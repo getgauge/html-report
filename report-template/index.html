@@ -1,0 +1,308 @@
+<!doctype html>
+<html ng-app="gauge_report" id="ng-app">
+<head>
+<meta http-equiv="X-UA-Compatible" content="IE=9; IE=8; IE=7; IE=EDGE"/>
+<title>Gauge Test Results</title>
+<script src="js/angular.min.js"></script>
+<script src="js/lightbox.js"></script>
+<script src="js/gauge.js"></script>
+<script src="js/result.js" charset="utf-8"></script>
+<script src="js/angular-hovercard.js"></script>
+<link rel="stylesheet" href="css/style.css"/>
+<link rel="stylesheet" href="css/angular-hovercard.css"/>
+
+<script type="text/ng-template" id="datatable.html">
+    <table class="data-table">
+        <tr>
+            <th ng-repeat="header in item.table.headers.cells">{{header}}</th>
+        </tr>
+        <tbody>
+
+        <tr ng-repeat="row in item.table.rows" ng-click="setDataTableIndex($index)"
+            ng-class="{'failed' : isRowFailure($index), 'passed': !isRowFailure($index), 'selected':$index==dataTableIndex}">
+            <td ng-repeat="cell in row.cells">{{cell}}</td>
+        </tr>
+        </tbody>
+    </table>
+</script>
+
+<script type="text/ng-template" id="parameterTableDetail.html">
+    <span ng-include src="'table.html'"></span>
+</script>
+
+<script type="text/ng-template" id="specialString.html">
+    <div>
+        <pre>{{fragment.parameter.value}}</pre>
+    </div>
+</script>
+
+<script type="text/ng-template" id="table.html">
+    <div>
+        <table>
+            <tr>
+                <th ng-repeat="header in fragment.parameter.table.headers.cells">{{header}}</th>
+            </tr>
+            <tbody>
+            <tr ng-repeat="row in fragment.parameter.table.rows">
+                <td ng-repeat="cell in row.cells">{{cell}}</td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
+</script>
+
+<script type="text/ng-template" id="item-render.html">
+    <div ng-switch="itemTypesMap[item.itemType]">
+        <div ng-switch-when="Comment">
+            <pre>{{item.comment.text}}</pre>
+        </div>
+        <div ng-switch-when="Step" class="step">
+            {{setCurrentStep(item.step)}}
+            <div ng-include src="'step.html'"></div>
+        </div>
+        <div ng-switch-when="Concept" class="step concept">
+            {{setCurrentStep(item.concept.conceptStep)}}
+            <div ng-include src="'step.html'"></div>
+            <div ng-include src="'concept-steps.html'"></div>
+        </div>
+        <div ng-switch-when="Table">
+            <div ng-include src="'datatable.html'"></div>
+        </div>
+        <div ng-switch-when="Scenario" class="scenarioItemsContainer">
+            {{setCurrentScenario(item.scenario)}}
+            <div ng-include src="'scenario.html'"></div>
+        </div>
+        <div ng-switch-when="TableDrivenScenario">
+            {{setCurrentScenario(item.tableDrivenScenario.scenarios[dataTableIndex])}}
+            <div ng-include src="'scenario.html'"></div>
+        </div>
+    </div>
+</script>
+
+<script type="text/ng-template" id="step.html">
+    <div ng-class="{true:'failed', false:'passed', 'undefined':'not-executed'}[currentStep.stepExecutionResult.executionResult.failed]">
+        <ul collapsable>
+            <li class="step">
+                <span ng-repeat="fragment in currentStep.fragments">
+                    <span ng-switch="fragmentTypesMap[fragment.fragmentType]">
+                        <span ng-switch-when="Text">
+                            {{fragment.text}}
+                        </span>
+                        <span ng-switch-when="Parameter">
+                            <span ng-switch="paramTypesMap[fragment.parameter.parameterType]">
+                                <span ng-switch-when="Static" class="parameter">
+                                    "{{fragment.parameter.value}}"
+                                </span>
+                                <span ng-switch-when="Dynamic" class="parameter">
+                                    "{{fragment.parameter.value}}"
+                                </span>
+                                <span ng-switch-when="Special_String">
+                                    <hovercard hover-tmpl-url="specialString.html">&lt;{{fragment.parameter.name}}&gt;</hovercard>
+                                </span>
+                                <span ng-switch-when="Special_Table">
+                                        <hovercard hover-tmpl-url="parameterTableDetail.html">&lt;{{fragment.parameter.name}}&gt;</hovercard>
+                                </span>
+                                  <div ng-switch-when="Table" class="inline-table">
+                                      <div ng-include src="'table.html'"></div>
+                                  </div>
+                            </span>
+                        </span>
+                    </span>
+                </span>
+            </li>
+        </ul>
+        <div class="error-container">
+            <div ng-if="currentStep.stepExecutionResult.preHookFailure">
+                {{setHookFailure(currentStep.stepExecutionResult.preHookFailure)}}
+                <div class="error-heading">Before Step Failed: <span class="error-message">{{hookFailure.errorMessage}}</span></div>
+                <div ng-include src="'hook-failure.html'">
+                </div>
+            </div>
+            <div ng-if="currentStep.stepExecutionResult.executionResult.failed">
+                <div ng-include src="'step-failure.html'"></div>
+            </div>
+            <div ng-if="currentStep.stepExecutionResult.postHookFailure">
+                {{setHookFailure(currentStep.stepExecutionResult.postHookFailure)}}
+                <div class="error-heading">After Step Failed: <span class="error-message">{{hookFailure.errorMessage}}</span></div>
+                <div ng-include src="'hook-failure.html'">
+                </div>
+            </div>
+        </div>
+    </div>
+</script>
+
+<script type="text/ng-template" id="concept-steps.html">
+    <div class="concept-steps">
+        <div ng-repeat="step in item.concept.steps">
+            {{setCurrentStep(step)}}
+            <div ng-include src="'step.html'"></div>
+        </div>
+    </div>
+</script>
+
+<script type="text/ng-template" id="scenario.html">
+    <h3 class="scenario-heading borderBottom">
+        <span>{{currentScenario.scenarioHeading}}</span>
+        <span class="time">{{formattedTime(currentScenario.executionTime)}}</span>
+    </h3>
+
+    <div ng-show="currentScenario.tags.length"
+         class="tagsHolder scenario_tags contentSection">
+        <span>Tags:</span>
+        <ul ng-repeat="tag in currentScenario.tags">
+            <li>{{tag}}</li>
+        </ul>
+    </div>
+    <div class="error-container failed">
+        <div ng-if="currentScenario.preHookFailure">
+            {{setHookFailure(currentScenario.preHookFailure)}}
+            <div collapsable class="error-heading">Before Scenario Hook Failed: <span class="error-message">{{hookFailure.errorMessage}}</span>
+            </div>
+            <div ng-include src="'hook-failure.html'">
+            </div>
+        </div>
+        <div ng-if="currentScenario.postHookFailure">
+            {{setHookFailure(currentScenario.postHookFailure)}}
+            <div collapsable class="error-heading">After Scenario Hook Failed: <span class="error-message">{{hookFailure.errorMessage}}</span>
+            </div>
+            <div ng-include src="'hook-failure.html'">
+            </div>
+        </div>
+    </div>
+    <div ng-repeat="item in currentScenario.contexts">
+        <div ng-include src="'item-render.html'" class="context-step"></div>
+    </div>
+    <div id="scenarioItemsContainer" ng-repeat="item in currentScenario.scenarioItems">
+        <div ng-include src="'item-render.html'"></div>
+    </div>
+</script>
+
+<script type="text/ng-template" id="hook-failure.html">
+    <table class="exception-container">
+        <tbody>
+        <tr>
+            <td>
+                <pre class="stacktrace">  {{hookFailure.stackTrace}}</pre>
+            </td>
+            <td>
+                <div>
+                    <a href="{{getScreenshotSrc(hookFailure.screenShot)}}" rel="lightbox">
+                        <img ng-src="{{getScreenshotSrc(hookFailure.screenShot)}}"
+                             class="screenshot-thumbnail"/>
+                    </a>
+                </div>
+            </td>
+        </tr>
+        </tbody>
+    </table>
+</script>
+
+<script type="text/ng-template" id="step-failure.html">
+    <table class="exception-container">
+        <tbody>
+        <tr>
+            <td>
+                <h4 class="error-message"> {{currentStep.stepExecutionResult.executionResult.errorMessage}}</h4>
+                <pre class="stacktrace"> {{currentStep.stepExecutionResult.executionResult.stackTrace}}</pre>
+            </td>
+            <td>
+                <div>
+                    <a href="{{getScreenshotSrc(currentStep.stepExecutionResult.executionResult.screenShot)}}"
+                       rel="lightbox">
+                        <img ng-src="{{getScreenshotSrc(currentStep.stepExecutionResult.executionResult.screenShot)}}"
+                             class="screenshot-thumbnail"/>
+                    </a>
+                </div>
+            </td>
+        </tr>
+        </tbody>
+    </table>
+</script>
+
+
+</head>
+<body ng-controller="mainController">
+<header>
+    <div>
+        <div id="summaryHolder">
+            <ul ng-repeat="summaryItem in summaryItems">
+                <li>
+                    <div class="key">
+                        {{summaryItem.key}}
+                    </div>
+                    <div ng-class="{'value':true,'failed':summaryItem.failed}">
+                        {{summaryItem.value}}
+                    </div>
+                </li>
+            </ul>
+        </div>
+    </div>
+</header>
+<section>
+    <h3>Specifications</h3>
+    <aside id='aside'>
+        <div class='filters' id='scenario_filter'>
+        </div>
+        <input id='searchSpecifications' ng-model="specToSearch.specHeading" placeholder='type specification name'
+               type='text'/>
+
+        <div id="listOfSpecifications">
+            <ul id="scenarios"
+                ng-repeat="specResult in result.specResults | filter:{protoSpec : specToSearch} | orderBy:'protoSpec.specHeading'">
+                <li ng-class="{'failed': specResult.failed,'passed': !specResult.failed,'selected': currentSpec === specResult}"
+                    class="spec-name"
+                    ng-click="loadSpecification(specResult)">
+                    <span id="scenarioName">{{specResult.protoSpec.specHeading}}</span>
+                    <span id="time">{{formattedTime(specResult.executionTime)}}</span>
+                </li>
+            </ul>
+        </div>
+    </aside>
+    <div id="congratulations" ng-show="allPassed()&&currentSpec==undefined">
+        <p>Congratulations! You've gone all <span class="green">green</span> and saved the environment!</p>
+    </div>
+    <section id='specificationContainer'>
+
+        <h2 id="currentSpecification" ng-if="currentSpec" class="borderBottom">
+            <span>{{currentSpec.protoSpec.specHeading}}</span>
+            <span class="time">{{formattedTime(currentSpec.executionTime)}}</span>
+        </h2>
+
+        <div ng-if="currentSpec.protoSpec.tags.length"
+             class="tagsHolder scenario_tags contentSection">
+            <span>Tags:</span>
+            <ul ng-repeat="tag in currentSpec.protoSpec.tags">
+                <li>{{tag}}</li>
+            </ul>
+        </div>
+        <div class="error-container failed">
+            <div ng-if="currentSpec.protoSpec.preHookFailure">
+                {{setHookFailure(currentSpec.protoSpec.preHookFailure)}}
+                <div collapsable class="error-heading">Before Spec Failed: <span class="error-message"><span class="error-message">{{hookFailure.errorMessage}}</span></span>
+                </div>
+                <div ng-include src="'hook-failure.html'">
+                </div>
+            </div>
+            <div ng-if="currentSpec.protoSpec.postHookFailure">
+                {{setHookFailure(currentSpec.protoSpec.postHookFailure)}}
+                <div collapsable class="error-heading">After Spec Failed: <span class="error-message">{{hookFailure.errorMessage}}</span>
+                </div>
+                <div ng-include src="'hook-failure.html'">
+                </div>
+            </div>
+        </div>
+        <br/>
+
+        <div id="specItemsContainer">
+            <div ng-repeat="item in currentSpec.protoSpec.items">
+                <div ng-include src="'item-render.html'"></div>
+            </div>
+        </div>
+        {{initializeLightbox()}}
+
+    </section>
+
+</section>
+</body>
+
+</html>

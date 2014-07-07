@@ -1,0 +1,693 @@
+html, body, div, span, applet, object, iframe,
+h1, h2, h3, h4, h5, h6, p, blockquote, pre,
+a, abbr, acronym, address, big, cite, code,
+del, dfn, em, img, ins, kbd, q, s, samp,
+small, strike, strong, sub, sup, tt, var,
+b, u, i, center,
+dl, dt, dd, ol, ul, li,
+fieldset, form, label, legend,
+table, caption, tbody, tfoot, thead, tr, th, td,
+article, aside, canvas, details, embed,
+figure, figcaption, footer, header, hgroup,
+menu, nav, output, ruby, section, summary,
+time, mark, audio, video {
+    margin: 0;
+    padding: 0;
+    border: 0;
+    font-size: 100%;
+    font: inherit;
+    vertical-align: baseline;
+}
+
+/* HTML5 display-role reset for older browsers */
+article, aside, details, figcaption, figure,
+footer, header, hgroup, menu, nav, section {
+    display: block;
+}
+
+.clearfix:after {
+    content: ".";
+    display: block;
+    clear: both;
+    visibility: hidden;
+    line-height: 0;
+    height: 0;
+}
+
+.clearfix {
+    display: inline-block;
+}
+
+body {
+    padding: 15px;
+    line-height: 1;
+    font-size: 13px;
+    color: #333px;
+    font-family: arial, verdana;
+    background-color: #ebebeb;
+}
+
+header img {
+    margin-right: 30px;
+}
+
+ol, ul {
+    list-style: none;
+}
+
+blockquote, q {
+    quotes: none;
+}
+
+a:hover {
+    text-decoration: none;
+}
+
+blockquote:before, blockquote:after,
+q:before, q:after {
+    content: '';
+    content: none;
+}
+
+table {
+    border-collapse: collapse;
+    border-spacing: 0;
+    padding: 20px;
+}
+
+h1 {
+    font-size: 2.5em
+}
+
+h2 {
+    font-size: 2.1em;
+}
+
+h3 {
+    font-size: 1.7em
+}
+
+h4 {
+    font-size: 1.3em
+}
+
+/*layout*/
+
+#specificationContainer {
+    padding: 20px;
+    min-height: 1000px;
+    margin-left: 310px;
+    background-color: white;
+    border-radius: 5px;
+}
+
+#specificationContainer h2 {
+    margin-bottom: 10px;
+}
+
+/*aside*/
+#aside {
+    float: left;
+    width: 300px;
+}
+
+#scenarios {
+    margin-top: 0px;
+}
+
+#scenarios a {
+    color: rgb(60, 60, 60);
+    text-decoration: none;
+    /*color : steelblue;*/
+}
+
+#scenarios li.selected {
+    /*border: 2px solid dimgray;*/
+    /*font-size: 1.3em;*/
+    /*background-color : rgb(175, 175, 175);*/
+    background-color: white;
+    font-weight: bolder;
+}
+
+#scenarios li {
+    padding: 5px;
+    padding-right: 60px;
+    display: block;
+    overflow: hidden;
+    margin-top: 5px;
+    margin-bottom: 5px;
+    position: relative;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+li #time {
+    right: 10px;
+    position: absolute;
+}
+
+#searchSpecifications {
+    width: 270px;
+    background: url('../images/icon_search.png') no-repeat 97% 6px;
+}
+
+.filters {
+    margin-top: 10px;
+    padding: 5px;
+    margin-bottom: 10px;
+}
+
+.filters a {
+    background-color: #ccc;
+    padding: 5px;
+    border-radius: 5px;
+    margin-right: 5px;
+    color: rgb(60, 60, 60);
+}
+
+.filters a.selected {
+    background-color: white;
+    text-decoration: none;
+}
+
+.borderBottom {
+    border-bottom: 1px solid #ccc;
+}
+
+.tagsHolder > span {
+    color: #aaa;
+    float: left;
+    padding: 5px;
+    width: 45px;
+}
+
+.tagsHolder {
+    float: none;
+    width: 100%;
+}
+
+.tagsHolder li {
+    float: left;
+    padding: 3px;
+    margin: 3px;
+}
+
+.tagsHolder li {
+    border-radius: 3px;
+    background-color: #ebebeb;
+}
+
+.user_comment_link {
+    margin: 10px;
+    text-decoration: none;
+    border-bottom: 1px dotted;
+    border-color: navy;
+    color: navy;
+}
+
+.user_comment_link:visited {
+    color: navy;
+}
+
+.scenarioStatus .step .step_comment {
+    background-color: #E4F3D3;
+    padding: 5px;
+    margin-top: 5px;
+    font-size: 12px;
+    font-color: #3d3d3d;
+}
+
+.passed {
+/ / background-color : rgba(137, 184, 63, 0.91);
+    background-color: rgb(163, 194, 115);
+}
+
+.failed {
+    background-color: rgb(255, 105, 105);
+}
+
+.errored {
+/ / background-color : rgba(255, 191, 55, 0.77);
+    background-color: rgb(255, 218, 139);
+}
+
+/*status color*/
+#listOfSpecifications {
+    overflow: auto;
+    margin-top: 10px;
+}
+
+#listOfSpecifications .passed {
+    border-left: 10px solid #89b83f;
+    background-color: lightgray;
+}
+
+#listOfSpecifications .failed {
+    border-left: 10px solid #ff3535;
+    background-color: lightgray;
+}
+
+#listOfSpecifications .errored {
+    border-left: 10px solid #ffbf37;
+    background-color: lightgray;
+}
+
+.not-executed {
+    background-color: #eee;
+}
+
+/*section*/
+body > section {
+    overflow: auto;
+    margin-top: 15px;
+    background-color: #ddd;
+    padding: 10px;
+    border-radius: 8px;
+}
+
+h2 > .time {
+    color: #aaa;
+    font-size: 0.7em;
+    margin-left: 10px;
+}
+
+h3 > .time {
+    color: #aaa;
+    font-size: 0.7em;
+    margin-left: 10px;
+}
+
+#specificationContainer .contentSection {
+    margin-top: 5px;
+    padding-top: 5px;
+    padding-bottom: 5px;
+    margin-bottom: 5px;
+    overflow: auto;
+}
+
+.contentSection h4 {
+    padding: 5px 0;
+    font-weight: bold;
+    color: #444;
+}
+
+li.concept {
+    list-style-type: square;
+    margin-left: 20px;
+}
+
+.step {
+    margin-left: 20px;
+    padding: 5px;
+    margin-top: 1px;
+    margin-bottom: 1px;
+}
+
+.contentSection .scenarioStatus li div {
+    padding: 5px;
+    margin-top: 1px;
+    margin-bottom: 1px;
+}
+
+/*form elements*/
+input[type='text'] {
+    font-size: 1.2em;
+    background-color: #eee !important;
+    border-radius: 10px;
+    border: 1px solid #ccc;
+    box-shadow: 0 0 6px rgba(0, 0, 0, .5) inset;
+    padding: 8px;
+}
+
+input[type='text']:focus {
+    box-shadow: 0 0 0px rgba(0, 0, 0, .5) inset;
+    background-color: white !important;
+}
+
+/*summary*/
+#summaryHolder {
+    padding: 10px;
+    overflow: auto;
+    margin-top: 10px;
+}
+
+#notes {
+    margin-top: 10px;
+    padding: 10px;
+    background-color: #ddd;
+    border-radius: 5px;
+}
+
+#notes p {
+    margin-bottom: 5px;
+}
+
+#notes p:last-child {
+    margin-bottom: 0;
+}
+
+#summaryHolder ul li {
+    float: left;
+    padding: 5px;
+    background-color: #ddd;
+    border-radius: 5px;
+    margin-right: 8px;
+    font-size: 1.1em;
+}
+
+#summaryHolder ul li .key {
+    padding: 5px;
+    float: left;
+}
+
+#summaryHolder ul li .value {
+    padding: 5px;
+    font-weight: bold;
+    float: left;
+    border-radius: 3px;
+}
+
+/*#summaryHolder h3{
+	padding: 5px 0;
+
+}
+#summaryBoxes{
+	display: block;
+	font-size: 1.3em;
+	clear: both;
+	overflow: auto;
+}
+#summaryHolder .texts{
+	color: #333;
+	margin-left: 5px;
+	padding-top: 5px;
+	padding-bottom: 5px;
+}
+#summaryHolder .texts li{
+	margin-bottom: 5px;
+}
+#summaryHolder .texts span{
+	font-size: 1.2em;
+}
+#summaryHolder .texts i{
+	text-decoration: underline;
+}*/
+/*#summaryBoxes > div{	
+	float: left;
+	color: #888;
+	font-weight: 0.3em;
+	margin: 5px;
+	background-color: #eee;
+	text-align: center;
+}
+#summaryBoxes > div > div{
+	border-bottom: 1px solid #ccc;
+	padding: 5px;
+}
+#summaryBoxes > div > ul{
+	padding: 10px;
+	display: block;
+}
+#summaryBoxes > div > ul > li{
+	padding: 0px 15px;
+	margin: 0 5px;
+	display: inline-block;
+}
+#summaryBoxes > div > ul > li > .key{
+	color: #666;
+	padding: 5px;
+}
+#summaryBoxes  > div > ul > li > .value{
+	font-weight: bold;
+	color: #333;
+	padding: 5px;
+}*/
+/*lightbox*/
+#exceptionHolder tr a img {
+    width: 200px;
+    padding: 3px;
+    margin: 5px;
+    border: 1px solid #ccc;
+}
+
+#exceptionHolder tr a img:hover {
+    border: 1px solid #aaa;
+}
+
+#exceptionHolder {
+    display: block;
+    overflow: auto;
+}
+
+#exceptionHolder tr td {
+    padding-top: 10px;
+    padding-bottom: 10px;
+    border-bottom: 1px solid #ccc;
+}
+
+#exceptionHolder tr td.code {
+    color: red;
+    vertical-align: top;
+}
+
+#lightbox {
+    background-color: #eee;
+    padding: 10px;
+    border-bottom: 2px solid #666;
+    border-right: 2px solid #666;
+}
+
+#lightboxDetails {
+    font-size: 0.8em;
+    padding-top: 0.4em;
+}
+
+#closeButton {
+    top: 0;
+    right: 0;
+}
+
+#lightboxCaption {
+    float: left;
+}
+
+#keyboardMsg {
+    float: right;
+}
+
+#lightbox img {
+    border: none;
+}
+
+#overlay img {
+    border: none;
+}
+
+#overlay {
+    background-image: url(../images/overlay.png);
+}
+
+#congratulations {
+    font-family: monospace;
+    font-size: 20px;
+    text-align: center;
+    display: block;
+}
+
+.green {
+    background-color: rgb(163, 194, 115);
+    font-size: 30px;
+    padding: 3px;
+}
+
+#congratulationsHidden {
+    display: none;
+}
+
+/*tables*/
+table tr th {
+    background-color: #ccc;
+    text-align: center;
+    font-weight: bold;
+    padding: 5px;
+    border: 1px solid white;
+}
+
+table td {
+    border: 1px solid white;
+    padding: 5px;
+}
+
+table th td {
+    background-color: #ddd;
+    color: #333;
+}
+
+.data-table {
+    margin: 0 auto;
+}
+
+.data-table td {
+    cursor: pointer;
+}
+
+.inline-table {
+    margin: 5px 30px;
+}
+
+.inline-table td {
+    background-color: #eeeeee;
+}
+
+.data_store {
+    margin-top: 15px;
+    margin-bottom: 15px;
+}
+
+.data_store_container {
+    margin-top: 15px;
+}
+
+.data_store th {
+    border: 1px solid white;
+}
+
+.data_store td {
+    border: 1px solid white;
+    background-color: #eee;
+}
+
+#datatable_container td {
+    cursor: pointer;
+}
+
+.comment_container {
+    font-size: 1.1em;
+}
+
+.comment_container .header {
+    font-size: 1.2em;
+    margin-top: 5px;
+    display: block;
+    margin-bottom: 5px;
+    color: #83b55c;
+}
+
+.align-center {
+    margin: 0 auto;
+}
+
+.italic {
+    font-style: italic;
+}
+
+.bold {
+    font-weight: bold;
+}
+
+#summaryHolder p {
+    margin-top: 10px;
+}
+
+.small {
+    font-size: 0.9em;
+}
+
+.identified_tags {
+    font-size: 1.1em;
+}
+
+.parameter {
+    color: navy;
+    font-weight: bold;
+}
+
+.brt {
+    margin-top: 15px;
+    margin-bottom: 15px;
+}
+
+.brt td, .brt th {
+    border-right: 1px solid white;
+}
+
+.next_prev_actions {
+    float: right;
+}
+
+.next_prev_actions img {
+    cursor: pointer;
+}
+
+.fixed {
+    position: fixed;
+    top: 0;
+}
+
+.filterCount {
+    font-weight: bold;
+}
+
+.nofailures {
+    margin: auto;
+    width: 500px;
+}
+
+.context-step li {
+    font-style: italic;
+    list-style-type: circle;
+}
+
+#specItemsContainer .step {
+    font-style: italic;
+    list-style-type: circle;
+}
+
+#scenarioItemsContainer .step {
+    list-style: disc;
+    font-style: normal;
+}
+
+#scenarioItemsContainer .context-step {
+    font-style: italic;
+    list-style-type: circle;
+}
+
+.concept-steps {
+    margin-left: 5%;
+}
+
+.screenshot-thumbnail {
+    height: 40%;
+    width: 40%;
+}
+
+.error-message {
+    font-size: 15px;
+}
+
+.exception-container .error-message, .exception-container .stacktrace {
+    padding: 5px;
+}
+
+.exception-container td {
+    border: none;
+}
+
+.collapsed .exception-container {
+    display: none;
+}
+
+.failed .step {
+    cursor: pointer;
+}
+
+.spec-name {
+    cursor: pointer;
+}
+
+.error-heading {
+    cursor: pointer;
+    font-size: 18px;
+    padding: 5px;
+}
