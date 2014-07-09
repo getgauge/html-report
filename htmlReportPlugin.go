@@ -123,7 +123,7 @@ func (gaugeListener *GaugeListener) Start() {
 			message := &Message{}
 			err = proto.Unmarshal(buffer.Bytes()[bytesRead:messageLength+uint64(bytesRead)], message)
 			if err != nil {
-				log.Printf("[Gauge Listener] Failed to read proto message: %s\n", err.Error())
+				log.Printf("[html-report] Failed to read proto message: %s\n", err.Error())
 			} else {
 				if *message.MessageType == Message_SuiteExecutionResult {
 					result := message.GetSuiteExecutionResult()
@@ -138,6 +138,7 @@ func (gaugeListener *GaugeListener) Start() {
 }
 
 func createReport(suiteResult *SuiteExecutionResult) {
+	fmt.Println("[html-report] Started generation of html reports")
 	contents := generateJsFileContents(suiteResult)
 	reportsDir, err := filepath.Abs(os.Getenv(gaugeReportsDirEnvName))
 	if reportsDir == "" || err != nil {
