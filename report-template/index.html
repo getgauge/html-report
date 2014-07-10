@@ -97,7 +97,8 @@
                                     "{{fragment.parameter.value}}"
                                 </span>
                                 <span ng-switch-when="Special_String">
-                                    <hovercard hover-tmpl-url="specialString.html">&lt;{{fragment.parameter.name}}&gt;</hovercard>
+                                    <hovercard hover-tmpl-url="specialString.html">
+                                        &lt;{{fragment.parameter.name}}&gt;</hovercard>
                                 </span>
                                 <span ng-switch-when="Special_Table">
                                         <hovercard hover-tmpl-url="parameterTableDetail.html">&lt;{{fragment.parameter.name}}&gt;</hovercard>
@@ -114,7 +115,8 @@
         <div class="error-container">
             <div ng-if="currentStep.stepExecutionResult.preHookFailure">
                 {{setHookFailure(currentStep.stepExecutionResult.preHookFailure)}}
-                <div class="error-heading">Before Step Failed: <span class="error-message">{{hookFailure.errorMessage}}</span></div>
+                <div class="error-heading">Before Step Failed: <span
+                        class="error-message">{{hookFailure.errorMessage}}</span></div>
                 <div ng-include src="'hook-failure.html'">
                 </div>
             </div>
@@ -123,7 +125,8 @@
             </div>
             <div ng-if="currentStep.stepExecutionResult.postHookFailure">
                 {{setHookFailure(currentStep.stepExecutionResult.postHookFailure)}}
-                <div class="error-heading">After Step Failed: <span class="error-message">{{hookFailure.errorMessage}}</span></div>
+                <div class="error-heading">After Step Failed: <span
+                        class="error-message">{{hookFailure.errorMessage}}</span></div>
                 <div ng-include src="'hook-failure.html'">
                 </div>
             </div>
@@ -202,7 +205,9 @@
         <tbody>
         <tr>
             <td>
-                <h4 class="error-message"> {{currentStep.stepExecutionResult.executionResult.errorMessage}}</h4>
+                <h4 class="error-message">
+                    <pre>{{currentStep.stepExecutionResult.executionResult.errorMessage}}</pre>
+                </h4>
                 <pre class="stacktrace"> {{currentStep.stepExecutionResult.executionResult.stackTrace}}</pre>
             </td>
             <td>
@@ -278,7 +283,8 @@
         <div class="error-container failed">
             <div ng-if="currentSpec.protoSpec.preHookFailure">
                 {{setHookFailure(currentSpec.protoSpec.preHookFailure)}}
-                <div collapsable class="error-heading">Before Spec Failed: <span class="error-message"><span class="error-message">{{hookFailure.errorMessage}}</span></span>
+                <div collapsable class="error-heading">Before Spec Failed: <span class="error-message"><span
+                        class="error-message">{{hookFailure.errorMessage}}</span></span>
                 </div>
                 <div ng-include src="'hook-failure.html'">
                 </div>
