@@ -177,7 +177,7 @@ func createReport(suiteResult *SuiteExecutionResult) {
 }
 
 func copyReportTemplateFiles(reportDir string) {
-	pluginsDir, err := common.GetPluginsPath()
+	pluginsDir, err := common.GetPluginsInstallDir()
 	if err != nil {
 		fmt.Printf("Error finding plugins directory :%s\n", err)
 		os.Exit(1)
