@@ -29,26 +29,29 @@ const (
 )
 
 var pluginProperties map[string]interface{}
-var pluginInstallationDir string
 var projectRoot string
+var pluginDir string
 
 func main() {
-	pluginInstallationDir = os.Getenv("plugin_root")
-	if pluginInstallationDir == "" {
-		fmt.Println("environment variable plugin_root is not set")
-		os.Exit(1)
-	}
-	projectRoot = os.Getenv("project_root")
+	projectRoot = os.Getenv(common.GaugeProjectRootEnv)
 	if projectRoot == "" {
-		fmt.Println("environment variable project_root is not set")
+		fmt.Printf("Environment variable '%s' is not set. \n", common.GaugeProjectRootEnv)
 		os.Exit(1)
 	}
 
-	pluginPropertiesJson, err := ioutil.ReadFile(filepath.Join(pluginInstallationDir, "plugin.json"))
+	var err error
+	pluginDir, err = os.Getwd()
 	if err != nil {
-		fmt.Printf("Could not read plugin.json: %s\n", err)
+		fmt.Printf("Error finding current working directory: %s \n", err)
 		os.Exit(1)
 	}
+
+	pluginPropertiesJson, readErr := ioutil.ReadFile("plugin.json")
+	if readErr != nil {
+		fmt.Printf("Could not read plugin.json: %s\n", readErr)
+		os.Exit(1)
+	}
+
 	var pluginJson interface{}
 	if err = json.Unmarshal([]byte(pluginPropertiesJson), &pluginJson); err != nil {
 		fmt.Printf("Could not read plugin.json: %s\n", err)
@@ -71,7 +74,7 @@ func main() {
 }
 
 func addDefaultPropertiesToProject() {
-	defaultPropertiesFile, err := common.GetDefaultPropertiesFile()
+	defaultPropertiesFile := getDefaultPropertiesFile()
 	reportsDirProperty := &(common.Property{
 		Comment:      "The path to the gauge reports directory. Should be either relative to the project directory or an absolute path",
 		Name:         gaugeReportsDirEnvName,
@@ -81,13 +84,19 @@ func addDefaultPropertiesToProject() {
 		Name:         overwriteReportsEnvProperty,
 		DefaultValue: "true"})
 
-	if err != nil {
-		fmt.Printf("Failed to setup html report plugin in project: %s", err)
+	if !common.FileExists(defaultPropertiesFile) {
+		fmt.Printf("Failed to setup html report plugin in project. Default properties file does not exist at %s. \n", defaultPropertiesFile)
+		return
 	}
 	if err := common.AppendProperties(defaultPropertiesFile, reportsDirProperty, overwriteReportProperty); err != nil {
-		fmt.Printf("Failed to setup html report plugin in project: %s", err)
+		fmt.Printf("Failed to setup html report plugin in project: %s \n", err)
+		return
 	}
 	fmt.Println("Succesfully added configurations for html-report to env/default/default.properties")
+}
+
+func getDefaultPropertiesFile() string {
+	return filepath.Join(projectRoot, "env", "default", "default.properties")
 }
 
 type GaugeResultHandlerFn func(*SuiteExecutionResult)
@@ -150,6 +159,7 @@ func (gaugeListener *GaugeListener) processMessages(buffer *bytes.Buffer) {
 }
 
 func createReport(suiteResult *SuiteExecutionResult) {
+	os.Chdir(projectRoot)
 	contents := generateJsFileContents(suiteResult)
 	reportsDir, err := filepath.Abs(os.Getenv(gaugeReportsDirEnvName))
 	if reportsDir == "" || err != nil {
@@ -177,18 +187,12 @@ func createReport(suiteResult *SuiteExecutionResult) {
 }
 
 func copyReportTemplateFiles(reportDir string) {
-	pluginsDir, err := common.GetPluginsInstallDir()
-	if err != nil {
-		fmt.Printf("Error finding plugins directory :%s\n", err)
-		os.Exit(1)
-	}
-	reportTemplateDir := path.Join(pluginsDir, pluginProperties["id"].(string), pluginProperties["version"].(string), reportTemplateDir)
-	err = common.MirrorDir(reportTemplateDir, reportDir)
+	reportTemplateDir := path.Join(pluginDir, reportTemplateDir)
+	err := common.MirrorDir(reportTemplateDir, reportDir)
 	if err != nil {
 		fmt.Printf("Error copying template directory :%s\n", err)
 		os.Exit(1)
 	}
-
 }
 
 func shouldOverwriteReports() bool {
