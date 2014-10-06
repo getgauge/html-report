@@ -29,17 +29,18 @@ It has these top-level messages:
 	SuiteExecutionResult
 	StepNamesRequest
 	StepNamesResponse
+	ScenarioDataStoreInitRequest
+	SpecDataStoreInitRequest
+	SuiteDataStoreInitRequest
 	Message
 */
 package main
 
 import proto "code.google.com/p/goprotobuf/proto"
-import json "encoding/json"
 import math "math"
 
-// Reference proto, json, and math imports to suppress error if they are not otherwise used.
+// Reference imports to suppress errors if they are not otherwise used.
 var _ = proto.Marshal
-var _ = &json.SyntaxError{}
 var _ = math.Inf
 
 type Message_MessageType int32
@@ -61,6 +62,9 @@ const (
 	Message_StepNamesResponse         Message_MessageType = 13
 	Message_KillProcessRequest        Message_MessageType = 14
 	Message_SuiteExecutionResult      Message_MessageType = 15
+	Message_ScenarioDataStoreInit     Message_MessageType = 16
+	Message_SpecDataStoreInit         Message_MessageType = 17
+	Message_SuiteDataStoreInit        Message_MessageType = 18
 )
 
 var Message_MessageType_name = map[int32]string{
@@ -80,6 +84,9 @@ var Message_MessageType_name = map[int32]string{
 	13: "StepNamesResponse",
 	14: "KillProcessRequest",
 	15: "SuiteExecutionResult",
+	16: "ScenarioDataStoreInit",
+	17: "SpecDataStoreInit",
+	18: "SuiteDataStoreInit",
 }
 var Message_MessageType_value = map[string]int32{
 	"ExecutionStarting":         0,
@@ -98,6 +105,9 @@ var Message_MessageType_value = map[string]int32{
 	"StepNamesResponse":         13,
 	"KillProcessRequest":        14,
 	"SuiteExecutionResult":      15,
+	"ScenarioDataStoreInit":     16,
+	"SpecDataStoreInit":         17,
+	"SuiteDataStoreInit":        18,
 }
 
 func (x Message_MessageType) Enum() *Message_MessageType {
@@ -535,6 +545,30 @@ func (m *StepNamesResponse) GetSteps() []string {
 	return nil
 }
 
+type ScenarioDataStoreInitRequest struct {
+	XXX_unrecognized []byte `json:"-"`
+}
+
+func (m *ScenarioDataStoreInitRequest) Reset()         { *m = ScenarioDataStoreInitRequest{} }
+func (m *ScenarioDataStoreInitRequest) String() string { return proto.CompactTextString(m) }
+func (*ScenarioDataStoreInitRequest) ProtoMessage()    {}
+
+type SpecDataStoreInitRequest struct {
+	XXX_unrecognized []byte `json:"-"`
+}
+
+func (m *SpecDataStoreInitRequest) Reset()         { *m = SpecDataStoreInitRequest{} }
+func (m *SpecDataStoreInitRequest) String() string { return proto.CompactTextString(m) }
+func (*SpecDataStoreInitRequest) ProtoMessage()    {}
+
+type SuiteDataStoreInitRequest struct {
+	XXX_unrecognized []byte `json:"-"`
+}
+
+func (m *SuiteDataStoreInitRequest) Reset()         { *m = SuiteDataStoreInitRequest{} }
+func (m *SuiteDataStoreInitRequest) String() string { return proto.CompactTextString(m) }
+func (*SuiteDataStoreInitRequest) ProtoMessage()    {}
+
 // This is the message which gets transferred all the time
 // with proper message type set
 type Message struct {
@@ -559,6 +593,9 @@ type Message struct {
 	StepNamesResponse                *StepNamesResponse                `protobuf:"bytes,16,opt,name=stepNamesResponse" json:"stepNamesResponse,omitempty"`
 	SuiteExecutionResult             *SuiteExecutionResult             `protobuf:"bytes,17,opt,name=suiteExecutionResult" json:"suiteExecutionResult,omitempty"`
 	KillProcessRequest               *KillProcessRequest               `protobuf:"bytes,18,opt,name=killProcessRequest" json:"killProcessRequest,omitempty"`
+	ScenarioDataStoreInitRequest     *ScenarioDataStoreInitRequest     `protobuf:"bytes,19,opt,name=scenarioDataStoreInitRequest" json:"scenarioDataStoreInitRequest,omitempty"`
+	SpecDataStoreInitRequest         *SpecDataStoreInitRequest         `protobuf:"bytes,20,opt,name=specDataStoreInitRequest" json:"specDataStoreInitRequest,omitempty"`
+	SuiteDataStoreInitRequest        *SuiteDataStoreInitRequest        `protobuf:"bytes,21,opt,name=suiteDataStoreInitRequest" json:"suiteDataStoreInitRequest,omitempty"`
 	XXX_unrecognized                 []byte                            `json:"-"`
 }
 
@@ -688,6 +725,27 @@ func (m *Message) GetSuiteExecutionResult() *SuiteExecutionResult {
 func (m *Message) GetKillProcessRequest() *KillProcessRequest {
 	if m != nil {
 		return m.KillProcessRequest
+	}
+	return nil
+}
+
+func (m *Message) GetScenarioDataStoreInitRequest() *ScenarioDataStoreInitRequest {
+	if m != nil {
+		return m.ScenarioDataStoreInitRequest
+	}
+	return nil
+}
+
+func (m *Message) GetSpecDataStoreInitRequest() *SpecDataStoreInitRequest {
+	if m != nil {
+		return m.SpecDataStoreInitRequest
+	}
+	return nil
+}
+
+func (m *Message) GetSuiteDataStoreInitRequest() *SuiteDataStoreInitRequest {
+	if m != nil {
+		return m.SuiteDataStoreInitRequest
 	}
 	return nil
 }

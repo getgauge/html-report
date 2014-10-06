@@ -26,16 +26,15 @@ It has these top-level messages:
 	ProtoHookFailure
 	ProtoSuiteResult
 	ProtoSpecResult
+	ProtoStepValue
 */
 package main
 
 import proto "code.google.com/p/goprotobuf/proto"
-import json "encoding/json"
 import math "math"
 
-// Reference proto, json, and math imports to suppress error if they are not otherwise used.
+// Reference imports to suppress errors if they are not otherwise used.
 var _ = proto.Marshal
-var _ = &json.SyntaxError{}
 var _ = math.Inf
 
 type ProtoItem_ItemType int32
@@ -416,7 +415,7 @@ func (m *ProtoStep) GetStepExecutionResult() *ProtoStepExecutionResult {
 
 type ProtoConcept struct {
 	ConceptStep            *ProtoStep                `protobuf:"bytes,1,req,name=conceptStep" json:"conceptStep,omitempty"`
-	Steps                  []*ProtoStep              `protobuf:"bytes,2,rep,name=steps" json:"steps,omitempty"`
+	Steps                  []*ProtoItem              `protobuf:"bytes,2,rep,name=steps" json:"steps,omitempty"`
 	ConceptExecutionResult *ProtoStepExecutionResult `protobuf:"bytes,3,opt,name=conceptExecutionResult" json:"conceptExecutionResult,omitempty"`
 	XXX_unrecognized       []byte                    `json:"-"`
 }
@@ -432,7 +431,7 @@ func (m *ProtoConcept) GetConceptStep() *ProtoStep {
 	return nil
 }
 
-func (m *ProtoConcept) GetSteps() []*ProtoStep {
+func (m *ProtoConcept) GetSteps() []*ProtoItem {
 	if m != nil {
 		return m.Steps
 	}
@@ -828,6 +827,38 @@ func (m *ProtoSpecResult) GetExecutionTime() int64 {
 		return *m.ExecutionTime
 	}
 	return 0
+}
+
+type ProtoStepValue struct {
+	StepValue              *string  `protobuf:"bytes,1,req,name=stepValue" json:"stepValue,omitempty"`
+	ParameterizedStepValue *string  `protobuf:"bytes,2,req,name=parameterizedStepValue" json:"parameterizedStepValue,omitempty"`
+	Parameters             []string `protobuf:"bytes,3,rep,name=parameters" json:"parameters,omitempty"`
+	XXX_unrecognized       []byte   `json:"-"`
+}
+
+func (m *ProtoStepValue) Reset()         { *m = ProtoStepValue{} }
+func (m *ProtoStepValue) String() string { return proto.CompactTextString(m) }
+func (*ProtoStepValue) ProtoMessage()    {}
+
+func (m *ProtoStepValue) GetStepValue() string {
+	if m != nil && m.StepValue != nil {
+		return *m.StepValue
+	}
+	return ""
+}
+
+func (m *ProtoStepValue) GetParameterizedStepValue() string {
+	if m != nil && m.ParameterizedStepValue != nil {
+		return *m.ParameterizedStepValue
+	}
+	return ""
+}
+
+func (m *ProtoStepValue) GetParameters() []string {
+	if m != nil {
+		return m.Parameters
+	}
+	return nil
 }
 
 func init() {
