@@ -1,6 +1,7 @@
 package main
 
 import (
+	"archive/zip"
 	"encoding/json"
 	"flag"
 	"fmt"
@@ -201,7 +202,7 @@ func executeCommand(command string, arg ...string) (string, error) {
 
 func compileGoPackage(packageName string) {
 	setGoEnv()
-	runProcess("go", BUILD_DIR, "get", "./..")
+	runProcess("go", BUILD_DIR, "get", "-d", "./..")
 	runProcess("go", BUILD_DIR, "install", "-v", packageName)
 }
 
@@ -367,8 +368,56 @@ func createPluginDistro(forAllPlatforms bool) {
 }
 
 func createDistro() {
-	distroDir := filepath.Join(deploy, fmt.Sprintf("%s-%s-%s.%s", htmlReport, getPluginVersion(), getOS(), getArch()))
+	packageName := fmt.Sprintf("%s-%s-%s.%s", htmlReport, getPluginVersion(), getOS(), getArch())
+	distroDir := filepath.Join(deploy, packageName)
 	copyPluginFiles(distroDir)
+	createZip(deploy, packageName)
+	os.RemoveAll(distroDir)
+}
+
+func createZip(dir, packageName string) {
+	wd, err := os.Getwd()
+	if err != nil {
+		panic(err)
+	}
+	os.Chdir(dir)
+
+	zipFileName := packageName + ".zip"
+	newfile, err := os.Create(zipFileName)
+	if err != nil {
+		panic(err)
+	}
+	defer newfile.Close()
+
+	zipWriter := zip.NewWriter(newfile)
+	defer zipWriter.Close()
+
+	filepath.Walk(packageName, func(path string, info os.FileInfo, err error) error {
+		infoHeader, err := zip.FileInfoHeader(info)
+		if err != nil {
+			panic(err)
+		}
+		infoHeader.Name = strings.Replace(path, fmt.Sprintf("%s%c", packageName, filepath.Separator), "", 1)
+		if info.IsDir() {
+			return nil
+		}
+		writer, err := zipWriter.CreateHeader(infoHeader)
+		if err != nil {
+			panic(err)
+		}
+		file, err := os.Open(path)
+		if err != nil {
+			panic(err)
+		}
+		defer file.Close()
+		_, err = io.Copy(writer, file)
+		if err != nil {
+			panic(err)
+		}
+		return nil
+	})
+
+	os.Chdir(wd)
 }
 
 func compileAcrossPlatforms() {
