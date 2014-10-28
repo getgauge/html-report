@@ -247,7 +247,7 @@ func copyFiles(files map[string]string, installDir string) {
 
 func copyPluginFiles(destDir string) {
 	files := make(map[string]string)
-	if getOS() == "windows" {
+	if getGOOS() == "windows" {
 		files[filepath.Join(getBinDir(), htmlReport+".exe")] = bin
 	} else {
 		files[filepath.Join(getBinDir(), htmlReport)] = bin
@@ -368,7 +368,7 @@ func createPluginDistro(forAllPlatforms bool) {
 }
 
 func createDistro() {
-	packageName := fmt.Sprintf("%s-%s-%s.%s", htmlReport, getPluginVersion(), getOS(), getArch())
+	packageName := fmt.Sprintf("%s-%s-%s.%s", htmlReport, getPluginVersion(), getGOOS(), getArch())
 	distroDir := filepath.Join(deploy, packageName)
 	copyPluginFiles(distroDir)
 	createZip(deploy, packageName)
@@ -457,15 +457,24 @@ func getUserHome() string {
 }
 
 func getArch() string {
-	arch := os.Getenv("GOARCH")
+	arch := getGOARCH()
 	if arch == X86 {
 		return "x86"
 	}
 	return "x86_64"
 }
 
-func getOS() string {
-	os := os.Getenv("GOOS")
+func getGOARCH() string {
+	goArch := os.Getenv(GOARCH)
+	if goArch == "" {
+		return runtime.GOARCH
+
+	}
+	return goArch
+}
+
+func getGOOS() string {
+	os := os.Getenv(GOOS)
 	if os == "" {
 		return runtime.GOOS
 
