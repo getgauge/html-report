@@ -134,15 +134,93 @@
     </div>
 </script>
 
-<script type="text/ng-template" id="concept-steps.html">
-    <div class="concept-steps">
-        <div ng-repeat="step in item.concept.steps">
-            {{setCurrentStep(step)}}
-            <div ng-include src="'step.html'"></div>
+<script type="text/ng-template" id="nestedConceptStep.html">
+    <div ng-class="{true:'failed', false:'passed', 'undefined':'not-executed'}[currentConceptStep.stepExecutionResult.executionResult.failed]">
+        <ul collapsable>
+            <li class="step">
+                <span ng-repeat="fragment in currentConceptStep.fragments">
+                    <span ng-switch="fragmentTypesMap[fragment.fragmentType]">
+                        <span ng-switch-when="Text">
+                            {{fragment.text}}
+                        </span>
+                        <span ng-switch-when="Parameter">
+                            <span ng-switch="paramTypesMap[fragment.parameter.parameterType]">
+                                <span ng-switch-when="Static" class="parameter">
+                                    "{{fragment.parameter.value}}"
+                                </span>
+                                <span ng-switch-when="Dynamic" class="parameter">
+                                    "{{fragment.parameter.value}}"
+                                </span>
+                                <span ng-switch-when="Special_String">
+                                    <hovercard hover-tmpl-url="specialString.html">
+                                        &lt;{{fragment.parameter.name}}&gt;</hovercard>
+                                </span>
+                                <span ng-switch-when="Special_Table">
+                                        <hovercard hover-tmpl-url="parameterTableDetail.html">&lt;{{fragment.parameter.name}}&gt;</hovercard>
+                                </span>
+                                  <div ng-switch-when="Table" class="inline-table">
+                                      <div ng-include src="'table.html'"></div>
+                                  </div>
+                            </span>
+                        </span>
+                    </span>
+                </span>
+            </li>
+        </ul>
+        <div class="error-container">
+            <div ng-if="currentStep.stepExecutionResult.preHookFailure">
+                {{setHookFailure(currentStep.stepExecutionResult.preHookFailure)}}
+                <div class="error-heading">Before Step Failed: <span
+                        class="error-message">{{hookFailure.errorMessage}}</span></div>
+                <div ng-include src="'hook-failure.html'">
+                </div>
+            </div>
+            <div ng-if="currentStep.stepExecutionResult.executionResult.failed">
+                <div ng-include src="'step-failure.html'"></div>
+            </div>
+            <div ng-if="currentStep.stepExecutionResult.postHookFailure">
+                {{setHookFailure(currentStep.stepExecutionResult.postHookFailure)}}
+                <div class="error-heading">After Step Failed: <span
+                        class="error-message">{{hookFailure.errorMessage}}</span></div>
+                <div ng-include src="'hook-failure.html'">
+                </div>
+            </div>
         </div>
     </div>
 </script>
 
+<script type="text/ng-template" id="concept-steps.html">
+    <div class="concept-steps">
+        <div ng-repeat="step in item.concept.steps">
+            {{setCurrentStep(step.step)}}
+            {{setConcept(step.concept)}}
+            <div ng-if="!isConcept">
+                <div ng-include src="'step.html'"></div>
+            </div>
+            <div ng-if="isConcept">
+                {{setCurrentConceptStep(step.concept.conceptStep)}}
+                <div ng-include src="'nestedConceptStep.html'"></div>
+                <div ng-include src="'nested-concept.html'"></div>
+            </div>
+        </div>
+    </div>
+</script>
+<script type="text/ng-template" id="nested-concept.html">
+    <div class="concept-steps">
+        <div ng-repeat="step in getTopConcept().steps">
+            {{setCurrentConceptStep(step.step)}}
+            {{setConcept(step.concept)}}
+            <div ng-if="!isConcept">
+                <div ng-include src="'nestedConceptStep.html'"></div>
+            </div>
+            <div ng-if="isConcept">
+                {{setCurrentConceptStep(step.concept.conceptStep)}}
+                <div ng-include src="'nestedConceptStep.html'"></div>
+                <div ng-include src="'nested-concept.html'"></div>
+            </div>
+        </div>
+    </div>
+</script>
 <script type="text/ng-template" id="scenario.html">
     <h3 class="scenario-heading borderBottom">
         <span>{{currentScenario.scenarioHeading}}</span>

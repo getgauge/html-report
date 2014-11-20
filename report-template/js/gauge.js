@@ -34,6 +34,8 @@ gaugeReport.controller('mainController', function ($scope) {
     $scope.dataTableIndex = 0;
     $scope.hookFailure = null;
     $scope.isPreHookFailure = false;
+    $scope.conceptList = [];
+    $scope.count = 0;
 
     $scope.allPassed = function () {
         return !$scope.result.failed
@@ -59,7 +61,24 @@ gaugeReport.controller('mainController', function ($scope) {
     };
 
     $scope.setCurrentStep = function (step) {
-        $scope.currentStep = step
+        $scope.currentStep = null;
+        if(step)    $scope.currentStep = step
+    };
+    $scope.setCurrentConceptStep = function (step) {
+        $scope.currentConceptStep = null;
+        if(step)    $scope.currentConceptStep = step
+    };
+    $scope.setConcept = function (concept) {
+        $scope.isConcept = false
+        if(concept){
+            $scope.isConcept = true
+            $scope.conceptList.push(concept)
+            $scope.currentStep = concept.conceptStep
+        }
+    };
+
+    $scope.getTopConcept = function () {
+        return $scope.conceptList.pop()
     };
 
     $scope.setCurrentScenario = function (scenario) {
