@@ -399,6 +399,7 @@ func createZip(dir, packageName string) {
 		}
 		infoHeader.Name = strings.Replace(path, fmt.Sprintf("%s%c", packageName, filepath.Separator), "", 1)
 		if info.IsDir() {
+			zipWriter.CreateHeader(infoHeader)
 			return nil
 		}
 		writer, err := zipWriter.CreateHeader(infoHeader)
