@@ -36,6 +36,7 @@ gaugeReport.controller('mainController', function ($scope) {
     $scope.isPreHookFailure = false;
     $scope.conceptList = [];
     $scope.count = 0;
+    $scope.isConcept = false;
 
     $scope.allPassed = function () {
         return !$scope.result.failed
@@ -50,7 +51,6 @@ gaugeReport.controller('mainController', function ($scope) {
     $scope.setDataTableIndex = function (index) {
         $scope.dataTableIndex = index
     };
-
 
     $scope.isRowFailure = function (index) {
         var failedRows = $scope.currentSpec.failedDataTableRows;
@@ -83,6 +83,10 @@ gaugeReport.controller('mainController', function ($scope) {
 
     $scope.setCurrentScenario = function (scenario) {
         $scope.currentScenario = scenario
+    };
+
+    $scope.getFragmentName = function (name) {
+            return name || "table"
     };
 
     $scope.setHookFailure = function (hookFailure) {

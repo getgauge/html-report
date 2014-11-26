@@ -62,6 +62,7 @@
         </div>
         <div ng-switch-when="Concept" class="step concept">
             {{setCurrentStep(item.concept.conceptStep)}}
+            {{setConcept(item.concept)}}
             <div ng-include src="'step.html'"></div>
             <div ng-include src="'concept-steps.html'"></div>
         </div>
@@ -101,7 +102,7 @@
                                         &lt;{{fragment.parameter.name}}&gt;</hovercard>
                                 </span>
                                 <span ng-switch-when="Special_Table">
-                                        <hovercard hover-tmpl-url="parameterTableDetail.html">&lt;{{fragment.parameter.name}}&gt;</hovercard>
+                                        <hovercard hover-tmpl-url="parameterTableDetail.html">&lt;{{getFragmentName(fragment.parameter.name)}}&gt;</hovercard>
                                 </span>
                                   <div ng-switch-when="Table" class="inline-table">
                                       <div ng-include src="'table.html'"></div>
@@ -120,7 +121,7 @@
                 <div ng-include src="'hook-failure.html'">
                 </div>
             </div>
-            <div ng-if="currentStep.stepExecutionResult.executionResult.failed">
+            <div ng-if="currentStep.stepExecutionResult.executionResult.failed && !isConcept">
                 <div ng-include src="'step-failure.html'"></div>
             </div>
             <div ng-if="currentStep.stepExecutionResult.postHookFailure">
@@ -156,11 +157,11 @@
                                         &lt;{{fragment.parameter.name}}&gt;</hovercard>
                                 </span>
                                 <span ng-switch-when="Special_Table">
-                                        <hovercard hover-tmpl-url="parameterTableDetail.html">&lt;{{fragment.parameter.name}}&gt;</hovercard>
+                                        <hovercard hover-tmpl-url="parameterTableDetail.html">&lt;{{getFragmentName(fragment.parameter.name)}}&gt;</hovercard>
                                 </span>
-                                  <div ng-switch-when="Table" class="inline-table">
-                                      <div ng-include src="'table.html'"></div>
-                                  </div>
+                                  <span ng-switch-when="Table">
+                                      <hovercard hover-tmpl-url="parameterTableDetail.html">&lt;{{getFragmentName(fragment.parameter.name)}}&gt;</hovercard>
+                                  </span>
                             </span>
                         </span>
                     </span>
@@ -175,8 +176,8 @@
                 <div ng-include src="'hook-failure.html'">
                 </div>
             </div>
-            <div ng-if="currentStep.stepExecutionResult.executionResult.failed">
-                <div ng-include src="'step-failure.html'"></div>
+            <div ng-if="currentStep.stepExecutionResult.executionResult.failed && !isConcept">
+                <div ng-include src="'conceptStep-failure.html'"></div>
             </div>
             <div ng-if="currentStep.stepExecutionResult.postHookFailure">
                 {{setHookFailure(currentStep.stepExecutionResult.postHookFailure)}}
@@ -279,7 +280,31 @@
 </script>
 
 <script type="text/ng-template" id="step-failure.html">
-    <table class="exception-container">
+    <table class="exception-container" ng-show="currentStep.stepExecutionResult.executionResult.failed">
+        <tbody>
+        <tr>
+            <td>
+                <h4 class="error-message">
+                    <pre>{{currentStep.stepExecutionResult.executionResult.errorMessage}}</pre>
+                </h4>
+                <pre class="stacktrace"> {{currentStep.stepExecutionResult.executionResult.stackTrace}}</pre>
+            </td>
+            <td>
+                <div>
+                    <a href="{{getScreenshotSrc(currentStep.stepExecutionResult.executionResult.screenShot)}}"
+                       rel="lightbox">
+                        <img ng-src="{{getScreenshotSrc(currentStep.stepExecutionResult.executionResult.screenShot)}}"
+                             class="screenshot-thumbnail"/>
+                    </a>
+                </div>
+            </td>
+        </tr>
+        </tbody>
+    </table>
+</script>
+
+<script type="text/ng-template" id="conceptStep-failure.html">
+    <table class="exception-container" ng-show="currentConceptStep.stepExecutionResult.executionResult.failed">
         <tbody>
         <tr>
             <td>
