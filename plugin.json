@@ -1,6 +1,6 @@
 {
     "id" : "html-report",
-    "version" : "1.0.0",
+    "version" : "1.0.1",
     "name" : "Html Report",
     "description" : "Html reporting plugin",
     "command" : {
