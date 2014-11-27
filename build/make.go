@@ -38,6 +38,7 @@ const (
 	deploy            = "deploy"
 	pluginJsonFile    = "plugin.json"
 	reportTemplate    = "report-template"
+	commonDep         = "github.com/getgauge/common"
 )
 
 var BUILD_DIR_BIN = filepath.Join(BUILD_DIR, bin)
@@ -48,7 +49,7 @@ var platformBinDir = filepath.Join(bin, fmt.Sprintf("%s_%s", runtime.GOOS, runti
 var deployDir = filepath.Join(deploy, htmlReport)
 
 func isExecMode(mode os.FileMode) bool {
-	return (mode & 0111) != 0
+	return (mode&0111) != 0
 }
 
 func mirrorFile(src, dst string) error {
@@ -62,7 +63,7 @@ func mirrorFile(src, dst string) error {
 	dfi, err := os.Stat(dst)
 	if err == nil &&
 		isExecMode(sfi.Mode()) == isExecMode(dfi.Mode()) &&
-		(dfi.Mode()&os.ModeType == 0) &&
+			(dfi.Mode()&os.ModeType == 0) &&
 		dfi.Size() == sfi.Size() &&
 		dfi.ModTime().Unix() == sfi.ModTime().Unix() {
 		// Seems to not be modified.
@@ -104,18 +105,18 @@ func mirrorFile(src, dst string) error {
 func mirrorDir(src, dst string) error {
 	log.Printf("Copying '%s' -> '%s'\n", src, dst)
 	err := filepath.Walk(src, func(path string, fi os.FileInfo, err error) error {
-		if err != nil {
-			return err
-		}
-		if fi.IsDir() {
-			return nil
-		}
-		suffix, err := filepath.Rel(src, path)
-		if err != nil {
-			return fmt.Errorf("Failed to find Rel(%q, %q): %v", src, path, err)
-		}
-		return mirrorFile(path, filepath.Join(dst, suffix))
-	})
+			if err != nil {
+				return err
+			}
+			if fi.IsDir() {
+				return nil
+			}
+			suffix, err := filepath.Rel(src, path)
+			if err != nil {
+				return fmt.Errorf("Failed to find Rel(%q, %q): %v", src, path, err)
+			}
+			return mirrorFile(path, filepath.Join(dst, suffix))
+		})
 	return err
 }
 
@@ -202,7 +203,7 @@ func executeCommand(command string, arg ...string) (string, error) {
 
 func compileGoPackage(packageName string) {
 	setGoEnv()
-	runProcess("go", BUILD_DIR, "get", "-d", "./..")
+	runProcess("go", BUILD_DIR, "get", "-d", "-u", commonDep)
 	runProcess("go", BUILD_DIR, "install", "-v", packageName)
 }
 
