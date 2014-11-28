@@ -63,8 +63,12 @@
         <div ng-switch-when="Concept" class="step concept">
             {{setCurrentStep(item.concept.conceptStep)}}
             {{setConcept(item.concept)}}
-            <div ng-include src="'step.html'"></div>
-            <div ng-include src="'concept-steps.html'"></div>
+            <div ng-init="collapse=false" ng-click="collapse = !collapse">
+                <a href="" style="text-decoration:none;">
+                    <div ng-include src="'step.html'"></div>
+                </a>
+            </div>
+            <div ng-include src="'concept-steps.html'" ng-show="collapse"></div>
         </div>
         <div ng-switch-when="Table">
             <div ng-include src="'datatable.html'"></div>
@@ -84,6 +88,7 @@
     <div ng-class="{true:'failed', false:'passed', 'undefined':'not-executed'}[currentStep.stepExecutionResult.executionResult.failed]">
         <ul collapsable>
             <li class="step">
+                <span ng-show="isConcept">{{ (collapse) ? "-" : "+" }}</span>
                 <span ng-repeat="fragment in currentStep.fragments">
                     <span ng-switch="fragmentTypesMap[fragment.fragmentType]">
                         <span ng-switch-when="Text">
@@ -139,6 +144,7 @@
     <div ng-class="{true:'failed', false:'passed', 'undefined':'not-executed'}[currentConceptStep.stepExecutionResult.executionResult.failed]">
         <ul collapsable>
             <li class="step">
+                <span ng-show="isConcept">{{ (collapse) ? "-" : "+" }}</span>
                 <span ng-repeat="fragment in currentConceptStep.fragments">
                     <span ng-switch="fragmentTypesMap[fragment.fragmentType]">
                         <span ng-switch-when="Text">
@@ -199,9 +205,13 @@
                 <div ng-include src="'step.html'"></div>
             </div>
             <div ng-if="isConcept">
-                {{setCurrentConceptStep(step.concept.conceptStep)}}
-                <div ng-include src="'nestedConceptStep.html'"></div>
-                <div ng-include src="'nested-concept.html'"></div>
+                <div ng-init="collapse=false" ng-click="collapse = !collapse">
+                    {{setCurrentConceptStep(step.concept.conceptStep)}}
+                    <a href="" style="text-decoration:none;">
+                        <div ng-include src="'nestedConceptStep.html'"></div>
+                    </a>
+                </div>
+                <div ng-include src="'nested-concept.html'" ng-show="collapse"></div>
             </div>
         </div>
     </div>
@@ -215,9 +225,14 @@
                 <div ng-include src="'nestedConceptStep.html'"></div>
             </div>
             <div ng-if="isConcept">
-                {{setCurrentConceptStep(step.concept.conceptStep)}}
-                <div ng-include src="'nestedConceptStep.html'"></div>
-                <div ng-include src="'nested-concept.html'"></div>
+                <div ng-init="collapse=false" ng-click="collapse = !collapse">
+                    {{setCurrentConceptStep(step.concept.conceptStep)}}
+                    <a href="" style="text-decoration:none;">
+                        <div ng-include src="'nestedConceptStep.html'"></div>
+                    </a>
+                </div>
+
+                <div ng-include src="'nested-concept.html'" ng-show="collapse"></div>
             </div>
         </div>
     </div>
