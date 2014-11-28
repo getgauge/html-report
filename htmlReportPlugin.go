@@ -142,6 +142,9 @@ func (gaugeListener *GaugeListener) processMessages(buffer *bytes.Buffer) {
 			if err != nil {
 				log.Printf("Failed to read proto message: %s\n", err.Error())
 			} else {
+				if *message.MessageType == Message_KillProcessRequest {
+					os.Exit(0)
+				}
 				if *message.MessageType == Message_SuiteExecutionResult {
 					result := message.GetSuiteExecutionResult()
 					gaugeListener.onResultHandler(result)
