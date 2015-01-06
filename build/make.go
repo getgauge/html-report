@@ -39,6 +39,7 @@ const (
 	pluginJsonFile    = "plugin.json"
 	reportTemplate    = "report-template"
 	commonDep         = "github.com/getgauge/common"
+	protoDep          = "code.google.com/p/goprotobuf/proto"
 )
 
 var BUILD_DIR_BIN = filepath.Join(BUILD_DIR, bin)
@@ -204,6 +205,7 @@ func executeCommand(command string, arg ...string) (string, error) {
 func compileGoPackage(packageName string) {
 	setGoEnv()
 	runProcess("go", BUILD_DIR, "get", "-d", "-u", commonDep)
+	runProcess("go", BUILD_DIR, "get", "-d", "-u", protoDep)
 	runProcess("go", BUILD_DIR, "install", "-v", packageName)
 }
 
