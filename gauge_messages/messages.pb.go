@@ -3,7 +3,7 @@
 // DO NOT EDIT!
 
 /*
-Package main is a generated protocol buffer package.
+Package gauge_messages is a generated protocol buffer package.
 
 It is generated from these files:
 	messages.proto
@@ -32,11 +32,16 @@ It has these top-level messages:
 	ScenarioDataStoreInitRequest
 	SpecDataStoreInitRequest
 	SuiteDataStoreInitRequest
+	ParameterPosition
+	RefactorRequest
+	RefactorResponse
+	StepNameRequest
+	StepNameResponse
 	Message
 */
-package main
+package gauge_messages
 
-import proto "code.google.com/p/goprotobuf/proto"
+import proto "github.com/golang/protobuf/proto"
 import math "math"
 
 // Reference imports to suppress errors if they are not otherwise used.
@@ -65,6 +70,10 @@ const (
 	Message_ScenarioDataStoreInit     Message_MessageType = 16
 	Message_SpecDataStoreInit         Message_MessageType = 17
 	Message_SuiteDataStoreInit        Message_MessageType = 18
+	Message_StepNameRequest           Message_MessageType = 19
+	Message_StepNameResponse          Message_MessageType = 20
+	Message_RefactorRequest           Message_MessageType = 21
+	Message_RefactorResponse          Message_MessageType = 22
 )
 
 var Message_MessageType_name = map[int32]string{
@@ -87,6 +96,10 @@ var Message_MessageType_name = map[int32]string{
 	16: "ScenarioDataStoreInit",
 	17: "SpecDataStoreInit",
 	18: "SuiteDataStoreInit",
+	19: "StepNameRequest",
+	20: "StepNameResponse",
+	21: "RefactorRequest",
+	22: "RefactorResponse",
 }
 var Message_MessageType_value = map[string]int32{
 	"ExecutionStarting":         0,
@@ -108,6 +121,10 @@ var Message_MessageType_value = map[string]int32{
 	"ScenarioDataStoreInit":     16,
 	"SpecDataStoreInit":         17,
 	"SuiteDataStoreInit":        18,
+	"StepNameRequest":           19,
+	"StepNameResponse":          20,
+	"RefactorRequest":           21,
+	"RefactorResponse":          22,
 }
 
 func (x Message_MessageType) Enum() *Message_MessageType {
@@ -569,10 +586,146 @@ func (m *SuiteDataStoreInitRequest) Reset()         { *m = SuiteDataStoreInitReq
 func (m *SuiteDataStoreInitRequest) String() string { return proto.CompactTextString(m) }
 func (*SuiteDataStoreInitRequest) ProtoMessage()    {}
 
+type ParameterPosition struct {
+	OldPosition      *int32 `protobuf:"varint,1,req,name=oldPosition" json:"oldPosition,omitempty"`
+	NewPosition      *int32 `protobuf:"varint,2,req,name=newPosition" json:"newPosition,omitempty"`
+	XXX_unrecognized []byte `json:"-"`
+}
+
+func (m *ParameterPosition) Reset()         { *m = ParameterPosition{} }
+func (m *ParameterPosition) String() string { return proto.CompactTextString(m) }
+func (*ParameterPosition) ProtoMessage()    {}
+
+func (m *ParameterPosition) GetOldPosition() int32 {
+	if m != nil && m.OldPosition != nil {
+		return *m.OldPosition
+	}
+	return 0
+}
+
+func (m *ParameterPosition) GetNewPosition() int32 {
+	if m != nil && m.NewPosition != nil {
+		return *m.NewPosition
+	}
+	return 0
+}
+
+type RefactorRequest struct {
+	OldStepValue     *ProtoStepValue      `protobuf:"bytes,1,req,name=oldStepValue" json:"oldStepValue,omitempty"`
+	NewStepValue     *ProtoStepValue      `protobuf:"bytes,2,req,name=newStepValue" json:"newStepValue,omitempty"`
+	ParamPositions   []*ParameterPosition `protobuf:"bytes,3,rep,name=paramPositions" json:"paramPositions,omitempty"`
+	XXX_unrecognized []byte               `json:"-"`
+}
+
+func (m *RefactorRequest) Reset()         { *m = RefactorRequest{} }
+func (m *RefactorRequest) String() string { return proto.CompactTextString(m) }
+func (*RefactorRequest) ProtoMessage()    {}
+
+func (m *RefactorRequest) GetOldStepValue() *ProtoStepValue {
+	if m != nil {
+		return m.OldStepValue
+	}
+	return nil
+}
+
+func (m *RefactorRequest) GetNewStepValue() *ProtoStepValue {
+	if m != nil {
+		return m.NewStepValue
+	}
+	return nil
+}
+
+func (m *RefactorRequest) GetParamPositions() []*ParameterPosition {
+	if m != nil {
+		return m.ParamPositions
+	}
+	return nil
+}
+
+type RefactorResponse struct {
+	Success          *bool    `protobuf:"varint,1,req,name=success" json:"success,omitempty"`
+	Error            *string  `protobuf:"bytes,2,opt,name=error" json:"error,omitempty"`
+	FilesChanged     []string `protobuf:"bytes,3,rep,name=filesChanged" json:"filesChanged,omitempty"`
+	XXX_unrecognized []byte   `json:"-"`
+}
+
+func (m *RefactorResponse) Reset()         { *m = RefactorResponse{} }
+func (m *RefactorResponse) String() string { return proto.CompactTextString(m) }
+func (*RefactorResponse) ProtoMessage()    {}
+
+func (m *RefactorResponse) GetSuccess() bool {
+	if m != nil && m.Success != nil {
+		return *m.Success
+	}
+	return false
+}
+
+func (m *RefactorResponse) GetError() string {
+	if m != nil && m.Error != nil {
+		return *m.Error
+	}
+	return ""
+}
+
+func (m *RefactorResponse) GetFilesChanged() []string {
+	if m != nil {
+		return m.FilesChanged
+	}
+	return nil
+}
+
+type StepNameRequest struct {
+	StepValue        *string `protobuf:"bytes,1,req,name=stepValue" json:"stepValue,omitempty"`
+	XXX_unrecognized []byte  `json:"-"`
+}
+
+func (m *StepNameRequest) Reset()         { *m = StepNameRequest{} }
+func (m *StepNameRequest) String() string { return proto.CompactTextString(m) }
+func (*StepNameRequest) ProtoMessage()    {}
+
+func (m *StepNameRequest) GetStepValue() string {
+	if m != nil && m.StepValue != nil {
+		return *m.StepValue
+	}
+	return ""
+}
+
+type StepNameResponse struct {
+	IsStepPresent    *bool    `protobuf:"varint,1,req,name=isStepPresent" json:"isStepPresent,omitempty"`
+	StepName         []string `protobuf:"bytes,2,rep,name=stepName" json:"stepName,omitempty"`
+	HasAlias         *bool    `protobuf:"varint,3,req,name=hasAlias" json:"hasAlias,omitempty"`
+	XXX_unrecognized []byte   `json:"-"`
+}
+
+func (m *StepNameResponse) Reset()         { *m = StepNameResponse{} }
+func (m *StepNameResponse) String() string { return proto.CompactTextString(m) }
+func (*StepNameResponse) ProtoMessage()    {}
+
+func (m *StepNameResponse) GetIsStepPresent() bool {
+	if m != nil && m.IsStepPresent != nil {
+		return *m.IsStepPresent
+	}
+	return false
+}
+
+func (m *StepNameResponse) GetStepName() []string {
+	if m != nil {
+		return m.StepName
+	}
+	return nil
+}
+
+func (m *StepNameResponse) GetHasAlias() bool {
+	if m != nil && m.HasAlias != nil {
+		return *m.HasAlias
+	}
+	return false
+}
+
 // This is the message which gets transferred all the time
 // with proper message type set
 type Message struct {
-	MessageType *Message_MessageType `protobuf:"varint,1,req,name=messageType,enum=main.Message_MessageType" json:"messageType,omitempty"`
+	MessageType *Message_MessageType `protobuf:"varint,1,req,name=messageType,enum=gauge.messages.Message_MessageType" json:"messageType,omitempty"`
 	// A unique id to represent this message. A response to the message should copy over this value
 	// this is used to synchronize messages & responses
 	MessageId *int64 `protobuf:"varint,2,req,name=messageId" json:"messageId,omitempty"`
@@ -596,6 +749,10 @@ type Message struct {
 	ScenarioDataStoreInitRequest     *ScenarioDataStoreInitRequest     `protobuf:"bytes,19,opt,name=scenarioDataStoreInitRequest" json:"scenarioDataStoreInitRequest,omitempty"`
 	SpecDataStoreInitRequest         *SpecDataStoreInitRequest         `protobuf:"bytes,20,opt,name=specDataStoreInitRequest" json:"specDataStoreInitRequest,omitempty"`
 	SuiteDataStoreInitRequest        *SuiteDataStoreInitRequest        `protobuf:"bytes,21,opt,name=suiteDataStoreInitRequest" json:"suiteDataStoreInitRequest,omitempty"`
+	StepNameRequest                  *StepNameRequest                  `protobuf:"bytes,22,opt,name=stepNameRequest" json:"stepNameRequest,omitempty"`
+	StepNameResponse                 *StepNameResponse                 `protobuf:"bytes,23,opt,name=stepNameResponse" json:"stepNameResponse,omitempty"`
+	RefactorRequest                  *RefactorRequest                  `protobuf:"bytes,24,opt,name=refactorRequest" json:"refactorRequest,omitempty"`
+	RefactorResponse                 *RefactorResponse                 `protobuf:"bytes,25,opt,name=refactorResponse" json:"refactorResponse,omitempty"`
 	XXX_unrecognized                 []byte                            `json:"-"`
 }
 
@@ -750,6 +907,34 @@ func (m *Message) GetSuiteDataStoreInitRequest() *SuiteDataStoreInitRequest {
 	return nil
 }
 
+func (m *Message) GetStepNameRequest() *StepNameRequest {
+	if m != nil {
+		return m.StepNameRequest
+	}
+	return nil
+}
+
+func (m *Message) GetStepNameResponse() *StepNameResponse {
+	if m != nil {
+		return m.StepNameResponse
+	}
+	return nil
+}
+
+func (m *Message) GetRefactorRequest() *RefactorRequest {
+	if m != nil {
+		return m.RefactorRequest
+	}
+	return nil
+}
+
+func (m *Message) GetRefactorResponse() *RefactorResponse {
+	if m != nil {
+		return m.RefactorResponse
+	}
+	return nil
+}
+
 func init() {
-	proto.RegisterEnum("main.Message_MessageType", Message_MessageType_name, Message_MessageType_value)
+	proto.RegisterEnum("gauge.messages.Message_MessageType", Message_MessageType_name, Message_MessageType_value)
 }

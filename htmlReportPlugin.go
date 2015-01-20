@@ -2,10 +2,11 @@ package main
 
 import (
 	"bytes"
-	"code.google.com/p/goprotobuf/proto"
 	"encoding/json"
+	"github.com/golang/protobuf/proto"
 	"fmt"
 	"github.com/getgauge/common"
+	"gauge_messages"
 	"io/ioutil"
 	"log"
 	"net"
@@ -99,7 +100,7 @@ func getDefaultPropertiesFile() string {
 	return filepath.Join(projectRoot, "env", "default", "default.properties")
 }
 
-type GaugeResultHandlerFn func(*SuiteExecutionResult)
+type GaugeResultHandlerFn func(*gauge_messages.SuiteExecutionResult)
 
 type GaugeListener struct {
 	connection      net.Conn
@@ -136,16 +137,16 @@ func (gaugeListener *GaugeListener) processMessages(buffer *bytes.Buffer) {
 	for {
 		messageLength, bytesRead := proto.DecodeVarint(buffer.Bytes())
 		if messageLength > 0 && messageLength < uint64(buffer.Len()) {
-			message := &Message{}
+			message := &gauge_messages.Message{}
 			messageBoundary := int(messageLength) + bytesRead
 			err := proto.Unmarshal(buffer.Bytes()[bytesRead:messageBoundary], message)
 			if err != nil {
 				log.Printf("Failed to read proto message: %s\n", err.Error())
 			} else {
-				if *message.MessageType == Message_KillProcessRequest {
+				if *message.MessageType == gauge_messages.Message_KillProcessRequest {
 					os.Exit(0)
 				}
-				if *message.MessageType == Message_SuiteExecutionResult {
+				if *message.MessageType == gauge_messages.Message_SuiteExecutionResult {
 					result := message.GetSuiteExecutionResult()
 					gaugeListener.onResultHandler(result)
 					gaugeListener.connection.Close()
@@ -161,7 +162,7 @@ func (gaugeListener *GaugeListener) processMessages(buffer *bytes.Buffer) {
 	}
 }
 
-func createReport(suiteResult *SuiteExecutionResult) {
+func createReport(suiteResult *gauge_messages.SuiteExecutionResult) {
 	os.Chdir(projectRoot)
 	contents := generateJsFileContents(suiteResult)
 	reportsDir, err := filepath.Abs(os.Getenv(gaugeReportsDirEnvName))
@@ -206,12 +207,12 @@ func shouldOverwriteReports() bool {
 	return false
 }
 
-func generateJsFileContents(suiteResult *SuiteExecutionResult) []byte {
+func generateJsFileContents(suiteResult *gauge_messages.SuiteExecutionResult) []byte {
 	var buffer bytes.Buffer
 	executionResultJson := marshal(suiteResult)
-	itemsTypeJson := marshal(convertKeysToString(ProtoItem_ItemType_name))
-	parameterTypeJson := marshal(convertKeysToString(Parameter_ParameterType_name))
-	fragmentTypeJson := marshal(convertKeysToString(Fragment_FragmentType_name))
+	itemsTypeJson := marshal(convertKeysToString(gauge_messages.ProtoItem_ItemType_name))
+	parameterTypeJson := marshal(convertKeysToString(gauge_messages.Parameter_ParameterType_name))
+	fragmentTypeJson := marshal(convertKeysToString(gauge_messages.Fragment_FragmentType_name))
 
 	buffer.WriteString("var gaugeExecutionResult = ")
 	buffer.Write(executionResultJson)

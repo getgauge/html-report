@@ -39,7 +39,8 @@ const (
 	pluginJsonFile    = "plugin.json"
 	reportTemplate    = "report-template"
 	commonDep         = "github.com/getgauge/common"
-	protoDep          = "code.google.com/p/goprotobuf/proto"
+	protoDep          = "github.com/golang/protobuf/proto"
+	GAUGE_MESSAGES    = "gauge_messages"
 )
 
 var BUILD_DIR_BIN = filepath.Join(BUILD_DIR, bin)
@@ -159,7 +160,7 @@ func copyHTMLPluginFilesToGoPath() {
 	if err != nil {
 		panic(err)
 	}
-
+	mirrorDir(GAUGE_MESSAGES,path.Join(BUILD_DIR_SRC,GAUGE_MESSAGES))
 	for _, f := range files {
 		if filepath.Ext(f.Name()) == ".go" {
 			mirrorFile(f.Name(), path.Join(BUILD_DIR_SRC, htmlReport, f.Name()))
