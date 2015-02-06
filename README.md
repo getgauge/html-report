@@ -2,7 +2,7 @@
 html-report
 ==========
 
-This is the [html-report plugin](http://getgauge.io/documentation/plugins/README.html) for [gauge](http://getgauge.io).
+This is the [html-report plugin](http://getgauge.io/documentation/user/current/plugins/README.html) for [gauge](http://getgauge.io).
 
 
 Compiling
