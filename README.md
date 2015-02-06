@@ -48,3 +48,16 @@ go run build/make.go --distro --all-platforms
 ````
 
 New distribution details need to be updated in the html-report-install.json file in  [gauge plugin repository](https://github.com/getgauge/gauge-repository) for a new verison update.
+
+License
+-------
+
+![GNU Public License version 3.0](http://www.gnu.org/graphics/gplv3-127x51.png)
+Html-Report is released under [GNU Public License version 3.0](http://www.gnu.org/licenses/gpl-3.0.txt)
+
+Copyright
+---------
+
+Copyright 2014 ThoughtWorks, Inc.
+
+
