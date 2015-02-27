@@ -8,5 +8,9 @@
         "linux" : ["bin/html-report"],
         "darwin" : ["bin/html-report"]
     },
-    "scope" : ["Execution"]
+    "scope" : ["Execution"],
+    "gaugeVersionSupport": {
+        "minimum": "0.0.4",
+        "maximum": "0.0.4"
+    }
 }
