@@ -10,7 +10,7 @@
     },
     "scope" : ["Execution"],
     "gaugeVersionSupport": {
-        "minimum": "0.0.4",
-        "maximum": "0.0.4"
+        "minimum": "0.0.5",
+        "maximum": ""
     }
 }
