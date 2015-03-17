@@ -36,9 +36,9 @@
         </tr>
         <tbody>
 
-        <tr ng-repeat="row in item.table.rows" ng-click="setDataTableIndex($index)"
+        <tr ng-repeat="row in item.table.rows track by $index" ng-click="setDataTableIndex($index)"
             ng-class="{'failed' : isRowFailure($index), 'passed': !isRowFailure($index), 'selected':$index==dataTableIndex}">
-            <td ng-repeat="cell in row.cells">{{cell}}</td>
+            <td ng-repeat="cell in row.cells track by $index">{{cell}}</td>
         </tr>
         </tbody>
     </table>
