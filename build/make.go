@@ -18,7 +18,6 @@
 package main
 
 import (
-	"archive/zip"
 	"encoding/json"
 	"flag"
 	"fmt"
@@ -34,7 +33,6 @@ import (
 )
 
 const (
-	BUILD_DIR   = "tmp"
 	CGO_ENABLED = "CGO_ENABLED"
 )
 
@@ -55,20 +53,69 @@ const (
 	deploy            = "deploy"
 	pluginJsonFile    = "plugin.json"
 	reportTemplate    = "report-template"
-	commonDep         = "github.com/getgauge/common"
-	protoDep          = "github.com/golang/protobuf/proto"
 	GAUGE_MESSAGES    = "gauge_messages"
 )
 
-var BUILD_DIR_BIN = filepath.Join(BUILD_DIR, bin)
-var BUILD_DIR_SRC = filepath.Join(BUILD_DIR, "src")
-var BUILD_DIR_PKG = filepath.Join(BUILD_DIR, "pkg")
-var BUILD_DIR_HTML_REPORT = filepath.Join(BUILD_DIR_SRC, htmlReport)
-var platformBinDir = filepath.Join(bin, fmt.Sprintf("%s_%s", runtime.GOOS, runtime.GOARCH))
 var deployDir = filepath.Join(deploy, htmlReport)
 
+func main() {
+	flag.Parse()
+	if *install {
+		updatePluginInstallPrefix()
+		installPlugin(*pluginInstallPrefix)
+	} else if *distro {
+		createPluginDistro(*allPlatforms)
+	} else {
+		compile()
+	}
+}
+
+func compile() {
+	if *allPlatforms {
+		compileAcrossPlatforms()
+	} else {
+		compileGoPackage(htmlReport)
+	}
+}
+
+func createPluginDistro(forAllPlatforms bool) {
+	if forAllPlatforms {
+		for _, platformEnv := range platformEnvs {
+			setEnv(platformEnv)
+			*binDir = filepath.Join(bin, fmt.Sprintf("%s_%s", platformEnv[GOOS], platformEnv[GOARCH]))
+			fmt.Printf("Creating distro for platform => OS:%s ARCH:%s \n", platformEnv[GOOS], platformEnv[GOARCH])
+			createDistro()
+		}
+	} else {
+		createDistro()
+	}
+	log.Printf("Distributables created in directory => %s \n", deploy)
+}
+
+func createDistro() {
+	packageName := fmt.Sprintf("%s-%s-%s.%s", htmlReport, getPluginVersion(), getGOOS(), getArch())
+	distroDir := filepath.Join(deploy, packageName)
+	copyPluginFiles(distroDir)
+	createZipFromUtil(deploy, packageName)
+	os.RemoveAll(distroDir)
+}
+
+func createZipFromUtil(dir, name string) {
+	wd, err := os.Getwd()
+	if err != nil {
+		panic(err)
+	}
+	os.Chdir(filepath.Join(dir, name))
+	output, err := executeCommand("zip", "-r", filepath.Join("..", name+".zip"), ".")
+	fmt.Println(output)
+	if err != nil {
+		panic(fmt.Sprintf("Failed to zip: %s", err))
+	}
+	os.Chdir(wd)
+}
+
 func isExecMode(mode os.FileMode) bool {
-	return (mode&0111) != 0
+	return (mode & 0111) != 0
 }
 
 func mirrorFile(src, dst string) error {
@@ -82,7 +129,7 @@ func mirrorFile(src, dst string) error {
 	dfi, err := os.Stat(dst)
 	if err == nil &&
 		isExecMode(sfi.Mode()) == isExecMode(dfi.Mode()) &&
-			(dfi.Mode()&os.ModeType == 0) &&
+		(dfi.Mode()&os.ModeType == 0) &&
 		dfi.Size() == sfi.Size() &&
 		dfi.ModTime().Unix() == sfi.ModTime().Unix() {
 		// Seems to not be modified.
@@ -124,74 +171,19 @@ func mirrorFile(src, dst string) error {
 func mirrorDir(src, dst string) error {
 	log.Printf("Copying '%s' -> '%s'\n", src, dst)
 	err := filepath.Walk(src, func(path string, fi os.FileInfo, err error) error {
-			if err != nil {
-				return err
-			}
-			if fi.IsDir() {
-				return nil
-			}
-			suffix, err := filepath.Rel(src, path)
-			if err != nil {
-				return fmt.Errorf("Failed to find Rel(%q, %q): %v", src, path, err)
-			}
-			return mirrorFile(path, filepath.Join(dst, suffix))
-		})
-	return err
-}
-
-func createGoPathForBuild() {
-	err := os.MkdirAll(BUILD_DIR_SRC, newDirPermissions)
-	if err != nil {
-		panic(err)
-	}
-
-	err = os.MkdirAll(BUILD_DIR_BIN, newDirPermissions)
-	if err != nil {
-		panic(err)
-	}
-
-	err = os.MkdirAll(BUILD_DIR_PKG, newDirPermissions)
-	if err != nil {
-		panic(err)
-	}
-
-	err = os.MkdirAll(BUILD_DIR_HTML_REPORT, newDirPermissions)
-	if err != nil {
-		panic(err)
-	}
-}
-
-func copyHTMLPluginFilesToGoPath() {
-	pwd, err := os.Getwd()
-	if err != nil {
-		panic(err)
-	}
-
-	d, err := os.Open(pwd)
-	if err != nil {
-		panic(err)
-	}
-	defer d.Close()
-
-	files, err := d.Readdir(-1)
-	if err != nil {
-		panic(err)
-	}
-	mirrorDir(GAUGE_MESSAGES,path.Join(BUILD_DIR_SRC,GAUGE_MESSAGES))
-	for _, f := range files {
-		if filepath.Ext(f.Name()) == ".go" {
-			mirrorFile(f.Name(), path.Join(BUILD_DIR_SRC, htmlReport, f.Name()))
+		if err != nil {
+			return err
 		}
-	}
-}
-
-func setGoEnv() {
-	absBuildDir, err := filepath.Abs(BUILD_DIR)
-	if err != nil {
-		panic(err)
-	}
-	set("GOPATH", absBuildDir)
-	set("GOBIN", filepath.Join(absBuildDir, bin))
+		if fi.IsDir() {
+			return nil
+		}
+		suffix, err := filepath.Rel(src, path)
+		if err != nil {
+			return fmt.Errorf("Failed to find Rel(%q, %q): %v", src, path, err)
+		}
+		return mirrorFile(path, filepath.Join(dst, suffix))
+	})
+	return err
 }
 
 func set(envName, envValue string) {
@@ -202,11 +194,10 @@ func set(envName, envValue string) {
 	}
 }
 
-func runProcess(command string, workingDir string, arg ...string) {
+func runProcess(command string, arg ...string) {
 	cmd := exec.Command(command, arg...)
 	cmd.Stdout = os.Stdout
 	cmd.Stderr = os.Stderr
-	cmd.Dir = workingDir
 	log.Printf("Execute %v\n", cmd.Args)
 	err := cmd.Run()
 	if err != nil {
@@ -221,28 +212,25 @@ func executeCommand(command string, arg ...string) (string, error) {
 }
 
 func compileGoPackage(packageName string) {
-	setGoEnv()
-	runProcess("go", BUILD_DIR, "get", "-d", "-u", commonDep)
-	runProcess("go", BUILD_DIR, "get", "-d", "-u", protoDep)
-	runProcess("go", BUILD_DIR, "install", "-v", packageName)
+	runProcess("go", "build", "-o", getGaugeExecutablePath(htmlReport))
 }
 
-func copyBinaries() {
-	err := os.MkdirAll(bin, newDirPermissions)
-	if err != nil {
-		panic(err)
-	}
+func getGaugeExecutablePath(file string) string {
+	return filepath.Join(getBinDir(), getExecutableName(file))
+}
 
-	err = mirrorDir(BUILD_DIR_BIN, bin)
-	if err != nil {
-		panic(err)
+func getExecutableName(file string) string {
+	if getGOOS() == "windows" {
+		return file + ".exe"
 	}
+	return file
+}
 
-	absBin, err := filepath.Abs(bin)
-	if err != nil {
-		panic(err)
+func getBinDir() string {
+	if *binDir != "" {
+		return *binDir
 	}
-	log.Printf("Binaries are available at: %s\n", absBin)
+	return filepath.Join(bin, fmt.Sprintf("%s_%s", getGOOS(), getGOARCH()))
 }
 
 // key will be the source file and value will be the target
@@ -284,13 +272,6 @@ func getPluginVersion() string {
 		panic(fmt.Sprintf("Failed to get properties file. %s", err))
 	}
 	return pluginProperties["version"].(string)
-}
-
-func getBinDir() string {
-	if *binDir == "" {
-		return platformBinDir
-	}
-	return path.Join(bin, *binDir)
 }
 
 func moveOSBinaryToCurrentOSArchDirectory(targetName string) {
@@ -348,97 +329,6 @@ func getPluginProperties(jsonPropertiesFile string) (map[string]interface{}, err
 		return nil, err
 	}
 	return pluginJson.(map[string]interface{}), nil
-}
-
-func main() {
-	createGoPathForBuild()
-	copyHTMLPluginFilesToGoPath()
-	flag.Parse()
-
-	if *install {
-		updatePluginInstallPrefix()
-		installPlugin(*pluginInstallPrefix)
-	} else if *distro {
-		createPluginDistro(*allPlatforms)
-	} else {
-		compile()
-	}
-}
-
-func compile() {
-	if *allPlatforms {
-		compileAcrossPlatforms()
-	} else {
-		compileGoPackage(htmlReport)
-	}
-	copyBinaries()
-	moveOSBinaryToCurrentOSArchDirectory(htmlReport)
-}
-
-func createPluginDistro(forAllPlatforms bool) {
-	if forAllPlatforms {
-		for _, platformEnv := range platformEnvs {
-			setEnv(platformEnv)
-			*binDir = fmt.Sprintf("%s_%s", platformEnv[GOOS], platformEnv[GOARCH])
-			fmt.Printf("Creating distro for platform => OS:%s ARCH:%s \n", platformEnv[GOOS], platformEnv[GOARCH])
-			createDistro()
-		}
-	} else {
-		createDistro()
-	}
-}
-
-func createDistro() {
-	packageName := fmt.Sprintf("%s-%s-%s.%s", htmlReport, getPluginVersion(), getGOOS(), getArch())
-	distroDir := filepath.Join(deploy, packageName)
-	copyPluginFiles(distroDir)
-	createZip(deploy, packageName)
-	os.RemoveAll(distroDir)
-}
-
-func createZip(dir, packageName string) {
-	wd, err := os.Getwd()
-	if err != nil {
-		panic(err)
-	}
-	os.Chdir(dir)
-
-	zipFileName := packageName + ".zip"
-	newfile, err := os.Create(zipFileName)
-	if err != nil {
-		panic(err)
-	}
-	defer newfile.Close()
-
-	zipWriter := zip.NewWriter(newfile)
-	defer zipWriter.Close()
-
-	filepath.Walk(packageName, func(path string, info os.FileInfo, err error) error {
-		infoHeader, err := zip.FileInfoHeader(info)
-		if err != nil {
-			panic(err)
-		}
-		infoHeader.Name = strings.Replace(path, fmt.Sprintf("%s%c", packageName, filepath.Separator), "", 1)
-		if info.IsDir() {
-			return nil
-		}
-		writer, err := zipWriter.CreateHeader(infoHeader)
-		if err != nil {
-			panic(err)
-		}
-		file, err := os.Open(path)
-		if err != nil {
-			panic(err)
-		}
-		defer file.Close()
-		_, err = io.Copy(writer, file)
-		if err != nil {
-			panic(err)
-		}
-		return nil
-	})
-
-	os.Chdir(wd)
 }
 
 func compileAcrossPlatforms() {
