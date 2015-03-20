@@ -27,7 +27,6 @@ import (
 	"github.com/getgauge/html-report/listener"
 	"io/ioutil"
 	"os"
-	"path"
 	"path/filepath"
 	"strings"
 	"time"
@@ -45,7 +44,7 @@ const (
 	GAUGE_HOST                  = "localhost"
 	GAUGE_PORT_ENV              = "plugin_connection_port"
 	PLUGIN_ACTION_ENV           = "html-report_action"
-	timeFormat                  = "2006-01-02 15:04:05"
+	timeFormat                  = "2006-01-02 15.04.05"
 )
 
 var projectRoot string
@@ -141,9 +140,9 @@ func getNameGen() nameGenerator {
 func createHtmlReport(reportsDir string, jsContents []byte, nameGen nameGenerator) (string, error) {
 	var currentReportDir string
 	if nameGen != nil {
-		currentReportDir = path.Join(reportsDir, htmlReport, nameGen.randomName())
+		currentReportDir = filepath.Join(reportsDir, htmlReport, nameGen.randomName())
 	} else {
-		currentReportDir = path.Join(reportsDir, htmlReport)
+		currentReportDir = filepath.Join(reportsDir, htmlReport)
 	}
 	createDirectory(currentReportDir)
 	err := copyReportTemplateFiles(currentReportDir)
