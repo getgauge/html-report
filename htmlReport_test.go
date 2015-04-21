@@ -95,3 +95,13 @@ func fileExists(path string) bool {
 	}
 	return !os.IsNotExist(err)
 }
+
+func (s *MySuite) TestCreatingReportShouldOverwriteReportsBasedOnEnv(c *C) {
+	os.Setenv(overwriteReportsEnvProperty, "true")
+	nameGen := getNameGen()
+	c.Assert(nameGen, Equals, nil)
+
+	os.Setenv(overwriteReportsEnvProperty, "false")
+	nameGen = getNameGen()
+	c.Assert(nameGen, Equals, timeStampedNameGenerator{})
+}

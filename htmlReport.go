@@ -130,9 +130,9 @@ func createReport(suiteResult *gauge_messages.SuiteExecutionResult) {
 func getNameGen() nameGenerator {
 	var nameGen nameGenerator
 	if shouldOverwriteReports() {
-		nameGen = timeStampedNameGenerator{}
-	} else {
 		nameGen = nil
+	} else {
+		nameGen = timeStampedNameGenerator{}
 	}
 	return nameGen
 }
