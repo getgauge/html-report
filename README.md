@@ -4,9 +4,30 @@ html-report
 
 This is the [html-report plugin](http://getgauge.io/documentation/user/current/plugins/README.html) for [gauge](http://getgauge.io).
 
+Install through Gauge
+---------------------
+````
+gauge --install html-report
+````
 
-Compiling
----------
+* Installing specific version
+```
+gauge --install html-report --plugin-version 1.0.1
+```
+
+### Offline installation
+* Download the plugin from [Releases](https://github.com/getgauge/html-report/releases)
+```
+gauge --install html-report --file html-report-1.0.1-linux.x86_64.zip
+```
+
+Build from Source
+-----------------
+
+### Requirements
+* [Golang](http://golang.org/)
+
+### Compiling
 
 ````
 go run build/make.go
@@ -18,9 +39,8 @@ For cross platform compilation
 go run build/make.go --all-platforms
 ````
 
-Installing
-----------
-After installing gauge
+### Installing
+After compilation
 
 ````
 go run build/make.go --install
@@ -32,8 +52,7 @@ Installing to a CUSTOM_LOCATION
 go run build/make.go --install --plugin-prefix CUSTOM_LOCATION
 ````
 
-Creating distributable
-----------------------
+### Creating distributable
 
 Note: Run after compiling
 
