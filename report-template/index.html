@@ -19,94 +19,94 @@
 <!doctype html>
 <html ng-app="gauge_report" id="ng-app">
 <head>
-<meta http-equiv="X-UA-Compatible" content="IE=9; IE=8; IE=7; IE=EDGE"/>
-<title>Gauge Test Results</title>
-<script src="js/angular.min.js"></script>
-<script src="js/lightbox.js"></script>
-<script src="js/gauge.js"></script>
-<script src="js/result.js" charset="utf-8"></script>
-<script src="js/angular-hovercard.js"></script>
-<link rel="stylesheet" href="css/style.css"/>
-<link rel="stylesheet" href="css/angular-hovercard.css"/>
+    <meta http-equiv="X-UA-Compatible" content="IE=9; IE=8; IE=7; IE=EDGE"/>
+    <title>Gauge Test Results</title>
+    <script src="js/angular.min.js"></script>
+    <script src="js/lightbox.js"></script>
+    <script src="js/gauge.js"></script>
+    <script src="js/result.js" charset="utf-8"></script>
+    <script src="js/angular-hovercard.js"></script>
+    <link rel="stylesheet" href="css/style.css"/>
+    <link rel="stylesheet" href="css/angular-hovercard.css"/>
 
-<script type="text/ng-template" id="datatable.html">
-    <table class="data-table">
-        <tr>
-            <th ng-repeat="header in item.table.headers.cells">{{header}}</th>
-        </tr>
-        <tbody>
-
-        <tr ng-repeat="row in item.table.rows track by $index" ng-click="setDataTableIndex($index)"
-            ng-class="{'failed' : isRowFailure($index), 'passed': !isRowFailure($index), 'selected':$index==dataTableIndex}">
-            <td ng-repeat="cell in row.cells track by $index">{{cell}}</td>
-        </tr>
-        </tbody>
-    </table>
-</script>
-
-<script type="text/ng-template" id="parameterTableDetail.html">
-    <span ng-include src="'table.html'"></span>
-</script>
-
-<script type="text/ng-template" id="specialString.html">
-    <div>
-        <pre>{{fragment.parameter.value}}</pre>
-    </div>
-</script>
-
-<script type="text/ng-template" id="table.html">
-    <div>
-        <table>
+    <script type="text/ng-template" id="datatable.html">
+        <table class="data-table">
             <tr>
-                <th ng-repeat="header in fragment.parameter.table.headers.cells">{{header}}</th>
+                <th ng-repeat="header in item.table.headers.cells">{{header}}</th>
             </tr>
             <tbody>
-            <tr ng-repeat="row in fragment.parameter.table.rows">
-                <td ng-repeat="cell in row.cells">{{cell}}</td>
+
+            <tr ng-repeat="row in item.table.rows track by $index" ng-click="setDataTableIndex($index)"
+                ng-class="{'failed' : isRowFailure($index), 'passed': !isRowFailure($index), 'selected':$index==dataTableIndex}">
+                <td ng-repeat="cell in row.cells track by $index">{{cell}}</td>
             </tr>
             </tbody>
         </table>
-    </div>
-</script>
+    </script>
 
-<script type="text/ng-template" id="item-render.html">
-    <div ng-switch="itemTypesMap[item.itemType]">
-        <div ng-switch-when="Comment">
-            <pre>{{item.comment.text}}</pre>
+    <script type="text/ng-template" id="parameterTableDetail.html">
+        <span ng-include src="'table.html'"></span>
+    </script>
+
+    <script type="text/ng-template" id="specialString.html">
+        <div>
+            <pre>{{fragment.parameter.value}}</pre>
         </div>
-        <div ng-switch-when="Step" class="step">
-            {{setCurrentStep(item.step)}}
-            <div ng-include src="'step.html'"></div>
+    </script>
+
+    <script type="text/ng-template" id="table.html">
+        <div>
+            <table>
+                <tr>
+                    <th ng-repeat="header in fragment.parameter.table.headers.cells">{{header}}</th>
+                </tr>
+                <tbody>
+                <tr ng-repeat="row in fragment.parameter.table.rows">
+                    <td ng-repeat="cell in row.cells">{{cell}}</td>
+                </tr>
+                </tbody>
+            </table>
         </div>
-        <div ng-switch-when="Concept" class="step concept">
-            {{setCurrentStep(item.concept.conceptStep)}}
-            {{setConcept(item.concept)}}
-            <div ng-init="collapse=false" ng-click="collapse = !collapse">
-                <a href="" style="text-decoration:none;">
-                    <div ng-include src="'step.html'"></div>
-                </a>
+    </script>
+
+    <script type="text/ng-template" id="item-render.html">
+        <div ng-switch="itemTypesMap[item.itemType]">
+            <div ng-switch-when="Comment">
+                <pre>{{item.comment.text}}</pre>
             </div>
-            <div ng-include src="'concept-steps.html'" ng-show="collapse"></div>
+            <div ng-switch-when="Step" class="step">
+                {{setCurrentStep(item.step)}}
+                <div ng-include src="'step.html'"></div>
+            </div>
+            <div ng-switch-when="Concept" class="step concept">
+                {{setCurrentStep(item.concept.conceptStep)}}
+                {{setConcept(item.concept)}}
+                <div ng-init="collapse=false" ng-click="collapse = !collapse">
+                    <a href="" style="text-decoration:none;">
+                        <div ng-include src="'step.html'"></div>
+                    </a>
+                </div>
+                <div ng-include src="'concept-steps.html'" ng-show="collapse"></div>
+            </div>
+            <div ng-switch-when="Table">
+                <div ng-include src="'datatable.html'"></div>
+            </div>
+            <div ng-switch-when="Scenario" class="scenarioItemsContainer">
+                {{setCurrentScenario(item.scenario)}}
+                <div ng-include src="'scenario.html'"></div>
+            </div>
+            <div ng-switch-when="TableDrivenScenario">
+                {{setCurrentScenario(item.tableDrivenScenario.scenarios[dataTableIndex])}}
+                <div ng-include src="'scenario.html'"></div>
+            </div>
         </div>
-        <div ng-switch-when="Table">
-            <div ng-include src="'datatable.html'"></div>
-        </div>
-        <div ng-switch-when="Scenario" class="scenarioItemsContainer">
-            {{setCurrentScenario(item.scenario)}}
-            <div ng-include src="'scenario.html'"></div>
-        </div>
-        <div ng-switch-when="TableDrivenScenario">
-            {{setCurrentScenario(item.tableDrivenScenario.scenarios[dataTableIndex])}}
-            <div ng-include src="'scenario.html'"></div>
-        </div>
-    </div>
-</script>
+    </script>
 
-<script type="text/ng-template" id="step.html">
-    <div ng-class="{true:'failed', false:'passed', 'undefined':'not-executed'}[currentStep.stepExecutionResult.executionResult.failed]">
-        <ul collapsable>
-            <li class="step">
-                <span ng-show="isConcept">{{ (collapse) ? "-" : "+" }}</span>
+    <script type="text/ng-template" id="step.html">
+        <div ng-class="{true:'failed', false:'passed', 'undefined':'not-executed'}[currentStep.stepExecutionResult.executionResult.failed]">
+            <ul collapsable>
+                <li class="step">
+                    <span ng-show="isConcept">{{ (collapse) ? "-" : "+" }}</span>
                 <span ng-repeat="fragment in currentStep.fragments">
                     <span ng-switch="fragmentTypesMap[fragment.fragmentType]">
                         <span ng-switch-when="Text">
@@ -134,35 +134,49 @@
                         </span>
                     </span>
                 </span>
-            </li>
-        </ul>
-        <div class="error-container">
-            <div ng-if="currentStep.stepExecutionResult.preHookFailure">
-                {{setHookFailure(currentStep.stepExecutionResult.preHookFailure)}}
-                <div class="error-heading">Before Step Failed: <span
-                        class="error-message">{{hookFailure.errorMessage}}</span></div>
-                <div ng-include src="'hook-failure.html'">
+                </li>
+            </ul>
+            <div class="error-container">
+                <div ng-if="currentStep.stepExecutionResult.preHookFailure">
+                    {{setHookFailure(currentStep.stepExecutionResult.preHookFailure)}}
+                    <div class="error-heading">Before Step Failed: <span
+                            class="error-message">{{hookFailure.errorMessage}}</span></div>
+                    <div ng-include src="'hook-failure.html'">
+                    </div>
+                </div>
+                <div ng-if="currentStep.stepExecutionResult.executionResult.failed && !isConcept">
+                    <div ng-include src="'step-failure.html'"></div>
+                </div>
+                <div ng-if="currentStep.stepExecutionResult.postHookFailure">
+                    {{setHookFailure(currentStep.stepExecutionResult.postHookFailure)}}
+                    <div class="error-heading">After Step Failed: <span
+                            class="error-message">{{hookFailure.errorMessage}}</span></div>
+                    <div ng-include src="'hook-failure.html'">
+                    </div>
                 </div>
             </div>
-            <div ng-if="currentStep.stepExecutionResult.executionResult.failed && !isConcept">
-                <div ng-include src="'step-failure.html'"></div>
+            {{setCurrentExecutionResult(currentStep.stepExecutionResult.executionResult)}}
+            <div ng-include src="'step-messages.html'">
             </div>
-            <div ng-if="currentStep.stepExecutionResult.postHookFailure">
-                {{setHookFailure(currentStep.stepExecutionResult.postHookFailure)}}
-                <div class="error-heading">After Step Failed: <span
-                        class="error-message">{{hookFailure.errorMessage}}</span></div>
-                <div ng-include src="'hook-failure.html'">
+        </div>
+    </script>
+
+    <script type="text/ng-template" id="step-messages.html">
+        <div class="message-container" ng-init="collapseMessages=true" ng-click="collapseMessages = !collapseMessages">
+            <div class="collapse-messages" ng-show="currentExecutionResult.message">{{ (collapseMessages) ? "- hide" : "+ show" }}</div>
+            <div ng-show="collapseMessages">
+                <div ng-repeat="msg in currentExecutionResult.message track by $index" class="step-message">
+                    {{msg}}
                 </div>
             </div>
         </div>
-    </div>
-</script>
+    </script>
 
-<script type="text/ng-template" id="nestedConceptStep.html">
-    <div ng-class="{true:'failed', false:'passed', 'undefined':'not-executed'}[currentConceptStep.stepExecutionResult.executionResult.failed]">
-        <ul collapsable>
-            <li class="step">
-                <span ng-show="isConcept">{{ (collapse) ? "-" : "+" }}</span>
+    <script type="text/ng-template" id="nestedConceptStep.html">
+        <div ng-class="{true:'failed', false:'passed', 'undefined':'not-executed'}[currentConceptStep.stepExecutionResult.executionResult.failed]">
+            <ul collapsable>
+                <li class="step">
+                    <span ng-show="isConcept">{{ (collapse) ? "-" : "+" }}</span>
                 <span ng-repeat="fragment in currentConceptStep.fragments">
                     <span ng-switch="fragmentTypesMap[fragment.fragmentType]">
                         <span ng-switch-when="Text">
@@ -190,175 +204,178 @@
                         </span>
                     </span>
                 </span>
-            </li>
-        </ul>
-        <div class="error-container">
-            <div ng-if="currentStep.stepExecutionResult.preHookFailure">
-                {{setHookFailure(currentStep.stepExecutionResult.preHookFailure)}}
-                <div class="error-heading">Before Step Failed: <span
-                        class="error-message">{{hookFailure.errorMessage}}</span></div>
+                </li>
+            </ul>
+            <div class="error-container">
+                <div ng-if="currentStep.stepExecutionResult.preHookFailure">
+                    {{setHookFailure(currentStep.stepExecutionResult.preHookFailure)}}
+                    <div class="error-heading">Before Step Failed: <span
+                            class="error-message">{{hookFailure.errorMessage}}</span></div>
+                    <div ng-include src="'hook-failure.html'">
+                    </div>
+                </div>
+                <div ng-if="currentStep.stepExecutionResult.executionResult.failed && !isConcept">
+                    <div ng-include src="'conceptStep-failure.html'"></div>
+                </div>
+                <div ng-if="currentStep.stepExecutionResult.postHookFailure">
+                    {{setHookFailure(currentStep.stepExecutionResult.postHookFailure)}}
+                    <div class="error-heading">After Step Failed: <span
+                            class="error-message">{{hookFailure.errorMessage}}</span></div>
+                    <div ng-include src="'hook-failure.html'">
+                    </div>
+                </div>
+            </div>
+            {{setCurrentExecutionResult(currentConceptStep.stepExecutionResult.executionResult)}}
+            <div ng-include src="'step-messages.html'">
+            </div>
+        </div>
+    </script>
+
+    <script type="text/ng-template" id="concept-steps.html">
+        <div class="concept-steps">
+            <div ng-repeat="step in item.concept.steps">
+                {{setCurrentStep(step.step)}}
+                {{setConcept(step.concept)}}
+                <div ng-if="!isConcept">
+                    <div ng-include src="'step.html'"></div>
+                </div>
+                <div ng-if="isConcept">
+                    <div ng-init="collapse=false" ng-click="collapse = !collapse">
+                        {{setCurrentConceptStep(step.concept.conceptStep)}}
+                        <a href="" style="text-decoration:none;">
+                            <div ng-include src="'nestedConceptStep.html'"></div>
+                        </a>
+                    </div>
+                    <div ng-include src="'nested-concept.html'" ng-show="collapse"></div>
+                </div>
+            </div>
+        </div>
+    </script>
+    <script type="text/ng-template" id="nested-concept.html">
+        <div class="concept-steps">
+            <div ng-repeat="step in getTopConcept().steps">
+                {{setCurrentConceptStep(step.step)}}
+                {{setConcept(step.concept)}}
+                <div ng-if="!isConcept">
+                    <div ng-include src="'nestedConceptStep.html'"></div>
+                </div>
+                <div ng-if="isConcept">
+                    <div ng-init="collapse=false" ng-click="collapse = !collapse">
+                        {{setCurrentConceptStep(step.concept.conceptStep)}}
+                        <a href="" style="text-decoration:none;">
+                            <div ng-include src="'nestedConceptStep.html'"></div>
+                        </a>
+                    </div>
+
+                    <div ng-include src="'nested-concept.html'" ng-show="collapse"></div>
+                </div>
+            </div>
+        </div>
+    </script>
+    <script type="text/ng-template" id="scenario.html">
+        <h3 class="scenario-heading borderBottom">
+            <span>{{currentScenario.scenarioHeading}}</span>
+            <span class="time">{{formattedTime(currentScenario.executionTime)}}</span>
+        </h3>
+
+        <div ng-show="currentScenario.tags.length"
+             class="tagsHolder scenario_tags contentSection">
+            <span>Tags:</span>
+            <ul ng-repeat="tag in currentScenario.tags">
+                <li>{{tag}}</li>
+            </ul>
+        </div>
+        <div class="error-container failed">
+            <div ng-if="currentScenario.preHookFailure">
+                {{setHookFailure(currentScenario.preHookFailure)}}
+                <div collapsable class="error-heading">Before Scenario Hook Failed: <span class="error-message">{{hookFailure.errorMessage}}</span>
+                </div>
                 <div ng-include src="'hook-failure.html'">
                 </div>
             </div>
-            <div ng-if="currentStep.stepExecutionResult.executionResult.failed && !isConcept">
-                <div ng-include src="'conceptStep-failure.html'"></div>
-            </div>
-            <div ng-if="currentStep.stepExecutionResult.postHookFailure">
-                {{setHookFailure(currentStep.stepExecutionResult.postHookFailure)}}
-                <div class="error-heading">After Step Failed: <span
-                        class="error-message">{{hookFailure.errorMessage}}</span></div>
+            <div ng-if="currentScenario.postHookFailure">
+                {{setHookFailure(currentScenario.postHookFailure)}}
+                <div collapsable class="error-heading">After Scenario Hook Failed: <span class="error-message">{{hookFailure.errorMessage}}</span>
+                </div>
                 <div ng-include src="'hook-failure.html'">
                 </div>
             </div>
         </div>
-    </div>
-</script>
-
-<script type="text/ng-template" id="concept-steps.html">
-    <div class="concept-steps">
-        <div ng-repeat="step in item.concept.steps">
-            {{setCurrentStep(step.step)}}
-            {{setConcept(step.concept)}}
-            <div ng-if="!isConcept">
-                <div ng-include src="'step.html'"></div>
-            </div>
-            <div ng-if="isConcept">
-                <div ng-init="collapse=false" ng-click="collapse = !collapse">
-                    {{setCurrentConceptStep(step.concept.conceptStep)}}
-                    <a href="" style="text-decoration:none;">
-                        <div ng-include src="'nestedConceptStep.html'"></div>
-                    </a>
-                </div>
-                <div ng-include src="'nested-concept.html'" ng-show="collapse"></div>
-            </div>
+        <div ng-repeat="item in currentScenario.contexts">
+            <div ng-include src="'item-render.html'" class="context-step"></div>
         </div>
-    </div>
-</script>
-<script type="text/ng-template" id="nested-concept.html">
-    <div class="concept-steps">
-        <div ng-repeat="step in getTopConcept().steps">
-            {{setCurrentConceptStep(step.step)}}
-            {{setConcept(step.concept)}}
-            <div ng-if="!isConcept">
-                <div ng-include src="'nestedConceptStep.html'"></div>
-            </div>
-            <div ng-if="isConcept">
-                <div ng-init="collapse=false" ng-click="collapse = !collapse">
-                    {{setCurrentConceptStep(step.concept.conceptStep)}}
-                    <a href="" style="text-decoration:none;">
-                        <div ng-include src="'nestedConceptStep.html'"></div>
-                    </a>
-                </div>
-
-                <div ng-include src="'nested-concept.html'" ng-show="collapse"></div>
-            </div>
+        <div id="scenarioItemsContainer" ng-repeat="item in currentScenario.scenarioItems">
+            <div ng-include src="'item-render.html'"></div>
         </div>
-    </div>
-</script>
-<script type="text/ng-template" id="scenario.html">
-    <h3 class="scenario-heading borderBottom">
-        <span>{{currentScenario.scenarioHeading}}</span>
-        <span class="time">{{formattedTime(currentScenario.executionTime)}}</span>
-    </h3>
+    </script>
 
-    <div ng-show="currentScenario.tags.length"
-         class="tagsHolder scenario_tags contentSection">
-        <span>Tags:</span>
-        <ul ng-repeat="tag in currentScenario.tags">
-            <li>{{tag}}</li>
-        </ul>
-    </div>
-    <div class="error-container failed">
-        <div ng-if="currentScenario.preHookFailure">
-            {{setHookFailure(currentScenario.preHookFailure)}}
-            <div collapsable class="error-heading">Before Scenario Hook Failed: <span class="error-message">{{hookFailure.errorMessage}}</span>
-            </div>
-            <div ng-include src="'hook-failure.html'">
-            </div>
-        </div>
-        <div ng-if="currentScenario.postHookFailure">
-            {{setHookFailure(currentScenario.postHookFailure)}}
-            <div collapsable class="error-heading">After Scenario Hook Failed: <span class="error-message">{{hookFailure.errorMessage}}</span>
-            </div>
-            <div ng-include src="'hook-failure.html'">
-            </div>
-        </div>
-    </div>
-    <div ng-repeat="item in currentScenario.contexts">
-        <div ng-include src="'item-render.html'" class="context-step"></div>
-    </div>
-    <div id="scenarioItemsContainer" ng-repeat="item in currentScenario.scenarioItems">
-        <div ng-include src="'item-render.html'"></div>
-    </div>
-</script>
+    <script type="text/ng-template" id="hook-failure.html">
+        <table class="exception-container">
+            <tbody>
+            <tr>
+                <td>
+                    <pre class="stacktrace">  {{hookFailure.stackTrace}}</pre>
+                </td>
+                <td>
+                    <div>
+                        <a href="{{getScreenshotSrc(hookFailure.screenShot)}}" rel="lightbox">
+                            <img ng-src="{{getScreenshotSrc(hookFailure.screenShot)}}"
+                                 class="screenshot-thumbnail"/>
+                        </a>
+                    </div>
+                </td>
+            </tr>
+            </tbody>
+        </table>
+    </script>
 
-<script type="text/ng-template" id="hook-failure.html">
-    <table class="exception-container">
-        <tbody>
-        <tr>
-            <td>
-                <pre class="stacktrace">  {{hookFailure.stackTrace}}</pre>
-            </td>
-            <td>
-                <div>
-                    <a href="{{getScreenshotSrc(hookFailure.screenShot)}}" rel="lightbox">
-                        <img ng-src="{{getScreenshotSrc(hookFailure.screenShot)}}"
-                             class="screenshot-thumbnail"/>
-                    </a>
-                </div>
-            </td>
-        </tr>
-        </tbody>
-    </table>
-</script>
+    <script type="text/ng-template" id="step-failure.html">
+        <table class="exception-container" ng-show="currentStep.stepExecutionResult.executionResult.failed">
+            <tbody>
+            <tr>
+                <td>
+                    <h4 class="error-message">
+                        <pre>{{currentStep.stepExecutionResult.executionResult.errorMessage}}</pre>
+                    </h4>
+                    <pre class="stacktrace"> {{currentStep.stepExecutionResult.executionResult.stackTrace}}</pre>
+                </td>
+                <td>
+                    <div>
+                        <a href="{{getScreenshotSrc(currentStep.stepExecutionResult.executionResult.screenShot)}}"
+                           rel="lightbox">
+                            <img ng-src="{{getScreenshotSrc(currentStep.stepExecutionResult.executionResult.screenShot)}}"
+                                 class="screenshot-thumbnail"/>
+                        </a>
+                    </div>
+                </td>
+            </tr>
+            </tbody>
+        </table>
+    </script>
 
-<script type="text/ng-template" id="step-failure.html">
-    <table class="exception-container" ng-show="currentStep.stepExecutionResult.executionResult.failed">
-        <tbody>
-        <tr>
-            <td>
-                <h4 class="error-message">
-                    <pre>{{currentStep.stepExecutionResult.executionResult.errorMessage}}</pre>
-                </h4>
-                <pre class="stacktrace"> {{currentStep.stepExecutionResult.executionResult.stackTrace}}</pre>
-            </td>
-            <td>
-                <div>
-                    <a href="{{getScreenshotSrc(currentStep.stepExecutionResult.executionResult.screenShot)}}"
-                       rel="lightbox">
-                        <img ng-src="{{getScreenshotSrc(currentStep.stepExecutionResult.executionResult.screenShot)}}"
-                             class="screenshot-thumbnail"/>
-                    </a>
-                </div>
-            </td>
-        </tr>
-        </tbody>
-    </table>
-</script>
-
-<script type="text/ng-template" id="conceptStep-failure.html">
-    <table class="exception-container" ng-show="currentConceptStep.stepExecutionResult.executionResult.failed">
-        <tbody>
-        <tr>
-            <td>
-                <h4 class="error-message">
-                    <pre>{{currentStep.stepExecutionResult.executionResult.errorMessage}}</pre>
-                </h4>
-                <pre class="stacktrace"> {{currentStep.stepExecutionResult.executionResult.stackTrace}}</pre>
-            </td>
-            <td>
-                <div>
-                    <a href="{{getScreenshotSrc(currentStep.stepExecutionResult.executionResult.screenShot)}}"
-                       rel="lightbox">
-                        <img ng-src="{{getScreenshotSrc(currentStep.stepExecutionResult.executionResult.screenShot)}}"
-                             class="screenshot-thumbnail"/>
-                    </a>
-                </div>
-            </td>
-        </tr>
-        </tbody>
-    </table>
-</script>
+    <script type="text/ng-template" id="conceptStep-failure.html">
+        <table class="exception-container" ng-show="currentConceptStep.stepExecutionResult.executionResult.failed">
+            <tbody>
+            <tr>
+                <td>
+                    <h4 class="error-message">
+                        <pre>{{currentStep.stepExecutionResult.executionResult.errorMessage}}</pre>
+                    </h4>
+                    <pre class="stacktrace"> {{currentStep.stepExecutionResult.executionResult.stackTrace}}</pre>
+                </td>
+                <td>
+                    <div>
+                        <a href="{{getScreenshotSrc(currentStep.stepExecutionResult.executionResult.screenShot)}}"
+                           rel="lightbox">
+                            <img ng-src="{{getScreenshotSrc(currentStep.stepExecutionResult.executionResult.screenShot)}}"
+                                 class="screenshot-thumbnail"/>
+                        </a>
+                    </div>
+                </td>
+            </tr>
+            </tbody>
+        </table>
+    </script>
 
 
 </head>

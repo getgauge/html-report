@@ -708,3 +708,21 @@ table th td {
     font-size: 18px;
     padding: 5px;
 }
+
+.message-container {
+    background-color: #ebebeb;
+}
+
+.step-message {
+    padding-left: 25px;
+    padding-top: 2.5px;
+    padding-bottom: 2.5px;
+}
+
+.collapse-messages {
+    cursor: pointer;
+    color: blue;
+    padding-left: 2px;
+    padding-top: 2.5px;
+    padding-bottm: 2.5px;
+}
