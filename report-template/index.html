@@ -62,7 +62,7 @@
                 </tr>
                 <tbody>
                 <tr ng-repeat="row in fragment.parameter.table.rows">
-                    <td ng-repeat="cell in row.cells">{{cell}}</td>
+                    <td ng-repeat="cell in row.cells track by $index">{{cell}}</td>
                 </tr>
                 </tbody>
             </table>
