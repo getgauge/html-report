@@ -313,10 +313,10 @@
         <table class="exception-container">
             <tbody>
             <tr>
-                <td>
-                    <pre class="stacktrace">  {{hookFailure.stackTrace}}</pre>
+                <td class="exception">
+                    <pre class="stacktrace"> {{hookFailure.stackTrace}}</pre>
                 </td>
-                <td>
+                <td class="screenshot-container" ng-show="hookFailure.screenShot">
                     <div>
                         <a href="{{getScreenshotSrc(hookFailure.screenShot)}}" rel="lightbox">
                             <img ng-src="{{getScreenshotSrc(hookFailure.screenShot)}}"
@@ -333,13 +333,13 @@
         <table class="exception-container" ng-show="currentStep.stepExecutionResult.executionResult.failed">
             <tbody>
             <tr>
-                <td>
+                <td class="exception">
                     <h4 class="error-message">
                         <pre>{{currentStep.stepExecutionResult.executionResult.errorMessage}}</pre>
                     </h4>
-                    <pre class="stacktrace"> {{currentStep.stepExecutionResult.executionResult.stackTrace}}</pre>
+                    <pre class="stacktrace">{{currentStep.stepExecutionResult.executionResult.stackTrace}}</pre>
                 </td>
-                <td>
+                <td class="screenshot-container" ng-show="currentStep.stepExecutionResult.executionResult.screenShot">
                     <div>
                         <a href="{{getScreenshotSrc(currentStep.stepExecutionResult.executionResult.screenShot)}}"
                            rel="lightbox">

@@ -675,19 +675,37 @@ table th td {
 }
 
 .screenshot-thumbnail {
-    height: 40%;
-    width: 40%;
+    height: 100%;
+    width: 100%;
 }
 
 .error-message {
     font-size: 15px;
+    word-wrap: break-word;
+}
+
+
+.exception {
+    width: 80%;
+    vertical-align: top;
+}
+
+.screenshot-container {
+    width: 20%;
+}
+
+.exception-container {
+    position: relative;
+    table-layout: fixed;
+    width: 100%;
 }
 
 .exception-container .error-message, .exception-container .stacktrace {
     padding: 5px;
+    word-wrap: break-word;
 }
 
-.exception-container td {
+.exception-container td, .exception-container tr {
     border: none;
 }
 
@@ -717,6 +735,7 @@ table th td {
     padding-left: 25px;
     padding-top: 2.5px;
     padding-bottom: 2.5px;
+    color: rgb(107, 101, 101)
 }
 
 .collapse-messages {
