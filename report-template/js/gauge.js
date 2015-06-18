@@ -150,6 +150,8 @@ gaugeReport.controller('mainController', function ($scope) {
         {"key": "Executed", "value": $scope.result.specResults.length},
         {"key": "Failure", "value": $scope.result.specsFailedCount, failed: true},
         {"key": "Success Rate", "value": $scope.result.successRate + "%"},
-        {"key": "Time", "value": $scope.formattedTime($scope.result.executionTime)}
+        {"key": "Time", "value": $scope.formattedTime($scope.result.executionTime)},
+        {"key": "Environment", "value": $scope.result.environment},
+        {"key": "Tags", "value": $scope.result.tags}
     ];
 });

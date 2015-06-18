@@ -384,7 +384,7 @@
     <div>
         <div id="summaryHolder">
             <ul ng-repeat="summaryItem in summaryItems">
-                <li>
+                <li ng-if="summaryItem.value">
                     <div class="key">
                         {{summaryItem.key}}
                     </div>
