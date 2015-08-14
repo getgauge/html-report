@@ -156,6 +156,11 @@ gaugeReport.controller('mainController', function ($scope) {
         }).concat(failedScenarios).concat(passedScenarios);
     };
 
+    $scope.setCurrentSpec = function (isFirst, specResult) {
+        if (isFirst)
+            $scope.currentSpec = specResult;
+    };
+
     $scope.summaryItems = [
         {"key": "Executed", "value": $scope.result.specResults.length},
         {"key": "Failure", "value": $scope.result.specsFailedCount, failed: true},

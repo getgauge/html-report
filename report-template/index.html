@@ -410,6 +410,7 @@
                 <li ng-class="{'failed': specResult.failed,'passed': !specResult.failed,'selected': currentSpec === specResult}"
                     class="spec-name"
                     ng-click="loadSpecification(specResult)">
+                    {{setCurrentSpec($first,specResult)}}
                     <span id="scenarioName">{{specResult.protoSpec.specHeading}}</span>
                     <span id="time">{{formattedTime(specResult.executionTime)}}</span>
                 </li>
