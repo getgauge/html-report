@@ -406,7 +406,7 @@
 
         <div id="listOfSpecifications">
             <ul id="scenarios"
-                ng-repeat="specResult in result.specResults | filter:{protoSpec : specToSearch} | orderBy:'protoSpec.specHeading'">
+                ng-repeat="specResult in result.specResults | filter:{protoSpec : specToSearch} | orderBy:'-failed'">
                 <li ng-class="{'failed': specResult.failed,'passed': !specResult.failed,'selected': currentSpec === specResult}"
                     class="spec-name"
                     ng-click="loadSpecification(specResult)">
@@ -453,7 +453,7 @@
         <br/>
 
         <div id="specItemsContainer">
-            <div ng-repeat="item in currentSpec.protoSpec.items">
+            <div ng-repeat="item in sort(currentSpec.protoSpec.items)">
                 <div ng-include src="'item-render.html'"></div>
             </div>
         </div>

@@ -79,19 +79,19 @@ gaugeReport.controller('mainController', function ($scope) {
 
     $scope.setCurrentStep = function (step) {
         $scope.currentStep = null;
-        if(step)    $scope.currentStep = step
+        if (step)    $scope.currentStep = step
     };
     $scope.setCurrentConceptStep = function (step) {
         $scope.currentConceptStep = null;
-        if(step)    $scope.currentConceptStep = step
+        if (step)    $scope.currentConceptStep = step
     };
     $scope.setCurrentExecutionResult = function (result) {
         $scope.currentExecutionResult = null;
-        if(result)    $scope.currentExecutionResult = result
+        if (result)    $scope.currentExecutionResult = result
     };
     $scope.setConcept = function (concept) {
         $scope.isConcept = false
-        if(concept){
+        if (concept) {
             $scope.isConcept = true
             $scope.conceptList.push(concept)
             $scope.currentStep = concept.conceptStep
@@ -107,7 +107,7 @@ gaugeReport.controller('mainController', function ($scope) {
     };
 
     $scope.getFragmentName = function (name) {
-            return name || "table"
+        return name || "table"
     };
 
     $scope.setHookFailure = function (hookFailure) {
@@ -140,10 +140,20 @@ gaugeReport.controller('mainController', function ($scope) {
             return "0" + value;
         }
         return value;
-    };
+    }
 
     $scope.getScreenshotSrc = function (screenshot) {
         return "data:image/png;base64," + screenshot
+    };
+
+    $scope.sort = function (items) {
+        if (!items) return;
+        var passedScenarios = [];
+        var failedScenarios = [];
+        return items.filter(function (item) {
+            if (itemTypesMap[item.itemType] != "Scenario")  return true;
+            item.scenario.failed ? failedScenarios.push(item) : passedScenarios.push(item);
+        }).concat(failedScenarios).concat(passedScenarios);
     };
 
     $scope.summaryItems = [
