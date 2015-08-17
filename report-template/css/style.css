@@ -294,6 +294,12 @@ h3 > .time {
     margin-left: 10px;
 }
 
+h4 > .time {
+    color: #aaa;
+    font-size: 0.7em;
+    margin-left: 10px;
+}
+
 #specificationContainer .contentSection {
     margin-top: 5px;
     padding-top: 5px;

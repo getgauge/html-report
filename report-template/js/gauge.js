@@ -122,9 +122,9 @@ gaugeReport.controller('mainController', function ($scope) {
         return text === "\n";
     };
 
-    $scope.formattedTime = function (timeInMs) {
+    $scope.formattedTime = function (timeInMs, prefix) {
+        if (timeInMs == undefined)  return  "";
         var sec = Math.floor(timeInMs / 1000);
-        timeInMs %= 1000;
 
         var min = Math.floor(sec / 60);
         sec %= 60;
@@ -132,7 +132,7 @@ gaugeReport.controller('mainController', function ($scope) {
         var hour = Math.floor(min / 60);
         min %= 60;
 
-        return convertTo2Digit(hour) + ":" + convertTo2Digit(min) + ":" + convertTo2Digit(sec);
+        return (prefix || "") + convertTo2Digit(hour) + ":" + convertTo2Digit(min) + ":" + convertTo2Digit(sec);
     };
 
     function convertTo2Digit(value) {

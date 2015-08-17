@@ -103,6 +103,9 @@
     </script>
 
     <script type="text/ng-template" id="step.html">
+        <h4>
+            <span class="time">{{formattedTime(currentStep.stepExecutionResult.executionResult.executionTime, "Execution Time : ")}}</span>
+        </h4>
         <div ng-class="{true:'failed', false:'passed', 'undefined':'not-executed'}[currentStep.stepExecutionResult.executionResult.failed]">
             <ul collapsable>
                 <li class="step">
@@ -163,7 +166,9 @@
 
     <script type="text/ng-template" id="step-messages.html">
         <div class="message-container" ng-init="collapseMessages=true" ng-click="collapseMessages = !collapseMessages">
-            <div class="collapse-messages" ng-show="currentExecutionResult.message">{{ (collapseMessages) ? "- hide" : "+ show" }}</div>
+            <div class="collapse-messages" ng-show="currentExecutionResult.message">{{ (collapseMessages) ? "- hide" :
+                "+ show" }}
+            </div>
             <div ng-show="collapseMessages">
                 <div ng-repeat="msg in currentExecutionResult.message track by $index" class="step-message">
                     {{msg}}
@@ -173,6 +178,9 @@
     </script>
 
     <script type="text/ng-template" id="nestedConceptStep.html">
+        <h4>
+            <span class="time">{{formattedTime(currentConceptStep.stepExecutionResult.executionResult.executionTime, "Execution Time : ")}}</span>
+        </h4>
         <div ng-class="{true:'failed', false:'passed', 'undefined':'not-executed'}[currentConceptStep.stepExecutionResult.executionResult.failed]">
             <ul collapsable>
                 <li class="step">
