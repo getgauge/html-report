@@ -711,6 +711,10 @@ table th td {
     word-wrap: break-word;
 }
 
+.exception-container .error-message pre, .exception-container .stacktrace {
+    white-space: pre-wrap;
+}
+
 .exception-container td, .exception-container tr {
     border: none;
 }
