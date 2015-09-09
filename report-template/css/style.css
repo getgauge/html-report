@@ -234,6 +234,10 @@ li #time {
     font-color: #3d3d3d;
 }
 
+.selected {
+    font-weight:bold;
+}
+
 .passed {
 / / background-color : rgba(137, 184, 63, 0.91);
     background-color: rgb(163, 194, 115);
