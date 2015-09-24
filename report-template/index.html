@@ -103,10 +103,10 @@
     </script>
 
     <script type="text/ng-template" id="step.html">
-        <h4>
+        <h5 ng-show="currentStep.stepExecutionResult.executionResult != undefined">
             <span class="time">{{formattedTime(currentStep.stepExecutionResult.executionResult.executionTime, "Execution Time : ")}}</span>
-        </h4>
-        <div ng-class="{true:'failed', false:'passed', 'undefined':'not-executed'}[currentStep.stepExecutionResult.executionResult.failed]">
+        </h5>
+        <div ng-class="{true:'failed', false:'passed', 'undefined':'not-executed', 'skipped':'skipped'}[getStatus(currentStep)]">
             <ul collapsable>
                 <li class="step">
                     <span ng-show="isConcept">{{ (collapse) ? "-" : "+" }}</span>
@@ -158,7 +158,7 @@
                     </div>
                 </div>
             </div>
-            {{setCurrentExecutionResult(currentStep.stepExecutionResult.executionResult)}}
+            {{setCurrentExecutionResult(currentStep.stepExecutionResult)}}
             <div ng-include src="'step-messages.html'">
             </div>
         </div>
@@ -166,11 +166,14 @@
 
     <script type="text/ng-template" id="step-messages.html">
         <div class="message-container" ng-init="collapseMessages=true" ng-click="collapseMessages = !collapseMessages">
-            <div class="collapse-messages" ng-show="currentExecutionResult.message">{{ (collapseMessages) ? "- hide" :
+            <h4 ng-show="currentExecutionResult.skipped">
+                <span class="skipReason" ng-show="currentExecutionResult.skipped">Skipped Reason : {{currentExecutionResult.skippedReason}}</span>
+            </h4>
+            <div class="collapse-messages" ng-show="currentExecutionResult.executionResult.message">{{ (collapseMessages) ? "- hide" :
                 "+ show" }}
             </div>
             <div ng-show="collapseMessages">
-                <div ng-repeat="msg in currentExecutionResult.message track by $index" class="step-message">
+                <div ng-repeat="msg in currentExecutionResult.executionResult.message track by $index" class="step-message">
                     {{msg}}
                 </div>
             </div>
@@ -178,9 +181,9 @@
     </script>
 
     <script type="text/ng-template" id="nestedConceptStep.html">
-        <h4>
+        <h5 ng-show="currentConceptStep.stepExecutionResult.executionResult != undefined">
             <span class="time">{{formattedTime(currentConceptStep.stepExecutionResult.executionResult.executionTime, "Execution Time : ")}}</span>
-        </h4>
+        </h5>
         <div ng-class="{true:'failed', false:'passed', 'undefined':'not-executed'}[currentConceptStep.stepExecutionResult.executionResult.failed]">
             <ul collapsable>
                 <li class="step">
@@ -233,7 +236,7 @@
                     </div>
                 </div>
             </div>
-            {{setCurrentExecutionResult(currentConceptStep.stepExecutionResult.executionResult)}}
+            {{setCurrentExecutionResult(currentConceptStep.stepExecutionResult)}}
             <div ng-include src="'step-messages.html'">
             </div>
         </div>
@@ -416,7 +419,7 @@
             <ul id="scenarios"
                 ng-repeat="specResult in result.specResults | filter:{protoSpec : specToSearch} | orderBy:'-failed'"
                 ng-init="setCurrentSpec($first,specResult)">
-                <li ng-class="{'failed': specResult.failed,'passed': !specResult.failed,'selected': currentSpec === specResult}"
+                <li ng-class="{'failed': specResult.failed,'passed': !specResult.failed,'selected': currentSpec === specResult,'skipped':specResult.skipped}"
                     class="spec-name"
                     ng-click="loadSpecification(specResult)">
                     <span id="scenarioName">{{specResult.protoSpec.specHeading}}</span>

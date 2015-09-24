@@ -105,6 +105,10 @@ h3 {
 }
 
 h4 {
+    font-size: 1.5em
+}
+
+h5 {
     font-size: 1.3em
 }
 
@@ -268,6 +272,11 @@ li #time {
     background-color: lightgray;
 }
 
+#listOfSpecifications .skipped {
+    border-left: 10px solid #C6C8C1;
+    background-color: lightgray;
+}
+
 #listOfSpecifications .errored {
     border-left: 10px solid #ffbf37;
     background-color: lightgray;
@@ -275,6 +284,10 @@ li #time {
 
 .not-executed {
     background-color: #eee;
+}
+
+.skipped {
+    background-color: #C6C8C1;
 }
 
 /*section*/
@@ -298,8 +311,14 @@ h3 > .time {
     margin-left: 10px;
 }
 
-h4 > .time {
+h5 > .time {
     color: #aaa;
+    font-size: 0.7em;
+    margin-left: 10px;
+}
+
+h4 > .skipReason {
+    color: #343434;
     font-size: 0.7em;
     margin-left: 10px;
 }

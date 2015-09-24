@@ -161,9 +161,19 @@ gaugeReport.controller('mainController', function ($scope) {
             $scope.currentSpec = specResult;
     };
 
+    $scope.getStatus = function (step) {
+        if (step.stepExecutionResult.skipped)
+            return "skipped";
+        else if (step.stepExecutionResult.executionResult) {
+            return step.stepExecutionResult.executionResult.failed;
+        }
+        return undefined
+    };
+
     $scope.summaryItems = [
         {"key": "Executed", "value": $scope.result.specResults.length},
         {"key": "Failure", "value": $scope.result.specsFailedCount, failed: true},
+        {"key": "Skipped", "value": $scope.result.specsSkippedCount, skipped: true},
         {"key": "Success Rate", "value": $scope.result.successRate + "%"},
         {"key": "Time", "value": $scope.formattedTime($scope.result.executionTime)},
         {"key": "Environment", "value": $scope.result.environment},
