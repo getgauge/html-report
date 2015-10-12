@@ -15,6 +15,7 @@
 <!--You should have received a copy of the GNU General Public License-->
 <!--along with getgauge/html-report.  If not, see <http://www.gnu.org/licenses/>.-->
 
+
 <!doctype html>
 <html ng-app="gauge_report" id="ng-app">
 <head>
@@ -25,10 +26,6 @@
     <script src="js/gauge.js"></script>
     <script src="js/result.js" charset="utf-8"></script>
     <script src="js/angular-hovercard.js"></script>
-    <script data-require="angular.js@1.2.x" src="js/angular.js" data-semver="1.2.16"></script>
-    <script src="js/d3.min.js"></script>
-    <script src="js/nv.d3.min.js"></script>
-    <script src="js/angular-nvd3.js"></script>
     <link rel="stylesheet" href="css/style.css"/>
     <link rel="stylesheet" href="css/angular-hovercard.css"/>
 
@@ -395,23 +392,18 @@
 </head>
 <body ng-controller="mainController">
 <header>
-    <div class="summary-wrapper">
-        <div class="chart-container">
-            <ul id="summaryHolder">
-                <li ng-repeat="summaryItem in summaryItems" ng-if="!isEmpty(summaryItem.value)">
-                    <span>
-                        <span class="key">
-                            {{summaryItem.key}} :
-                        </span>
-                        <span ng-class="{'value':true,'failed':summaryItem.failed}">
-                            {{summaryItem.value}}
-                        </span>
-                    </span>
+    <div>
+        <div id="summaryHolder">
+            <ul ng-repeat="summaryItem in summaryItems">
+                <li ng-if="summaryItem.value">
+                    <div class="key">
+                        {{summaryItem.key}}
+                    </div>
+                    <div ng-class="{'value':true,'failed':summaryItem.failed}">
+                        {{summaryItem.value}}
+                    </div>
                 </li>
             </ul>
-            <div id="pieChartHolder">
-                <nvd3 options="options" data="data"></nvd3>
-            </div>
         </div>
     </div>
 </header>

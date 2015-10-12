@@ -392,35 +392,18 @@ input[type='text']:focus {
     margin-bottom: 0;
 }
 
-.summary-wrapper{
-    width:768px;
-    margin:0px auto;
-    text-align:center;
-}
-.chart-container{
-    overflow:hidden;
-    display:inline-block;
-}
-#summaryHolder,#pieChartHolder{
-    float:left;
-}
-#summaryHolder li {
+#summaryHolder ul li {
+    float: left;
     padding: 5px;
     background-color: #ddd;
     border-radius: 5px;
     margin-right: 8px;
     font-size: 1.1em;
-    margin-bottom: 10px;
-}
-
-#summaryHolder li .key {
-    font-weight: bold;
 }
 
 #summaryHolder ul li .key {
     padding: 5px;
     float: left;
-    font-weight: bold;
 }
 
 #summaryHolder ul li .value {
@@ -430,29 +413,6 @@ input[type='text']:focus {
     border-radius: 3px;
 }
 
-@media screen and (max-width: 768px) {
-    .summary-wrapper{
-        width:100%;
-    }
-    #summaryHolder,#pieChartHolder{
-        float:none;
-    }
-}
-
-.nvtooltip {
-    position: absolute;
-    background-color: rgba(255,255,255,0.8);
-    padding: 1px;
-    margin-top: -40px;
-    padding:10px 20px;
-    border:1px solid #cecece;
-
-}
-.nvtooltip h3{
-    font-size:16px;
-    line-height: 24px;
-    font-weight:bold;
-}
 /*#summaryHolder h3{
 	padding: 5px 0;
 
