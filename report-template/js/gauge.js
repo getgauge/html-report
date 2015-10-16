@@ -241,7 +241,7 @@ gaugeReport.controller('mainController', function ($scope) {
     $scope.data = [
         {
             label: "Passed",
-            score: $scope.result.specResults.length
+            score: $scope.result.specResults.length - $scope.result.specsFailedCount - $scope.result.specsSkippedCount
         },
         {
             label: "Failed",
