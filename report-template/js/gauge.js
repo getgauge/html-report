@@ -159,6 +159,42 @@ gaugeReport.controller('mainController', function ($scope) {
         }).concat(failedScenarios).concat(passedScenarios);
     };
 
+    $scope.filteredListOfSpecs = $scope.result.specResults;
+
+    $scope.showFailedSpecs = function (){
+        var specs = [];
+        angular.forEach($scope.result.specResults, function(specRes){
+            if (specRes.failed) {
+                specs.push(specRes)
+            }
+        });
+        $scope.filteredListOfSpecs = specs;
+    };
+
+    $scope.showPassedSpecs = function (){
+        var specs = [];
+        angular.forEach($scope.result.specResults, function(specRes){
+            if (!specRes.failed && !specRes.skipped) {
+                specs.push(specRes)
+            }
+        });
+        $scope.filteredListOfSpecs = specs;
+    };
+
+    $scope.showSkippedSpecs = function (){
+        var specs = [];
+        angular.forEach($scope.result.specResults, function(specRes){
+            if (specRes.skipped) {
+                specs.push(specRes)
+            }
+        });
+        $scope.filteredListOfSpecs = specs;
+    };
+
+    $scope.showAllSpecs = function (){
+        $scope.filteredListOfSpecs = $scope.result.specResults;
+    };
+
     $scope.setCurrentSpec = function (isFirst, specResult) {
         if (isFirst)
             $scope.currentSpec = specResult;
@@ -174,35 +210,21 @@ gaugeReport.controller('mainController', function ($scope) {
     };
 
     $scope.summaryItems = [{
-        "key": "Executed",
-        "value": $scope.result.specResults.length
-    }, {
-        "key": "Failure",
-        "value": $scope.result.specsFailedCount,
-        failed: true
-    }, {
-        "key": "Skipped",
-        "value": $scope.result.specsSkippedCount,
-        skipped: true
-    }, {
-        "key": "Success Rate",
-        "value": $scope.result.successRate + "%"
-    }, {
-        "key": "Time",
-        "value": $scope.formattedTime($scope.result.executionTime)
-    }, {
         "key": "Environment",
         "value": $scope.result.environment
     }, {
         "key": "Tags",
         "value": $scope.result.tags
+    }, {
+        "key": "Total Time",
+        "value": $scope.formattedTime($scope.result.executionTime)
+    }, {
+        "key": "Success Rate",
+        "value": $scope.result.successRate + "%"
     }];
 
     $scope.isEmpty = function (item) {
-        if (typeof(item) === "string" && item.length <= 0) {
-            return true;
-        }
-        return false;
+        return !!(typeof(item) === "string" && item.length <= 0);
     };
 
     var myColors = ["#A3C273", "#FF6969", "#C6C8C1"];
@@ -215,7 +237,7 @@ gaugeReport.controller('mainController', function ($scope) {
             type: 'pieChart',
             height: 300,
             donut: true,
-            donutRatio: 0.3,
+            donutRatio: 0.2,
             x: function (d) {
                 return d.label;
             },
@@ -227,29 +249,28 @@ gaugeReport.controller('mainController', function ($scope) {
             transitionDuration: 500,
             labelThreshold: 0.01,
             color: d3.scale.myColors().range(),
-            legend: {
-                margin: {
-                    top: 5,
-                    right: 35,
-                    bottom: 5,
-                    left: 0
-                }
-            }
+            showLegend: false
         }
     };
+
+    $scope.totalSpecs = $scope.result.specResults.length;
+    $scope.passed = $scope.result.specResults.length - $scope.result.specsFailedCount - $scope.result.specsSkippedCount;
+    $scope.failed = $scope.result.specsFailedCount;
+    $scope.skipped = $scope.result.specsSkippedCount;
+    $scope.projectName = $scope.result.projectName;
 
     $scope.data = [
         {
             label: "Passed",
-            score: $scope.result.specResults.length - $scope.result.specsFailedCount - $scope.result.specsSkippedCount
+            score: $scope.passed
         },
         {
             label: "Failed",
-            score: $scope.result.specsFailedCount
+            score: $scope.failed
         },
         {
             label: "Skipped",
-            score: $scope.result.specsSkippedCount
+            score: $scope.skipped
         }
     ];
 

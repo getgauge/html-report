@@ -59,13 +59,7 @@ body {
     padding: 15px;
     line-height: 1;
     font-size: 13px;
-    color: #333px;
     font-family: arial, verdana;
-    background-color: #ebebeb;
-}
-
-header img {
-    margin-right: 30px;
 }
 
 ol, ul {
@@ -297,6 +291,7 @@ body > section {
     background-color: #ddd;
     padding: 10px;
     border-radius: 8px;
+    clear: left;
 }
 
 h2 > .time {
@@ -370,13 +365,6 @@ input[type='text']:focus {
     background-color: white !important;
 }
 
-/*summary*/
-#summaryHolder {
-    padding: 10px;
-    overflow: auto;
-    margin-top: 10px;
-}
-
 #notes {
     margin-top: 10px;
     padding: 10px;
@@ -390,53 +378,6 @@ input[type='text']:focus {
 
 #notes p:last-child {
     margin-bottom: 0;
-}
-
-.summary-wrapper{
-    width:768px;
-    margin:0px auto;
-    text-align:center;
-}
-.chart-container{
-    overflow:hidden;
-    display:inline-block;
-}
-#summaryHolder,#pieChartHolder{
-    float:left;
-}
-#summaryHolder li {
-    padding: 5px;
-    background-color: #ddd;
-    border-radius: 5px;
-    margin-right: 8px;
-    font-size: 1.1em;
-    margin-bottom: 10px;
-}
-
-#summaryHolder li .key {
-    font-weight: bold;
-}
-
-#summaryHolder ul li .key {
-    padding: 5px;
-    float: left;
-    font-weight: bold;
-}
-
-#summaryHolder ul li .value {
-    padding: 5px;
-    font-weight: bold;
-    float: left;
-    border-radius: 3px;
-}
-
-@media screen and (max-width: 768px) {
-    .summary-wrapper{
-        width:100%;
-    }
-    #summaryHolder,#pieChartHolder{
-        float:none;
-    }
 }
 
 .nvtooltip {
@@ -453,61 +394,7 @@ input[type='text']:focus {
     line-height: 24px;
     font-weight:bold;
 }
-/*#summaryHolder h3{
-	padding: 5px 0;
 
-}
-#summaryBoxes{
-	display: block;
-	font-size: 1.3em;
-	clear: both;
-	overflow: auto;
-}
-#summaryHolder .texts{
-	color: #333;
-	margin-left: 5px;
-	padding-top: 5px;
-	padding-bottom: 5px;
-}
-#summaryHolder .texts li{
-	margin-bottom: 5px;
-}
-#summaryHolder .texts span{
-	font-size: 1.2em;
-}
-#summaryHolder .texts i{
-	text-decoration: underline;
-}*/
-/*#summaryBoxes > div{	
-	float: left;
-	color: #888;
-	font-weight: 0.3em;
-	margin: 5px;
-	background-color: #eee;
-	text-align: center;
-}
-#summaryBoxes > div > div{
-	border-bottom: 1px solid #ccc;
-	padding: 5px;
-}
-#summaryBoxes > div > ul{
-	padding: 10px;
-	display: block;
-}
-#summaryBoxes > div > ul > li{
-	padding: 0px 15px;
-	margin: 0 5px;
-	display: inline-block;
-}
-#summaryBoxes > div > ul > li > .key{
-	color: #666;
-	padding: 5px;
-}
-#summaryBoxes  > div > ul > li > .value{
-	font-weight: bold;
-	color: #333;
-	padding: 5px;
-}*/
 /*lightbox*/
 #exceptionHolder tr a img {
     width: 200px;
@@ -671,10 +558,6 @@ table th td {
     font-weight: bold;
 }
 
-#summaryHolder p {
-    margin-top: 10px;
-}
-
 .small {
     font-size: 0.9em;
 }
@@ -816,5 +699,119 @@ table th td {
     color: blue;
     padding-left: 2px;
     padding-top: 2.5px;
-    padding-bottm: 2.5px;
+    padding-bottom: 2.5px;
+}
+
+.header {
+    position: relative;
+    height: 35px;
+    margin-bottom: 5px;
+}
+
+#glogo {
+    height: inherit;
+    position: absolute;
+    left: 0px;
+    bottom: 0px;
+}
+
+#glogo img{
+    display: inline;
+    margin-right: 30px;
+    height: inherit;
+}
+
+#title {
+    position: absolute;
+    left: 45%;
+    bottom: 0px;
+    font-size: x-large;
+    height: 35px;
+    font-family: sans-serif;
+}
+
+#summary {
+    width: 100%;
+    margin-top: 3px;
+    display: inline-flex;
+    border-top: 1px solid gray;
+}
+
+.score {
+    cursor: pointer;
+    float: left;
+    display: inline-block;
+}
+
+.box {
+    text-align: center;
+    width: 25%;
+    float: left;
+    display: inline-block;
+}
+
+.chart {
+    text-align: center;
+}
+
+#summary #left {
+    width: 30%;
+}
+
+#summary #right {
+    width: 60%;
+    text-align: left;
+    margin-top: 50px;
+    margin-right: 50px;
+}
+#scores {
+    margin-left: 70px;
+    width: 100%;
+    display: inline-block;
+}
+
+#details {
+    margin-top: 30px;
+    text-align: center;
+    width: 100%;
+}
+
+.myNumber {
+    text-align: center;
+    font-size: 100px;
+    font-family: serif;
+}
+
+#passed {
+    color: rgb(163, 194, 115);
+}
+#failed {
+    color: rgb(255, 105, 105);
+    font-weight: bold;
+}
+#skipped {
+    color: #666666;
+}
+
+.myText {
+    text-align: center;
+    font-size: large;
+}
+
+.execution-details li {
+    font-size: large;
+    display: inline-block;
+    padding: 10px;
+    margin: 10px;
+    border: 1px solid #A5A0A0;
+}
+
+#footer {
+    background: #ddd;
+    color: black;
+    font-size: medium;
+    text-align: center;
+    padding: 4px;
+    border-radius: 8px;
+    margin-top: 2px;
 }
