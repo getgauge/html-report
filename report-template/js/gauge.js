@@ -249,7 +249,8 @@ gaugeReport.controller('mainController', function ($scope) {
             transitionDuration: 500,
             labelThreshold: 0.01,
             color: d3.scale.myColors().range(),
-            showLegend: false
+            showLegend: false,
+            valueFormat: d3.format("d")
         }
     };
 
