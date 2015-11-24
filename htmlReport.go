@@ -163,7 +163,8 @@ func createReportsDirectory() string {
 
 func copyReportTemplateFiles(reportDir string) error {
 	reportTemplateDir := filepath.Join(pluginDir, reportTemplateDir)
-	return common.MirrorDir(reportTemplateDir, reportDir)
+	_, err := common.MirrorDir(reportTemplateDir, reportDir)
+	return err
 }
 
 func writeResultJsFile(reportDir string, jsContents []byte) error {
