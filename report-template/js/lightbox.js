@@ -213,12 +213,18 @@ function showLightbox(objLink)
 		// and the image placed outside the viewport
 		var lightboxTop = arrayPageScroll[1] + ((arrayPageSize[3] - 35 - imgPreload.height) / 2);
 		var lightboxLeft = ((arrayPageSize[0] - 20 - imgPreload.width) / 2);
-		
-		objLightbox.style.top = (lightboxTop < 0) ? "0px" : lightboxTop + "px";
-		objLightbox.style.left = (lightboxLeft < 0) ? "0px" : lightboxLeft + "px";
 
+        objLightbox.style.top = (lightboxTop < 0) ? "0px" : lightboxTop + "px";
 
-		objLightboxDetails.style.width = imgPreload.width + 'px';
+        if(imgPreload.width > arrayPageSize[3]) {
+            objLightbox.style.width = '95%';
+            objLightbox.style.marginLeft = 'auto';
+            objLightbox.style.marginRight = 'auto';
+        }else {
+            objLightbox.style.width = imgPreload.width + 'px';
+        }
+        objLightboxDetails.style.width = '100%';
+        objLightbox.style.maxWidth = imgPreload.width + 'px';
 		
 		if(objLink.getAttribute('title')){
 			objCaption.style.display = 'block';
@@ -374,7 +380,7 @@ function initLightbox()
 	var objLightbox = document.createElement("div");
 	objLightbox.setAttribute('id','lightbox');
 	objLightbox.style.display = 'none';
-	objLightbox.style.position = 'absolute';
+	objLightbox.style.position = 'relative';
 	objLightbox.style.zIndex = '100';	
 	objBody.insertBefore(objLightbox, objOverlay.nextSibling);
 	
