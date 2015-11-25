@@ -227,7 +227,7 @@ gaugeReport.controller('mainController', function ($scope) {
         return !!(typeof(item) === "string" && item.length <= 0);
     };
 
-    var myColors = ["#A3C273", "#FF6969", "#C6C8C1"];
+    var myColors = ["#27caa9", "#e73e48", "#999999"];
     d3.scale.myColors = function () {
         return d3.scale.ordinal().range(myColors);
     };
