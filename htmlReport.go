@@ -64,14 +64,14 @@ func (T timeStampedNameGenerator) randomName() string {
 func findPluginAndProjectRoot() {
 	projectRoot = os.Getenv(common.GaugeProjectRootEnv)
 	if projectRoot == "" {
-		fmt.Println("Environment variable '%s' is not set.", common.GaugeProjectRootEnv)
+		fmt.Printf("Environment variable '%s' is not set. \n", common.GaugeProjectRootEnv)
 		os.Exit(1)
 	}
 
 	var err error
 	pluginDir, err = os.Getwd()
 	if err != nil {
-		fmt.Println("Error finding current working directory: %s", err)
+		fmt.Printf("Error finding current working directory: %s \n", err)
 		os.Exit(1)
 	}
 }
@@ -101,11 +101,11 @@ func addDefaultPropertiesToProject() {
 		DefaultValue: "true"})
 
 	if !common.FileExists(defaultPropertiesFile) {
-		fmt.Println("Failed to setup html report plugin in project. Default properties file does not exist at %s.", defaultPropertiesFile)
+		fmt.Printf("Failed to setup html report plugin in project. Default properties file does not exist at %s. \n", defaultPropertiesFile)
 		return
 	}
 	if err := common.AppendProperties(defaultPropertiesFile, reportsDirProperty, overwriteReportProperty); err != nil {
-		fmt.Println("Failed to setup html report plugin in project: %s", err)
+		fmt.Printf("Failed to setup html report plugin in project: %s \n", err)
 		return
 	}
 	fmt.Println("Succesfully added configurations for html-report to env/default/default.properties")
@@ -119,10 +119,10 @@ func createReport(suiteResult *gauge_messages.SuiteExecutionResult) {
 	jsContents := generateJsFileContents(suiteResult)
 	reportDir, err := createHtmlReport(createReportsDirectory(), jsContents, getNameGen())
 	if err != nil {
-		fmt.Println("Report generation failed: %s", err)
+		fmt.Printf("Report generation failed: %s \n", err)
 		os.Exit(1)
 	} else {
-		fmt.Println("Successfully generated html-report to => %s", reportDir)
+		fmt.Printf("Sucessfully generated Html-report to => %s\n", reportDir)
 	}
 
 }
@@ -147,7 +147,7 @@ func createHtmlReport(reportsDir string, jsContents []byte, nameGen nameGenerato
 	createDirectory(currentReportDir)
 	err := copyReportTemplateFiles(currentReportDir)
 	if err != nil {
-		return "", errors.New(fmt.Sprintln("Error copying template directory :%s", err))
+		return "", errors.New(fmt.Sprintf("Error copying template directory :%s\n", err))
 	}
 	return currentReportDir, writeResultJsFile(currentReportDir, jsContents)
 }
@@ -171,7 +171,7 @@ func writeResultJsFile(reportDir string, jsContents []byte) error {
 	resultJsPath := filepath.Join(reportDir, "js", resultJsFile)
 	err := ioutil.WriteFile(resultJsPath, jsContents, common.NewFilePermissions)
 	if err != nil {
-		return errors.New(fmt.Sprintln("Failed to copy file: %s %s", resultJsFile, err))
+		return errors.New(fmt.Sprintf("Failed to copy file: %s %s\n", resultJsFile, err))
 	}
 	return nil
 }
@@ -218,7 +218,7 @@ func convertKeysToString(intKeyMap map[int32]string) map[string]string {
 func marshal(item interface{}) []byte {
 	marshalledResult, err := json.Marshal(item)
 	if err != nil {
-		fmt.Println("Failed to convert to json :%s", err)
+		fmt.Printf("Failed to convert to json :%s\n", err)
 		os.Exit(1)
 	}
 	return marshalledResult
@@ -229,7 +229,7 @@ func createDirectory(dir string) {
 		return
 	}
 	if err := os.MkdirAll(dir, common.NewDirectoryPermissions); err != nil {
-		fmt.Println("Failed to create directory %s: %s", defaultReportsDir, err)
+		fmt.Printf("Failed to create directory %s: %s\n", defaultReportsDir, err)
 		os.Exit(1)
 	}
 }
