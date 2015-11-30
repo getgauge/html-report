@@ -122,7 +122,7 @@ func createReport(suiteResult *gauge_messages.SuiteExecutionResult) {
 		fmt.Printf("Report generation failed: %s \n", err)
 		os.Exit(1)
 	} else {
-		fmt.Printf("Sucessfully generated Html-report to => %s\n", reportDir)
+		fmt.Printf("Successfully generated html-report to => %s\n", reportDir)
 	}
 
 }
