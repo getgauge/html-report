@@ -1,3 +1,20 @@
+/*Copyright 2015 ThoughtWorks, Inc.*/
+
+/*This file is part of getgauge/html-report.*/
+
+/*getgauge/html-report is free software: you can redistribute it and/or modify*/
+/*it under the terms of the GNU General Public License as published by*/
+/*the Free Software Foundation, either version 3 of the License, or*/
+/*(at your option) any later version.*/
+
+/*getgauge/html-report is distributed in the hope that it will be useful,*/
+/*but WITHOUT ANY WARRANTY; without even the implied warranty of*/
+/*MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the*/
+/*GNU General Public License for more details.*/
+
+/*You should have received a copy of the GNU General Public License*/
+/*along with getgauge/html-report.  If not, see <http://www.gnu.org/licenses/>.*/
+
 @import url(normalize.css);
 @import url(https://fonts.googleapis.com/css?family=Open+Sans:400,300,300italic,400italic,600,600italic,700,700italic,800,800italic);
 * {
@@ -337,6 +354,8 @@ header.top {
     display: inline-block;
     font-size: 14px;
     color: #999999; }
+  .scenario-head .tags {
+    margin: 0 0 10px 0; }
 
 .step {
   list-style-type: none;
@@ -417,5 +436,56 @@ footer {
     padding: 10px; }
   footer p {
     margin: 0; }
+
+.stacktrace {
+  /* These are technically the same, but use both */
+  overflow-wrap: break-word;
+  word-wrap: break-word;
+  -ms-word-break: break-all;
+  /* This is the dangerous one in WebKit, as it breaks things wherever */
+  word-break: break-all;
+  /* Instead use this non-standard one: */
+  word-break: break-word;
+  /* Adds a hyphen where the word breaks, if supported (No Blink) */
+  -ms-hyphens: auto;
+  -moz-hyphens: auto;
+  -webkit-hyphens: auto;
+  hyphens: auto; }
+
+.exception-container td.exception {
+  width: 70%; }
+.exception-container img {
+  max-width: 100%; }
+
+.execution-time {
+  margin: 10px 0 5px 0;
+  color: #999999;
+  font-weight: 400;
+  font-style: italic; }
+
+.nvtooltip {
+  position: absolute;
+  background-color: rgba(255, 255, 255, 0.8);
+  margin-top: -40px;
+  padding: 10px;
+  border: 1px solid #cecece; }
+
+.nvtooltip h3 {
+  font-size: 16px;
+  /*line-height: 24px;*/
+  margin: 0;
+  font-weight: bold; }
+
+.tags span:last-child:after {
+  content: "";
+}
+.tags span:after {
+  content: ",";
+}
+
+.failure_container{
+  margin:20px 0;
+}
+
 
 /*# sourceMappingURL=styles.css.map */

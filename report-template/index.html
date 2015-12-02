@@ -17,7 +17,7 @@
 
 <!doctype html>
 <html ng-app="gauge_report" id="ng-app">
-    <head>
+<head>
     <meta http-equiv="X-UA-Compatible" content="IE=9; IE=8; IE=7; IE=EDGE"/>
     <title>Gauge Test Results</title>
     <script src="js/angular.min.js"></script>
@@ -30,7 +30,7 @@
     <script src="js/nv.d3.min.js"></script>
     <script src="js/angular-nvd3.js"></script>
     <link rel="stylesheet" href="css/style.css"/>
-    
+
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.4.0/css/font-awesome.min.css">
     <link rel="stylesheet" href="css/angular-hovercard.css"/>
     <script type="text/ng-template" id="datatable.html">
@@ -52,7 +52,7 @@
     </script>
     <script type="text/ng-template" id="specialString.html">
         <div>
-            <pre>{{fragment.parameter.value}}</pre>
+            <p>{{fragment.parameter.value}}</p>
         </div>
     </script>
     <script type="text/ng-template" id="table.html">
@@ -72,7 +72,7 @@
     <script type="text/ng-template" id="item-render.html">
         <div ng-switch="itemTypesMap[item.itemType]">
             <div ng-switch-when="Comment">
-                <pre>{{item.comment.text}}</pre>
+                <p>{{item.comment.text}}</p>
             </div>
             <div ng-switch-when="Step" class="step">
                 {{setCurrentStep(item.step)}}
@@ -91,12 +91,13 @@
             <div ng-switch-when="Table">
                 <div ng-include src="'datatable.html'"></div>
             </div>
-           
+
             <div ng-switch-when="Scenario" class="scenarioItemsContainer">
-             <div class="scenario-container">
                 {{setCurrentScenario(item.scenario)}}
-                <div ng-include src="'scenario.html'"></div>
-            </div>
+                <div class="scenario-container"
+                     ng-class="{true:'failed', false:'passed', 'skipped':'skipped'}[getScenarioStatus(currentScenario)]">
+                    <div ng-include src="'scenario.html'"></div>
+                </div>
             </div>
 
             <div ng-switch-when="TableDrivenScenario">
@@ -106,61 +107,60 @@
         </div>
     </script>
     <script type="text/ng-template" id="step.html">
-        <h5 ng-show="currentStep.stepExecutionResult.executionResult != undefined">
+        <h5 ng-show="currentStep.stepExecutionResult.executionResult != undefined" class="execution-time">
             <span class="time">{{formattedTime(currentStep.stepExecutionResult.executionResult.executionTime, "Execution Time : ")}}</span>
         </h5>
         <div ng-class="{true:'failed', false:'passed', 'undefined':'not-executed', 'skipped':'skipped'}[getStatus(currentStep)]">
             <ul collapsable>
                 <li class="step">
                     <span ng-show="isConcept">{{ (collapse) ? "-" : "+" }}</span>
-                <span ng-repeat="fragment in currentStep.fragments">
-                    <span ng-switch="fragmentTypesMap[fragment.fragmentType]">
-                        <span ng-switch-when="Text">
+
+                    <div class="step-txt">
+                    <span ng-repeat="fragment in currentStep.fragments">
+                        <span ng-switch="fragmentTypesMap[fragment.fragmentType]">
+                            <span ng-switch-when="Text">
                             {{fragment.text}}
-                        </span>
-                        <span ng-switch-when="Parameter">
+                            </span><span ng-switch-when="Parameter">
                             <span ng-switch="paramTypesMap[fragment.parameter.parameterType]">
-                                <span ng-switch-when="Static" class="parameter">
-                                    "{{fragment.parameter.value}}"
+                                <span ng-switch-when="Static" class="parameter">"{{fragment.parameter.value}}"
                                 </span>
-                                <span ng-switch-when="Dynamic" class="parameter">
-                                    "{{fragment.parameter.value}}"
+                                <span ng-switch-when="Dynamic" class="parameter">"{{fragment.parameter.value}}"
                                 </span>
-                                <span ng-switch-when="Special_String">
-                                    <hovercard hover-tmpl-url="specialString.html">
-                                        &lt;{{fragment.parameter.name}}&gt;</hovercard>
+                                <span ng-switch-when="Special_String"><hovercard hover-tmpl-url="specialString.html">
+                                    &lt;{{fragment.parameter.name}}&gt;</hovercard>
                                 </span>
                                 <span ng-switch-when="Special_Table">
-                                        <hovercard hover-tmpl-url="parameterTableDetail.html">&lt;{{getFragmentName(fragment.parameter.name)}}&gt;</hovercard>
+                                    <hovercard hover-tmpl-url="parameterTableDetail.html">&lt;{{getFragmentName(fragment.parameter.name)}}&gt;</hovercard>
                                 </span>
-                                  <div ng-switch-when="Table" class="inline-table">
-                                      <div ng-include src="'table.html'"></div>
-                                  </div>
+                                <div ng-switch-when="Table" class="inline-table">
+                                    <div ng-include src="'table.html'"></div>
+                                </div>
+                            </span>
                             </span>
                         </span>
-                    </span>
-                </span>
+                    </span></div>
+                    <div class="error-container">
+                        <div ng-if="currentStep.stepExecutionResult.preHookFailure">
+                            {{setHookFailure(currentStep.stepExecutionResult.preHookFailure)}}
+                            <div class="error-heading">Before Step Failed: <span
+                                    class="error-message">{{hookFailure.errorMessage}}</span></div>
+                            <div ng-include src="'hook-failure.html'">
+                            </div>
+                        </div>
+                        <div ng-if="currentStep.stepExecutionResult.executionResult.failed && !isConcept">
+                            <div ng-include src="'step-failure.html'" class="failure_container"></div>
+                        </div>
+                        <div ng-if="currentStep.stepExecutionResult.postHookFailure">
+                            {{setHookFailure(currentStep.stepExecutionResult.postHookFailure)}}
+                            <div class="error-heading">After Step Failed: <span
+                                    class="error-message">{{hookFailure.errorMessage}}</span></div>
+                            <div ng-include src="'hook-failure.html'">
+                            </div>
+                        </div>
+                    </div>
                 </li>
             </ul>
-            <div class="error-container">
-                <div ng-if="currentStep.stepExecutionResult.preHookFailure">
-                    {{setHookFailure(currentStep.stepExecutionResult.preHookFailure)}}
-                    <div class="error-heading">Before Step Failed: <span
-                            class="error-message">{{hookFailure.errorMessage}}</span></div>
-                    <div ng-include src="'hook-failure.html'">
-                    </div>
-                </div>
-                <div ng-if="currentStep.stepExecutionResult.executionResult.failed && !isConcept">
-                    <div ng-include src="'step-failure.html'"></div>
-                </div>
-                <div ng-if="currentStep.stepExecutionResult.postHookFailure">
-                    {{setHookFailure(currentStep.stepExecutionResult.postHookFailure)}}
-                    <div class="error-heading">After Step Failed: <span
-                            class="error-message">{{hookFailure.errorMessage}}</span></div>
-                    <div ng-include src="'hook-failure.html'">
-                    </div>
-                </div>
-            </div>
+
             {{setCurrentExecutionResult(currentStep.stepExecutionResult)}}
             <div ng-include src="'step-messages.html'">
             </div>
@@ -185,7 +185,7 @@
         </div>
     </script>
     <script type="text/ng-template" id="nestedConceptStep.html">
-        <h5 ng-show="currentConceptStep.stepExecutionResult.executionResult != undefined">
+        <h5 ng-show="currentConceptStep.stepExecutionResult.executionResult != undefined" class="execution-time">
             <span class="time">{{formattedTime(currentConceptStep.stepExecutionResult.executionResult.executionTime, "Execution Time : ")}}</span>
         </h5>
         <div ng-class="{true:'failed', false:'passed', 'undefined':'not-executed'}[currentConceptStep.stepExecutionResult.executionResult.failed]">
@@ -288,17 +288,22 @@
     </script>
     <script type="text/ng-template" id="scenario.html">
         <div class="scenario-head">
-        <h3 class="head borderBottom"> {{currentScenario.scenarioHeading}} </h3>
-        <span class="time">{{formattedTime(currentScenario.executionTime)}}</span>
+            <h3 class="head borderBottom"> {{currentScenario.scenarioHeading}} </h3>
+            <span class="time">{{formattedTime(currentScenario.executionTime)}}</span>
+
+            <div ng-show="currentScenario.tags.length"
+                 class="tagsHolder scenario_tags contentSection">
+                <p class="tags">
+                    <strong>Tags:</strong>
+
+            <span ng-repeat="tag in currentScenario.tags">
+                {{tag}}
+            </span>
+                </p>
+            </div>
         </div>
 
-        <div ng-show="currentScenario.tags.length"
-             class="tagsHolder scenario_tags contentSection">
-            <span>Tags:</span>
-            <ul ng-repeat="tag in currentScenario.tags">
-                <li>{{tag}}</li>
-            </ul>
-        </div>
+
         <div class="error-container failed">
             <div ng-if="currentScenario.preHookFailure">
                 {{setHookFailure(currentScenario.preHookFailure)}}
@@ -327,7 +332,7 @@
             <tbody>
             <tr>
                 <td class="exception">
-                    <pre class="stacktrace"> {{hookFailure.stackTrace}}</pre>
+                    <pre class="stacktrace"> {{hookFailure.stackTrace}}</p>
                 </td>
                 <td class="screenshot-container" ng-show="hookFailure.screenShot">
                     <div>
@@ -347,9 +352,9 @@
             <tr>
                 <td class="exception">
                     <h4 class="error-message">
-                        <pre>{{currentStep.stepExecutionResult.executionResult.errorMessage}}</pre>
+                        <p>{{currentStep.stepExecutionResult.executionResult.errorMessage}}</p>
                     </h4>
-                    <pre class="stacktrace">{{currentStep.stepExecutionResult.executionResult.stackTrace}}</pre>
+                    <p class="stacktrace">{{currentStep.stepExecutionResult.executionResult.stackTrace}}</p>
                 </td>
                 <td class="screenshot-container" ng-show="currentStep.stepExecutionResult.executionResult.screenShot">
                     <div>
@@ -370,9 +375,9 @@
             <tr>
                 <td>
                     <h4 class="error-message">
-                        <pre>{{currentStep.stepExecutionResult.executionResult.errorMessage}}</pre>
+                        <p>{{currentStep.stepExecutionResult.executionResult.errorMessage}}</p>
                     </h4>
-                    <pre class="stacktrace"> {{currentStep.stepExecutionResult.executionResult.stackTrace}}</pre>
+                    <p class="stacktrace"> {{currentStep.stepExecutionResult.executionResult.stackTrace}}</p>
                 </td>
                 <td>
                     <div>
@@ -387,98 +392,111 @@
             </tbody>
         </table>
     </script>
-    </head>
-    <body ng-controller="mainController">
+</head>
+<body ng-controller="mainController">
 <header class="top">
-      <div class="header">
-    <div class="container">
-          <div class="logo"><img src="images/logo.png"></div>
-          <h2 class="project">Project: {{projectName}}</h2>
+    <div class="header">
+        <div class="container">
+            <div class="logo"><img src="images/logo.png"></div>
+            <h2 class="project">Project: {{projectName}}</h2>
         </div>
-  </div>
-    </header>
+    </div>
+</header>
 <main class="main-container">
-      <div class="container">
-    <div class="report-overview">
-          <div class="report_chart">
-        <div class="chart">
-              <nvd3 options="options" data="data"></nvd3>
-            </div>
-        <div class="total-specs" ng-click="showAllSpecs()"> <span class="value">{{totalSpecs}}</span> <span class="txt">Total specs</span> </div>
-      </div>
-          <div class="report_test-results">
-        <ul>
-              <li class="fail" ng-click="showFailedSpecs()"> <span class="value">{{failed}}</span> <span class="txt">Failed</span> </li>
-              <li class="pass" ng-click="showPassedSpecs()"> <span class="value">{{passed}}</span> <span class="txt">Passed</span> </li>
-              <li class="skip" ng-click="showSkippedSpecs()"> <span class="value">{{skipped}}</span> <span class="txt">Skipped</span> </li>
-            </ul>
-      </div>
-          <div class="report_details">
-        <ul>
-              <li ng-repeat="summaryItem in summaryItems" ng-if="!isEmpty(summaryItem.value)">
-            <label>{{summaryItem.key}} </label>
-            <span ng-class="{'value':true,'failed':summaryItem.failed}">{{summaryItem.value}}</span> </li>
-            </ul>
-      </div>
-        </div>
-    <div  class="specifications">
-    <aside class="sidebar">
-          <h3 class="title">Specifications</h3>
-          <div class="searchbar">
-        <input id="searchSpecifications" ng-model="specToSearch.specHeading" placeholder="type specification name" type="text"/>
-        <i class="fa fa-search"></i> </div>
-          
-          
-     <div id="listOfSpecifications">
-        <ul id="scenarios"
-                ng-init="setCurrentSpec($first,specResult)" class="spec-list">
-              <li ng-repeat="specResult in filteredListOfSpecs | filter:{protoSpec : specToSearch} | orderBy:'-failed'" ng-class="{'failed': specResult.failed,'passed': !specResult.failed,'selected': currentSpec === specResult,'skipped':specResult.skipped}"
-                    class="spec-name"
-                    ng-click="loadSpecification(specResult)"> <span id="scenarioName" class="scenarioname">{{specResult.protoSpec.specHeading}}</span> <span id="time" class="time">{{formattedTime(specResult.executionTime)}}</span> </li>
-            </ul>
-      </div>
-        </aside>
-    	<div class="congratulations" ng-show="allPassed()&&currentSpec==undefined">
-          <p>Congratulations! You've gone all <span class="green">green</span> and saved the environment!</p>
-        </div>
-        <div id="specificationContainer" class="details">
-          <header class="curr-spec" ng-if="currentSpec">
-            <h3 class="spec-head">{{currentSpec.protoSpec.specHeading}}</h3>
-            <span class="time">{{formattedTime(currentSpec.executionTime)}}</span>
-            <div ng-if="currentSpec.protoSpec.tags.length" class="tags scenario_tags contentSection"> <strong>Tags:</strong> <span ng-repeat="tag in currentSpec.protoSpec.tags"> {{tag}}</span> </div>
- 	      </header>
-          <div class="error-container failed">
-          <div class="content">
-	        <div ng-if="currentSpec.protoSpec.preHookFailure"> {{setHookFailure(currentSpec.protoSpec.preHookFailure)}}
-              <div collapsable class="error-heading">Before Spec Failed: <span class="error-message"><span
-                        class="error-message">{{hookFailure.errorMessage}}</span></span> </div>
-              <div ng-include src="'hook-failure.html'"> </div>
-            </div>
-       		 <div ng-if="currentSpec.protoSpec.postHookFailure"> {{setHookFailure(currentSpec.protoSpec.postHookFailure)}}
-              <div collapsable class="error-heading">After Spec Failed: <span class="error-message">{{hookFailure.errorMessage}}</span> </div>
-              <div ng-include src="'hook-failure.html'"> </div>
-            </div>
-         </div>
-     	 </div>
-          
-          <div id="specItemsContainer">
-          <div class="content">
-            <div ng-repeat="item in sort(currentSpec.protoSpec.items)">
-                  <div ng-include src="'item-render.html'"></div>
+    <div class="container">
+        <div class="report-overview">
+            <div class="report_chart">
+                <div class="chart">
+                    <nvd3 options="options" data="data"></nvd3>
                 </div>
-           </div>
-           </div>
-            {{initializeLightbox()}}
+                <div class="total-specs" ng-click="showAllSpecs()"><span class="value">{{totalSpecs}}</span> <span
+                        class="txt">Total specs</span></div>
             </div>
+            <div class="report_test-results">
+                <ul>
+                    <li class="fail" ng-click="showFailedSpecs()"><span class="value">{{failed}}</span> <span
+                            class="txt">Failed</span></li>
+                    <li class="pass" ng-click="showPassedSpecs()"><span class="value">{{passed}}</span> <span
+                            class="txt">Passed</span></li>
+                    <li class="skip" ng-click="showSkippedSpecs()"><span class="value">{{skipped}}</span> <span
+                            class="txt">Skipped</span></li>
+                </ul>
+            </div>
+            <div class="report_details">
+                <ul>
+                    <li ng-repeat="summaryItem in summaryItems" ng-if="!isEmpty(summaryItem.value)">
+                        <label>{{summaryItem.key}} </label>
+                        <span ng-class="{'value':true,'failed':summaryItem.failed}">{{summaryItem.value}}</span></li>
+                </ul>
             </div>
         </div>
-  </div>
-    </main>
+        <div class="specifications">
+            <aside class="sidebar">
+                <h3 class="title">Specifications</h3>
+
+                <div class="searchbar">
+                    <input id="searchSpecifications" ng-model="specToSearch.specHeading"
+                           placeholder="type specification name" type="text"/>
+                    <i class="fa fa-search"></i></div>
+
+
+                <div id="listOfSpecifications">
+                    <ul id="scenarios"
+                        ng-init="setCurrentSpec($first,specResult)" class="spec-list">
+                        <li ng-repeat="specResult in filteredListOfSpecs | filter:{protoSpec : specToSearch} | orderBy:'-failed'"
+                            ng-class="{'failed': specResult.failed,'passed': !specResult.failed,'selected': currentSpec === specResult,'skipped':specResult.skipped}"
+                            class="spec-name"
+                            ng-click="loadSpecification(specResult)"><span id="scenarioName" class="scenarioname">{{specResult.protoSpec.specHeading}}</span>
+                            <span id="time" class="time">{{formattedTime(specResult.executionTime)}}</span></li>
+                    </ul>
+                </div>
+            </aside>
+            <div class="congratulations" ng-show="allPassed()&&currentSpec==undefined">
+                <p>Congratulations! You've gone all <span class="green">green</span> and saved the environment!</p>
+            </div>
+            <div id="specificationContainer" class="details">
+                <header class="curr-spec" ng-if="currentSpec">
+                    <h3 class="spec-head">{{currentSpec.protoSpec.specHeading}}</h3>
+                    <span class="time">{{formattedTime(currentSpec.executionTime)}}</span>
+
+                    <div ng-if="currentSpec.protoSpec.tags.length" class="tags scenario_tags contentSection">
+                        <strong>Tags:</strong> <span ng-repeat="tag in currentSpec.protoSpec.tags"> {{tag}}</span></div>
+                </header>
+                <div class="error-container failed">
+                    <div class="content">
+                        <div ng-if="currentSpec.protoSpec.preHookFailure">
+                            {{setHookFailure(currentSpec.protoSpec.preHookFailure)}}
+                            <div collapsable class="error-heading">Before Spec Failed: <span class="error-message"><span
+                                    class="error-message">{{hookFailure.errorMessage}}</span></span></div>
+                            <div ng-include src="'hook-failure.html'"></div>
+                        </div>
+                        <div ng-if="currentSpec.protoSpec.postHookFailure">
+                            {{setHookFailure(currentSpec.protoSpec.postHookFailure)}}
+                            <div collapsable class="error-heading">After Spec Failed: <span class="error-message">{{hookFailure.errorMessage}}</span>
+                            </div>
+                            <div ng-include src="'hook-failure.html'"></div>
+                        </div>
+                    </div>
+                </div>
+
+                <div id="specItemsContainer">
+                    <div class="content">
+                        <div ng-repeat="item in sort(currentSpec.protoSpec.items)">
+                            <div ng-include src="'item-render.html'"></div>
+                        </div>
+                    </div>
+                </div>
+                {{initializeLightbox()}}
+            </div>
+        </div>
+    </div>
+    </div>
+</main>
 
 <footer class="footer">
-<div class="container">
-      <p>Generated by Gauge HTML Report.</p>
-      </div>
-    </footer>
+    <div class="container">
+        <p>Generated by Gauge HTML Report.</p>
+    </div>
+</footer>
 </body>
 </html>
