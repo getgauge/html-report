@@ -54,6 +54,7 @@ gaugeReport.controller('mainController', function ($scope) {
     $scope.conceptList = [];
     $scope.count = 0;
     $scope.isConcept = false;
+    $scope.tearDownSteps= [];
 
     $scope.allPassed = function () {
         return !$scope.result.failed
@@ -198,6 +199,10 @@ gaugeReport.controller('mainController', function ($scope) {
     $scope.setCurrentSpec = function (isFirst, specResult) {
         if (isFirst)
             $scope.currentSpec = specResult;
+    };
+
+    $scope.addTearDownSteps= function (steps) {
+        $scope.tearDownSteps = steps;
     };
 
     $scope.getStatus = function (step) {

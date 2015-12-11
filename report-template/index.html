@@ -326,6 +326,10 @@
         <div id="scenarioItemsContainer" ng-repeat="item in currentScenario.scenarioItems">
             <div ng-include src="'item-render.html'"></div>
         </div>
+        {{addTearDownSteps(currentScenario.tearDownSteps)}}
+        <div ng-repeat="item in currentScenario.tearDownSteps">
+            <div ng-include src="'item-render.html'" class="context-step"></div>
+        </div>
     </script>
     <script type="text/ng-template" id="hook-failure.html">
         <table class="exception-container">
@@ -482,6 +486,9 @@
                 <div id="specItemsContainer">
                     <div class="content">
                         <div ng-repeat="item in sort(currentSpec.protoSpec.items)">
+                            <div ng-include src="'item-render.html'"></div>
+                        </div>
+                        <div ng-repeat="item in tearDownSteps">
                             <div ng-include src="'item-render.html'"></div>
                         </div>
                     </div>
