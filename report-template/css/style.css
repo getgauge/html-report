@@ -453,6 +453,16 @@ header.top .project {
     position: absolute;
 }
 
+.scenario-container.skipped:before {
+    content: "";
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
+    background: #a1a1a1;
+    display: block;
+    position: absolute;
+}
+
 .scenario-container .passed {
     position: relative;
 }
@@ -595,7 +605,7 @@ input[type='text']:focus {
 }
 
 .skipped {
-    background-color: #C6C8C1;
+    background-color: #ececec;
 }
 
 .inline-table {
