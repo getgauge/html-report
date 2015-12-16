@@ -20,19 +20,17 @@
 <head>
     <meta http-equiv="X-UA-Compatible" content="IE=9; IE=8; IE=7; IE=EDGE"/>
     <title>Gauge Test Results</title>
-    <script src="js/angular.min.js"></script>
-    <script src="js/lightbox.js"></script>
-    <script src="js/gauge.js"></script>
-    <script src="js/result.js" charset="utf-8"></script>
-    <script src="js/angular-hovercard.js"></script>
-    <script data-require="angular.js@1.2.x" src="js/angular.js" data-semver="1.2.16"></script>
-    <script src="js/d3.min.js"></script>
-    <script src="js/nv.d3.min.js"></script>
-    <script src="js/angular-nvd3.js"></script>
-    <link rel="stylesheet" href="css/style.css"/>
 
-    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.4.0/css/font-awesome.min.css">
-    <link rel="stylesheet" href="css/angular-hovercard.css"/>
+    <link rel="shortcut icon" type="image/x-icon" href="images/favicon.ico">
+
+    <link rel="stylesheet" type="text/css"
+          href="https://fonts.googleapis.com/css?family=Roboto:400,300,300italic,400italic,600,600italic,700,700italic,800,800italic">
+    <link rel="stylesheet" type="text/css"
+          href="https://maxcdn.bootstrapcdn.com/font-awesome/4.4.0/css/font-awesome.min.css">
+    <link rel="stylesheet" type="text/css" href="css/normalize.css"/>
+    <link rel="stylesheet" type="text/css" href="css/angular-hovercard.css"/>
+    <link rel="stylesheet" type="text/css" href="css/style.css"/>
+
     <script type="text/ng-template" id="datatable.html">
         <table class="data-table">
             <tr>
@@ -47,14 +45,17 @@
             </tbody>
         </table>
     </script>
+
     <script type="text/ng-template" id="parameterTableDetail.html">
         <span ng-include src="'table.html'"></span>
     </script>
+
     <script type="text/ng-template" id="specialString.html">
         <div>
             <p>{{fragment.parameter.value}}</p>
         </div>
     </script>
+
     <script type="text/ng-template" id="table.html">
         <div>
             <table>
@@ -69,6 +70,7 @@
             </table>
         </div>
     </script>
+
     <script type="text/ng-template" id="item-render.html">
         <div ng-switch="itemTypesMap[item.itemType]">
             <div ng-switch-when="Comment">
@@ -106,6 +108,7 @@
             </div>
         </div>
     </script>
+
     <script type="text/ng-template" id="step.html">
         <h5 ng-show="currentStep.stepExecutionResult.executionResult != undefined" class="execution-time">
             <span class="time">{{formattedTime(currentStep.stepExecutionResult.executionResult.executionTime, "Execution Time : ")}}</span>
@@ -166,6 +169,7 @@
             </div>
         </div>
     </script>
+
     <script type="text/ng-template" id="step-messages.html">
         <div class="message-container" ng-init="collapseMessages=true" ng-click="collapseMessages = !collapseMessages">
             <h4 ng-show="currentExecutionResult.skipped">
@@ -184,6 +188,7 @@
             </div>
         </div>
     </script>
+
     <script type="text/ng-template" id="nestedConceptStep.html">
         <h5 ng-show="currentConceptStep.stepExecutionResult.executionResult != undefined" class="execution-time">
             <span class="time">{{formattedTime(currentConceptStep.stepExecutionResult.executionResult.executionTime, "Execution Time : ")}}</span>
@@ -245,6 +250,7 @@
             </div>
         </div>
     </script>
+
     <script type="text/ng-template" id="concept-steps.html">
         <div class="concept-steps">
             <div ng-repeat="step in item.concept.steps">
@@ -265,6 +271,7 @@
             </div>
         </div>
     </script>
+
     <script type="text/ng-template" id="nested-concept.html">
         <div class="concept-steps">
             <div ng-repeat="step in getTopConcept().steps">
@@ -286,6 +293,7 @@
             </div>
         </div>
     </script>
+
     <script type="text/ng-template" id="scenario.html">
         <div class="scenario-head">
             <h3 class="head borderBottom"> {{currentScenario.scenarioHeading}} </h3>
@@ -331,6 +339,7 @@
             <div ng-include src="'item-render.html'" class="context-step"></div>
         </div>
     </script>
+
     <script type="text/ng-template" id="hook-failure.html">
         <table class="exception-container">
             <tbody>
@@ -350,6 +359,7 @@
             </tbody>
         </table>
     </script>
+
     <script type="text/ng-template" id="step-failure.html">
         <table class="exception-container" ng-show="currentStep.stepExecutionResult.executionResult.failed">
             <tbody>
@@ -373,6 +383,7 @@
             </tbody>
         </table>
     </script>
+
     <script type="text/ng-template" id="conceptStep-failure.html">
         <table class="exception-container" ng-show="currentConceptStep.stepExecutionResult.executionResult.failed">
             <tbody>
@@ -397,6 +408,7 @@
         </table>
     </script>
 </head>
+
 <body ng-controller="mainController">
 <header class="top">
     <div class="header">
@@ -455,7 +467,7 @@
                     </ul>
                 </div>
             </aside>
-            <div class="congratulations" ng-show="allPassed()&&currentSpec==undefined">
+            <div class="congratulations details" ng-show="allPassed()&&currentSpec==undefined">
                 <p>Congratulations! You've gone all <span class="green">green</span> and saved the environment!</p>
             </div>
             <div id="specificationContainer" class="details">
@@ -497,7 +509,6 @@
             </div>
         </div>
     </div>
-    </div>
 </main>
 
 <footer class="footer">
@@ -505,5 +516,15 @@
         <p>Generated by Gauge HTML Report.</p>
     </div>
 </footer>
+
+<script src="js/angular.min.js"></script>
+<script src="js/angular-hovercard.js"></script>
+<script src="js/lightbox.js"></script>
+<script src="js/result.js" charset="utf-8"></script>
+<script src="js/d3.min.js"></script>
+<script src="js/nv.d3.min.js"></script>
+<script src="js/angular-nvd3.js"></script>
+<script src="js/gauge.js"></script>
+
 </body>
 </html>

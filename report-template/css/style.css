@@ -10,17 +10,16 @@
 /*GNU General Public License for more details.*/
 /*You should have received a copy of the GNU General Public License*/
 /*along with getgauge/html-report.  If not, see <http://www.gnu.org/licenses/>.*/
-@import url(normalize.css);
-@import url(https://fonts.googleapis.com/css?family=Open+Sans:400,300,300italic,400italic,600,600italic,700,700italic,800,800italic);
 
 * {
     box-sizing: border-box;
 }
 
 body {
-    font-family: 'Open Sans', sans-serif;
+    font-family: 'Roboto', sans-serif;
     margin: 0;
     padding: 0;
+    outline: 0;
     background: #5d5d5d;
     font-size: 14px;
 }
@@ -104,9 +103,14 @@ header.top .project {
     justify-content: space-around;
 }
 
+.report_chart .chart {
+  width: 50%;
+}
+
 .report_chart .total-specs {
     border-right: 5px solid #cccccc;
     padding: 10px;
+    cursor: pointer;
 }
 
 .report_chart .total-specs .value {
@@ -140,6 +144,7 @@ header.top .project {
 .report_test-results ul li {
     display: inline-block;
     padding: 0 10px;
+    cursor: pointer;
 }
 
 .report_details {
@@ -198,6 +203,10 @@ header.top .project {
 
 .specifications {
     background: #f5f5f5;
+    display: -webkit-box;
+    display: -webkit-flex;
+    display: -ms-flexbox;
+    display: flex;
 }
 
 .specifications:after {
@@ -210,7 +219,6 @@ header.top .project {
     background: #333333;
     color: #fff;
     width: 350px;
-    float: left;
 }
 
 .specifications .title {
@@ -328,9 +336,11 @@ header.top .project {
 }
 
 .details {
-    float: left;
-    width: 1050px;
+    -webkit-flex-grow: 1;
+    -moz-flex-grow: 1;
+    flex-grow: 1;
     padding: 0 0px 50px 0;
+    background-color: #ffffff;
 }
 
 .details:after {
@@ -340,7 +350,7 @@ header.top .project {
 }
 
 .details .content {
-    padding: 0 50px;
+    padding: 0.5rem 2rem;
     background: #fff;
 }
 
@@ -566,6 +576,7 @@ input[type='text']:focus {
 
 .congratulations .green {
     background-color: #27caa9;
+    color: #ffffff;
     font-size: 30px;
     padding: 3px;
 }
@@ -607,6 +618,7 @@ footer .container {
 
 footer p {
     margin: 0;
+    color: #aaaaaa;
 }
 
 .stacktrace {
