@@ -20,12 +20,12 @@ var gaugeReport = angular.module('gauge_report', ['yaru22.hovercard', 'nvd3']).c
     function ($compileProvider) {
         $compileProvider.aHrefSanitizationWhitelist(/^\s*(https?|ftp|mailto|chrome-extension|data):/);
     }]).directive('collapsable', function () {
-    return function ($scope, $element) {
-        $element.bind('click', function () {
-            $element.parent().toggleClass("collapsed");
-        });
-    };
-});
+        return function ($scope, $element) {
+            $element.bind('click', function () {
+                $element.parent().toggleClass("collapsed");
+            });
+        };
+    });
 
 function init() {
     (function addIndexOf() {
@@ -37,7 +37,7 @@ function init() {
                     }
                 }
                 return -1;
-            }
+            };
         }
     })();
 }
@@ -57,7 +57,7 @@ gaugeReport.controller('mainController', function ($scope) {
     $scope.tearDownSteps= [];
 
     $scope.allPassed = function () {
-        return !$scope.result.failed
+        return !$scope.result.failed;
     };
 
     $scope.loadSpecification = function (specification) {
@@ -67,7 +67,7 @@ gaugeReport.controller('mainController', function ($scope) {
     $scope.initializeLightbox = initLightbox;
 
     $scope.setDataTableIndex = function (index) {
-        $scope.dataTableIndex = index
+        $scope.dataTableIndex = index;
     };
 
     $scope.isRowFailure = function (index) {
@@ -75,43 +75,43 @@ gaugeReport.controller('mainController', function ($scope) {
         if (failedRows === undefined)
             return false;
         else
-            return failedRows.indexOf(index) != -1
+            return failedRows.indexOf(index) != -1;
     };
 
     $scope.setCurrentStep = function (step) {
         $scope.currentStep = null;
-        if (step) $scope.currentStep = step
+        if (step) $scope.currentStep = step;
     };
 
     $scope.setCurrentConceptStep = function (step) {
         $scope.currentConceptStep = null;
-        if (step) $scope.currentConceptStep = step
+        if (step) $scope.currentConceptStep = step;
     };
 
     $scope.setCurrentExecutionResult = function (result) {
         $scope.currentExecutionResult = null;
-        if (result) $scope.currentExecutionResult = result
+        if (result) $scope.currentExecutionResult = result;
     };
 
     $scope.setConcept = function (concept) {
-        $scope.isConcept = false
+        $scope.isConcept = false;
         if (concept) {
-            $scope.isConcept = true
-            $scope.conceptList.push(concept)
-            $scope.currentStep = concept.conceptStep
+            $scope.isConcept = true;
+            $scope.conceptList.push(concept);
+            $scope.currentStep = concept.conceptStep;
         }
     };
 
     $scope.getTopConcept = function () {
-        return $scope.conceptList.pop()
+        return $scope.conceptList.pop();
     };
 
     $scope.setCurrentScenario = function (scenario) {
-        $scope.currentScenario = scenario
+        $scope.currentScenario = scenario;
     };
 
     $scope.getFragmentName = function (name) {
-        return name || "table"
+        return name || "table";
     };
 
     $scope.setHookFailure = function (hookFailure) {
@@ -119,7 +119,7 @@ gaugeReport.controller('mainController', function ($scope) {
     };
 
     $scope.hookFailureType = function () {
-        return $scope.isPreHookFailure ? "Before-hook failure" : "After-hook failure"
+        return $scope.isPreHookFailure ? "Before-hook failure" : "After-hook failure";
     };
 
     $scope.isNewLine = function (text) {
@@ -127,7 +127,7 @@ gaugeReport.controller('mainController', function ($scope) {
     };
 
     $scope.formattedTime = function (timeInMs, prefix) {
-        if (timeInMs == undefined) return "";
+        if (timeInMs === undefined) return "";
         var sec = Math.floor(timeInMs / 1000);
 
         var min = Math.floor(sec / 60);
@@ -147,16 +147,21 @@ gaugeReport.controller('mainController', function ($scope) {
     }
 
     $scope.getScreenshotSrc = function (screenshot) {
-        return "data:image/png;base64," + screenshot
+        return "data:image/png;base64," + screenshot;
     };
 
     $scope.sort = function (items) {
-        if (!items) return;
+        if (!items) return true;
         var passedScenarios = [];
         var failedScenarios = [];
         return items.filter(function (item) {
-            if (itemTypesMap[item.itemType] != "Scenario") return true;
-            item.scenario.failed ? failedScenarios.push(item) : passedScenarios.push(item);
+            if (itemTypesMap[item.itemType] !== "Scenario") return true;
+            if (item.scenario.failed) {
+                failedScenarios.push(item);
+            } else {
+                passedScenarios.push(item);
+            }
+            return false;
         }).concat(failedScenarios).concat(passedScenarios);
     };
 
@@ -166,7 +171,7 @@ gaugeReport.controller('mainController', function ($scope) {
         var specs = [];
         angular.forEach($scope.result.specResults, function(specRes){
             if (specRes.failed) {
-                specs.push(specRes)
+                specs.push(specRes);
             }
         });
         $scope.filteredListOfSpecs = specs;
@@ -176,7 +181,7 @@ gaugeReport.controller('mainController', function ($scope) {
         var specs = [];
         angular.forEach($scope.result.specResults, function(specRes){
             if (!specRes.failed && !specRes.skipped) {
-                specs.push(specRes)
+                specs.push(specRes);
             }
         });
         $scope.filteredListOfSpecs = specs;
@@ -186,7 +191,7 @@ gaugeReport.controller('mainController', function ($scope) {
         var specs = [];
         angular.forEach($scope.result.specResults, function(specRes){
             if (specRes.skipped) {
-                specs.push(specRes)
+                specs.push(specRes);
             }
         });
         $scope.filteredListOfSpecs = specs;
@@ -208,16 +213,15 @@ gaugeReport.controller('mainController', function ($scope) {
     $scope.getStatus = function (step) {
         if (step.stepExecutionResult.skipped)
             return "skipped";
-        else if (step.stepExecutionResult.executionResult) {
+        if (step.stepExecutionResult.executionResult)
             return step.stepExecutionResult.executionResult.failed;
-        }
-        return undefined
+        return undefined;
     };
 
     $scope.getScenarioStatus = function (scenario) {
         if (scenario.skipped)
             return "skipped";
-        return scenario.failed
+        return scenario.failed;
     };
 
     $scope.summaryItems = [{
