@@ -17,11 +17,12 @@
 
 body {
     font-family: 'Roboto', sans-serif;
+    font-size: 16px;
+    font-weight: 400;
     margin: 0;
     padding: 0;
     outline: 0;
     background: #5d5d5d;
-    font-size: 14px;
 }
 
 p {
@@ -63,7 +64,7 @@ header.top .project {
     float: right;
     margin: 13px 10px 0;
     font-weight: normal;
-    font-size: 20px;
+    font-size: 1.25rem;
 }
 
 .report-overview {
@@ -114,12 +115,11 @@ header.top .project {
 }
 
 .report_chart .total-specs .value {
-    font-size: 60px;
-    font-weight: 300;
+    font-size: 3.5rem;
 }
 
 .value {
-    font-size: 50px;
+    font-size: 3.125rem;
     font-weight: 400;
     display: block;
     text-align: right;
@@ -159,13 +159,12 @@ header.top .project {
     display: block;
     float: left;
     margin-bottom: 10px;
-    font-size: 14px;
+    font-size: 0.8rem;
 }
 
 .report_details label {
     clear: both;
     width: 130px;
-    font-weight: 300;
 }
 
 .report_details span {
@@ -223,7 +222,7 @@ header.top .project {
 
 .specifications .title {
     font-weight: 300;
-    font-size: 18px;
+    font-size: 1.125rem;
     margin: 20px 20px 10px;
     color: #fff;
 }
@@ -238,7 +237,7 @@ header.top .project {
     display: block;
     line-height: 30px;
     padding: 0 40px 0 10px;
-    font-size: 14px;
+    font-size: 0.8rem;
 }
 
 .specifications .searchbar .fa {
@@ -352,6 +351,7 @@ header.top .project {
 .details .content {
     padding: 0.5rem 2rem;
     background: #fff;
+    font-size: 0.9rem;
 }
 
 .details .content:after {
@@ -409,7 +409,7 @@ header.top .project {
 
 .curr-spec .tags strong {
     color: #fff;
-    font-size: 15px;
+    font-size: 0.8rem;
 }
 
 .curr-spec .tags span:last-child:after {
@@ -499,7 +499,7 @@ header.top .project {
 
 .scenario-head .time {
     display: inline-block;
-    font-size: 14px;
+    font-size: 0.8rem;
     color: #999999;
 }
 
@@ -568,7 +568,7 @@ input[type='text']:focus {
 }
 
 .congratulations {
-    font-size: 25px;
+    font-size: 1.5rem;
     text-align: center;
     display: block;
     padding-top: 50px;
@@ -577,8 +577,8 @@ input[type='text']:focus {
 .congratulations .green {
     background-color: #27caa9;
     color: #ffffff;
-    font-size: 30px;
-    padding: 3px;
+    font-size: 1.75rem;
+    padding: 0.3rem;
 }
 
 #congratulationsHidden {
@@ -619,6 +619,7 @@ footer .container {
 footer p {
     margin: 0;
     color: #aaaaaa;
+    font-size: 0.8rem;
 }
 
 .stacktrace {
@@ -648,7 +649,6 @@ footer p {
 .execution-time {
     margin: 10px 0 5px 0;
     color: #999999;
-    font-weight: 400;
     font-style: italic;
 }
 
@@ -661,7 +661,7 @@ footer p {
 }
 
 .nvtooltip h3 {
-    font-size: 16px;
+    font-size: 1rem;
     /*line-height: 24px;*/
     margin: 0;
     font-weight: bold;
