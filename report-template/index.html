@@ -305,7 +305,7 @@
                     <strong>Tags:</strong>
 
             <span ng-repeat="tag in currentScenario.tags">
-                {{tag}}
+                {{tag}}{{$last ? '' : ', '}}
             </span>
                 </p>
             </div>
@@ -476,7 +476,7 @@
                     <span class="time">{{formattedTime(currentSpec.executionTime)}}</span>
 
                     <div ng-if="currentSpec.protoSpec.tags.length" class="tags scenario_tags contentSection">
-                        <strong>Tags:</strong> <span ng-repeat="tag in currentSpec.protoSpec.tags"> {{tag}}</span></div>
+                        <strong>Tags:</strong><span ng-repeat="tag in currentSpec.protoSpec.tags"> {{tag}}</span></div>
                 </header>
                 <div class="error-container failed">
                     <div class="content">
