@@ -345,7 +345,7 @@
             <tbody>
             <tr>
                 <td class="exception">
-                    <pre class="stacktrace"> {{hookFailure.stackTrace}}</p>
+                    <pre class="stacktrace"> {{hookFailure.stackTrace}}</pre>
                 </td>
                 <td class="screenshot-container" ng-show="hookFailure.screenShot">
                     <div>
@@ -368,7 +368,7 @@
                     <h4 class="error-message">
                         <p>{{currentStep.stepExecutionResult.executionResult.errorMessage}}</p>
                     </h4>
-                    <p class="stacktrace">{{currentStep.stepExecutionResult.executionResult.stackTrace}}</p>
+                    <pre class="stacktrace">{{currentStep.stepExecutionResult.executionResult.stackTrace}}</pre>
                 </td>
                 <td class="screenshot-container" ng-show="currentStep.stepExecutionResult.executionResult.screenShot">
                     <div>
