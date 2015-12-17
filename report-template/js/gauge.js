@@ -283,9 +283,16 @@ gaugeReport.controller('mainController', function ($scope) {
     };
 
     $scope.totalSpecs = $scope.result.specResults.length;
-    $scope.passed = $scope.result.specResults.length - $scope.result.specsFailedCount - $scope.result.specsSkippedCount;
-    $scope.failed = $scope.result.specsFailedCount;
-    $scope.skipped = $scope.result.specsSkippedCount;
+    $scope.passed = 0;
+    $scope.failed = 0;
+    $scope.skipped = 0;
+
+    $scope.result.specResults.forEach(function (spec) {
+        if (spec.skipped) $scope.skipped++;
+        if (spec.failed) $scope.failed++;
+        if (!spec.skipped && !spec.failed) $scope.passed++;
+    });
+
     $scope.projectName = $scope.result.projectName;
 
     $scope.data = [
