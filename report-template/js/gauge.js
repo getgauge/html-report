@@ -242,6 +242,19 @@ gaugeReport.controller('mainController', function ($scope) {
         return !!(typeof(item) === "string" && item.length <= 0);
     };
 
+    $scope.searchItems = function (searchQuery) {
+        return function (spec) {
+            if (!searchQuery) return true;
+            var tagMatches = spec.protoSpec.items.filter(function (item) {
+                if (!item.tags) return false;
+                if (item.tags.tags) item.tags = item.tags.tags;
+                return item.tags.join(" ").toLowerCase().indexOf(searchQuery.toLowerCase()) > -1;
+            });
+            if (tagMatches.length) return true;
+            return spec.protoSpec.specHeading.toLowerCase().indexOf(searchQuery.toLowerCase()) > -1;
+        };
+    };
+
     var myColors = ["#27caa9", "#e73e48", "#999999"];
     d3.scale.myColors = function () {
         return d3.scale.ordinal().range(myColors);

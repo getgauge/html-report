@@ -451,15 +451,15 @@
                 <h3 class="title">Specifications</h3>
 
                 <div class="searchbar">
-                    <input id="searchSpecifications" ng-model="specToSearch.specHeading"
-                           placeholder="type specification name" type="text"/>
+                    <input id="searchSpecifications" ng-model="searchQuery"
+                           placeholder="Type specification or tag name" type="text"/>
                     <i class="fa fa-search"></i></div>
 
 
                 <div id="listOfSpecifications">
                     <ul id="scenarios"
                         ng-init="setCurrentSpec($first,specResult)" class="spec-list">
-                        <li ng-repeat="specResult in filteredListOfSpecs | filter:{protoSpec : specToSearch} | orderBy:'-failed'"
+                        <li ng-repeat="specResult in filteredListOfSpecs | filter: searchItems(searchQuery) | orderBy:'-failed'"
                             ng-class="{'failed': specResult.failed,'passed': !specResult.failed,'selected': currentSpec === specResult,'skipped':specResult.skipped}"
                             class="spec-name"
                             ng-click="loadSpecification(specResult)"><span id="scenarioName" class="scenarioname">{{specResult.protoSpec.specHeading}}</span>
