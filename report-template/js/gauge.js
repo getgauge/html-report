@@ -246,13 +246,25 @@ gaugeReport.controller('mainController', function ($scope) {
         return function (spec) {
             if (!searchQuery) return true;
             var tagMatches = spec.protoSpec.items.filter(function (item) {
-                if (!item.tags) return false;
-                if (item.tags.tags) item.tags = item.tags.tags;
-                return item.tags.join(" ").toLowerCase().indexOf(searchQuery.toLowerCase()) > -1;
+                var searchList = [];
+                if (item.scenario) searchList.push(item.scenario.scenarioHeading);
+                if (item.scenario && item.scenario.tags) searchList = searchList.concat(item.scenario.tags);
+                if (item.tags && item.tags.tags) searchList = searchList.concat(item.tags.tags);
+                return searchList.join(" ").toLowerCase().indexOf(searchQuery.toLowerCase()) > -1;
             });
             if (tagMatches.length) return true;
             return spec.protoSpec.specHeading.toLowerCase().indexOf(searchQuery.toLowerCase()) > -1;
         };
+    };
+
+    $scope.showScenario = function (item) {
+        if (!$scope.searchQuery) return true;
+        if (item.scenarioHeading.toLowerCase().indexOf($scope.searchQuery.toLowerCase()) < 0) {
+            if (item.tags) return item.tags.join(" ").toLowerCase().indexOf($scope.searchQuery.toLowerCase()) > -1;
+        } else {
+            return true;
+        }
+        return false;
     };
 
     var myColors = ["#27caa9", "#e73e48", "#999999"];

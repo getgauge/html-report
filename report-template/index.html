@@ -94,7 +94,7 @@
                 <div ng-include src="'datatable.html'"></div>
             </div>
 
-            <div ng-switch-when="Scenario" class="scenarioItemsContainer">
+            <div ng-switch-when="Scenario" class="scenarioItemsContainer" ng-show="showScenario(currentScenario)">
                 {{setCurrentScenario(item.scenario)}}
                 <div class="scenario-container"
                      ng-class="{true:'failed', false:'passed', 'skipped':'skipped'}[getScenarioStatus(currentScenario)]">
