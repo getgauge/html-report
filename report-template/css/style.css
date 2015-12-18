@@ -378,6 +378,48 @@ header.top .project {
     background: #cccccc;
 }
 
+.details .data-table {
+    border-collapse: collapse;
+    border: 1px solid #cccccc;
+    border-bottom: 0;
+    border-right: 0;
+}
+
+.details .data-table td {
+    color: #000000;
+    border-bottom: 1px solid #cccccc;
+    border-right: 1px solid #cccccc;
+    padding: 10px;
+    cursor: pointer;
+    opacity: 0.75;
+}
+
+.data-table tr.passed td {
+    background-color: #27CAA9;
+}
+
+.data-table tr.failed td {
+    background-color: #E73E48;
+    color: #ffffff;
+}
+
+.data-table tr.skipped td {
+    background-color: #999999;
+    color: #000000;
+}
+
+.data-table tr.selected td {
+    opacity: 1;
+}
+
+.data-table tr.selected td:first-child {
+    border-left: 4px solid #0085C9;
+}
+
+.data-table tr:hover td {
+    opacity: 0.9;
+}
+
 .curr-spec {
     padding: 10px 20px;
     color: #fff;
@@ -522,6 +564,7 @@ header.top .project {
     list-style-type: none;
     margin: 0;
     padding: 0;
+    color: #333333;
 }
 
 .step ul {
