@@ -387,8 +387,8 @@ header.top .project {
 
 .details .data-table td {
     color: #000000;
-    border-bottom: 1px solid #cccccc;
-    border-right: 1px solid #cccccc;
+    border-bottom: none;
+    border-right: none;
     padding: 10px;
     cursor: pointer;
     opacity: 0.75;
