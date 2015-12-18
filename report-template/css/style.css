@@ -640,6 +640,12 @@ footer p {
 
 .exception-container td.exception {
     width: 70%;
+    max-width: 40rem;
+    overflow: scroll;
+}
+
+.exception .stacktrace {
+    max-width: 100%;
 }
 
 .exception-container td.screenshot-container {
