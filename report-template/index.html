@@ -116,10 +116,10 @@
         <div ng-class="{true:'failed', false:'passed', 'undefined':'not-executed', 'skipped':'skipped'}[getStatus(currentStep)]">
             <ul collapsable>
                 <li class="step">
-                    <span ng-show="isConcept">{{ (collapse) ? "-" : "+" }}</span>
 
                     <div class="step-txt">
-                    <span ng-repeat="fragment in currentStep.fragments">
+                        <span ng-show="isConcept">{{ (collapse) ? "-" : "+" }}</span>
+                        <span ng-repeat="fragment in currentStep.fragments">
                         <span ng-switch="fragmentTypesMap[fragment.fragmentType]">
                             <span ng-switch-when="Text">
                             {{fragment.text}}
