@@ -726,4 +726,46 @@ footer p {
     margin: 20px 0;
 }
 
+/* Lightbox styles */
+
+#lightbox {
+    background-color:#eee;
+    margin-left: 10%;
+    padding: 1rem;
+    width: 80%;
+    max-height: 90%;
+    border-bottom: 2px solid #666;
+    border-right: 2px solid #666;
+}
+#lightboxDetails {
+    font-size: 0.8rem;
+    padding-top: 0.4rem;
+}
+#lightboxCaption{ float: left; }
+#keyboardMsg{ float: right; }
+#closeButton{
+    top: 5px;
+    right: 5px;
+}
+#lightbox img {
+    border: none;
+    clear: both;
+    max-width: 100%;
+    max-height: 100%;
+    text-align: center;
+}
+#overlay img { border: none; }
+
+#overlay { background-image: url(../images/overlay.png); }
+
+* html #overlay{
+	background-color: #333;
+	back\ground-color: transparent;
+	background-image: url(../images/blank.gif);
+	filter: progid:DXImageTransform.Microsoft.AlphaImageLoader(src="../images/overlay.png", sizingMethod="scale");
+}
+
+
+/* End Lightbox styles */
+
 /*# sourceMappingURL=styles.css.map */
