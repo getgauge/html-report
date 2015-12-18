@@ -104,7 +104,10 @@
 
             <div ng-switch-when="TableDrivenScenario">
                 {{setCurrentScenario(item.tableDrivenScenario.scenarios[dataTableIndex])}}
-                <div ng-include src="'scenario.html'"></div>
+                <div class="scenario-container"
+                     ng-class="{true:'failed', false:'passed', 'skipped':'skipped'}[getScenarioStatus(currentScenario)]">
+                    <div ng-include src="'scenario.html'"></div>
+                </div>
             </div>
         </div>
     </script>
