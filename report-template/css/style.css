@@ -620,7 +620,7 @@ input[type='text']:focus {
     background-color: white !important;
 }
 
-.congratulations {
+.congratulations, .spec-click {
     font-size: 1.5rem;
     text-align: center;
     display: block;
@@ -632,6 +632,10 @@ input[type='text']:focus {
     color: #ffffff;
     font-size: 1.75rem;
     padding: 0.3rem;
+}
+
+.spec-click {
+  background: #ffffff url("../images/leftarrow.png") no-repeat scroll 17% 75%;
 }
 
 #congratulationsHidden {

@@ -473,6 +473,9 @@
             <div class="congratulations details" ng-show="allPassed()&&currentSpec==undefined">
                 <p>Congratulations! You've gone all <span class="green">green</span> and saved the environment!</p>
             </div>
+            <div class="spec-click details" ng-show="!allPassed()&&currentSpec==undefined">
+                <p>Click on a specification to view details.</p>
+            </div>
             <div id="specificationContainer" class="details">
                 <header class="curr-spec" ng-if="currentSpec">
                     <h3 class="spec-head">{{currentSpec.protoSpec.specHeading}}</h3>
