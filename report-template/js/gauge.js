@@ -174,6 +174,7 @@ gaugeReport.controller('mainController', function ($scope) {
                 specs.push(specRes);
             }
         });
+        $scope.setCurrentSpec(true, specs[0]);
         $scope.filteredListOfSpecs = specs;
     };
 
@@ -184,6 +185,7 @@ gaugeReport.controller('mainController', function ($scope) {
                 specs.push(specRes);
             }
         });
+        $scope.loadSpecification(specs[0]);
         $scope.filteredListOfSpecs = specs;
     };
 
@@ -194,10 +196,12 @@ gaugeReport.controller('mainController', function ($scope) {
                 specs.push(specRes);
             }
         });
+        $scope.loadSpecification(specs[0]);
         $scope.filteredListOfSpecs = specs;
     };
 
     $scope.showAllSpecs = function (){
+        $scope.loadSpecification($scope.result.specResults[0]);
         $scope.filteredListOfSpecs = $scope.result.specResults;
     };
 
