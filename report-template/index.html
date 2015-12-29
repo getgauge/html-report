@@ -460,11 +460,11 @@
 
 
                 <div id="listOfSpecifications">
-                    <ul id="scenarios"
-                        ng-init="setCurrentSpec($first,specResult)" class="spec-list">
+                    <ul id="scenarios" class="spec-list">
                         <li ng-repeat="specResult in filteredListOfSpecs | filter: searchItems(searchQuery) | orderBy:'-failed'"
                             ng-class="{'failed': specResult.failed,'passed': !specResult.failed,'selected': currentSpec === specResult,'skipped':specResult.skipped}"
                             class="spec-name"
+                            ng-init="setCurrentSpec($first, specResult)"
                             ng-click="loadSpecification(specResult)"><span id="scenarioName" class="scenarioname">{{specResult.protoSpec.specHeading}}</span>
                             <span id="time" class="time">{{formattedTime(specResult.executionTime)}}</span></li>
                     </ul>
@@ -472,9 +472,6 @@
             </aside>
             <div class="congratulations details" ng-show="allPassed()&&currentSpec==undefined">
                 <p>Congratulations! You've gone all <span class="green">green</span> and saved the environment!</p>
-            </div>
-            <div class="spec-click details" ng-show="!allPassed()&&currentSpec==undefined">
-                <p>Click on a specification to view details.</p>
             </div>
             <div id="specificationContainer" class="details">
                 <header class="curr-spec" ng-if="currentSpec">

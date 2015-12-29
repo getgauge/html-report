@@ -202,7 +202,7 @@ gaugeReport.controller('mainController', function ($scope) {
     };
 
     $scope.setCurrentSpec = function (isFirst, specResult) {
-        if (isFirst)
+        if (isFirst && specResult.failed)
             $scope.currentSpec = specResult;
     };
 
