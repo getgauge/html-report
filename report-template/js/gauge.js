@@ -27,7 +27,7 @@ var gaugeReport = angular.module('gauge_report', ['yaru22.hovercard', 'nvd3']).c
         };
     });
 
-function init() {
+function initialize() {
     (function addIndexOf() {
         if (!Array.prototype.indexOf) {
             Array.prototype.indexOf = function (obj, start) {
@@ -43,7 +43,7 @@ function init() {
 }
 
 gaugeReport.controller('mainController', function ($scope) {
-    init();
+    initialize();
     $scope.result = gaugeExecutionResult.suiteResult;
     $scope.itemTypesMap = itemTypesMap;
     $scope.paramTypesMap = parameterTypesMap;
