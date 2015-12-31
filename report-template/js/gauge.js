@@ -19,6 +19,12 @@ var gaugeReport = angular.module('gauge_report', ['yaru22.hovercard', 'nvd3']).c
     '$compileProvider',
     function ($compileProvider) {
         $compileProvider.aHrefSanitizationWhitelist(/^\s*(https?|ftp|mailto|chrome-extension|data|file):/);
+    }]).config( ['$provide', function ($provide){
+        $provide.decorator('$sniffer', ['$delegate', function ($delegate) {
+            $delegate.history = false;
+            return $delegate;
+        }]);
+
     }]).directive('collapsable', function () {
         return function ($scope, $element) {
             $element.bind('click', function () {
