@@ -269,6 +269,15 @@ gaugeReport.controller('mainController', function ($scope) {
 
     $scope.showScenario = function (item) {
         if (!$scope.searchQuery) return true;
+        if (item.contexts && item.contexts.length) {
+            var matchedContexts = item.contexts.filter(function (context) {
+                if (context.step && context.step.parsedText) {
+                    return context.step.parsedText.indexOf($scope.searchQuery.toLowerCase()) > -1;
+                }
+                return false;
+            });
+            if (matchedContexts.length > 0) return true;
+        }
         if (item.scenarioHeading.toLowerCase().indexOf($scope.searchQuery.toLowerCase()) < 0) {
             if (item.tags) return item.tags.join(" ").toLowerCase().indexOf($scope.searchQuery.toLowerCase()) > -1;
         } else {
