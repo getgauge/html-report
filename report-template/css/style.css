@@ -382,13 +382,14 @@ header.top .project {
     border: 1px solid #cccccc;
     border-bottom: 0;
     border-right: 0;
+    margin-bottom: 1.75rem;
 }
 
 .details .data-table td {
     color: #000000;
     border-bottom: none;
     border-right: none;
-    padding: 10px;
+    padding: 0.5rem 1rem;
     cursor: pointer;
     opacity: 0.75;
 }
