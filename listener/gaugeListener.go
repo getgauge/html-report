@@ -71,12 +71,12 @@ func (gaugeListener *GaugeListener) processMessages(buffer *bytes.Buffer) {
 				log.Printf("Failed to read proto message: %s\n", err.Error())
 			} else {
 				if *message.MessageType == gauge_messages.Message_KillProcessRequest {
+					gaugeListener.connection.Close()
 					os.Exit(0)
 				}
 				if *message.MessageType == gauge_messages.Message_SuiteExecutionResult {
 					result := message.GetSuiteExecutionResult()
 					gaugeListener.onResultHandler(result)
-					gaugeListener.connection.Close()
 				}
 				buffer.Next(messageBoundary)
 				if buffer.Len() == 0 {
