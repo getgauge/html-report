@@ -15,7 +15,7 @@
 // You should have received a copy of the GNU General Public License
 // along with getgauge/html-report.  If not, see <http://www.gnu.org/licenses/>.
 
-var gaugeReport = angular.module('gauge_report', ['yaru22.hovercard', 'nvd3']).config([
+var gaugeReport = angular.module('gauge_report', ['yaru22.hovercard', 'nvd3', 'ngSanitize']).config([
     '$compileProvider',
     function ($compileProvider) {
         $compileProvider.aHrefSanitizationWhitelist(/^\s*(https?|ftp|mailto|chrome-extension|data|file):/);
@@ -343,5 +343,9 @@ gaugeReport.controller('mainController', function ($scope) {
             score: $scope.skipped
         }
     ];
+
+    $scope.parseComments = function (items) {
+        return items && items.length ? marked(items.map(function (x) { return x.comment && x.comment.text; } ).join("").trim().split("\n").join("\n\n")) : null;
+    };
 
 });

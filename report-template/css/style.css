@@ -29,6 +29,13 @@ p {
     margin: 10px 0;
 }
 
+blockquote {
+	font-style: italic;
+	border-left: 0.25rem solid #333;
+	margin-left: 0;
+	padding-left: 1rem;
+}
+
 .container {
     margin: 0 auto;
     background: #fff;
