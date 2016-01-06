@@ -15,6 +15,8 @@
 // You should have received a copy of the GNU General Public License
 // along with getgauge/html-report.  If not, see <http://www.gnu.org/licenses/>.
 
+marked.setOptions({ gfm: true, sanitize: true, tables: true, breaks: true, smartLists: true });
+
 var gaugeReport = angular.module('gauge_report', ['yaru22.hovercard', 'nvd3', 'ngSanitize']).config([
     '$compileProvider',
     function ($compileProvider) {
@@ -345,7 +347,8 @@ gaugeReport.controller('mainController', function ($scope) {
     ];
 
     $scope.parseComments = function (items) {
-        return items && items.length ? marked(items.map(function (x) { return x.comment && x.comment.text; } ).join("").trim().split("\n").join("\n\n")) : null;
+        if (!items || !items.length) return null;
+        return marked(items.map(function (x) { return x.comment && x.comment.text; }).join("\n").trim().split("\n").join("\n"));
     };
 
 });
