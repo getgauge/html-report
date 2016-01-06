@@ -241,11 +241,14 @@ gaugeReport.controller('mainController', function ($scope) {
         "key": "Tags",
         "value": $scope.result.tags
     }, {
+        "key": "Success Rate",
+        "value": $scope.result.successRate + "%"
+    }, {
         "key": "Total Time",
         "value": $scope.formattedTime($scope.result.executionTime)
     }, {
-        "key": "Success Rate",
-        "value": $scope.result.successRate + "%"
+        "key": "Generated On",
+        "value": $scope.result.timestamp
     }];
 
     $scope.isEmpty = function (item) {
