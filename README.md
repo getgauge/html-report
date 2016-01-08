@@ -1,6 +1,8 @@
-
 html-report
 ==========
+
+ [ ![Download Nightly](https://api.bintray.com/packages/gauge/html-report/Nightly/images/download.svg) ](https://bintray.com/gauge/html-report/Nightly/_latestVersion)
+
 
 This is the [html-report plugin](http://getgauge.io/documentation/user/current/plugins/README.html) for [gauge](http://getgauge.io).
 
@@ -78,5 +80,3 @@ Copyright
 ---------
 
 Copyright 2015 ThoughtWorks, Inc.
-
-
