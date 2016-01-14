@@ -190,7 +190,7 @@ header.top .project {
     content: "";
     position: absolute;
     border-bottom: 1px solid #cccccc;
-    width: 290px;
+    width: 340px;
     right: 0;
     bottom: -5px;
 }
