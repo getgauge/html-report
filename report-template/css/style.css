@@ -105,18 +105,19 @@ header.top .project {
     -webkit-align-items: center;
     -ms-flex-align: center;
     align-items: center;
-    -webkit-justify-content: space-around;
+    -webkit-justify-content: space-between;
     -ms-flex-pack: distribute;
-    justify-content: space-around;
+    justify-content: space-between;
 }
 
 .report_chart .chart {
     width: 50%;
+    padding-left: 40px;
 }
 
 .report_chart .total-specs {
     border-right: 5px solid #cccccc;
-    padding: 10px;
+    padding: 10px 30px 10px 10px;
     cursor: pointer;
 }
 
@@ -176,7 +177,7 @@ header.top .project {
 .report_details span {
     position: relative;
     margin-left: 0;
-    width: 150px;
+    width: 210px;
     text-align: left;
 }
 

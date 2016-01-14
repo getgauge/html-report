@@ -299,7 +299,13 @@ gaugeReport.controller('mainController', function ($scope) {
     $scope.options = {
         chart: {
             type: 'pieChart',
-            height: 300,
+            height: 200,
+            margin : {
+                top: 0,
+                right: 0,
+                bottom: 0,
+                left: 0
+            },
             donut: true,
             donutRatio: 0.2,
             x: function (d) {
