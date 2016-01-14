@@ -487,6 +487,11 @@
                                     class="error-message">{{hookFailure.errorMessage}}</span></span></div>
                             <div ng-include src="'hook-failure.html'"></div>
                         </div>
+                        <div ng-if="currentSpec == undefined && isPreHookFailure">
+                            <div collapsable class="error-heading">Before Spec Failed: <span class="error-message"><span
+                                    class="error-message">{{hookFailure.errorMessage}}</span></span></div>
+                            <div ng-include src="'hook-failure.html'"></div>
+                        </div>
                         <div ng-if="currentSpec.protoSpec.postHookFailure">
                             {{setHookFailure(currentSpec.protoSpec.postHookFailure)}}
                             <div collapsable class="error-heading">After Spec Failed: <span class="error-message">{{hookFailure.errorMessage}}</span>

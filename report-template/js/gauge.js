@@ -324,16 +324,21 @@ gaugeReport.controller('mainController', function ($scope) {
         }
     };
 
-    $scope.totalSpecs = $scope.result.specResults.length;
+    $scope.totalSpecs = $scope.result && $scope.result.specResults ? $scope.result.specResults.length : 0;
     $scope.passed = 0;
     $scope.failed = 0;
     $scope.skipped = 0;
 
-    $scope.result.specResults.forEach(function (spec) {
-        if (spec.skipped) $scope.skipped++;
-        if (spec.failed) $scope.failed++;
-        if (!spec.skipped && !spec.failed) $scope.passed++;
-    });
+    if ($scope.result && $scope.result.specResults) {
+        $scope.result.specResults.forEach(function (spec) {
+            if (spec.skipped) $scope.skipped++;
+            if (spec.failed) $scope.failed++;
+            if (!spec.skipped && !spec.failed) $scope.passed++;
+        });
+    } else if ($scope.result && $scope.result.preHookFailure) {
+        $scope.hookFailure = $scope.result.preHookFailure;
+        $scope.isPreHookFailure = true;
+    }
 
     $scope.projectName = $scope.result.projectName;
 
