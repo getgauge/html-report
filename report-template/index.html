@@ -176,11 +176,11 @@
                 <span class="skipReason" ng-show="currentExecutionResult.skipped">Skipped Reason : {{currentExecutionResult.skippedReason}}</span>
             </h4>
 
-            <div class="collapse-messages" ng-show="currentExecutionResult.executionResult.message">{{
+            <button class="collapse-messages-header" ng-show="currentExecutionResult.executionResult.message">{{
                 (collapseMessages) ? "- hide" :
                 "+ show" }}
-            </div>
-            <div ng-show="collapseMessages">
+            </button>
+            <div ng-show="collapseMessages" class="collapse-messages">
                 <div ng-repeat="msg in currentExecutionResult.executionResult.message track by $index"
                      class="step-message">
                     {{msg}}

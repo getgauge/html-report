@@ -781,3 +781,20 @@ footer p {
 /* End Lightbox styles */
 
 /*# sourceMappingURL=styles.css.map */
+
+.collapse-messages-header {
+    cursor: pointer;
+    background: #ececec;
+    display: inline-block;
+    border-radius: 2px;
+    border: 1px solid #ccc;
+    margin: 0 0 0 20px;
+    text-align: center;
+}
+.collapse-messages-header:active{
+    outline:0;
+}
+
+.collapse-messages{
+    padding: 10px 0 0 20px;
+}
