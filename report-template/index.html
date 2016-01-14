@@ -165,22 +165,21 @@
             </ul>
 
             {{setCurrentExecutionResult(currentStep.stepExecutionResult)}}
-            <div ng-include src="'step-messages.html'">
+            <div ng-include src="'step-messages.html'" ng-if="currentExecutionResult.skipped || currentExecutionResult.executionResult.message">
             </div>
         </div>
     </script>
 
     <script type="text/ng-template" id="step-messages.html">
         <div class="message-container" ng-init="collapseMessages=true" ng-click="collapseMessages = !collapseMessages">
-            <h4 ng-show="currentExecutionResult.skipped">
+            <h4 ng-if="currentExecutionResult.skipped">
                 <span class="skipReason" ng-show="currentExecutionResult.skipped">Skipped Reason : {{currentExecutionResult.skippedReason}}</span>
             </h4>
 
-            <button class="collapse-messages-header" ng-show="currentExecutionResult.executionResult.message">{{
-                (collapseMessages) ? "- hide" :
-                "+ show" }}
+            <button class="collapse-messages-header" ng-if="currentExecutionResult.executionResult.message">
+                {{(collapseMessages) ? "- hide" : "+ show" }}
             </button>
-            <div ng-show="collapseMessages" class="collapse-messages">
+            <div ng-if="collapseMessages" class="collapse-messages">
                 <div ng-repeat="msg in currentExecutionResult.executionResult.message track by $index"
                      class="step-message">
                     {{msg}}
