@@ -282,6 +282,13 @@ header.top .project {
 .spec-list li .scenarioname {
     float: left;
     width: 235px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.spec-list li .scenarioname:hover {
+    overflow-wrap: break-word;
+    overflow: visible;
 }
 
 .spec-list li .time {
