@@ -357,9 +357,8 @@ gaugeReport.controller('mainController', function ($scope) {
         }
     ];
 
-    $scope.parseComments = function (items) {
-        if (!items || !items.length) return null;
-        return marked(items.map(function (x) { return x.comment && x.comment.text; }).join("\n").trim().split("\n").join("\n"));
+    $scope.parseComment = function (item) {
+        return marked(item.comment.text);
     };
 
 });

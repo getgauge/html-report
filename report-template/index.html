@@ -75,6 +75,7 @@
 
     <script type="text/ng-template" id="item-render.html">
         <div ng-switch="itemTypesMap[item.itemType]">
+            <span ng-switch-when="Comment" ng-bind-html="parseComment(item)"></span>
             <div ng-switch-when="Step" class="step">
                 {{setCurrentStep(item.step)}}
                 <div ng-include src="'step.html'"></div>
@@ -332,7 +333,6 @@
         <div ng-repeat="item in currentScenario.contexts">
             <div ng-include src="'item-render.html'" class="context-step"></div>
         </div>
-        <div class="scenarioComments" ng-bind-html="parseComments(currentScenario.scenarioItems)"></div>
         <div class="scenarioItemsContainer" ng-repeat="item in currentScenario.scenarioItems">
             <div ng-include src="'item-render.html'"></div>
         </div>
@@ -504,7 +504,6 @@
 
                 <div id="specItemsContainer">
                     <div class="content">
-                        <div class="specComments" ng-bind-html="parseComments(currentSpec.protoSpec.items)"></div>
                         <div ng-repeat="item in sort(currentSpec.protoSpec.items)">
                             <div ng-include src="'item-render.html'"></div>
                         </div>
