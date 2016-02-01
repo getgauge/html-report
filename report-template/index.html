@@ -153,7 +153,7 @@
                             <div ng-include src="'hook-failure.html'">
                             </div>
                         </div>
-                        <div ng-if="currentStep.stepExecutionResult.executionResult.failed && !isConcept">
+                        <div ng-if="isStepFailure(currentStep.stepExecutionResult) && !isConcept">
                             <div ng-include src="'step-failure.html'" class="failure_container"></div>
                         </div>
                         <div ng-if="currentStep.stepExecutionResult.postHookFailure">

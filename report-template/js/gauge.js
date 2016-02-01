@@ -361,4 +361,9 @@ gaugeReport.controller('mainController', function ($scope) {
         return marked(item.comment.text);
     };
 
+
+    $scope.isStepFailure = function (result) {
+        return result.executionResult && result.executionResult.failed && result.executionResult.errorMessage && result.executionResult.stackTrace;
+    };
+
 });
