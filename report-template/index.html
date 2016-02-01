@@ -322,13 +322,6 @@
                 <div ng-include src="'hook-failure.html'">
                 </div>
             </div>
-            <div ng-if="currentScenario.postHookFailure">
-                {{setHookFailure(currentScenario.postHookFailure)}}
-                <div collapsable class="error-heading">After Scenario Hook Failed: <span class="error-message">{{hookFailure.errorMessage}}</span>
-                </div>
-                <div ng-include src="'hook-failure.html'">
-                </div>
-            </div>
         </div>
         <div ng-repeat="item in currentScenario.contexts">
             <div ng-include src="'item-render.html'" class="context-step"></div>
@@ -339,6 +332,15 @@
         {{addTearDownSteps(currentScenario.tearDownSteps)}}
         <div ng-repeat="item in currentScenario.tearDownSteps">
             <div ng-include src="'item-render.html'" class="context-step"></div>
+        </div>
+        <div class="error-container failed">
+            <div ng-if="currentScenario.postHookFailure">
+                {{setHookFailure(currentScenario.postHookFailure)}}
+                <div collapsable class="error-heading">After Scenario Hook Failed: <span class="error-message">{{hookFailure.errorMessage}}</span>
+                </div>
+                <div ng-include src="'hook-failure.html'">
+                </div>
+            </div>
         </div>
     </script>
 
