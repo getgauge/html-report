@@ -231,6 +231,7 @@ header.top .project {
     display: -webkit-flex;
     display: -ms-flexbox;
     display: flex;
+    flex-direction: column;
 }
 
 .specifications:after {
@@ -242,7 +243,13 @@ header.top .project {
 .specifications .sidebar {
     background: #333333;
     color: #fff;
-    width: 350px;
+    width: 100%;
+}
+
+#listOfSpecifications {
+    max-height: 8rem;
+    overflow: scroll;
+    overflow-x: hidden;
 }
 
 .specifications .title {
@@ -299,7 +306,7 @@ header.top .project {
 
 .spec-list li .scenarioname {
     float: left;
-    width: 235px;
+    width: 75%;
     overflow: hidden;
     text-overflow: ellipsis;
 }
@@ -310,6 +317,7 @@ header.top .project {
 }
 
 .spec-list li .time {
+    width: 25%;
     float: right;
 }
 
@@ -365,6 +373,11 @@ header.top .project {
     width: 10px;
     -webkit-transition: all 0.2s ease;
     transition: all 0.2s ease;
+}
+
+#specificationContainer {
+    margin-top: 1rem;
+    border-top: 10px solid #cccccc;
 }
 
 .details {
@@ -468,12 +481,11 @@ header.top .project {
 .curr-spec .spec-head {
     margin: 10px 20px 10px 0;
     font-weight: 300;
-    font-size: 25px;
-    float: left;
+    font-size: 1.5rem;
 }
 
 .curr-spec .time {
-    float: left;
+    font-size: 1rem;
     margin-top: 20px;
     color: #cccccc;
 }
@@ -883,6 +895,24 @@ footer p {
 
     .report_test-results .value {
         font-size: 2.5rem;
+    }
+
+    .specifications {
+        flex-direction: row;
+    }
+
+    .specifications .sidebar {
+        width: 350px;
+    }
+
+    #listOfSpecifications {
+        max-height: auto;
+    }
+
+    #specificationContainer {
+        margin-top: 0;
+        border-top: none;
+        overflow-x: scroll;
     }
 
 
