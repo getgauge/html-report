@@ -474,7 +474,7 @@
             <div class="congratulations details" ng-show="allPassed()&&currentSpec==undefined">
                 <p>Congratulations! You've gone all <span class="green">green</span> and saved the environment!</p>
             </div>
-            <div id="specificationContainer" class="details">
+            <div id="specificationContainer" class="details" ng-hide="currentSpec==undefined">
                 <header class="curr-spec" ng-if="currentSpec">
                     <h3 class="spec-head">{{currentSpec.protoSpec.specHeading}}</h3>
                     <span class="time">{{formattedTime(currentSpec.executionTime)}}</span>
