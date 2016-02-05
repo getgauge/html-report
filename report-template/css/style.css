@@ -61,16 +61,28 @@ header.top .container {
     background: inherit;
 }
 
+header.top .container {
+    padding-top: 10px;
+    display: flex;
+    flex-direction: column;
+}
+
 header.top .logo {
-    float: left;
-    margin: 10px;
+    float: none;
+    margin: 10px 10px 0 10px;
 }
 
 header.top .project {
-    float: right;
-    margin: 13px 10px 0;
-    font-weight: normal;
-    font-size: 1.25rem;
+    float: none;
+    margin: 0 10px 10px 10px;
+    text-align: left;
+    font-size: 1rem;
+    font-weight: 400;
+}
+
+.value {
+    text-align: left;
+    font-size: 2rem;
 }
 
 .report-overview {
@@ -82,6 +94,7 @@ header.top .project {
     -webkit-align-items: center;
     -ms-flex-align: center;
     align-items: center;
+    flex-direction: column;
 }
 
 .report-overview:after {
@@ -90,13 +103,11 @@ header.top .project {
     clear: both;
 }
 
-.report_chart, .report_test-results, .report_details {
-    float: left;
-    padding: 20px 10px;
+.report-overview > div {
+    float: none;
 }
 
 .report_chart {
-    width: 40%;
     display: -webkit-box;
     display: -webkit-flex;
     display: -ms-flexbox;
@@ -105,31 +116,38 @@ header.top .project {
     -webkit-align-items: center;
     -ms-flex-align: center;
     align-items: center;
-    -webkit-justify-content: space-between;
-    -ms-flex-pack: distribute;
-    justify-content: space-between;
+    flex-direction: column;
+    width: 100%;
+}
+
+.report_chart > div {
+    display: block;
+    float: none;
 }
 
 .report_chart .chart {
-    width: 50%;
-    padding-left: 40px;
+    width: 100%;
+    padding-left: 0;
+    text-align: center;
 }
 
 .report_chart .total-specs {
-    border-right: 5px solid #cccccc;
-    padding: 10px 30px 10px 10px;
+    width: 100%;
+    border-right: none;
+    border-bottom: 2px solid #cccccc;
+    padding: 0 0 10px 0;
     cursor: pointer;
 }
 
 .report_chart .total-specs .value {
-    font-size: 3.5rem;
+    font-size: 2.5rem;
 }
 
-.value {
-    font-size: 3.125rem;
-    font-weight: 300;
+.report_chart .total-specs span,
+.report_test-results ul,
+.report_test-results .value {
+    text-align: center;
     display: block;
-    text-align: right;
 }
 
 .txt {
@@ -139,7 +157,7 @@ header.top .project {
 }
 
 .report_test-results {
-    width: 30%;
+    width: 100%;
 }
 
 .report_test-results ul {
@@ -155,11 +173,13 @@ header.top .project {
 }
 
 .report_details {
-    width: 30%;
+    width: 100%;
 }
 
 .report_details ul {
     list-style-type: none;
+    margin: 10px 0 0 0;
+    padding: 10px;
 }
 
 .report_details label, .report_details span {
@@ -171,13 +191,13 @@ header.top .project {
 
 .report_details label {
     clear: both;
-    width: 130px;
+    text-align: right;
+    padding-right: 10px;
 }
 
 .report_details span {
     position: relative;
     margin-left: 0;
-    width: 210px;
     text-align: left;
 }
 
@@ -186,13 +206,11 @@ header.top .project {
     margin-right: 10px;
 }
 
-.report_details span:after {
-    content: "";
-    position: absolute;
+.report_details span,
+.report_details label {
+    width: 50%;
+    padding-bottom: 5px;
     border-bottom: 1px solid #cccccc;
-    width: 340px;
-    right: 0;
-    bottom: -5px;
 }
 
 .fail .value {
@@ -804,4 +822,121 @@ footer p {
 
 .collapse-messages{
     padding: 10px 0 0 20px;
+}
+
+@media screen and (min-width: 760px) {
+
+    header.top .container {
+        flex-direction: row;
+    }
+
+    header.top .logo {
+        flex-grow: 1;
+    }
+
+    header.top .project {
+        font-size: 1.25rem;
+        float: right;
+        margin: 10px;
+    }
+
+    .report-overview {
+        flex-direction: row;
+        flex-wrap: wrap;
+    }
+
+    .report_chart {
+        flex-direction: row;
+        width: 50%;
+        border-bottom: none;
+    }
+
+    .report_chart .chart {
+        width: auto;
+        flex-grow: 1;
+    }
+
+    .report_chart .total-specs {
+        width: auto;
+        margin-top: 1.5rem;
+        border-right: 5px solid #cccccc;
+        border-bottom: none;
+        padding-right: 2rem;
+    }
+
+    .report_chart .total-specs span {
+        text-align: right;
+    }
+
+    .report_test-results {
+        width: 50%;
+    }
+
+    .report_test-results ul {
+        text-align: left;
+        margin-left: 2rem;
+    }
+
+    .report_test-results ul li {
+        padding: 10px;
+    }
+
+    .report_test-results .value {
+        font-size: 2.5rem;
+    }
+
+
+}
+
+@media screen and (min-width: 1200px) {
+
+    .report-overview {
+        flex-wrap: initial;
+    }
+
+    .report_chart {
+        width: 40%;
+    }
+
+    .report_chart .total-specs {
+        margin-top: 0;
+        border-right: 5px solid #cccccc;
+    }
+
+    .report_chart, .report_test-results, .report_details {
+        float: left;
+        padding: 20px 10px;
+    }
+
+    .report_chart .total-specs span {
+        text-align: right;
+    }
+
+    .value {
+        text-align: right;
+    }
+
+    .report_test-results {
+        width: 30%;
+    }
+
+    .report_details {
+        width: 30%;
+        padding: 0;
+    }
+
+    .report_details ul {
+        margin: 1rem;
+        padding: 1rem;
+    }
+
+    .report_details label {
+        text-align: left;
+        padding-right: 0;
+        width: 40%;
+    }
+
+    .report_details span {
+        width: 60%;
+    }
 }
