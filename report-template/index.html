@@ -116,7 +116,7 @@
         <h5 ng-show="currentStep.stepExecutionResult.executionResult != undefined" class="execution-time">
             <span class="time">{{formattedTime(currentStep.stepExecutionResult.executionResult.executionTime, "Execution Time : ")}}</span>
         </h5>
-        <div ng-class="{true:'failed', false:'passed', 'undefined':'not-executed', 'skipped':'skipped'}[getStatus(currentStep)]">
+        <div class="step-info" ng-class="{true:'failed', false:'passed', 'undefined':'not-executed', 'skipped':'skipped'}[getStatus(currentStep)]">
             <ul collapsable>
                 <li class="step">
 

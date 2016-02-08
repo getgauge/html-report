@@ -825,8 +825,9 @@ footer p {
     display: inline-block;
     border-radius: 2px;
     border: 1px solid #ccc;
-    margin: 0 0 0 20px;
+    margin: 0 0 0 1rem;
     text-align: center;
+    font-size: 0.75rem;
 }
 .collapse-messages-header:active{
     outline:0;
@@ -834,6 +835,20 @@ footer p {
 
 .collapse-messages{
     padding: 10px 0 0 20px;
+}
+
+.message-container {
+    display: flex;
+    flex-direction: row;
+    align-items: baseline;
+}
+
+.message-container .collapse-messages {
+    padding-top: 0;
+}
+
+.step-info {
+    margin-bottom: 1.5rem;
 }
 
 @media screen and (min-width: 760px) {
