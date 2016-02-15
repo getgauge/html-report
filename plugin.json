@@ -3,6 +3,11 @@
     "version" : "2.0.1",
     "name" : "Html Report",
     "description" : "Html reporting plugin",
+    "install": {
+        "windows": [],
+        "linux": [],
+        "darwin": []
+    },
     "command" : {
         "windows" : ["bin/html-report"],
         "linux" : ["bin/html-report"],
