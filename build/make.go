@@ -30,9 +30,6 @@ import (
 	"path/filepath"
 	"runtime"
 	"strings"
-	"time"
-
-	"github.com/getgauge/common"
 )
 
 const (
@@ -60,14 +57,9 @@ const (
 )
 
 var deployDir = filepath.Join(deploy, htmlReport)
-var buildMetadata string
 
 func main() {
 	flag.Parse()
-	if *nightly {
-		buildMetadata = fmt.Sprintf("nightly-%s", time.Now().Format(common.NightlyDatelayout))
-	}
-
 	if *install {
 		updatePluginInstallPrefix()
 		installPlugin(*pluginInstallPrefix)
@@ -101,7 +93,7 @@ func createPluginDistro(forAllPlatforms bool) {
 }
 
 func createDistro() {
-	packageName := fmt.Sprintf("%s-%s-%s.%s", htmlReport, getPluginVersionWithBuildInfo(), getGOOS(), getArch())
+	packageName := fmt.Sprintf("%s-%s-%s.%s", htmlReport, getPluginVersion(), getGOOS(), getArch())
 	distroDir := filepath.Join(deploy, packageName)
 	copyPluginFiles(distroDir)
 	createZipFromUtil(deploy, packageName)
@@ -282,15 +274,6 @@ func getPluginVersion() string {
 	return pluginProperties["version"].(string)
 }
 
-func getPluginVersionWithBuildInfo() string {
-	version := getPluginVersion()
-	if buildMetadata != "" {
-		version += fmt.Sprintf(".%s", buildMetadata)
-	}
-	return version
-
-}
-
 func moveOSBinaryToCurrentOSArchDirectory(targetName string) {
 	destDir := path.Join(bin, fmt.Sprintf("%s_%s", runtime.GOOS, runtime.GOARCH))
 	moveBinaryToDirectory(path.Base(targetName), destDir)
@@ -322,7 +305,6 @@ var pluginInstallPrefix = flag.String("plugin-prefix", "", "Specifies the prefix
 var distro = flag.Bool("distro", false, "Creates distributables for the plugin")
 var allPlatforms = flag.Bool("all-platforms", false, "Compiles or creates distributables for all platforms windows, linux, darwin both x86 and x86_64")
 var binDir = flag.String("bin-dir", "", "Specifies OS_PLATFORM specific binaries to install when cross compiling")
-var nightly = flag.Bool("nightly", false, "Adds nightly build information")
 
 var (
 	platformEnvs = []map[string]string{
@@ -359,7 +341,7 @@ func compileAcrossPlatforms() {
 
 func installPlugin(installPrefix string) {
 	copyPluginFiles(deployDir)
-	pluginInstallPath := filepath.Join(installPrefix, htmlReport, getPluginVersionWithBuildInfo())
+	pluginInstallPath := filepath.Join(installPrefix, htmlReport, getPluginVersion())
 	mirrorDir(deployDir, pluginInstallPath)
 }
 
