@@ -345,71 +345,53 @@
     </script>
 
     <script type="text/ng-template" id="hook-failure.html">
-        <table class="exception-container">
-            <tbody>
-            <tr>
-                <td class="exception">
-                    <p class="stacktrace"> {{hookFailure.stackTrace}}</p>
-                </td>
-                <td class="screenshot-container" ng-show="hookFailure.screenShot">
-                    <div>
-                        <a href="{{getScreenshotSrc(hookFailure.screenShot)}}" rel="lightbox">
-                            <img ng-src="{{getScreenshotSrc(hookFailure.screenShot)}}"
-                                 class="screenshot-thumbnail"/>
-                        </a>
-                    </div>
-                </td>
-            </tr>
-            </tbody>
-        </table>
+        <div class="exception-container">
+            <div class="exception">
+                <pre class="stacktrace"> {{hookFailure.stackTrace}}</pre>
+            </div>
+            <div class="screenshot-container" ng-show="hookFailure.screenShot">
+                <a href="{{getScreenshotSrc(hookFailure.screenShot)}}" rel="lightbox">
+                    <img ng-src="{{getScreenshotSrc(hookFailure.screenShot)}}"
+                         class="screenshot-thumbnail"/>
+                </a>
+            </div>
+        </div>
     </script>
 
     <script type="text/ng-template" id="step-failure.html">
-        <table class="exception-container" ng-show="currentStep.stepExecutionResult.executionResult.failed">
-            <tbody>
-            <tr>
-                <td class="exception">
-                    <h4 class="error-message">
-                        <p>{{currentStep.stepExecutionResult.executionResult.errorMessage}}</p>
-                    </h4>
-                    <p class="stacktrace">{{currentStep.stepExecutionResult.executionResult.stackTrace}}</p>
-                </td>
-                <td class="screenshot-container" ng-show="currentStep.stepExecutionResult.executionResult.screenShot">
-                    <div>
-                        <a href="{{getScreenshotSrc(currentStep.stepExecutionResult.executionResult.screenShot)}}"
-                           rel="lightbox">
-                            <img ng-src="{{getScreenshotSrc(currentStep.stepExecutionResult.executionResult.screenShot)}}"
-                                 class="screenshot-thumbnail"/>
-                        </a>
-                    </div>
-                </td>
-            </tr>
-            </tbody>
-        </table>
+        <div class="exception-container" ng-show="currentStep.stepExecutionResult.executionResult.failed">
+            <div class="exception">
+                <h4 class="error-message">
+                    <pre>{{currentStep.stepExecutionResult.executionResult.errorMessage}}</pre>
+                </h4>
+                <pre class="stacktrace">{{currentStep.stepExecutionResult.executionResult.stackTrace}}</pre>
+            </div>
+            <div class="screenshot-container" ng-show="currentStep.stepExecutionResult.executionResult.screenShot">
+                <a href="{{getScreenshotSrc(currentStep.stepExecutionResult.executionResult.screenShot)}}"
+                   rel="lightbox">
+                    <img ng-src="{{getScreenshotSrc(currentStep.stepExecutionResult.executionResult.screenShot)}}"
+                         class="screenshot-thumbnail"/>
+                </a>
+            </div>
+        </div>
     </script>
 
     <script type="text/ng-template" id="conceptStep-failure.html">
-        <table class="exception-container" ng-show="currentConceptStep.stepExecutionResult.executionResult.failed">
-            <tbody>
-            <tr>
-                <td>
-                    <h4 class="error-message">
-                        <p>{{currentStep.stepExecutionResult.executionResult.errorMessage}}</p>
-                    </h4>
-                    <p class="stacktrace"> {{currentStep.stepExecutionResult.executionResult.stackTrace}}</p>
-                </td>
-                <td>
-                    <div>
-                        <a href="{{getScreenshotSrc(currentStep.stepExecutionResult.executionResult.screenShot)}}"
-                           rel="lightbox">
-                            <img ng-src="{{getScreenshotSrc(currentStep.stepExecutionResult.executionResult.screenShot)}}"
-                                 class="screenshot-thumbnail"/>
-                        </a>
-                    </div>
-                </td>
-            </tr>
-            </tbody>
-        </table>
+        <div class="exception-container" ng-show="currentConceptStep.stepExecutionResult.executionResult.failed">
+            <div>
+                <h4 class="error-message">
+                    <pre>{{currentStep.stepExecutionResult.executionResult.errorMessage}}</pre>
+                </h4>
+                <pre class="stacktrace">{{currentStep.stepExecutionResult.executionResult.stackTrace}}</pre>
+            </div>
+            <div class="screenshot-container" ng-show="currentConceptStep.stepExecutionResult.executionResult.screenShot">
+                <a href="{{getScreenshotSrc(currentConceptStep.stepExecutionResult.executionResult.screenShot)}}"
+                   rel="lightbox">
+                    <img ng-src="{{getScreenshotSrc(currentConceptStep.stepExecutionResult.executionResult.screenShot)}}"
+                         class="screenshot-thumbnail"/>
+                </a>
+            </div>
+        </div>
     </script>
 </head>
 

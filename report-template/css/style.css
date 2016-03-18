@@ -39,6 +39,7 @@ blockquote {
 .container {
     margin: 0 auto;
     background: #fff;
+    padding-top: 1rem;
 }
 
 .container:after {
@@ -121,7 +122,6 @@ header.top .project {
 }
 
 .report_chart > div {
-    display: block;
     float: none;
 }
 
@@ -129,12 +129,13 @@ header.top .project {
     width: 100%;
     padding-left: 0;
     text-align: center;
+    display: none;
 }
 
 .report_chart .total-specs {
     width: 100%;
     border-right: none;
-    border-bottom: 2px solid #cccccc;
+    border-bottom: 2px solid #f0f0f0;
     padding: 0 0 10px 0;
     cursor: pointer;
 }
@@ -168,8 +169,16 @@ header.top .project {
 
 .report_test-results ul li {
     display: inline-block;
-    padding: 0 10px;
+    padding: 0.75rem;
     cursor: pointer;
+    margin: 1rem 0.25rem;
+    background-color: #f9f9f9;
+    transition: background-color 0.75s;
+}
+
+.report_test-results ul li:focus,
+.report_test-results ul li:hover {
+    background-color: #f0f0f0;
 }
 
 .report_details {
@@ -180,11 +189,16 @@ header.top .project {
     list-style-type: none;
     margin: 10px 0 0 0;
     padding: 10px;
+    display: flex;
+    flex-direction: column;
+}
+
+.report_details ul > li {
+    display: flex;
+    flex-direction: row;
 }
 
 .report_details label, .report_details span {
-    display: block;
-    float: left;
     margin-bottom: 10px;
     font-size: 0.8rem;
 }
@@ -193,22 +207,22 @@ header.top .project {
     clear: both;
     text-align: right;
     padding-right: 10px;
+    width: 50%;
+}
+
+.report_details label:after {
+    content: ":";
 }
 
 .report_details span {
     position: relative;
     margin-left: 0;
     text-align: left;
-}
-
-.report_details span:before {
-    content: ":";
-    margin-right: 10px;
+    flex-grow: 1;
 }
 
 .report_details span,
 .report_details label {
-    width: 50%;
     padding-bottom: 5px;
     border-bottom: 1px solid #cccccc;
 }
@@ -257,6 +271,7 @@ header.top .project {
     font-size: 1.125rem;
     margin: 20px 20px 10px;
     color: #fff;
+    display: none;
 }
 
 .specifications .searchbar {
@@ -376,8 +391,7 @@ header.top .project {
 }
 
 #specificationContainer {
-    margin-top: 1rem;
-    border-top: 10px solid #cccccc;
+    border-top: 0.25rem solid #cccccc;
 }
 
 .details {
@@ -395,7 +409,7 @@ header.top .project {
 }
 
 .details .content {
-    padding: 0.5rem 2rem;
+    padding: 0.5rem;
     background: #fff;
     font-size: 0.9rem;
 }
@@ -514,9 +528,6 @@ header.top .project {
 
 .scenario-container {
     background: #fff;
-    padding: 20px;
-    border-bottom-right-radius: 10px;
-    border-bottom-left-radius: 10px;
     margin: 20px 0;
     position: relative;
 }
@@ -619,10 +630,8 @@ header.top .project {
 }
 
 .step li {
-    padding: 10px 20px;
+    padding: 0.5rem;
     border: 1px solid #cccccc;
-    border-top-right-radius: 10px;
-    border-bottom-right-radius: 10px;
     margin-bottom: 10px;
 }
 
@@ -725,29 +734,25 @@ footer p {
     font-size: 0.8rem;
 }
 
+.exception-container {
+    display: flex;
+    flex-direction: column;
+}
+
+.exception-container .exception {
+    flex-grow: 1;
+}
+
 .stacktrace {
-    overflow: scroll;
-    max-width: 45rem;
-}
-
-.exception-container td.exception {
-    width: 70%;
-    max-width: 40rem;
-    overflow: scroll;
-}
-
-.exception .stacktrace {
     max-width: 100%;
 }
 
-.exception-container td.screenshot-container {
-    width: 30%;
-    max-width: 15rem;
+.exception-container .screenshot-container {
     position: relative;
 }
 
 .exception-container img {
-    max-width: 100%;
+    max-width: 50%;
 }
 
 .execution-time {
@@ -851,7 +856,13 @@ footer p {
     margin-bottom: 1.5rem;
 }
 
-@media screen and (min-width: 760px) {
+/**@media screen and (min-width: 760px) {
+
+
+
+} **/
+
+@media screen and (min-width: 1024px) {
 
     header.top .container {
         flex-direction: row;
@@ -869,23 +880,24 @@ footer p {
 
     .report-overview {
         flex-direction: row;
-        flex-wrap: wrap;
+        flex-wrap: initial;
     }
 
     .report_chart {
         flex-direction: row;
-        width: 50%;
+        width: 40%;
         border-bottom: none;
     }
 
     .report_chart .chart {
         width: auto;
         flex-grow: 1;
+        display: block;
     }
 
     .report_chart .total-specs {
         width: auto;
-        margin-top: 1.5rem;
+        margin-top: 0;
         border-right: 5px solid #cccccc;
         border-bottom: none;
         padding-right: 2rem;
@@ -896,7 +908,7 @@ footer p {
     }
 
     .report_test-results {
-        width: 50%;
+        width: 30%;
     }
 
     .report_test-results ul {
@@ -912,57 +924,12 @@ footer p {
         font-size: 2.5rem;
     }
 
-    .specifications {
-        flex-direction: row;
-    }
-
-    .specifications .sidebar {
-        width: 350px;
-    }
-
-    #listOfSpecifications {
-        max-height: auto;
-    }
-
-    #specificationContainer {
-        margin-top: 0;
-        border-top: none;
-        overflow-x: scroll;
-    }
-
-
-}
-
-@media screen and (min-width: 1200px) {
-
-    .report-overview {
-        flex-wrap: initial;
-    }
-
-    .report_chart {
-        width: 40%;
-    }
-
-    .report_chart .total-specs {
-        margin-top: 0;
-        border-right: 5px solid #cccccc;
-    }
-
     .report_chart, .report_test-results, .report_details {
-        float: left;
         padding: 20px 10px;
-    }
-
-    .report_chart .total-specs span {
-        text-align: right;
     }
 
     .value {
         text-align: right;
-    }
-
-    .report_test-results {
-        width: 30%;
     }
 
     .report_details {
@@ -983,5 +950,52 @@ footer p {
 
     .report_details span {
         width: 60%;
+    }
+
+    .specifications {
+        flex-direction: row;
+    }
+
+    .specifications .title {
+        display: block;
+    }
+
+    .specifications .sidebar {
+        width: 350px;
+    }
+
+    .details .content {
+        padding: 0.5rem 1.5rem;
+    }
+
+    #listOfSpecifications {
+        max-height: 100%;
+        overflow: auto;
+    }
+
+    #specificationContainer {
+        margin-top: 0;
+        border-top: none;
+    }
+
+    .exception-container .screenshot-container {
+        max-width: 20rem;
+    }
+
+    .exception-container {
+        flex-direction: row;
+    }
+
+    .exception-container .screenshot-container {
+        max-width: 15rem;
+        padding-left: 1rem;
+    }
+
+    .exception-container img {
+        max-width: 100%;
+    }
+
+    .stacktrace {
+        max-width: 45rem;
     }
 }
