@@ -1,22 +1,5 @@
-// Copyright 2015 ThoughtWorks, Inc.
-
-// This file is part of getgauge/html-report.
-
-// getgauge/html-report is free software: you can redistribute it and/or modify
-// it under the terms of the GNU General Public License as published by
-// the Free Software Foundation, either version 3 of the License, or
-// (at your option) any later version.
-
-// getgauge/html-report is distributed in the hope that it will be useful,
-// but WITHOUT ANY WARRANTY; without even the implied warranty of
-// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-// GNU General Public License for more details.
-
-// You should have received a copy of the GNU General Public License
-// along with getgauge/html-report.  If not, see <http://www.gnu.org/licenses/>.
-
 /*
-	Lightbox JS: Fullsize Image Overlays 
+	Lightbox JS: Fullsize Image Overlays
 	by Lokesh Dhakar - http://www.huddletogether.com
 
 	For more information on this script, visit:
@@ -24,11 +7,11 @@
 
 	Licensed under the Creative Commons Attribution 2.5 License - http://creativecommons.org/licenses/by/2.5/
 	(basically, do anything you want, just leave my name and link)
-	
+
 	Table of Contents
 	-----------------
 	Configuration
-	
+
 	Functions
 	- getPageScroll()
 	- getPageSize()
@@ -39,7 +22,7 @@
 	- hideLightbox()
 	- initLightbox()
 	- addLoadEvent()
-	
+
 	Function Calls
 	- addLoadEvent(initLightbox)
 
@@ -52,8 +35,8 @@
 //
 
 // If you would like to use a custom loading image or close button reference them in the next two lines.
-var loadingImage = 'images/loading.gif';		
-var closeButton = 'images/close.gif';		
+var loadingImage = 'images/loading.gif';
+var closeButton = 'images/close.gif';
 
 
 
@@ -70,13 +53,13 @@ function getPageScroll(){
 
 	if (self.pageYOffset) {
 		yScroll = self.pageYOffset;
-	} else if (document.documentElement && document.documentElement.scrollTop){	 // Explorer 6 Strict
+	} else if (document.documentElement && document.documentElement.scrollTop){  // Explorer 6 Strict
 		yScroll = document.documentElement.scrollTop;
 	} else if (document.body) {// all other Explorers
 		yScroll = document.body.scrollTop;
 	}
 
-	arrayPageScroll = new Array('',yScroll) 
+	arrayPageScroll = new Array('',yScroll)
 	return arrayPageScroll;
 }
 
@@ -89,10 +72,10 @@ function getPageScroll(){
 // Edit for Firefox by pHaez
 //
 function getPageSize(){
-	
+
 	var xScroll, yScroll;
-	
-	if (window.innerHeight && window.scrollMaxY) {	
+
+	if (window.innerHeight && window.scrollMaxY) {
 		xScroll = document.body.scrollWidth;
 		yScroll = window.innerHeight + window.scrollMaxY;
 	} else if (document.body.scrollHeight > document.body.offsetHeight){ // all but Explorer Mac
@@ -102,7 +85,7 @@ function getPageSize(){
 		xScroll = document.body.offsetWidth;
 		yScroll = document.body.offsetHeight;
 	}
-	
+
 	var windowWidth, windowHeight;
 	if (self.innerHeight) {	// all except Explorer
 		windowWidth = self.innerWidth;
@@ -113,24 +96,24 @@ function getPageSize(){
 	} else if (document.body) { // other Explorers
 		windowWidth = document.body.clientWidth;
 		windowHeight = document.body.clientHeight;
-	}	
-	
+	}
+
 	// for small pages with total height less then height of the viewport
 	if(yScroll < windowHeight){
 		pageHeight = windowHeight;
-	} else { 
+	} else {
 		pageHeight = yScroll;
 	}
 
 	// for small pages with total width less then width of the viewport
-	if(xScroll < windowWidth){	
+	if(xScroll < windowWidth){
 		pageWidth = windowWidth;
 	} else {
 		pageWidth = xScroll;
 	}
 
 
-	arrayPageSize = new Array(pageWidth,pageHeight,windowWidth,windowHeight) 
+	arrayPageSize = new Array(pageWidth,pageHeight,windowWidth,windowHeight)
 	return arrayPageSize;
 }
 
@@ -162,7 +145,7 @@ function getKey(e){
 		keycode = e.which;
 	}
 	key = String.fromCharCode(keycode).toLowerCase();
-	
+
 	if(key == 'x'){ hideLightbox(); }
 	if(e.keyCode == 27){ hideLightbox(); }
 }
@@ -172,7 +155,7 @@ function getKey(e){
 // listenKey()
 //
 function listenKey () {	document.onkeypress = getKey; }
-	
+
 
 //
 // showLightbox()
@@ -188,7 +171,7 @@ function showLightbox(objLink)
 	var objLoadingImage = document.getElementById('loadingImage');
 	var objLightboxDetails = document.getElementById('lightboxDetails');
 
-	
+
 	var arrayPageSize = getPageSize();
 	var arrayPageScroll = getPageScroll();
 
@@ -213,13 +196,13 @@ function showLightbox(objLink)
 		// and the image placed outside the viewport
 		var lightboxTop = arrayPageScroll[1] + ((arrayPageSize[3] - 35 - imgPreload.height) / 2);
 		var lightboxLeft = ((arrayPageSize[0] - 20 - imgPreload.width) / 2);
-		
+
 		objLightbox.style.top = (lightboxTop < 0) ? "0px" : lightboxTop + "px";
 		objLightbox.style.left = (lightboxLeft < 0) ? "0px" : lightboxLeft + "px";
 
 
 		objLightboxDetails.style.width = imgPreload.width + 'px';
-		
+
 		if(objLink.getAttribute('title')){
 			objCaption.style.display = 'block';
 			//objCaption.style.width = imgPreload.width + 'px';
@@ -227,12 +210,12 @@ function showLightbox(objLink)
 		} else {
 			objCaption.style.display = 'none';
 		}
-		
+
 		// A small pause between the image loading and displaying is required with IE,
 		// this prevents the previous image displaying for a short burst causing flicker.
 		if (navigator.appVersion.indexOf("MSIE")!=-1){
 			pause(250);
-		} 
+		}
 
 		if (objLoadingImage) {	objLoadingImage.style.display = 'none'; }
 
@@ -242,14 +225,14 @@ function showLightbox(objLink)
                 selects[i].style.visibility = "hidden";
         }
 
-	
+
 		objLightbox.style.display = 'block';
 
 		// After image is loaded, update the overlay height as the new image might have
 		// increased the overall page height.
 		arrayPageSize = getPageSize();
 		objOverlay.style.height = (arrayPageSize[1] + 'px');
-		
+
 		// Check for 'x' keypress
 		listenKey();
 
@@ -257,7 +240,7 @@ function showLightbox(objLink)
 	}
 
 	imgPreload.src = objLink.href;
-	
+
 }
 
 
@@ -299,7 +282,7 @@ function hideLightbox()
 //
 function initLightbox()
 {
-	
+
 	if (!document.getElementsByTagName){ return; }
 	var anchors = document.getElementsByTagName("a");
 
@@ -319,7 +302,7 @@ function initLightbox()
 	//	</div>
 	// <div id="lightbox">
 	//		<a href="#" onclick="hideLightbox(); return false;" title="Click anywhere to close image">
-	//			<img id="closeButton" />		
+	//			<img id="closeButton" />
 	//			<img id="lightboxImage" />
 	//		</a>
 	//		<div id="lightboxDetails">
@@ -327,9 +310,9 @@ function initLightbox()
 	//			<div id="keyboardMsg"></div>
 	//		</div>
 	// </div>
-	
+
 	var objBody = document.getElementsByTagName("body").item(0);
-	
+
 	// create overlay div and hardcode some functional styles (aesthetic styles are in CSS file)
 	var objOverlay = document.createElement("div");
 	objOverlay.setAttribute('id','overlay');
@@ -339,15 +322,15 @@ function initLightbox()
 	objOverlay.style.top = '0';
 	objOverlay.style.left = '0';
 	objOverlay.style.zIndex = '90';
- 	objOverlay.style.width = '100%';
+    objOverlay.style.width = '100%';
 	objBody.insertBefore(objOverlay, objBody.firstChild);
-	
+
 	var arrayPageSize = getPageSize();
 	var arrayPageScroll = getPageScroll();
 
 	// preload and create loader image
 	var imgPreloader = new Image();
-	
+
 	// if loader image found, create link to hide lightbox and create loadingimage
 	imgPreloader.onload=function(){
 
@@ -355,7 +338,7 @@ function initLightbox()
 		objLoadingImageLink.setAttribute('href','#');
 		objLoadingImageLink.onclick = function () {hideLightbox(); return false;}
 		objOverlay.appendChild(objLoadingImageLink);
-		
+
 		var objLoadingImage = document.createElement("img");
 		objLoadingImage.src = loadingImage;
 		objLoadingImage.setAttribute('id','loadingImage');
@@ -375,9 +358,9 @@ function initLightbox()
 	objLightbox.setAttribute('id','lightbox');
 	objLightbox.style.display = 'none';
 	objLightbox.style.position = 'absolute';
-	objLightbox.style.zIndex = '100';	
+	objLightbox.style.zIndex = '100';
 	objBody.insertBefore(objLightbox, objOverlay.nextSibling);
-	
+
 	// create link
 	var objLink = document.createElement("a");
 	objLink.setAttribute('href','#');
@@ -388,7 +371,7 @@ function initLightbox()
 	// preload and create close button image
 	var imgPreloadCloseButton = new Image();
 
-	// if close button image found, 
+	// if close button image found,
 	imgPreloadCloseButton.onload=function(){
 
 		var objCloseButton = document.createElement("img");
@@ -407,7 +390,7 @@ function initLightbox()
 	var objImage = document.createElement("img");
 	objImage.setAttribute('id','lightboxImage');
 	objLink.appendChild(objImage);
-	
+
 	// create details div, a container for the caption and keyboard message
 	var objLightboxDetails = document.createElement("div");
 	objLightboxDetails.setAttribute('id','lightboxDetails');
@@ -437,10 +420,10 @@ function initLightbox()
 // Function found at Simon Willison's weblog - http://simon.incutio.com/
 //
 function addLoadEvent(func)
-{	
+{
 	var oldonload = window.onload;
 	if (typeof window.onload != 'function'){
-    	window.onload = func;
+        window.onload = func;
 	} else {
 		window.onload = function(){
 		oldonload();
