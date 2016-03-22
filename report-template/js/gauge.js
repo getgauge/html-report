@@ -17,6 +17,14 @@
 
 marked.setOptions({ gfm: true, sanitize: true, tables: true, breaks: true, smartLists: true });
 
+// Override lightbox listener if it exists
+if (typeof listenKey === "function") {
+    //
+    // listenKey()
+    //
+    listenKey = function () { document.onkeydown = getKey; };
+}
+
 var gaugeReport = angular.module('gauge_report', ['yaru22.hovercard', 'nvd3', 'ngSanitize']).config([
     '$compileProvider',
     function ($compileProvider) {
