@@ -167,7 +167,8 @@ header.top .project {
     padding: 0;
 }
 
-.report_test-results ul li {
+.report_test-results ul li,
+.report_chart .total-specs {
     display: inline-block;
     padding: 0.75rem;
     cursor: pointer;
@@ -177,7 +178,9 @@ header.top .project {
 }
 
 .report_test-results ul li:focus,
-.report_test-results ul li:hover {
+.report_test-results ul li:hover,
+.report_chart .total-specs:focus,
+.report_chart .total-specs:hover {
     background-color: #f0f0f0;
 }
 
@@ -322,6 +325,7 @@ header.top .project {
 .spec-list li .scenarioname {
     float: left;
     width: 75%;
+    padding-right: 0.5rem;
     overflow: hidden;
     text-overflow: ellipsis;
 }
@@ -425,6 +429,7 @@ header.top .project {
     border: 1px solid #cccccc;
     border-bottom: 0;
     border-right: 0;
+    min-width: 25%;
 }
 
 .details table td, .details table th {
@@ -897,10 +902,11 @@ footer p {
 
     .report_chart .total-specs {
         width: auto;
-        margin-top: 0;
+        margin-top: 1rem;
         border-right: 5px solid #cccccc;
         border-bottom: none;
         padding-right: 2rem;
+        background-color: transparent;
     }
 
     .report_chart .total-specs span {
@@ -918,6 +924,7 @@ footer p {
 
     .report_test-results ul li {
         padding: 10px;
+        background-color: transparent;
     }
 
     .report_test-results .value {
@@ -976,6 +983,10 @@ footer p {
     #specificationContainer {
         margin-top: 0;
         border-top: none;
+    }
+
+    .step li {
+        padding: 0.5rem 1rem;
     }
 
     .exception-container .screenshot-container {
