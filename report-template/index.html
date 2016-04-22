@@ -458,7 +458,7 @@
             </div>
             <div id="specificationContainer" class="details" ng-hide="currentSpec==undefined">
                 <header class="curr-spec" ng-if="currentSpec">
-                    <h3 class="spec-head">{{currentSpec.protoSpec.specHeading}}</h3>
+                    <h3 class="spec-head" title="{{currentSpec.protoSpec.fileName}}">{{currentSpec.protoSpec.specHeading}}</h3>
                     <span class="time">{{formattedTime(currentSpec.executionTime)}}</span>
 
                     <div ng-if="currentSpec.protoSpec.tags.length" class="tags scenario_tags contentSection">
