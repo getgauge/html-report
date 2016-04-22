@@ -22,31 +22,32 @@ if (typeof listenKey === "function") {
     //
     // listenKey()
     //
-    listenKey = function () { document.onkeydown = getKey; };
+    listenKey = function() { document.onkeydown = getKey; };
 }
 
 var gaugeReport = angular.module('gauge_report', ['yaru22.hovercard', 'nvd3', 'ngSanitize']).config([
     '$compileProvider',
-    function ($compileProvider) {
+    function($compileProvider) {
         $compileProvider.aHrefSanitizationWhitelist(/^\s*(https?|ftp|mailto|chrome-extension|data|file):/);
-    }]).config( ['$provide', function ($provide){
-        $provide.decorator('$sniffer', ['$delegate', function ($delegate) {
-            $delegate.history = false;
-            return $delegate;
-        }]);
+    }
+]).config(['$provide', function($provide) {
+    $provide.decorator('$sniffer', ['$delegate', function($delegate) {
+        $delegate.history = false;
+        return $delegate;
+    }]);
 
-    }]).directive('collapsable', function () {
-        return function ($scope, $element) {
-            $element.bind('click', function () {
-                $element.parent().toggleClass("collapsed");
-            });
-        };
-    });
+}]).directive('collapsable', function() {
+    return function($scope, $element) {
+        $element.bind('click', function() {
+            $element.parent().toggleClass("collapsed");
+        });
+    };
+});
 
 function initialize() {
     (function addIndexOf() {
         if (!Array.prototype.indexOf) {
-            Array.prototype.indexOf = function (obj, start) {
+            Array.prototype.indexOf = function(obj, start) {
                 for (var i = (start || 0), j = this.length; i < j; i++) {
                     if (this[i] === obj) {
                         return i;
@@ -58,7 +59,7 @@ function initialize() {
     })();
 }
 
-gaugeReport.controller('mainController', function ($scope) {
+gaugeReport.controller('mainController', function($scope) {
     initialize();
     $scope.result = gaugeExecutionResult.suiteResult;
     $scope.itemTypesMap = itemTypesMap;
@@ -70,23 +71,23 @@ gaugeReport.controller('mainController', function ($scope) {
     $scope.conceptList = [];
     $scope.count = 0;
     $scope.isConcept = false;
-    $scope.tearDownSteps= [];
+    $scope.tearDownSteps = [];
 
-    $scope.allPassed = function () {
+    $scope.allPassed = function() {
         return !$scope.result.failed;
     };
 
-    $scope.loadSpecification = function (specification) {
+    $scope.loadSpecification = function(specification) {
         $scope.currentSpec = specification;
     };
 
     $scope.initializeLightbox = initLightbox;
 
-    $scope.setDataTableIndex = function (index) {
+    $scope.setDataTableIndex = function(index) {
         $scope.dataTableIndex = index;
     };
 
-    $scope.isRowFailure = function (index) {
+    $scope.isRowFailure = function(index) {
         var failedRows = $scope.currentSpec.failedDataTableRows;
         if (failedRows === undefined)
             return false;
@@ -94,22 +95,22 @@ gaugeReport.controller('mainController', function ($scope) {
             return failedRows.indexOf(index) != -1;
     };
 
-    $scope.setCurrentStep = function (step) {
+    $scope.setCurrentStep = function(step) {
         $scope.currentStep = null;
         if (step) $scope.currentStep = step;
     };
 
-    $scope.setCurrentConceptStep = function (step) {
+    $scope.setCurrentConceptStep = function(step) {
         $scope.currentConceptStep = null;
         if (step) $scope.currentConceptStep = step;
     };
 
-    $scope.setCurrentExecutionResult = function (result) {
+    $scope.setCurrentExecutionResult = function(result) {
         $scope.currentExecutionResult = null;
         if (result) $scope.currentExecutionResult = result;
     };
 
-    $scope.setConcept = function (concept) {
+    $scope.setConcept = function(concept) {
         $scope.isConcept = false;
         if (concept) {
             $scope.isConcept = true;
@@ -118,31 +119,31 @@ gaugeReport.controller('mainController', function ($scope) {
         }
     };
 
-    $scope.getTopConcept = function () {
+    $scope.getTopConcept = function() {
         return $scope.conceptList.pop();
     };
 
-    $scope.setCurrentScenario = function (scenario) {
+    $scope.setCurrentScenario = function(scenario) {
         $scope.currentScenario = scenario;
     };
 
-    $scope.getFragmentName = function (name) {
+    $scope.getFragmentName = function(name) {
         return name || "table";
     };
 
-    $scope.setHookFailure = function (hookFailure) {
+    $scope.setHookFailure = function(hookFailure) {
         $scope.hookFailure = hookFailure;
     };
 
-    $scope.hookFailureType = function () {
+    $scope.hookFailureType = function() {
         return $scope.isPreHookFailure ? "Before-hook failure" : "After-hook failure";
     };
 
-    $scope.isNewLine = function (text) {
+    $scope.isNewLine = function(text) {
         return text === "\n";
     };
 
-    $scope.formattedTime = function (timeInMs, prefix) {
+    $scope.formattedTime = function(timeInMs, prefix) {
         if (timeInMs === undefined) return "";
         var sec = Math.floor(timeInMs / 1000);
 
@@ -162,15 +163,15 @@ gaugeReport.controller('mainController', function ($scope) {
         return value;
     }
 
-    $scope.getScreenshotSrc = function (screenshot) {
+    $scope.getScreenshotSrc = function(screenshot) {
         return "data:image/png;base64," + screenshot;
     };
 
-    $scope.sort = function (items) {
+    $scope.sort = function(items) {
         if (!items) return true;
         var passedScenarios = [];
         var failedScenarios = [];
-        return items.filter(function (item) {
+        return items.filter(function(item) {
             if (itemTypesMap[item.itemType] !== "Scenario") return true;
             if (item.scenario.failed) {
                 failedScenarios.push(item);
@@ -183,9 +184,9 @@ gaugeReport.controller('mainController', function ($scope) {
 
     $scope.filteredListOfSpecs = $scope.result.specResults;
 
-    $scope.showFailedSpecs = function (){
+    $scope.showFailedSpecs = function() {
         var specs = [];
-        angular.forEach($scope.result.specResults, function(specRes){
+        angular.forEach($scope.result.specResults, function(specRes) {
             if (specRes.failed) {
                 specs.push(specRes);
             }
@@ -194,9 +195,9 @@ gaugeReport.controller('mainController', function ($scope) {
         $scope.filteredListOfSpecs = specs;
     };
 
-    $scope.showPassedSpecs = function (){
+    $scope.showPassedSpecs = function() {
         var specs = [];
-        angular.forEach($scope.result.specResults, function(specRes){
+        angular.forEach($scope.result.specResults, function(specRes) {
             if (!specRes.failed && !specRes.skipped) {
                 specs.push(specRes);
             }
@@ -205,9 +206,9 @@ gaugeReport.controller('mainController', function ($scope) {
         $scope.filteredListOfSpecs = specs;
     };
 
-    $scope.showSkippedSpecs = function (){
+    $scope.showSkippedSpecs = function() {
         var specs = [];
-        angular.forEach($scope.result.specResults, function(specRes){
+        angular.forEach($scope.result.specResults, function(specRes) {
             if (specRes.skipped) {
                 specs.push(specRes);
             }
@@ -216,32 +217,26 @@ gaugeReport.controller('mainController', function ($scope) {
         $scope.filteredListOfSpecs = specs;
     };
 
-    $scope.showAllSpecs = function (){
+    $scope.showAllSpecs = function() {
         $scope.loadSpecification($scope.result.specResults[0]);
         $scope.filteredListOfSpecs = $scope.result.specResults;
     };
 
-    $scope.setCurrentSpec = function (isFirst, specResult) {
+    $scope.setCurrentSpec = function(isFirst, specResult) {
         if (isFirst && specResult.failed)
             $scope.currentSpec = specResult;
     };
 
-    $scope.addTearDownSteps= function (steps) {
+    $scope.addTearDownSteps = function(steps) {
         $scope.tearDownSteps = steps;
     };
 
-    $scope.getStatus = function (step) {
+    $scope.getStatus = function(step) {
         if (step.stepExecutionResult.skipped)
             return "skipped";
         if (step.stepExecutionResult.executionResult)
             return step.stepExecutionResult.executionResult.failed;
         return undefined;
-    };
-
-    $scope.getScenarioStatus = function (scenario) {
-        if (scenario.skipped)
-            return "skipped";
-        return scenario.failed;
     };
 
     $scope.summaryItems = [{
@@ -261,14 +256,14 @@ gaugeReport.controller('mainController', function ($scope) {
         "value": $scope.result.timestamp
     }];
 
-    $scope.isEmpty = function (item) {
+    $scope.isEmpty = function(item) {
         return !!(typeof(item) === "string" && item.length <= 0);
     };
 
-    $scope.searchItems = function (searchQuery) {
-        return function (spec) {
+    $scope.searchItems = function(searchQuery) {
+        return function(spec) {
             if (!searchQuery) return true;
-            var tagMatches = spec.protoSpec.items.filter(function (item) {
+            var tagMatches = spec.protoSpec.items.filter(function(item) {
                 var searchList = [];
                 if (item.scenario) searchList.push(item.scenario.scenarioHeading);
                 if (item.scenario && item.scenario.tags) searchList = searchList.concat(item.scenario.tags);
@@ -280,10 +275,10 @@ gaugeReport.controller('mainController', function ($scope) {
         };
     };
 
-    $scope.showScenario = function (item) {
+    $scope.showScenario = function(item) {
         if (!$scope.searchQuery) return true;
         if (item.contexts && item.contexts.length) {
-            var matchedContexts = item.contexts.filter(function (context) {
+            var matchedContexts = item.contexts.filter(function(context) {
                 if (context.step && context.step.parsedText) {
                     return context.step.parsedText.indexOf($scope.searchQuery.toLowerCase()) > -1;
                 }
@@ -300,7 +295,7 @@ gaugeReport.controller('mainController', function ($scope) {
     };
 
     var myColors = ["#27caa9", "#e73e48", "#999999"];
-    d3.scale.myColors = function () {
+    d3.scale.myColors = function() {
         return d3.scale.ordinal().range(myColors);
     };
 
@@ -308,7 +303,7 @@ gaugeReport.controller('mainController', function ($scope) {
         chart: {
             type: 'pieChart',
             height: 200,
-            margin : {
+            margin: {
                 top: 0,
                 right: 0,
                 bottom: 0,
@@ -316,10 +311,10 @@ gaugeReport.controller('mainController', function ($scope) {
             },
             donut: true,
             donutRatio: 0.2,
-            x: function (d) {
+            x: function(d) {
                 return d.label;
             },
-            y: function (d) {
+            y: function(d) {
                 return d.score;
             },
             showLabels: false,
@@ -338,7 +333,7 @@ gaugeReport.controller('mainController', function ($scope) {
     $scope.skipped = 0;
 
     if ($scope.result && $scope.result.specResults) {
-        $scope.result.specResults.forEach(function (spec) {
+        $scope.result.specResults.forEach(function(spec) {
             if (spec.skipped) $scope.skipped++;
             if (spec.failed) $scope.failed++;
             if (!spec.skipped && !spec.failed) $scope.passed++;
@@ -350,27 +345,23 @@ gaugeReport.controller('mainController', function ($scope) {
 
     $scope.projectName = $scope.result.projectName;
 
-    $scope.data = [
-        {
-            label: "Passed",
-            score: $scope.passed
-        },
-        {
-            label: "Failed",
-            score: $scope.failed
-        },
-        {
-            label: "Skipped",
-            score: $scope.skipped
-        }
-    ];
+    $scope.data = [{
+        label: "Passed",
+        score: $scope.passed
+    }, {
+        label: "Failed",
+        score: $scope.failed
+    }, {
+        label: "Skipped",
+        score: $scope.skipped
+    }];
 
-    $scope.parseComment = function (item) {
+    $scope.parseComment = function(item) {
         return marked(item.comment.text);
     };
 
 
-    $scope.isStepFailure = function (result) {
+    $scope.isStepFailure = function(result) {
         return result.executionResult && result.executionResult.failed && result.executionResult.errorMessage && result.executionResult.stackTrace;
     };
 
