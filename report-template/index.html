@@ -95,7 +95,7 @@
             <div ng-switch-when="Scenario" class="scenarioItemsContainer" ng-show="showScenario(currentScenario)">
                 {{setCurrentScenario(item.scenario)}}
                 <div class="scenario-container"
-                     ng-class="{true:'failed', false:'passed', 'skipped':'skipped'}[getScenarioStatus(currentScenario)]">
+                     ng-class="{'failed': item.scenario.failed, 'skipped': item.scenario.skipped, 'passed': !item.scenario.failed &amp;&amp;!item.scenario.skipped}">
                     <div ng-include src="'scenario.html'"></div>
                 </div>
             </div>
@@ -103,7 +103,9 @@
             <div ng-switch-when="TableDrivenScenario">
                 {{setCurrentScenario(item.tableDrivenScenario.scenarios[dataTableIndex])}}
                 <div class="scenario-container"
-                     ng-class="{true:'failed', false:'passed', 'skipped':'skipped'}[getScenarioStatus(currentScenario)]">
+                     ng-class="{'failed':item.tableDrivenScenario.scenarios[dataTableIndex].failed, 
+                     'passed':item.tableDrivenScenario.scenarios[dataTableIndex].passed, 
+                     'skipped':item.tableDrivenScenario.scenarios[dataTableIndex].skipped}">
                     <div ng-include src="'scenario.html'"></div>
                 </div>
             </div>

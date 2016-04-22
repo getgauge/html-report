@@ -239,12 +239,6 @@ gaugeReport.controller('mainController', function($scope) {
         return undefined;
     };
 
-    $scope.getScenarioStatus = function(scenario) {
-        if (scenario.skipped)
-            return "skipped";
-        return scenario.failed;
-    };
-
     $scope.summaryItems = [{
         "key": "Environment",
         "value": $scope.result.environment
