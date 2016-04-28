@@ -488,10 +488,7 @@
 
                 <div id="specItemsContainer">
                     <div class="content">
-                        <div ng-repeat="item in sort(currentSpec.protoSpec.items)">
-                            <div ng-include src="'item-render.html'"></div>
-                        </div>
-                        <div ng-repeat="item in tearDownSteps">
+                        <div ng-repeat="item in sort(currentSpec.protoSpec.items)" ng-if="itemTypesMap[item.itemType]!='Step'">
                             <div ng-include src="'item-render.html'"></div>
                         </div>
                     </div>
