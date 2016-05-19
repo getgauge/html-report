@@ -198,7 +198,7 @@ gaugeReport.controller('mainController', function($scope) {
     $scope.showPassedSpecs = function() {
         var specs = [];
         angular.forEach($scope.result.specResults, function(specRes) {
-            if (!specRes.failed && !specRes.skipped) {
+            if (!specRes.failed && specRes.scenarioSkippedCount < specRes.scenarioCount) {
                 specs.push(specRes);
             }
         });
@@ -209,7 +209,7 @@ gaugeReport.controller('mainController', function($scope) {
     $scope.showSkippedSpecs = function() {
         var specs = [];
         angular.forEach($scope.result.specResults, function(specRes) {
-            if (specRes.skipped) {
+            if (specRes.skipped && specRes.scenarioCount === specRes.scenarioSkippedCount) {
                 specs.push(specRes);
             }
         });
@@ -328,17 +328,11 @@ gaugeReport.controller('mainController', function($scope) {
         }
     };
 
-    $scope.totalSpecs = $scope.result && $scope.result.specResults ? $scope.result.specResults.length : 0;
-    $scope.passed = 0;
-    $scope.failed = 0;
-    $scope.skipped = 0;
-
     if ($scope.result && $scope.result.specResults) {
-        $scope.result.specResults.forEach(function(spec) {
-            if (spec.skipped) $scope.skipped++;
-            if (spec.failed) $scope.failed++;
-            if (!spec.skipped && !spec.failed) $scope.passed++;
-        });
+        $scope.totalSpecs = $scope.result.specResults.length || 0;
+        $scope.failed = $scope.result.specsFailedCount || 0;
+        $scope.skipped = $scope.result.specsSkippedCount || 0;
+        $scope.passed = $scope.totalSpecs - ($scope.failed + $scope.skipped);
     } else if ($scope.result && $scope.result.preHookFailure) {
         $scope.hookFailure = $scope.result.preHookFailure;
         $scope.isPreHookFailure = true;

@@ -103,8 +103,8 @@
             <div ng-switch-when="TableDrivenScenario">
                 {{setCurrentScenario(item.tableDrivenScenario.scenarios[dataTableIndex])}}
                 <div class="scenario-container"
-                     ng-class="{'failed':item.tableDrivenScenario.scenarios[dataTableIndex].failed, 
-                     'passed':item.tableDrivenScenario.scenarios[dataTableIndex].passed, 
+                     ng-class="{'failed':item.tableDrivenScenario.scenarios[dataTableIndex].failed,
+                     'passed':item.tableDrivenScenario.scenarios[dataTableIndex].passed,
                      'skipped':item.tableDrivenScenario.scenarios[dataTableIndex].skipped}">
                     <div ng-include src="'scenario.html'"></div>
                 </div>
@@ -445,7 +445,10 @@
                 <div id="listOfSpecifications">
                     <ul id="scenarios" class="spec-list">
                         <li ng-repeat="specResult in filteredListOfSpecs | filter: searchItems(searchQuery) | orderBy:'-failed'"
-                            ng-class="{'failed': specResult.failed,'passed': !specResult.failed,'selected': currentSpec === specResult,'skipped':specResult.skipped}"
+                            ng-class="{'failed': specResult.failed,
+                                      'passed': !specResult.failed,
+                                      'selected': currentSpec === specResult,
+                                      'skipped':specResult.scenarioCount === specResult.scenarioSkippedCount}"
                             class="spec-name"
                             ng-init="setCurrentSpec($first, specResult)"
                             ng-click="loadSpecification(specResult)"><span id="scenarioName" class="scenarioname">{{specResult.protoSpec.specHeading}}</span>
