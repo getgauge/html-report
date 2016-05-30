@@ -347,7 +347,7 @@
     <script type="text/ng-template" id="hook-failure.html">
         <div class="exception-container">
             <div class="exception">
-                <pre class="stacktrace"> {{hookFailure.stackTrace}}</pre>
+                <pre class="stacktrace">{{hookFailure.stackTrace}}</pre>
             </div>
             <div class="screenshot-container" ng-show="hookFailure.screenShot">
                 <a href="{{getScreenshotSrc(hookFailure.screenShot)}}" rel="lightbox">
@@ -433,7 +433,7 @@
             </div>
         </div>
         <div class="specifications">
-            <aside class="sidebar">
+            <aside class="sidebar" ng-if="!isPreHookFailure">
                 <h3 class="title">Specifications</h3>
 
                 <div class="searchbar">
@@ -456,10 +456,10 @@
                     </ul>
                 </div>
             </aside>
-            <div class="congratulations details" ng-show="(allPassed()&&currentSpec==undefined)||currentSpec==undefined">
+            <div class="congratulations details" ng-show="(allPassed()&&currentSpec==undefined)||currentSpec==undefined" ng-hide="isPreHookFailure">
                 <p>Congratulations! You've gone all <span class="green">green</span> and saved the environment!</p>
             </div>
-            <div id="specificationContainer" class="details" ng-hide="currentSpec==undefined">
+            <div id="specificationContainer" class="details">
                 <header class="curr-spec" ng-if="currentSpec">
                     <h3 class="spec-head" title="{{currentSpec.protoSpec.fileName}}">{{currentSpec.protoSpec.specHeading}}</h3>
                     <span class="time">{{formattedTime(currentSpec.executionTime)}}</span>
@@ -469,15 +469,16 @@
                 </header>
                 <div class="error-container failed">
                     <div class="content">
-                        <div ng-if="currentSpec.protoSpec.preHookFailure">
-                            {{setHookFailure(currentSpec.protoSpec.preHookFailure)}}
-                            <div collapsable class="error-heading">Before Spec Failed: <span class="error-message"><span
-                                    class="error-message">{{hookFailure.errorMessage}}</span></span></div>
+                        <div ng-if="currentSpec == undefined && isPreHookFailure">
+                            {{setHookFailure(result.preHookFailure)}}
+                            <h2>Before Suite Failed</h2>
+                            <div collapsable class="error-heading">Error: <span class="error-message">{{hookFailure.errorMessage}}</span></div>
                             <div ng-include src="'hook-failure.html'"></div>
                         </div>
-                        <div ng-if="currentSpec == undefined && isPreHookFailure">
-                            <div collapsable class="error-heading">Before Spec Failed: <span class="error-message"><span
-                                    class="error-message">{{hookFailure.errorMessage}}</span></span></div>
+                        <div ng-if="currentSpec.protoSpec.preHookFailure">
+                            {{setHookFailure(currentSpec.protoSpec.preHookFailure)}}
+                            <div collapsable class="error-heading">Before Spec Failed: <span class="error-message">{{hookFailure.errorMessage}}</span>
+                            </div>
                             <div ng-include src="'hook-failure.html'"></div>
                         </div>
                         <div ng-if="currentSpec.protoSpec.postHookFailure">

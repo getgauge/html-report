@@ -185,6 +185,7 @@ gaugeReport.controller('mainController', function($scope) {
     $scope.filteredListOfSpecs = $scope.result.specResults;
 
     $scope.showFailedSpecs = function() {
+        if ($scope.isPreHookFailure) return;
         var specs = [];
         angular.forEach($scope.result.specResults, function(specRes) {
             if (specRes.failed) {
@@ -200,6 +201,7 @@ gaugeReport.controller('mainController', function($scope) {
     };
 
     $scope.showPassedSpecs = function() {
+        if ($scope.isPreHookFailure) return;
         var specs = [];
         angular.forEach($scope.result.specResults, function(specRes) {
             if (!specRes.failed && specRes.scenarioSkippedCount < specRes.scenarioCount) {
@@ -211,6 +213,7 @@ gaugeReport.controller('mainController', function($scope) {
     };
 
     $scope.showSkippedSpecs = function() {
+        if ($scope.isPreHookFailure) return;
         var specs = [];
         angular.forEach($scope.result.specResults, function(specRes) {
             if (specRes.skipped && specRes.scenarioCount === specRes.scenarioSkippedCount) {
@@ -222,6 +225,7 @@ gaugeReport.controller('mainController', function($scope) {
     };
 
     $scope.showAllSpecs = function() {
+        if ($scope.isPreHookFailure) return;
         $scope.loadSpecification($scope.result.specResults[0]);
         $scope.filteredListOfSpecs = $scope.result.specResults;
     };
@@ -339,23 +343,33 @@ gaugeReport.controller('mainController', function($scope) {
         $scope.failed = $scope.result.specsFailedCount || 0;
         $scope.skipped = $scope.result.specsSkippedCount || 0;
         $scope.passed = $scope.totalSpecs - ($scope.failed + $scope.skipped);
+        $scope.data = [{
+            label: "Passed",
+            score: $scope.passed
+        }, {
+            label: "Failed",
+            score: $scope.failed
+        }, {
+            label: "Skipped",
+            score: $scope.skipped
+        }];
     } else if ($scope.result && $scope.result.preHookFailure) {
+        $scope.totalSpecs = $scope.failed = $scope.skipped = $scope.passed = 0;
         $scope.hookFailure = $scope.result.preHookFailure;
         $scope.isPreHookFailure = true;
+        $scope.data = [{
+            label: "Passed",
+            score: 0
+        }, {
+            label: "Suite Failed",
+            score: 1
+        }, {
+            label: "Skipped",
+            score: 0
+        }];
     }
 
     $scope.projectName = $scope.result.projectName;
-
-    $scope.data = [{
-        label: "Passed",
-        score: $scope.passed
-    }, {
-        label: "Failed",
-        score: $scope.failed
-    }, {
-        label: "Skipped",
-        score: $scope.skipped
-    }];
 
     $scope.parseComment = function(item) {
         return marked(item.comment.text);
