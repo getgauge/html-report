@@ -267,6 +267,7 @@ gaugeReport.controller('mainController', function($scope) {
     $scope.searchItems = function(searchQuery) {
         return function(spec) {
             if (!searchQuery) return true;
+            if (spec.protoSpec.specHeading.toLowerCase().indexOf(searchQuery.toLowerCase()) > -1) return true;
             var tagMatches = spec.protoSpec.items.filter(function(item) {
                 var searchList = [];
                 if (item.scenario) searchList.push(item.scenario.scenarioHeading);
@@ -275,12 +276,13 @@ gaugeReport.controller('mainController', function($scope) {
                 return searchList.join(" ").toLowerCase().indexOf(searchQuery.toLowerCase()) > -1;
             });
             if (tagMatches.length) return true;
-            return spec.protoSpec.specHeading.toLowerCase().indexOf(searchQuery.toLowerCase()) > -1;
+            return false;
         };
     };
 
     $scope.showScenario = function(item) {
         if (!$scope.searchQuery) return true;
+        if ($scope.currentSpec.protoSpec.specHeading.toLowerCase().indexOf($scope.searchQuery.toLowerCase()) > -1) return true;
         if ($scope.currentSpec.protoSpec.tags && $scope.currentSpec.protoSpec.tags.join(" ").toLowerCase().indexOf($scope.searchQuery.toLowerCase()) > -1) return true;
         if (item.contexts && item.contexts.length) {
             var matchedContexts = item.contexts.filter(function(context) {
