@@ -68,6 +68,7 @@ gaugeReport.controller('mainController', function($scope) {
     $scope.dataTableIndex = 0;
     $scope.hookFailure = null;
     $scope.isPreHookFailure = false;
+    $scope.isPostHookFailure = false;
     $scope.conceptList = [];
     $scope.count = 0;
     $scope.isConcept = false;
@@ -367,6 +368,9 @@ gaugeReport.controller('mainController', function($scope) {
             label: "Skipped",
             score: 0
         }];
+    }
+    if ($scope.result && $scope.result.postHookFailure) {
+        $scope.isPostHookFailure = true;
     }
 
     $scope.projectName = $scope.result.projectName;

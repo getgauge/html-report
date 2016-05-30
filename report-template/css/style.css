@@ -785,6 +785,26 @@ footer p {
     margin: 20px 0;
 }
 
+.error-container {
+    padding: 20px;
+    border-top: 1px solid #e73e48;
+    border-bottom: 1px solid #e73e48;
+    border-left: 5px solid #e73e48;
+    font-size: 0.9rem;
+    margin: 20px 0;
+    position: relative;
+}
+
+.toggleShow {
+    font-weight: bold;
+    cursor: pointer;
+    position: absolute;
+    top: 20px;
+    right: 0;
+    background-color: #fff;
+    color: #000;
+}
+
 /* Lightbox styles */
 
 #lightbox {
