@@ -456,7 +456,7 @@
                     </ul>
                 </div>
             </aside>
-            <div class="congratulations details" ng-show="allPassed()&&currentSpec==undefined">
+            <div class="congratulations details" ng-show="(allPassed()&&currentSpec==undefined)||currentSpec==undefined">
                 <p>Congratulations! You've gone all <span class="green">green</span> and saved the environment!</p>
             </div>
             <div id="specificationContainer" class="details" ng-hide="currentSpec==undefined">

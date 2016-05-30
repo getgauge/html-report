@@ -191,7 +191,11 @@ gaugeReport.controller('mainController', function($scope) {
                 specs.push(specRes);
             }
         });
-        $scope.setCurrentSpec(true, specs[0]);
+        if (specs.length > 0) {
+            $scope.setCurrentSpec(true, specs[0]);
+        } else {
+            $scope.currentSpec = undefined;
+        }
         $scope.filteredListOfSpecs = specs;
     };
 
