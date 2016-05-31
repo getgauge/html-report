@@ -145,19 +145,15 @@
                             </span>
                         </span>
                     </span></div>
-                    <div class="error-container failed" ng-if="currentStep.stepExecutionResult.preHookFailure">
-                        {{setHookFailure(currentStep.stepExecutionResult.preHookFailure)}}
-                        <div class="error-heading">Before Step Failed: <span
-                                                                           class="error-message">{{hookFailure.errorMessage}}</span></div>
+                    <div ng-if="currentStep.stepExecutionResult.preHookFailure">
+                        {{setHookFailure("Before Step", currentStep.stepExecutionResult.preHookFailure)}}
                         <div ng-include src="'hook-failure.html'"></div>
                     </div>
                     <div class="error-container failed" ng-if="isStepFailure(currentStep.stepExecutionResult) && !isConcept">
                         <div ng-include src="'step-failure.html'" class="failure_container"></div>
                     </div>
-                    <div class="error-container failed" ng-if="currentStep.stepExecutionResult.postHookFailure">
-                        {{setHookFailure(currentStep.stepExecutionResult.postHookFailure)}}
-                        <div class="error-heading">After Step Failed: <span
-                                                                          class="error-message">{{hookFailure.errorMessage}}</span></div>
+                    <div ng-if="currentStep.stepExecutionResult.postHookFailure">
+                        {{setHookFailure("After Step", currentStep.stepExecutionResult.postHookFailure)}}
                         <div ng-include src="'hook-failure.html'"></div>
                     </div>
                 </li>
@@ -302,13 +298,9 @@
             </div>
         </div>
 
-
-        <div class="error-container failed" ng-if="currentScenario.preHookFailure">
-            {{setHookFailure(currentScenario.preHookFailure)}}
-            <div collapsable class="error-heading">Before Scenario Hook Failed: <span class="error-message">{{hookFailure.errorMessage}}</span>
-            </div>
-            <div ng-include src="'hook-failure.html'">
-            </div>
+        <div ng-if="currentScenario.preHookFailure">
+            {{setHookFailure("Before Scenario", currentScenario.preHookFailure)}}
+            <div ng-include src="'hook-failure.html'"></div>
         </div>
         <div ng-repeat="item in currentScenario.contexts">
             <div ng-include src="'item-render.html'" class="context-step"></div>
@@ -320,29 +312,31 @@
         <div ng-repeat="item in currentScenario.tearDownSteps">
             <div ng-include src="'item-render.html'" class="context-step"></div>
         </div>
-        <div class="error-container failed" ng-if="currentScenario.postHookFailure">
-            {{setHookFailure(currentScenario.postHookFailure)}}
-            <div collapsable class="error-heading">After Scenario Hook Failed: <span class="error-message">{{hookFailure.errorMessage}}</span>
-            </div>
-            <div ng-include src="'hook-failure.html'">
-            </div>
+
+        <div ng-if="currentScenario.postHookFailure">
+            {{setHookFailure("After Scenario", currentScenario.postHookFailure)}}
+            <div ng-include src="'hook-failure.html'"></div>
         </div>
     </script>
 
     <script type="text/ng-template" id="hook-failure.html" ng-model="hookShowDetails">
-        <div class="toggleShow" ng-click="hookShowDetails=!hookShowDetails">
-            <span ng-if="!hookShowDetails">[Show details]</span>
-            <span ng-if="hookShowDetails">[Hide details]</span>
-        </div>
-        <div class="exception-container" ng-if="hookShowDetails">
-            <div class="exception">
-                <pre class="stacktrace">{{hookFailure.stackTrace}}</pre>
+        <div class="error-container failed">
+            <div collapsable class="error-heading">{{currentHookName}} Failed: <span class="error-message">{{hookFailure.errorMessage}}</span>
             </div>
-            <div class="screenshot-container" ng-show="hookFailure.screenShot">
-                <a href="{{getScreenshotSrc(hookFailure.screenShot)}}" rel="lightbox">
-                    <img ng-src="{{getScreenshotSrc(hookFailure.screenShot)}}"
-                         class="screenshot-thumbnail"/>
-                </a>
+            <div class="toggleShow" ng-click="hookShowDetails=!hookShowDetails">
+                <span ng-if="!hookShowDetails">[Show details]</span>
+                <span ng-if="hookShowDetails">[Hide details]</span>
+            </div>
+            <div class="exception-container" ng-if="hookShowDetails">
+                <div class="exception">
+                    <pre class="stacktrace">{{hookFailure.stackTrace}}</pre>
+                </div>
+                <div class="screenshot-container" ng-show="hookFailure.screenShot">
+                    <a href="{{getScreenshotSrc(hookFailure.screenShot)}}" rel="lightbox">
+                        <img ng-src="{{getScreenshotSrc(hookFailure.screenShot)}}"
+                             class="screenshot-thumbnail"/>
+                    </a>
+                </div>
             </div>
         </div>
     </script>
@@ -422,21 +416,14 @@
                 </div>
             </div>
 
-            <div class="error-container failed" ng-if="isPreHookFailure">
-                <div ng-if="currentSpec == undefined && isPreHookFailure">
-                    {{setHookFailure(result.preHookFailure)}}
-                    <h2>Before Suite Failed</h2>
-                    <div class="error-heading">Error: <span class="error-message">{{hookFailure.errorMessage}}</span></div>
-                    <div ng-include src="'hook-failure.html'"></div>
-                </div>
+            <div ng-if="currentSpec == undefined && isPreHookFailure">
+                {{setHookFailure("Before Suite", result.preHookFailure)}}
+                <div ng-include src="'hook-failure.html'"></div>
             </div>
-            <div class="error-container failed" ng-if="isPostHookFailure">
-                <div class="content" ng-model="aftersuitecollapsed">
-                    {{setHookFailure(result.postHookFailure)}}
-                    <h2>After Suite Failed</h2>
-                    <div class="error-heading">Error: <span class="error-message">{{hookFailure.errorMessage}}</span></div>
-                    <div ng-include src="'hook-failure.html'"></div>
-                </div>
+
+            <div ng-if="isPostHookFailure">
+                {{setHookFailure("After Suite", result.postHookFailure)}}
+                <div ng-include src="'hook-failure.html'"></div>
             </div>
 
             <div class="specifications">
@@ -474,17 +461,14 @@
                         <div ng-if="currentSpec.protoSpec.tags.length" class="tags scenario_tags contentSection">
                             <strong>Tags:</strong><span ng-repeat="tag in currentSpec.protoSpec.tags"> {{tag}}</span></div>
                     </header>
-                    <div class="error-container failed" ng-if="currentSpec.protoSpec.preHookFailure">
-                        {{setHookFailure(currentSpec.protoSpec.preHookFailure)}}
-                        <div collapsable class="error-heading">Before Spec Failed: <span class="error-message">{{hookFailure.errorMessage}}</span>
-                        </div>
-                        <div ng-include src="'hook-failure.html'"></div>
+
+                    <div ng-if="currentSpec.protoSpec.preHookFailure">
+                        {{setHookFailure("Before Spec", currentSpec.protoSpec.preHookFailure)}}
+                        <div ng-include src="'hook-failure.html'" ng-if="currentSpec.protoSpec.preHookFailure"></div>
                     </div>
-                    <div class="error-container failed" ng-if="currentSpec.protoSpec.postHookFailure">
-                        {{setHookFailure(currentSpec.protoSpec.postHookFailure)}}
-                        <div collapsable class="error-heading">After Spec Failed: <span class="error-message">{{hookFailure.errorMessage}}</span>
-                        </div>
-                        <div ng-include src="'hook-failure.html'"></div>
+                    <div ng-if="currentSpec.protoSpec.postHookFailure">
+                        {{setHookFailure("After Spec", currentSpec.protoSpec.postHookFailure)}}
+                        <div ng-include src="'hook-failure.html'" ></div>
                     </div>
 
                     <div id="specItemsContainer">

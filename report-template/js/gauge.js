@@ -132,7 +132,8 @@ gaugeReport.controller('mainController', function($scope) {
         return name || "table";
     };
 
-    $scope.setHookFailure = function(hookFailure) {
+    $scope.setHookFailure = function(hookName, hookFailure) {
+        $scope.currentHookName = hookName;
         $scope.hookFailure = hookFailure;
     };
 
