@@ -601,6 +601,14 @@ header.top .project {
     top: 0;
 }
 
+.scenario-container .not-executed {
+    border-left: 5px solid #a1a1a1;
+}
+
+.scenario-container .not-executed .step {
+    color: #a1a1a1;
+}
+
 .scenario-head {
     margin-left: 40px;
     margin-bottom: 20px;
