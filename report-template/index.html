@@ -480,7 +480,7 @@
                         </div>
                         <div ng-include src="'hook-failure.html'"></div>
                     </div>
-                    <div class="error-container failed">
+                    <div class="error-container failed" ng-if="currentSpec.protoSpec.postHookFailure">
                         {{setHookFailure(currentSpec.protoSpec.postHookFailure)}}
                         <div collapsable class="error-heading">After Spec Failed: <span class="error-message">{{hookFailure.errorMessage}}</span>
                         </div>
