@@ -1035,6 +1035,10 @@ footer p {
         max-width: 100%;
     }
 
+    .error-message {
+        max-width: 45rem;
+    }
+
     .stacktrace {
         max-width: 45rem;
     }
