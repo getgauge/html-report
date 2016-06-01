@@ -535,6 +535,7 @@ header.top .project {
     background: #fff;
     margin: 20px 0;
     position: relative;
+    padding-bottom: 1px;
 }
 
 .scenario-container.passed:before {
