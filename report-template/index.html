@@ -450,10 +450,13 @@
                         </ul>
                     </div>
                 </aside>
-                <div class="congratulations details" ng-show="(allPassed()&&currentSpec==undefined)||currentSpec==undefined" ng-hide="isPreHookFailure||isPostHookFailure">
+                <div class="congratulations details currentMessage" ng-if="currentMessage && currentSpec==undefined" ng-hide="isPreHookFailure||isPostHookFailure">
+                    <p>{{ currentMessage }}</p>
+                </div>
+                <div class="congratulations details" ng-if="allPassed()&&currentSpec==undefined" ng-hide="isPreHookFailure||isPostHookFailure||currentMessage">
                     <p>Congratulations! You've gone all <span class="green">green</span> and saved the environment!</p>
                 </div>
-                <div id="specificationContainer" class="details" ng-hide="isPreHookFailure">
+                <div id="specificationContainer" class="details" ng-hide="isPreHookFailure||currentMessage">
                     <header class="curr-spec" ng-if="currentSpec">
                         <h3 class="spec-head" title="{{currentSpec.protoSpec.fileName}}">{{currentSpec.protoSpec.specHeading}}</h3>
                         <span class="time">{{formattedTime(currentSpec.executionTime)}}</span>

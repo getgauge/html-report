@@ -73,6 +73,7 @@ gaugeReport.controller('mainController', function($scope) {
     $scope.count = 0;
     $scope.isConcept = false;
     $scope.tearDownSteps = [];
+    $scope.currentMessage = "";
 
     $scope.allPassed = function() {
         return !$scope.result.failed;
@@ -196,8 +197,10 @@ gaugeReport.controller('mainController', function($scope) {
         });
         if (specs.length > 0) {
             $scope.setCurrentSpec(true, specs[0]);
+            $scope.currentMessage = "";
         } else {
             $scope.currentSpec = undefined;
+            $scope.currentMessage = "No failed specifications.";
         }
         $scope.filteredListOfSpecs = specs;
     };
@@ -210,7 +213,13 @@ gaugeReport.controller('mainController', function($scope) {
                 specs.push(specRes);
             }
         });
-        $scope.loadSpecification(specs[0]);
+        if (specs.length > 0) {
+            $scope.loadSpecification(specs[0]);
+            $scope.currentMessage = "";
+        } else {
+            $scope.currentSpec = undefined;
+            $scope.currentMessage = "No passed specifications.";
+        }
         $scope.filteredListOfSpecs = specs;
     };
 
@@ -222,13 +231,20 @@ gaugeReport.controller('mainController', function($scope) {
                 specs.push(specRes);
             }
         });
-        $scope.loadSpecification(specs[0]);
+        if (specs.length > 0) {
+            $scope.loadSpecification(specs[0]);
+            $scope.currentMessage = "";
+        } else {
+            $scope.currentSpec = undefined;
+            $scope.currentMessage = "No skipped specifications.";
+        }
         $scope.filteredListOfSpecs = specs;
     };
 
     $scope.showAllSpecs = function() {
         if ($scope.isPreHookFailure) return;
         $scope.loadSpecification($scope.result.specResults[0]);
+        $scope.currentMessage = "";
         $scope.filteredListOfSpecs = $scope.result.specResults;
     };
 
