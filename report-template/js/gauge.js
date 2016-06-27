@@ -59,7 +59,7 @@ function initialize() {
     })();
 }
 
-gaugeReport.controller('mainController', function($scope) {
+gaugeReport.controller('mainController', function($scope, $timeout) {
     initialize();
     $scope.result = gaugeExecutionResult.suiteResult;
     $scope.itemTypesMap = itemTypesMap;
@@ -74,14 +74,15 @@ gaugeReport.controller('mainController', function($scope) {
     $scope.isConcept = false;
     $scope.tearDownSteps = [];
     $scope.currentMessage = "";
-    $scope.search = { query: "" };
+    $scope.search = { query: "", specList: [], timer: undefined, disabled: false, lastSpec: undefined };
 
     $scope.allPassed = function() {
         return !$scope.result.failed;
     };
 
     $scope.loadSpecification = function(specification) {
-        $scope.currentSpec = specification;
+        $scope.currentSpec = $scope.search.lastSpec = specification;
+        $scope.currentMessage = "";
     };
 
     $scope.initializeLightbox = initLightbox;
@@ -286,6 +287,36 @@ gaugeReport.controller('mainController', function($scope) {
     $scope.isEmpty = function(item) {
         return !!(typeof(item) === "string" && item.length <= 0);
     };
+
+    var searchEnd = function () {
+        $scope.search.disabled = true;
+         if ($scope.search.query.length === 0) {
+             $scope.currentMessage = "";
+             if ($scope.search.lastSpec !== undefined) $scope.loadSpecification($scope.search.lastSpec);
+        } else if ($scope.search.specList.length >= 1) {
+            if ($scope.currentSpec !== undefined) {
+                var matched = $scope.search.specList.filter(function (s) {
+                    return s.protoSpec.specHeading === $scope.currentSpec.protoSpec.specHeading;
+                });
+                if (matched.length < 1) {
+                    $scope.loadSpecification($scope.search.specList[0]);
+                }
+            }
+        } else if ($scope.search.query.length >= 1 && $scope.search.specList.length === 0) {
+            $scope.currentSpec = undefined;
+            $scope.currentMessage = "No results found.";
+        }
+        $scope.search.disabled = false;
+    };
+
+    $scope.$watch("search.query", function () {
+        if ($scope.search.query.length === 0) {
+            searchEnd();
+            return;
+        }
+        if ($scope.search.timer) $timeout.cancel($scope.search.timer);
+        $scope.search.timer = $timeout(searchEnd, 500);
+    }, true);
 
     $scope.searchItems = function(searchQuery) {
         return function(spec) {

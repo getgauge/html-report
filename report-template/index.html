@@ -432,14 +432,14 @@
                     <h3 class="title">Specifications</h3>
 
                     <div class="searchbar">
-                        <input id="searchSpecifications" ng-model="search.query"
+                        <input id="searchSpecifications" ng-model="search.query" ng-disabled="search.disabled"
                                placeholder="Type specification or tag name" type="text"/>
                         <i class="fa fa-search"></i></div>
 
 
                     <div id="listOfSpecifications">
                         <ul id="scenarios" class="spec-list">
-                            <li ng-repeat="specResult in filteredListOfSpecs | filter: searchItems(search.query) | orderBy:'-failed'"
+                            <li ng-repeat="specResult in (search.specList = (filteredListOfSpecs | filter: searchItems(search.query) | orderBy:'-failed'))"
                                 ng-class="{'failed': specResult.failed,
                                           'passed': !specResult.failed,
                                           'selected': currentSpec === specResult,
