@@ -178,7 +178,7 @@
             <div ng-if="collapseMessages" class="collapse-messages">
                 <div ng-repeat="msg in currentExecutionResult.executionResult.message track by $index"
                      class="step-message">
-                    {{msg}}
+                    <span ng-bind-html="formatMessage(msg)"></span>
                 </div>
             </div>
         </div>

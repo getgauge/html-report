@@ -433,4 +433,7 @@ gaugeReport.controller('mainController', function($scope, $timeout) {
         return result.executionResult && result.executionResult.failed && result.executionResult.errorMessage && result.executionResult.stackTrace;
     };
 
+    $scope.formatMessage = function (msg) {
+        return msg.replace(/\n/g, "<br/>").replace(/\s/g, "&nbsp;");
+    };
 });
