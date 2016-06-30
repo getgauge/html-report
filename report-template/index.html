@@ -101,12 +101,12 @@
                 </div>
             </div>
 
-            <div ng-switch-when="TableDrivenScenario">
+            <div ng-switch-when="TableDrivenScenario" class="scenarioItemsContainer">
                 {{setCurrentScenario(item.tableDrivenScenario.scenarios[dataTableIndex])}}
                 <div class="scenario-container"
                      ng-class="{'failed':item.tableDrivenScenario.scenarios[dataTableIndex].failed,
-                     'passed':item.tableDrivenScenario.scenarios[dataTableIndex].passed,
-                     'skipped':item.tableDrivenScenario.scenarios[dataTableIndex].skipped}">
+                               'passed': !item.tableDrivenScenario.scenarios[dataTableIndex].failed &amp;&amp;!item.tableDrivenScenario.scenarios[dataTableIndex].skipped,
+                               'skipped':item.tableDrivenScenario.scenarios[dataTableIndex].skipped}">
                     <div ng-include src="'scenario.html'"></div>
                 </div>
             </div>
