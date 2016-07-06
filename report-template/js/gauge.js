@@ -292,7 +292,11 @@ gaugeReport.controller('mainController', function($scope, $timeout) {
         $scope.search.disabled = true;
          if ($scope.search.query.length === 0) {
              $scope.currentMessage = "";
-             if ($scope.search.lastSpec !== undefined) $scope.loadSpecification($scope.search.lastSpec);
+             if ($scope.search.lastSpec !== undefined) {
+                 $scope.loadSpecification($scope.search.lastSpec);
+             } else {
+                 $scope.loadSpecification($scope.search.specList[0]);
+             }
         } else if ($scope.search.specList.length >= 1) {
             if ($scope.currentSpec !== undefined) {
                 var matched = $scope.search.specList.filter(function (s) {
@@ -301,6 +305,8 @@ gaugeReport.controller('mainController', function($scope, $timeout) {
                 if (matched.length < 1) {
                     $scope.loadSpecification($scope.search.specList[0]);
                 }
+            } else {
+                $scope.loadSpecification($scope.search.specList[0]);
             }
         } else if ($scope.search.query.length >= 1 && $scope.search.specList.length === 0) {
             $scope.currentSpec = undefined;
@@ -315,7 +321,7 @@ gaugeReport.controller('mainController', function($scope, $timeout) {
             return;
         }
         if ($scope.search.timer) $timeout.cancel($scope.search.timer);
-        $scope.search.timer = $timeout(searchEnd, 500);
+        $scope.search.timer = $timeout(searchEnd, 200);
     }, true);
 
     $scope.searchItems = function(searchQuery) {
