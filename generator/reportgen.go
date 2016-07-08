@@ -38,7 +38,7 @@ type overview struct {
 	ProjectName string
 	Env         string
 	Tags        string
-	SuccRate    string
+	SuccRate    float32
 	ExecTime    string
 	Timestamp   string
 	TotalSpecs  int
@@ -51,7 +51,7 @@ func newOverview() *overview {
 	return &overview{
 		ProjectName: "gauge-testsss",
 		Env:         "default",
-		SuccRate:    "95",
+		SuccRate:    95,
 		ExecTime:    "00:01:53",
 		Timestamp:   "Jun 3, 2016 at 12:29pm",
 	}

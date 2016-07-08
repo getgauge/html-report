@@ -93,9 +93,9 @@ var re *regexp.Regexp = regexp.MustCompile("[ ]*\n[ ]*")
 
 var reportGenTests = []reportGenTest{
 	{"generate body header with project name", bodyHeaderTag, overview{ProjectName: "projname"}, bodyHeader},
-	{"generate report overview with tags", reportOverviewTag, overview{"projname", "default", "foo", "34", "00:01:53", "Jun 3, 2016 at 12:29pm", 41, 2, 39, 0},
+	{"generate report overview with tags", reportOverviewTag, overview{"projname", "default", "foo", 34, "00:01:53", "Jun 3, 2016 at 12:29pm", 41, 2, 39, 0},
 		chartDiv + resCtrDiv + env + tags + succRate + execTime + timestamp},
-	{"generate report overview without tags", reportOverviewTag, overview{"projname", "default", "", "34", "00:01:53", "Jun 3, 2016 at 12:29pm", 41, 2, 39, 0},
+	{"generate report overview without tags", reportOverviewTag, overview{"projname", "default", "", 34, "00:01:53", "Jun 3, 2016 at 12:29pm", 41, 2, 39, 0},
 		chartDiv + resCtrDiv + env + succRate + execTime + timestamp},
 }
 
