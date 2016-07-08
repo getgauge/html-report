@@ -30,6 +30,15 @@ type reportGenTest struct {
 	output string
 }
 
+var bodyHeader string = `<header class="top">
+<div class="header">
+  <div class="container">
+     <div class="logo"><img src="images/logo.png" alt="Report logo"></div>
+        <h2 class="project">Project: projname</h2>
+      </div>
+  </div>
+</header>`
+
 var chartDiv string = `<div class="report-overview">
   <div class="report_chart">
     <div class="chart">
@@ -83,9 +92,10 @@ var timestamp string = `
 var re *regexp.Regexp = regexp.MustCompile("[ ]*\n[ ]*")
 
 var reportGenTests = []reportGenTest{
-	{"generate report overview with tags", reportOverviewTag, overview{"default", "foo", "34", "00:01:53", "Jun 3, 2016 at 12:29pm", 41, 2, 39, 0},
+	{"generate body header with project name", bodyHeaderTag, overview{ProjectName: "projname"}, bodyHeader},
+	{"generate report overview with tags", reportOverviewTag, overview{"projname", "default", "foo", "34", "00:01:53", "Jun 3, 2016 at 12:29pm", 41, 2, 39, 0},
 		chartDiv + resCtrDiv + env + tags + succRate + execTime + timestamp},
-	{"generate report overview without tags", reportOverviewTag, overview{"default", "", "34", "00:01:53", "Jun 3, 2016 at 12:29pm", 41, 2, 39, 0},
+	{"generate report overview without tags", reportOverviewTag, overview{"projname", "default", "", "34", "00:01:53", "Jun 3, 2016 at 12:29pm", 41, 2, 39, 0},
 		chartDiv + resCtrDiv + env + succRate + execTime + timestamp},
 }
 

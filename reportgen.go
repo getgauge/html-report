@@ -24,7 +24,7 @@ import (
 )
 
 func gen(tmplName string, f io.Writer, data interface{}) {
-	tmpl, err := template.New("Reports").Parse(tmplName)
+	tmpl, err := template.New(defaultReportsDir).Parse(tmplName)
 	if err != nil {
 		log.Fatalf(err.Error())
 	}
@@ -35,25 +35,26 @@ func gen(tmplName string, f io.Writer, data interface{}) {
 }
 
 type overview struct {
-	Env        string
-	Tags       string
-	SuccRate   string
-	ExecTime   string
-	Timestamp  string
-	TotalSpecs int
-	Failed     int
-	Passed     int
-	Skipped    int
+	ProjectName string
+	Env         string
+	Tags        string
+	SuccRate    string
+	ExecTime    string
+	Timestamp   string
+	TotalSpecs  int
+	Failed      int
+	Passed      int
+	Skipped     int
 }
 
-func genOverview(f io.Writer) {
-	o := &overview{
-		Env:       "default",
-		SuccRate:  "95",
-		ExecTime:  "00:01:53",
-		Timestamp: "Jun 3, 2016 at 12:29pm",
+func newOverview() *overview {
+	return &overview{
+		ProjectName: "gauge-testsss",
+		Env:         "default",
+		SuccRate:    "95",
+		ExecTime:    "00:01:53",
+		Timestamp:   "Jun 3, 2016 at 12:29pm",
 	}
-	gen(reportOverviewTag, f, o)
 }
 
 func generate() {
@@ -61,13 +62,14 @@ func generate() {
 	if err != nil {
 		log.Fatalf(err.Error())
 	}
+	o := newOverview()
 	gen(htmlStartTag, f, nil)
-	gen(header, f, nil)
+	gen(headerTag, f, nil)
 	gen(bodyStartTag, f, nil)
-	gen(bodyHeader, f, nil)
+	gen(bodyHeaderTag, f, o)
 	gen(mainStartTag, f, nil)
 	gen(containerStartTag, f, nil)
-	genOverview(f)
+	gen(reportOverviewTag, f, o)
 	gen(containerEndTag, f, nil)
 	gen(mainEndTag, f, nil)
 	gen(bodyEndTag, f, nil)
