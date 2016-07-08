@@ -3,3 +3,4 @@ deploy
 .idea
 bin
 *.iml
+.DS_Store

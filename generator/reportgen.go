@@ -14,7 +14,7 @@
 
 // You should have received a copy of the GNU General Public License
 // along with getgauge/html-report.  If not, see <http://www.gnu.org/licenses/>.
-package main
+package generator
 
 import (
 	"io"
@@ -24,7 +24,7 @@ import (
 )
 
 func gen(tmplName string, f io.Writer, data interface{}) {
-	tmpl, err := template.New(defaultReportsDir).Parse(tmplName)
+	tmpl, err := template.New("Reports").Parse(tmplName)
 	if err != nil {
 		log.Fatalf(err.Error())
 	}

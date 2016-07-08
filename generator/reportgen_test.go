@@ -15,7 +15,7 @@
 // You should have received a copy of the GNU General Public License
 // along with getgauge/html-report.  If not, see <http://www.gnu.org/licenses/>.
 
-package main
+package generator
 
 import (
 	"bytes"
