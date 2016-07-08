@@ -19,12 +19,13 @@ package main
 
 import (
 	"fmt"
-	. "gopkg.in/check.v1"
 	"os"
 	"path/filepath"
 	"strings"
 	"testing"
 	"time"
+
+	. "gopkg.in/check.v1"
 )
 
 func Test(t *testing.T) { TestingT(t) }

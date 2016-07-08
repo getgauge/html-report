@@ -22,14 +22,15 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
-	"github.com/getgauge/common"
-	"github.com/getgauge/html-report/gauge_messages"
-	"github.com/getgauge/html-report/listener"
 	"io/ioutil"
 	"os"
 	"path/filepath"
 	"strings"
 	"time"
+
+	"github.com/getgauge/common"
+	"github.com/getgauge/html-report/gauge_messages"
+	"github.com/getgauge/html-report/listener"
 )
 
 const (

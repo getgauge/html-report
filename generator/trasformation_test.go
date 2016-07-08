@@ -31,11 +31,12 @@ type transformTest struct {
 	output interface{}
 }
 
-var suiteRes *gauge_messages.ProtoSuiteResult = &gauge_messages.ProtoSuiteResult{
+var suiteRes = &gauge_messages.ProtoSuiteResult{
 	ProjectName:       proto.String("projName"),
 	Environment:       proto.String("ci-java"),
 	Tags:              proto.String("!unimplemented"),
 	SuccessRate:       proto.Float32(80.00),
+	ExecutionTime:     proto.Int64(113163),
 	Timestamp:         proto.String("Jun 3, 2016 at 12:29pm"),
 	SpecResults:       make([]*gauge_messages.ProtoSpecResult, 15),
 	SpecsFailedCount:  proto.Int32(2),
@@ -47,7 +48,7 @@ var o = &overview{
 	Env:         "ci-java",
 	Tags:        "!unimplemented",
 	SuccRate:    80.00,
-	ExecTime:    "foo",
+	ExecTime:    "00:01:53",
 	Timestamp:   "Jun 3, 2016 at 12:29pm",
 	TotalSpecs:  15,
 	Failed:      2,

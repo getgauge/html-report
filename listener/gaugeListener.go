@@ -20,11 +20,12 @@ package listener
 import (
 	"bytes"
 	"fmt"
-	"github.com/getgauge/html-report/gauge_messages"
-	"github.com/golang/protobuf/proto"
 	"log"
 	"net"
 	"os"
+
+	"github.com/getgauge/html-report/gauge_messages"
+	"github.com/golang/protobuf/proto"
 )
 
 type GaugeResultHandlerFn func(*gauge_messages.SuiteExecutionResult)

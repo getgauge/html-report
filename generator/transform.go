@@ -18,7 +18,13 @@
 package generator
 
 import (
+	"time"
+
 	"github.com/getgauge/html-report/gauge_messages"
+)
+
+const (
+	execTimeFormat = "15:04:05"
 )
 
 func toOverview(res *gauge_messages.ProtoSuiteResult) *overview {
@@ -28,11 +34,15 @@ func toOverview(res *gauge_messages.ProtoSuiteResult) *overview {
 		Env:         res.GetEnvironment(),
 		Tags:        res.GetTags(),
 		SuccRate:    res.GetSuccessRate(),
-		ExecTime:    "foo",
+		ExecTime:    formatTime(res.GetExecutionTime()),
 		Timestamp:   res.GetTimestamp(),
 		TotalSpecs:  len(res.GetSpecResults()),
 		Failed:      int(res.GetSpecsFailedCount()),
 		Passed:      passed,
 		Skipped:     int(res.GetSpecsSkippedCount()),
 	}
+}
+
+func formatTime(ms int64) string {
+	return time.Unix(0, ms*int64(time.Millisecond)).UTC().Format(execTimeFormat)
 }
