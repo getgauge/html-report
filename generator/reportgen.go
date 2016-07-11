@@ -47,14 +47,16 @@ type overview struct {
 	Skipped     int
 }
 
-func newOverview() *overview {
-	return &overview{
-		ProjectName: "gauge-testsss",
-		Env:         "default",
-		SuccRate:    95,
-		ExecTime:    "00:01:53",
-		Timestamp:   "Jun 3, 2016 at 12:29pm",
-	}
+type specsMeta struct {
+	SpecName string
+	ExecTime string
+	Failed   bool
+	Skipped  bool
+}
+
+type sidebar struct {
+	IsPreHookFailure bool
+	Specs            []*specsMeta
 }
 
 func generate() {

@@ -98,3 +98,31 @@ const reportOverviewTag = `<div class="report-overview">
   </div>
 </div>
 `
+
+//TODO: 1. Set first spec as selected by default and load it
+//      2. Javascript action to load spec on click
+//      3. Filtering based on search query
+const sidebarDiv = `{{if not .IsPreHookFailure}}
+<aside class="sidebar">
+  <h3 class="title">Specifications</h3>
+
+  <div class="searchbar">
+    <input id="searchSpecifications" placeholder="Type specification or tag name" type="text"/>
+    <i class="fa fa-search"></i>
+  </div>
+
+  <div id="listOfSpecifications">
+    <ul id="scenarios" class="spec-list">
+    {{range $index, $specMeta := .Specs}}
+      {{if $specMeta.Failed}} <li class='failed spec-name'>
+      {{else if $specMeta.Skipped}} <li class='skipped spec-name'>
+      {{else}} <li class='passed spec-name'>
+      {{end}}
+        <span id="scenarioName" class="scenarioname">{{$specMeta.SpecName}}</span>
+        <span id="time" class="time">{{$specMeta.ExecTime}}</span>
+      </li>
+      {{end}}
+    </ul>
+  </div>
+</aside>
+{{end}}`

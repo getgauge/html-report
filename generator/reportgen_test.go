@@ -30,7 +30,7 @@ type reportGenTest struct {
 	output string
 }
 
-var bodyHeader string = `<header class="top">
+var wBodyHeader string = `<header class="top">
 <div class="header">
   <div class="container">
      <div class="logo"><img src="images/logo.png" alt="Report logo"></div>
@@ -39,7 +39,7 @@ var bodyHeader string = `<header class="top">
   </div>
 </header>`
 
-var chartDiv string = `<div class="report-overview">
+var wChartDiv string = `<div class="report-overview">
   <div class="report_chart">
     <div class="chart">
       <nvd3 options="options" data="data"></nvd3>
@@ -47,7 +47,7 @@ var chartDiv string = `<div class="report-overview">
     <div class="total-specs"><span class="value">41</span> <span class="txt">Total specs</span></div>
   </div>`
 
-var resCtrDiv string = `
+var wResCntDiv string = `
   <div class="report_test-results">
     <ul>
       <li class="fail"><span class="value">2</span> <span class="txt">Failed</span></li>
@@ -56,31 +56,31 @@ var resCtrDiv string = `
     </ul>
   </div>`
 
-var env string = `<div class="report_details"><ul>
+var wEnvLi string = `<div class="report_details"><ul>
       <li>
         <label>Environment </label>
         <span>default</span>
       </li>`
 
-var tags string = `
+var wTagsLi string = `
       <li>
         <label>Tags </label>
         <span>foo</span>
       </li>`
 
-var succRate string = `
+var wSuccRateLi string = `
       <li>
         <label>Success Rate </label>
         <span>34%</span>
       </li>`
 
-var execTime string = `
+var wExecTimeLi string = `
      <li>
         <label>Total Time </label>
         <span>00:01:53</span>
       </li>`
 
-var timestamp string = `
+var wTimestampLi string = `
      <li>
         <label>Generated On </label>
         <span>Jun 3, 2016 at 12:29pm</span>
@@ -89,14 +89,64 @@ var timestamp string = `
   </div>
 </div>`
 
+var wSidebarAside string = `<aside class="sidebar">
+  <h3 class="title">Specifications</h3>
+  <div class="searchbar">
+    <input id="searchSpecifications" placeholder="Type specification or tag name" type="text"/>
+    <i class="fa fa-search"></i>
+  </div>
+  <div id="listOfSpecifications">
+    <ul id="scenarios" class="spec-list">
+    <li class='passed spec-name'>
+      <span id="scenarioName" class="scenarioname">Passing Spec</span>
+      <span id="time" class="time">00:01:04</span>
+    </li>
+    <li class='failed spec-name'>
+      <span id="scenarioName" class="scenarioname">Failing Spec</span>
+      <span id="time" class="time">00:00:30</span>
+    </li>
+    <li class='skipped spec-name'>
+      <span id="scenarioName" class="scenarioname">Skipped Spec</span>
+      <span id="time" class="time">00:00:00</span>
+    </li>
+    </ul>
+  </div>
+</aside>`
+
+func newOverview() *overview {
+	return &overview{
+		ProjectName: "gauge-testsss",
+		Env:         "default",
+		SuccRate:    95,
+		ExecTime:    "00:01:53",
+		Timestamp:   "Jun 3, 2016 at 12:29pm",
+	}
+}
+
+func newSpecsMeta(name, execTime string, failed, skipped bool) *specsMeta {
+	return &specsMeta{
+		SpecName: name,
+		ExecTime: execTime,
+		Failed:   failed,
+		Skipped:  skipped,
+	}
+}
+
 var re *regexp.Regexp = regexp.MustCompile("[ ]*\n[ ]*")
 
 var reportGenTests = []reportGenTest{
-	{"generate body header with project name", bodyHeaderTag, overview{ProjectName: "projname"}, bodyHeader},
+	{"generate body header with project name", bodyHeaderTag, overview{ProjectName: "projname"}, wBodyHeader},
 	{"generate report overview with tags", reportOverviewTag, overview{"projname", "default", "foo", 34, "00:01:53", "Jun 3, 2016 at 12:29pm", 41, 2, 39, 0},
-		chartDiv + resCtrDiv + env + tags + succRate + execTime + timestamp},
+		wChartDiv + wResCntDiv + wEnvLi + wTagsLi + wSuccRateLi + wExecTimeLi + wTimestampLi},
 	{"generate report overview without tags", reportOverviewTag, overview{"projname", "default", "", 34, "00:01:53", "Jun 3, 2016 at 12:29pm", 41, 2, 39, 0},
-		chartDiv + resCtrDiv + env + succRate + execTime + timestamp},
+		wChartDiv + wResCntDiv + wEnvLi + wSuccRateLi + wExecTimeLi + wTimestampLi},
+	{"generate sidebar with appropriate pass/fail/skip class", sidebarDiv, &sidebar{
+		IsPreHookFailure: false,
+		Specs: []*specsMeta{
+			newSpecsMeta("Passing Spec", "00:01:04", false, false),
+			newSpecsMeta("Failing Spec", "00:00:30", true, false),
+			newSpecsMeta("Skipped Spec", "00:00:00", false, true),
+		}}, wSidebarAside},
 }
 
 func TestExecute(t *testing.T) {
