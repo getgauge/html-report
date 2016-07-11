@@ -59,6 +59,22 @@ type sidebar struct {
 	Specs            []*specsMeta
 }
 
+type hookFailure struct {
+	HookName   string
+	ErrMsg     string
+	Screenshot string
+	Stacktrace string
+}
+
+func newHookFailure(name, errMsg, screenshot, stacktrace string) *hookFailure {
+	return &hookFailure{
+		HookName:   name,
+		ErrMsg:     errMsg,
+		Screenshot: screenshot,
+		Stacktrace: stacktrace,
+	}
+}
+
 func newOverview() *overview {
 	return &overview{
 		ProjectName: "gauge-testsss",

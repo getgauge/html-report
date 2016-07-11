@@ -117,6 +117,35 @@ var wCongratsDiv string = `<div class="congratulations details">
   <p>Congratulations! You've gone all <span class="green">green</span> and saved the environment!</p>
 </div>`
 
+var wHookFailureWithScreenhotDiv string = `<div class="error-container failed">
+  <div collapsable class="error-heading">BeforeSuite Failed: <span class="error-message">SomeError</span></div>
+  <div class="toggleShow" data-toggle="collapse" data-target="#hookFailureDetails">
+    <span>[Show details]</span>
+  </div>
+  <div class="exception-container" id="hookFailureDetails">
+      <div class="exception">
+        <pre class="stacktrace">Stack trace</pre>
+      </div>
+      <div class="screenshot-container">
+        <a href="data:image/png;base64,iVBO" rel="lightbox">
+          <img ng-src="data:image/png;base64,iVBO" class="screenshot-thumbnail"/>
+        </a>
+      </div>
+  </div>
+</div>`
+
+var wHookFailureWithoutScreenhotDiv string = `<div class="error-container failed">
+  <div collapsable class="error-heading">BeforeSuite Failed: <span class="error-message">SomeError</span></div>
+  <div class="toggleShow" data-toggle="collapse" data-target="#hookFailureDetails">
+    <span>[Show details]</span>
+  </div>
+  <div class="exception-container" id="hookFailureDetails">
+      <div class="exception">
+        <pre class="stacktrace">Stack trace</pre>
+      </div>
+  </div>
+</div>`
+
 func newSpecsMeta(name, execTime string, failed, skipped bool) *specsMeta {
 	return &specsMeta{
 		SpecName: name,
@@ -147,6 +176,8 @@ var reportGenTests = []reportGenTest{
 	}, ""},
 	{"generate congratulations bar if all specs are passed", congratsDiv, &overview{}, wCongratsDiv},
 	{"don't generate congratulations bar if some spec failed", congratsDiv, &overview{Failed: 1}, ""},
+	{"generate hook failure div with screenshot", hookFailureDiv, newHookFailure("BeforeSuite", "SomeError", "iVBO", "Stack trace"), wHookFailureWithScreenhotDiv},
+	{"generate hook failure div without screenshot", hookFailureDiv, newHookFailure("BeforeSuite", "SomeError", "", "Stack trace"), wHookFailureWithoutScreenhotDiv},
 }
 
 func TestExecute(t *testing.T) {

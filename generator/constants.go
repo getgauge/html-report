@@ -22,6 +22,7 @@ const htmlStartTag = `<!doctype html>
 
 const htmlEndTag = `</html>`
 
+//TODO: Move JS includes at the end of body
 const headerTag = `<head>
 <meta http-equiv="X-UA-Compatible" content="IE=9; IE=8; IE=7; IE=EDGE"/>
 <title>Gauge Test Results</title>
@@ -31,6 +32,7 @@ const headerTag = `<head>
 <link rel="stylesheet" type="text/css" href="css/normalize.css"/>
 <link rel="stylesheet" type="text/css" href="css/angular-hovercard.css"/>
 <link rel="stylesheet" type="text/css" href="css/style.css"/>
+<script src="js/lightbox.js"></script>
 </head>`
 
 const bodyStartTag = `<body>
@@ -127,11 +129,30 @@ const sidebarDiv = `{{if not .IsPreHookFailure}}
 </aside>
 {{end}}`
 
-const specsStartDiv = `<div class="specifications">
-`
+const specsStartDiv = `<div class="specifications">`
 
 //TODO: Hide if pre/post hook failed
 const congratsDiv = `{{if not .Failed}}
   <div class="congratulations details">
     <p>Congratulations! You've gone all <span class="green">green</span> and saved the environment!</p>
   </div>{{end}}`
+
+
+//TODO 1. Change text on toggle collapse
+//     2. Check for collapsible
+const hookFailureDiv = `<div class="error-container failed">
+  <div collapsable class="error-heading">{{.HookName}} Failed: <span class="error-message">{{.ErrMsg}}</span></div>
+  <div class="toggleShow" data-toggle="collapse" data-target="#hookFailureDetails">
+    <span>[Show details]</span>
+  </div>
+  <div class="exception-container" id="hookFailureDetails">
+      <div class="exception">
+        <pre class="stacktrace">{{.Stacktrace}}</pre>
+      </div>
+      {{if .Screenshot}}<div class="screenshot-container">
+        <a href="data:image/png;base64,{{.Screenshot}}" rel="lightbox">
+          <img ng-src="data:image/png;base64,{{.Screenshot}}" class="screenshot-thumbnail"/>
+        </a>
+      </div> {{end}}
+  </div>
+</div>`
