@@ -113,15 +113,9 @@ var wSidebarAside string = `<aside class="sidebar">
   </div>
 </aside>`
 
-func newOverview() *overview {
-	return &overview{
-		ProjectName: "gauge-testsss",
-		Env:         "default",
-		SuccRate:    95,
-		ExecTime:    "00:01:53",
-		Timestamp:   "Jun 3, 2016 at 12:29pm",
-	}
-}
+var wCongratsDiv string = `<div class="congratulations details">
+  <p>Congratulations! You've gone all <span class="green">green</span> and saved the environment!</p>
+</div>`
 
 func newSpecsMeta(name, execTime string, failed, skipped bool) *specsMeta {
 	return &specsMeta{
@@ -135,10 +129,10 @@ func newSpecsMeta(name, execTime string, failed, skipped bool) *specsMeta {
 var re *regexp.Regexp = regexp.MustCompile("[ ]*\n[ ]*")
 
 var reportGenTests = []reportGenTest{
-	{"generate body header with project name", bodyHeaderTag, overview{ProjectName: "projname"}, wBodyHeader},
-	{"generate report overview with tags", reportOverviewTag, overview{"projname", "default", "foo", 34, "00:01:53", "Jun 3, 2016 at 12:29pm", 41, 2, 39, 0},
+	{"generate body header with project name", bodyHeaderTag, &overview{ProjectName: "projname"}, wBodyHeader},
+	{"generate report overview with tags", reportOverviewTag, &overview{"projname", "default", "foo", 34, "00:01:53", "Jun 3, 2016 at 12:29pm", 41, 2, 39, 0},
 		wChartDiv + wResCntDiv + wEnvLi + wTagsLi + wSuccRateLi + wExecTimeLi + wTimestampLi},
-	{"generate report overview without tags", reportOverviewTag, overview{"projname", "default", "", 34, "00:01:53", "Jun 3, 2016 at 12:29pm", 41, 2, 39, 0},
+	{"generate report overview without tags", reportOverviewTag, &overview{"projname", "default", "", 34, "00:01:53", "Jun 3, 2016 at 12:29pm", 41, 2, 39, 0},
 		wChartDiv + wResCntDiv + wEnvLi + wSuccRateLi + wExecTimeLi + wTimestampLi},
 	{"generate sidebar with appropriate pass/fail/skip class", sidebarDiv, &sidebar{
 		IsPreHookFailure: false,
@@ -147,6 +141,12 @@ var reportGenTests = []reportGenTest{
 			newSpecsMeta("Failing Spec", "00:00:30", true, false),
 			newSpecsMeta("Skipped Spec", "00:00:00", false, true),
 		}}, wSidebarAside},
+	{"do not generate sidebar if presuitehook failure", sidebarDiv, &sidebar{
+		IsPreHookFailure: true,
+		Specs:            []*specsMeta{},
+	}, ""},
+	{"generate congratulations bar if all specs are passed", congratsDiv, &overview{}, wCongratsDiv},
+	{"don't generate congratulations bar if some spec failed", congratsDiv, &overview{Failed: 1}, ""},
 }
 
 func TestExecute(t *testing.T) {

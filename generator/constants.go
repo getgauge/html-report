@@ -126,3 +126,12 @@ const sidebarDiv = `{{if not .IsPreHookFailure}}
   </div>
 </aside>
 {{end}}`
+
+const specsStartDiv = `<div class="specifications">
+`
+
+//TODO: Hide if pre/post hook failed
+const congratsDiv = `{{if not .Failed}}
+  <div class="congratulations details">
+    <p>Congratulations! You've gone all <span class="green">green</span> and saved the environment!</p>
+  </div>{{end}}`
