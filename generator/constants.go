@@ -54,9 +54,7 @@ const mainStartTag = `<main class="main-container">`
 
 const mainEndTag = `</main>`
 
-const containerStartTag = `<div class="container">`
-
-const containerEndTag = `</div>`
+const containerStartDiv = `<div class="container">`
 
 const reportOverviewTag = `<div class="report-overview">
   <div class="report_chart">
@@ -137,7 +135,6 @@ const congratsDiv = `{{if not .Failed}}
     <p>Congratulations! You've gone all <span class="green">green</span> and saved the environment!</p>
   </div>{{end}}`
 
-
 //TODO 1. Change text on toggle collapse
 //     2. Check for collapsible
 const hookFailureDiv = `<div class="error-container failed">
@@ -156,3 +153,21 @@ const hookFailureDiv = `<div class="error-container failed">
       </div> {{end}}
   </div>
 </div>`
+
+const specHeaderTag = `<header class="curr-spec">
+  <h3 class="spec-head">{{.SpecName}}</h3>
+  <span class="time">{{.ExecTime}}</span>
+  {{if .Tags}}
+  <div class="tags scenario_tags contentSection">
+    <strong>Tags:</strong>
+    {{range .Tags}}
+    <span>{{.}}</span>
+    {{end}}
+  </div>
+  {{end}} 
+</header>`
+
+//TODO: Hide this if there is a pre hook failure
+const specContainerStartDiv = `<div id="specificationContainer" class="details">`
+
+const endDiv = `</div>`

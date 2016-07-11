@@ -52,6 +52,7 @@ type specsMeta struct {
 	ExecTime string
 	Failed   bool
 	Skipped  bool
+	Tags     []string
 }
 
 type sidebar struct {
@@ -96,9 +97,13 @@ func generate() {
 	gen(bodyStartTag, f, nil)
 	gen(bodyHeaderTag, f, o)
 	gen(mainStartTag, f, nil)
-	gen(containerStartTag, f, nil)
+	gen(containerStartDiv, f, nil)
+	gen(specsStartDiv, f, nil)
 	gen(reportOverviewTag, f, o)
-	gen(containerEndTag, f, nil)
+	gen(specContainerStartDiv, f, nil)
+	gen(endDiv, f, nil)
+	gen(endDiv, f, nil)
+	gen(endDiv, f, nil)
 	gen(mainEndTag, f, nil)
 	gen(bodyEndTag, f, nil)
 	gen(htmlEndTag, f, nil)
