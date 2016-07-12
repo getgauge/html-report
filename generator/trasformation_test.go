@@ -93,7 +93,7 @@ func TestTransformOverview(t *testing.T) {
 
 	got := toOverview(suiteRes1)
 	if !reflect.DeepEqual(got, want) {
-		t.Errorf("%s: \n want:\n%q\ngot:\n%q\n", "transform to overview", want, got)
+		t.Errorf("want:\n%q\ngot:\n%q\n", want, got)
 	}
 }
 
@@ -127,6 +127,6 @@ func TestTransformSidebar(t *testing.T) {
 
 	got := toSidebar(suiteRes2)
 	if !reflect.DeepEqual(got, want) {
-		t.Errorf("%s: \n want:\n%q\ngot:\n%q\n", "transform to sidebar", want, got)
+		t.Errorf("want:\n%q\ngot:\n%q\n", want, got)
 	}
 }
