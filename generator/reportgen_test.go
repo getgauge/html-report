@@ -156,6 +156,11 @@ var wSpecHeaderTag string = `<header class="curr-spec">
   </div>
 </header>`
 
+var wSpecHeaderNoTag string = `<header class="curr-spec">
+  <h3 class="spec-head">Spec heading</h3>
+  <span class="time">00:01:01</span>
+</header>`
+
 func newSpecsMeta(name, execTime string, failed, skipped bool, tags []string) *specsMeta {
 	return &specsMeta{
 		SpecName: name,
@@ -190,6 +195,7 @@ var reportGenTests = []reportGenTest{
 	{"generate hook failure div with screenshot", hookFailureDiv, newHookFailure("BeforeSuite", "SomeError", "iVBO", "Stack trace"), wHookFailureWithScreenhotDiv},
 	{"generate hook failure div without screenshot", hookFailureDiv, newHookFailure("BeforeSuite", "SomeError", "", "Stack trace"), wHookFailureWithoutScreenhotDiv},
 	{"generate spec header with all values", specHeaderTag, newSpecsMeta("Spec heading", "00:01:01", false, false, []string{"tag1", "tag2"}), wSpecHeaderTag},
+	{"generate spec header without tags", specHeaderTag, newSpecsMeta("Spec heading", "00:01:01", false, false, []string{}), wSpecHeaderNoTag},
 }
 
 func TestExecute(t *testing.T) {
