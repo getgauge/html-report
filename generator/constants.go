@@ -182,3 +182,7 @@ const messageDiv = `<div class="message-container">
 const skippedReasonDiv = `<div class="message-container">
   <h4 class="skipReason">Skipped Reason: {{.SkippedReason}}</h4>
 </div>`
+
+const scenarioHeaderStartTag = `<div class="scenario-head">
+    <h3 class="head borderBottom"> {{.ScenarioHeading}} </h3>
+    <span class="time">{{.ExecTime)}}</span>`
