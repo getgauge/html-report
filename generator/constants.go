@@ -35,6 +35,8 @@ const headerTag = `<head>
   <script src="js/lightbox.js"></script>
 </head>`
 
+const headerEndTag = `</header>`
+
 const bodyStartTag = `<body>`
 
 const bodyEndTag = `</body>`
@@ -152,18 +154,14 @@ const hookFailureDiv = `<div class="error-container failed">
   </div>
 </div>`
 
-const specHeaderTag = `<header class="curr-spec">
+const specHeaderStartTag = `<header class="curr-spec">
   <h3 class="spec-head">{{.SpecName}}</h3>
-  <span class="time">{{.ExecTime}}</span>
-  {{if .Tags}}
-  <div class="tags scenario_tags contentSection">
-    <strong>Tags:</strong>
-    {{range .Tags}}
-    <span>{{.}}</span>
-    {{end}}
-  </div>
-  {{end}}
-</header>`
+  <span class="time">{{.ExecTime}}</span>`
+
+const tagsDiv = `<div class="tags scenario_tags contentSection">
+  <strong>Tags:</strong>
+  {{range .Tags}}<span>{{.}}</span>{{end}}
+</div>`
 
 //TODO: Hide this if there is a pre hook failure
 const specContainerStartDiv = `<div id="specificationContainer" class="details">`
