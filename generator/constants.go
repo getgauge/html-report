@@ -24,19 +24,18 @@ const htmlEndTag = `</html>`
 
 //TODO: Move JS includes at the end of body
 const headerTag = `<head>
-<meta http-equiv="X-UA-Compatible" content="IE=9; IE=8; IE=7; IE=EDGE"/>
-<title>Gauge Test Results</title>
-<link rel="shortcut icon" type="image/x-icon" href="images/favicon.ico">
-<link rel="stylesheet" type="text/css" href="css/open-sans.css">
-<link rel="stylesheet" type="text/css" href="css/font-awesome.css">
-<link rel="stylesheet" type="text/css" href="css/normalize.css"/>
-<link rel="stylesheet" type="text/css" href="css/angular-hovercard.css"/>
-<link rel="stylesheet" type="text/css" href="css/style.css"/>
-<script src="js/lightbox.js"></script>
+  <meta http-equiv="X-UA-Compatible" content="IE=9; IE=8; IE=7; IE=EDGE"/>
+  <title>Gauge Test Results</title>
+  <link rel="shortcut icon" type="image/x-icon" href="images/favicon.ico">
+  <link rel="stylesheet" type="text/css" href="css/open-sans.css">
+  <link rel="stylesheet" type="text/css" href="css/font-awesome.css">
+  <link rel="stylesheet" type="text/css" href="css/normalize.css"/>
+  <link rel="stylesheet" type="text/css" href="css/angular-hovercard.css"/>
+  <link rel="stylesheet" type="text/css" href="css/style.css"/>
+  <script src="js/lightbox.js"></script>
 </head>`
 
-const bodyStartTag = `<body>
-`
+const bodyStartTag = `<body>`
 
 const bodyEndTag = `</body>`
 
@@ -96,8 +95,7 @@ const reportOverviewTag = `<div class="report-overview">
       </li>
     </ul>
   </div>
-</div>
-`
+</div>`
 
 //TODO: 1. Set first spec as selected by default and load it
 //      2. Javascript action to load spec on click
@@ -164,7 +162,7 @@ const specHeaderTag = `<header class="curr-spec">
     <span>{{.}}</span>
     {{end}}
   </div>
-  {{end}} 
+  {{end}}
 </header>`
 
 //TODO: Hide this if there is a pre hook failure
