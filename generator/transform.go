@@ -46,3 +46,22 @@ func toOverview(res *gauge_messages.ProtoSuiteResult) *overview {
 func formatTime(ms int64) string {
 	return time.Unix(0, ms*int64(time.Millisecond)).UTC().Format(execTimeFormat)
 }
+
+func toSidebar(res *gauge_messages.ProtoSuiteResult) *sidebar {
+	specsMetaList := make([]*specsMeta, 0)
+	for _, specRes := range res.SpecResults {
+		sm := &specsMeta{
+			SpecName: specRes.ProtoSpec.GetSpecHeading(),
+			ExecTime: formatTime(specRes.GetExecutionTime()),
+			Failed:   specRes.GetFailed(),
+			Skipped:  specRes.GetSkipped(),
+			Tags:     specRes.ProtoSpec.GetTags(),
+		}
+		specsMetaList = append(specsMetaList, sm)
+	}
+
+	return &sidebar{
+		IsPreHookFailure: res.PreHookFailure != nil,
+		Specs:            specsMetaList,
+	}
+}

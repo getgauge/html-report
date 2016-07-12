@@ -31,7 +31,37 @@ type transformTest struct {
 	output interface{}
 }
 
-var suiteRes = &gauge_messages.ProtoSuiteResult{
+var specRes1 = &gauge_messages.ProtoSpecResult{
+	Failed:        proto.Bool(false),
+	Skipped:       proto.Bool(false),
+	ExecutionTime: proto.Int64(211316),
+	ProtoSpec: &gauge_messages.ProtoSpec{
+		SpecHeading: proto.String("specRes1"),
+		Tags:        []string{"tag1", "tag2"},
+	},
+}
+
+var specRes2 = &gauge_messages.ProtoSpecResult{
+	Failed:        proto.Bool(true),
+	Skipped:       proto.Bool(false),
+	ExecutionTime: proto.Int64(211316),
+	ProtoSpec: &gauge_messages.ProtoSpec{
+		SpecHeading: proto.String("specRes2"),
+		Tags:        []string{"tag1", "tag2", "tag3"},
+	},
+}
+
+var specRes3 = &gauge_messages.ProtoSpecResult{
+	Failed:        proto.Bool(false),
+	Skipped:       proto.Bool(true),
+	ExecutionTime: proto.Int64(211316),
+	ProtoSpec: &gauge_messages.ProtoSpec{
+		SpecHeading: proto.String("specRes3"),
+		Tags:        []string{"tag1"},
+	},
+}
+
+var suiteRes1 = &gauge_messages.ProtoSuiteResult{
 	ProjectName:       proto.String("projName"),
 	Environment:       proto.String("ci-java"),
 	Tags:              proto.String("!unimplemented"),
@@ -43,29 +73,60 @@ var suiteRes = &gauge_messages.ProtoSuiteResult{
 	SpecsSkippedCount: proto.Int32(5),
 }
 
-var o = &overview{
-	ProjectName: "projName",
-	Env:         "ci-java",
-	Tags:        "!unimplemented",
-	SuccRate:    80.00,
-	ExecTime:    "00:01:53",
-	Timestamp:   "Jun 3, 2016 at 12:29pm",
-	TotalSpecs:  15,
-	Failed:      2,
-	Passed:      8,
-	Skipped:     5,
+var suiteRes2 = &gauge_messages.ProtoSuiteResult{
+	SpecResults: []*gauge_messages.ProtoSpecResult{specRes1, specRes2, specRes3},
 }
 
-var transformTests = []transformTest{
-	{"transforms to overview", suiteRes, o},
+func TestTransformOverview(t *testing.T) {
+	want := &overview{
+		ProjectName: "projName",
+		Env:         "ci-java",
+		Tags:        "!unimplemented",
+		SuccRate:    80.00,
+		ExecTime:    "00:01:53",
+		Timestamp:   "Jun 3, 2016 at 12:29pm",
+		TotalSpecs:  15,
+		Failed:      2,
+		Passed:      8,
+		Skipped:     5,
+	}
+
+	got := toOverview(suiteRes1)
+	if !reflect.DeepEqual(got, want) {
+		t.Errorf("%s: \n want:\n%q\ngot:\n%q\n", "transform to overview", want, got)
+	}
 }
 
-func TestTransform(t *testing.T) {
-	for _, test := range transformTests {
-		got := toOverview(test.input)
-		want := test.output.(*overview)
-		if !reflect.DeepEqual(got, want) {
-			t.Errorf("%s: \n want:\n%q\ngot:\n%q\n", test.name, want, got)
-		}
+func TestTransformSidebar(t *testing.T) {
+	want := &sidebar{
+		IsPreHookFailure: false,
+		Specs: []*specsMeta{
+			&specsMeta{
+				SpecName: "specRes1",
+				ExecTime: "00:03:31",
+				Failed:   false,
+				Skipped:  false,
+				Tags:     []string{"tag1", "tag2"},
+			},
+			&specsMeta{
+				SpecName: "specRes2",
+				ExecTime: "00:03:31",
+				Failed:   true,
+				Skipped:  false,
+				Tags:     []string{"tag1", "tag2", "tag3"},
+			},
+			&specsMeta{
+				SpecName: "specRes3",
+				ExecTime: "00:03:31",
+				Failed:   false,
+				Skipped:  true,
+				Tags:     []string{"tag1"},
+			},
+		},
+	}
+
+	got := toSidebar(suiteRes2)
+	if !reflect.DeepEqual(got, want) {
+		t.Errorf("%s: \n want:\n%q\ngot:\n%q\n", "transform to sidebar", want, got)
 	}
 }
