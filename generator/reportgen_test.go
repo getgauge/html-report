@@ -23,6 +23,25 @@ import (
 	"testing"
 )
 
+func newHookFailure(name, errMsg, screenshot, stacktrace string) *hookFailure {
+	return &hookFailure{
+		HookName:   name,
+		ErrMsg:     errMsg,
+		Screenshot: screenshot,
+		Stacktrace: stacktrace,
+	}
+}
+
+func newOverview() *overview {
+	return &overview{
+		ProjectName: "gauge-testsss",
+		Env:         "default",
+		SuccRate:    95,
+		ExecTime:    "00:01:53",
+		Timestamp:   "Jun 3, 2016 at 12:29pm",
+	}
+}
+
 type reportGenTest struct {
 	name   string
 	tmpl   string
@@ -166,7 +185,7 @@ func newSpecsMeta(name, execTime string, failed, skipped bool, tags []string) *s
 	}
 }
 
-var re *regexp.Regexp = regexp.MustCompile("[ ]*\n[ ]*")
+var re *regexp.Regexp = regexp.MustCompile("[ ]*[\n\t][ ]*")
 
 var reportGenTests = []reportGenTest{
 	{"generate body header with project name", bodyHeaderTag, &overview{ProjectName: "projname"}, wBodyHeader},

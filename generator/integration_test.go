@@ -23,9 +23,21 @@ import (
 	"testing"
 
 	"github.com/getgauge/html-report/gauge_messages"
+	"github.com/golang/protobuf/proto"
 )
 
-var suiteRes = &gauge_messages.ProtoSuiteResult{}
+var suiteRes = &gauge_messages.ProtoSuiteResult{
+	SpecResults:       make([]*gauge_messages.ProtoSpecResult, 0),
+	Failed:            proto.Bool(false),
+	SpecsFailedCount:  proto.Int32(0),
+	ExecutionTime:     proto.Int64(122609),
+	SuccessRate:       proto.Float32(100),
+	Environment:       proto.String("default"),
+	Tags:              proto.String(""),
+	ProjectName:       proto.String("Gauge Project"),
+	Timestamp:         proto.String("Jul 13, 2016 at 11:49am"),
+	SpecsSkippedCount: proto.Int32(0),
+}
 
 func TestHTMLGeneration(t *testing.T) {
 	cont, err := ioutil.ReadFile("_testdata/expected.html")
@@ -34,7 +46,7 @@ func TestHTMLGeneration(t *testing.T) {
 	}
 
 	buf := new(bytes.Buffer)
-	generate(buf)
+	generate(suiteRes, buf)
 
 	want := removeNewline(string(cont))
 	got := removeNewline(buf.String())

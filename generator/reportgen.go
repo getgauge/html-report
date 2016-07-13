@@ -20,6 +20,8 @@ import (
 	"io"
 	"log"
 	"text/template"
+
+	"github.com/getgauge/html-report/gauge_messages"
 )
 
 type overview struct {
@@ -55,25 +57,6 @@ type hookFailure struct {
 	Stacktrace string
 }
 
-func newHookFailure(name, errMsg, screenshot, stacktrace string) *hookFailure {
-	return &hookFailure{
-		HookName:   name,
-		ErrMsg:     errMsg,
-		Screenshot: screenshot,
-		Stacktrace: stacktrace,
-	}
-}
-
-func newOverview() *overview {
-	return &overview{
-		ProjectName: "gauge-testsss",
-		Env:         "default",
-		SuccRate:    95,
-		ExecTime:    "00:01:53",
-		Timestamp:   "Jun 3, 2016 at 12:29pm",
-	}
-}
-
 func gen(tmplName string, w io.Writer, data interface{}) {
 	tmpl, err := template.New("Reports").Parse(tmplName)
 	if err != nil {
@@ -85,10 +68,18 @@ func gen(tmplName string, w io.Writer, data interface{}) {
 	}
 }
 
-func generate(w io.Writer) {
+func generate(suiteRes *gauge_messages.ProtoSuiteResult, w io.Writer) {
+	overview := toOverview(suiteRes)
 	gen(htmlStartTag, w, nil)
 	gen(headerTag, w, nil)
 	gen(bodyStartTag, w, nil)
+	gen(bodyHeaderTag, w, overview)
+	gen(mainStartTag, w, nil)
+	gen(containerStartDiv, w, nil)
+	gen(reportOverviewTag, w, overview)
+	gen(endDiv, w, nil)
+	gen(mainEndTag, w, nil)
+	gen(bodyFooterDiv, w, nil)
 	gen(bodyEndTag, w, nil)
 	gen(htmlEndTag, w, nil)
 }
