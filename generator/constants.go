@@ -154,7 +154,7 @@ const scenarioHeaderStartTag = `<div class="scenario-head">
 // Common HTML tags templates
 
 const htmlStartTag = `<!doctype html>
-    <html>`
+<html>`
 
 const htmlEndTag = `</html>`
 

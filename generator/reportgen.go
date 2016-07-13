@@ -19,20 +19,8 @@ package generator
 import (
 	"io"
 	"log"
-	"os"
 	"text/template"
 )
-
-func gen(tmplName string, f io.Writer, data interface{}) {
-	tmpl, err := template.New("Reports").Parse(tmplName)
-	if err != nil {
-		log.Fatalf(err.Error())
-	}
-	err = tmpl.Execute(f, data)
-	if err != nil {
-		log.Fatalf(err.Error())
-	}
-}
 
 type overview struct {
 	ProjectName string
@@ -86,25 +74,21 @@ func newOverview() *overview {
 	}
 }
 
-func generate() {
-	f, err := os.Create("report-template/index2.html")
+func gen(tmplName string, w io.Writer, data interface{}) {
+	tmpl, err := template.New("Reports").Parse(tmplName)
 	if err != nil {
 		log.Fatalf(err.Error())
 	}
-	o := newOverview()
-	gen(htmlStartTag, f, nil)
-	gen(headerTag, f, nil)
-	gen(bodyStartTag, f, nil)
-	gen(bodyHeaderTag, f, o)
-	gen(mainStartTag, f, nil)
-	gen(containerStartDiv, f, nil)
-	gen(specsStartDiv, f, nil)
-	gen(reportOverviewTag, f, o)
-	gen(specContainerStartDiv, f, nil)
-	gen(endDiv, f, nil)
-	gen(endDiv, f, nil)
-	gen(endDiv, f, nil)
-	gen(mainEndTag, f, nil)
-	gen(bodyEndTag, f, nil)
-	gen(htmlEndTag, f, nil)
+	err = tmpl.Execute(w, data)
+	if err != nil {
+		log.Fatalf(err.Error())
+	}
+}
+
+func generate(w io.Writer) {
+	gen(htmlStartTag, w, nil)
+	gen(headerTag, w, nil)
+	gen(bodyStartTag, w, nil)
+	gen(bodyEndTag, w, nil)
+	gen(htmlEndTag, w, nil)
 }
