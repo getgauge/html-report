@@ -90,7 +90,7 @@ var suiteRes = &gauge_messages.ProtoSuiteResult{
 }
 
 func TestHTMLGeneration(t *testing.T) {
-	cont, err := ioutil.ReadFile("_testdata/expected.html")
+	content, err := ioutil.ReadFile("_testdata/expected.html")
 	if err != nil {
 		t.Errorf("Error reading expected HTML file: %s", err.Error())
 	}
@@ -98,7 +98,7 @@ func TestHTMLGeneration(t *testing.T) {
 	buf := new(bytes.Buffer)
 	generate(suiteRes, buf)
 
-	want := removeNewline(string(cont))
+	want := removeNewline(string(content))
 	got := removeNewline(buf.String())
 
 	if got != want {

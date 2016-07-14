@@ -81,6 +81,8 @@ func generate(suiteRes *gauge_messages.ProtoSuiteResult, w io.Writer) {
 	gen(reportOverviewTag, w, overview)
 	gen(specsStartDiv, w, nil)
 	gen(sidebarDiv, w, sidebar)
+	gen(specContainerStartDiv, w, nil)
+	gen(endDiv, w, nil)
 	gen(endDiv, w, nil)
 	gen(endDiv, w, nil)
 	gen(mainEndTag, w, nil)
