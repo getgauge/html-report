@@ -62,6 +62,14 @@ func toSidebar(res *gauge_messages.ProtoSuiteResult) *sidebar {
 	}
 }
 
+func toSpecHeader(res *gauge_messages.ProtoSpecResult) *specHeader {
+	return &specHeader{
+		SpecName: res.ProtoSpec.GetSpecHeading(),
+		ExecTime: formatTime(res.GetExecutionTime()),
+		FileName: res.ProtoSpec.GetFileName(),
+	}
+}
+
 func formatTime(ms int64) string {
 	return time.Unix(0, ms*int64(time.Millisecond)).UTC().Format(execTimeFormat)
 }

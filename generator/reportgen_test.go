@@ -23,25 +23,6 @@ import (
 	"testing"
 )
 
-func newHookFailure(name, errMsg, screenshot, stacktrace string) *hookFailure {
-	return &hookFailure{
-		HookName:   name,
-		ErrMsg:     errMsg,
-		Screenshot: screenshot,
-		Stacktrace: stacktrace,
-	}
-}
-
-func newOverview() *overview {
-	return &overview{
-		ProjectName: "gauge-testsss",
-		Env:         "default",
-		SuccRate:    95,
-		ExecTime:    "00:01:53",
-		Timestamp:   "Jun 3, 2016 at 12:29pm",
-	}
-}
-
 type reportGenTest struct {
 	name   string
 	tmpl   string
@@ -166,7 +147,7 @@ var wHookFailureWithoutScreenhotDiv string = `<div class="error-container failed
 </div>`
 
 var wSpecHeaderStartTag string = `<header class="curr-spec">
-  <h3 class="spec-head">Spec heading</h3>
+  <h3 class="spec-head" title="/tmp/gauge/specs/foobar.spec">Spec heading</h3>
   <span class="time">00:01:01</span>`
 
 var wTagsDiv string = `<div class="tags scenario_tags contentSection">
@@ -174,16 +155,6 @@ var wTagsDiv string = `<div class="tags scenario_tags contentSection">
   <span>tag1</span>
   <span>tag2</span>
 </div>`
-
-func newSpecsMeta(name, execTime string, failed, skipped bool, tags []string) *specsMeta {
-	return &specsMeta{
-		SpecName: name,
-		ExecTime: execTime,
-		Failed:   failed,
-		Skipped:  skipped,
-		Tags:     tags,
-	}
-}
 
 var re *regexp.Regexp = regexp.MustCompile("[ ]*[\n\t][ ]*")
 
@@ -208,7 +179,7 @@ var reportGenTests = []reportGenTest{
 	{"don't generate congratulations bar if some spec failed", congratsDiv, &overview{Failed: 1}, ""},
 	{"generate hook failure div with screenshot", hookFailureDiv, newHookFailure("BeforeSuite", "SomeError", "iVBO", "Stack trace"), wHookFailureWithScreenhotDiv},
 	{"generate hook failure div without screenshot", hookFailureDiv, newHookFailure("BeforeSuite", "SomeError", "", "Stack trace"), wHookFailureWithoutScreenhotDiv},
-	{"generate spec header", specHeaderStartTag, newSpecsMeta("Spec heading", "00:01:01", false, false, nil), wSpecHeaderStartTag},
+	{"generate spec header", specHeaderStartTag, &specHeader{"Spec heading", "00:01:01", "/tmp/gauge/specs/foobar.spec"}, wSpecHeaderStartTag},
 	{"generate div for tags", tagsDiv, newSpecsMeta("Spec heading", "00:01:01", false, false, []string{"tag1", "tag2"}), wTagsDiv},
 }
 
@@ -233,4 +204,33 @@ func testReportGen(reportGenTests []reportGenTest, t *testing.T) {
 
 func removeNewline(s string) string {
 	return re.ReplaceAllLiteralString(s, "")
+}
+
+func newHookFailure(name, errMsg, screenshot, stacktrace string) *hookFailure {
+	return &hookFailure{
+		HookName:   name,
+		ErrMsg:     errMsg,
+		Screenshot: screenshot,
+		Stacktrace: stacktrace,
+	}
+}
+
+func newOverview() *overview {
+	return &overview{
+		ProjectName: "gauge-testsss",
+		Env:         "default",
+		SuccRate:    95,
+		ExecTime:    "00:01:53",
+		Timestamp:   "Jun 3, 2016 at 12:29pm",
+	}
+}
+
+func newSpecsMeta(name, execTime string, failed, skipped bool, tags []string) *specsMeta {
+	return &specsMeta{
+		SpecName: name,
+		ExecTime: execTime,
+		Failed:   failed,
+		Skipped:  skipped,
+		Tags:     tags,
+	}
 }

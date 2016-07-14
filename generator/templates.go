@@ -145,7 +145,7 @@ const specsStartDiv = `<div class="specifications">`
 const specContainerStartDiv = `<div id="specificationContainer" class="details">`
 
 const specHeaderStartTag = `<header class="curr-spec">
-  <h3 class="spec-head">{{.SpecName}}</h3>
+  <h3 class="spec-head" title="{{.FileName}}">{{.SpecName}}</h3>
   <span class="time">{{.ExecTime}}</span>`
 
 const scenarioHeaderStartDiv = `<div class="scenario-head">

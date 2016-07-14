@@ -38,6 +38,7 @@ var specRes1 = &gauge_messages.ProtoSpecResult{
 	ProtoSpec: &gauge_messages.ProtoSpec{
 		SpecHeading: proto.String("specRes1"),
 		Tags:        []string{"tag1", "tag2"},
+		FileName:    proto.String("/tmp/gauge/specs/foobar.spec"),
 	},
 }
 
@@ -126,6 +127,19 @@ func TestTransformSidebar(t *testing.T) {
 	}
 
 	got := toSidebar(suiteRes2)
+	if !reflect.DeepEqual(got, want) {
+		t.Errorf("want:\n%q\ngot:\n%q\n", want, got)
+	}
+}
+
+func TestTransformSpecHeader(t *testing.T) {
+	want := &specHeader{
+		SpecName: "specRes1",
+		ExecTime: "00:03:31",
+		FileName: "/tmp/gauge/specs/foobar.spec",
+	}
+
+	got := toSpecHeader(specRes1)
 	if !reflect.DeepEqual(got, want) {
 		t.Errorf("want:\n%q\ngot:\n%q\n", want, got)
 	}

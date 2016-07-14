@@ -57,6 +57,12 @@ type hookFailure struct {
 	Stacktrace string
 }
 
+type specHeader struct {
+	SpecName string
+	ExecTime string
+	FileName string
+}
+
 func gen(tmplName string, w io.Writer, data interface{}) {
 	tmpl, err := template.New("Reports").Parse(tmplName)
 	if err != nil {
