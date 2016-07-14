@@ -724,6 +724,11 @@ input[type='text']:focus {
     background-color: lightgray;
 }
 
+.concept-steps {
+    border-left: 2px dashed #eee;
+    padding-left: 20px;
+}
+
 .not-executed li {
     background: #fff;
 }
