@@ -218,19 +218,6 @@
           </span>
         </li>
       </ul>
-      <div class="error-container failed" ng-if="currentStep.stepExecutionResult.preHookFailure">
-        {{setHookFailure(currentStep.stepExecutionResult.preHookFailure)}}
-        <div class="error-heading">Before Step Failed: <span class="error-message">{{hookFailure.errorMessage}}</span></div>
-        <div ng-include src="'hook-failure.html'"></div>
-      </div>
-      <div class="error-container failed" ng-if="currentStep.stepExecutionResult.executionResult.failed && !isConcept">
-        <div ng-include src="'conceptStep-failure.html'"></div>
-      </div>
-      <div class="error-container failed" ng-if="currentStep.stepExecutionResult.postHookFailure">
-        {{setHookFailure(currentStep.stepExecutionResult.postHookFailure)}}
-        <div class="error-heading">After Step Failed: <span class="error-message">{{hookFailure.errorMessage}}</span></div>
-        <div ng-include src="'hook-failure.html'"></div>
-      </div>
       {{setCurrentExecutionResult(currentConceptStep.stepExecutionResult)}}
       <div ng-include src="'step-messages.html'"></div>
     </div>
@@ -261,7 +248,8 @@
       <div ng-repeat="step in getTopConcept().steps">
         {{setCurrentConceptStep(step.step)}} {{setConcept(step.concept)}}
         <div ng-if="!isConcept">
-          <div ng-include src="'nestedConceptStep.html'"></div>
+            {{setCurrentStep(step.step)}}
+          <div ng-include src="'step.html'"></div>
         </div>
         <div ng-if="isConcept">
           <div ng-init="collapse=false" ng-click="collapse = !collapse">
