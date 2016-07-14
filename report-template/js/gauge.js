@@ -116,10 +116,10 @@ gaugeReport.controller('mainController', function($scope, $timeout) {
 
     $scope.setConcept = function(concept) {
         $scope.isConcept = false;
-        if (concept) {
+        if (!!concept) {
             $scope.isConcept = true;
             $scope.conceptList.push(concept);
-            $scope.currentStep = concept.conceptStep;
+            $scope.setCurrentConceptStep(concept.conceptStep);
         }
     };
 

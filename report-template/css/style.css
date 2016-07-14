@@ -604,6 +604,7 @@ header.top .project {
 
 .scenario-container .not-executed {
     border-left: 5px solid #a1a1a1;
+    margin-top: 20px;
 }
 
 .scenario-container .not-executed .step {
@@ -647,6 +648,13 @@ header.top .project {
     padding: 0.5rem;
     border: 1px solid #cccccc;
     margin-bottom: 10px;
+}
+
+.step li:last-child {
+    margin-bottom: 0;
+}
+.step li:first-child {
+    margin-top: 10px;
 }
 
 .step li.pass {
