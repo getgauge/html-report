@@ -137,6 +137,7 @@ func TestTransformSpecHeader(t *testing.T) {
 		SpecName: "specRes1",
 		ExecTime: "00:03:31",
 		FileName: "/tmp/gauge/specs/foobar.spec",
+		Tags:     []string{"tag1", "tag2"},
 	}
 
 	got := toSpecHeader(specRes1)

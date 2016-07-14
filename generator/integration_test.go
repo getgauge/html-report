@@ -33,6 +33,7 @@ var passSpecRes1 = &gauge_messages.ProtoSpecResult{
 	ProtoSpec: &gauge_messages.ProtoSpec{
 		SpecHeading: proto.String("Passing Specification 1"),
 		Tags:        []string{"tag1", "tag2"},
+		FileName:    proto.String("/tmp/gauge/specs/foobar.spec"),
 	},
 }
 

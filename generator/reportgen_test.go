@@ -146,14 +146,14 @@ var wHookFailureWithoutScreenhotDiv string = `<div class="error-container failed
   </div>
 </div>`
 
-var wSpecHeaderStartTag string = `<header class="curr-spec">
+var wSpecHeaderStartWithTags string = `<header class="curr-spec">
   <h3 class="spec-head" title="/tmp/gauge/specs/foobar.spec">Spec heading</h3>
   <span class="time">00:01:01</span>`
 
 var wTagsDiv string = `<div class="tags scenario_tags contentSection">
   <strong>Tags:</strong>
-  <span>tag1</span>
-  <span>tag2</span>
+  <span> tag1</span>
+  <span> tag2</span>
 </div>`
 
 var re *regexp.Regexp = regexp.MustCompile("[ ]*[\n\t][ ]*")
@@ -179,8 +179,8 @@ var reportGenTests = []reportGenTest{
 	{"don't generate congratulations bar if some spec failed", congratsDiv, &overview{Failed: 1}, ""},
 	{"generate hook failure div with screenshot", hookFailureDiv, newHookFailure("BeforeSuite", "SomeError", "iVBO", "Stack trace"), wHookFailureWithScreenhotDiv},
 	{"generate hook failure div without screenshot", hookFailureDiv, newHookFailure("BeforeSuite", "SomeError", "", "Stack trace"), wHookFailureWithoutScreenhotDiv},
-	{"generate spec header", specHeaderStartTag, &specHeader{"Spec heading", "00:01:01", "/tmp/gauge/specs/foobar.spec"}, wSpecHeaderStartTag},
-	{"generate div for tags", tagsDiv, newSpecsMeta("Spec heading", "00:01:01", false, false, []string{"tag1", "tag2"}), wTagsDiv},
+	{"generate spec header with tags", specHeaderStartTag, &specHeader{"Spec heading", "00:01:01", "/tmp/gauge/specs/foobar.spec", []string{"foo", "bar"}}, wSpecHeaderStartWithTags},
+	{"generate div for tags", tagsDiv, &specHeader{Tags: []string{"tag1", "tag2"}}, wTagsDiv},
 }
 
 func TestExecute(t *testing.T) {

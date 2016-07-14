@@ -67,6 +67,7 @@ func toSpecHeader(res *gauge_messages.ProtoSpecResult) *specHeader {
 		SpecName: res.ProtoSpec.GetSpecHeading(),
 		ExecTime: formatTime(res.GetExecutionTime()),
 		FileName: res.ProtoSpec.GetFileName(),
+		Tags:     res.ProtoSpec.GetTags(),
 	}
 }
 

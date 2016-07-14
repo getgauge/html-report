@@ -61,6 +61,7 @@ type specHeader struct {
 	SpecName string
 	ExecTime string
 	FileName string
+	Tags     []string
 }
 
 func gen(tmplName string, w io.Writer, data interface{}) {
@@ -77,6 +78,7 @@ func gen(tmplName string, w io.Writer, data interface{}) {
 func generate(suiteRes *gauge_messages.ProtoSuiteResult, w io.Writer) {
 	overview := toOverview(suiteRes)
 	sidebar := toSidebar(suiteRes)
+	specHeader := toSpecHeader(suiteRes.GetSpecResults()[0])
 
 	gen(htmlStartTag, w, nil)
 	gen(pageHeaderTag, w, nil)
@@ -88,6 +90,9 @@ func generate(suiteRes *gauge_messages.ProtoSuiteResult, w io.Writer) {
 	gen(specsStartDiv, w, nil)
 	gen(sidebarDiv, w, sidebar)
 	gen(specContainerStartDiv, w, nil)
+	gen(specHeaderStartTag, w, specHeader)
+	gen(tagsDiv, w, specHeader)
+	gen(headerEndTag, w, nil)
 	gen(endDiv, w, nil)
 	gen(endDiv, w, nil)
 	gen(endDiv, w, nil)

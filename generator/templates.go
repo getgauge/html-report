@@ -125,10 +125,10 @@ const hookFailureDiv = `<div class="error-container failed">
   </div>
 </div>`
 
-const tagsDiv = `<div class="tags scenario_tags contentSection">
+const tagsDiv = `{{if .Tags}}<div class="tags scenario_tags contentSection">
   <strong>Tags:</strong>
-  {{range .Tags}}<span>{{.}}</span>{{end}}
-</div>`
+  {{range .Tags}}<span> {{.}}</span>{{end}}
+</div>{{end}}`
 
 //TODO 1. Format message to convert newlines to <br>
 const messageDiv = `<div class="message-container">
