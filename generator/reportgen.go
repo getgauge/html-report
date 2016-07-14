@@ -70,6 +70,8 @@ func gen(tmplName string, w io.Writer, data interface{}) {
 
 func generate(suiteRes *gauge_messages.ProtoSuiteResult, w io.Writer) {
 	overview := toOverview(suiteRes)
+	sidebar := toSidebar(suiteRes)
+
 	gen(htmlStartTag, w, nil)
 	gen(pageHeaderTag, w, nil)
 	gen(bodyStartTag, w, nil)
@@ -77,6 +79,9 @@ func generate(suiteRes *gauge_messages.ProtoSuiteResult, w io.Writer) {
 	gen(mainStartTag, w, nil)
 	gen(containerStartDiv, w, nil)
 	gen(reportOverviewTag, w, overview)
+	gen(specsStartDiv, w, nil)
+	gen(sidebarDiv, w, sidebar)
+	gen(endDiv, w, nil)
 	gen(endDiv, w, nil)
 	gen(mainEndTag, w, nil)
 	gen(bodyFooterTag, w, nil)

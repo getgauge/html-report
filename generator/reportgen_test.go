@@ -111,7 +111,7 @@ var wTimestampLi string = `
 var wSidebarAside string = `<aside class="sidebar">
   <h3 class="title">Specifications</h3>
   <div class="searchbar">
-    <input id="searchSpecifications" placeholder="Type specification or tag name" type="text"/>
+    <input id="searchSpecifications" placeholder="Type specification or tag name" type="text" />
     <i class="fa fa-search"></i>
   </div>
   <div id="listOfSpecifications">
