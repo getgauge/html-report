@@ -89,7 +89,12 @@ const (
 	SKIP
 )
 
-type scenario struct{}
+type scenario struct {
+	Heading  string
+	ExecTime string
+	Tags     []string
+	Res      result
+}
 
 func gen(tmplName string, w io.Writer, data interface{}) {
 	tmpl, err := template.New("Reports").Parse(tmplName)

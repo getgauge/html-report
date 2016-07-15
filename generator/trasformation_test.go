@@ -117,6 +117,13 @@ var suiteRes1 = &gauge_messages.ProtoSuiteResult{
 	SpecsSkippedCount: proto.Int32(5),
 }
 
+var scenario1 = &gauge_messages.ProtoScenario{
+	ScenarioHeading: proto.String("Vowel counts in single word"), Failed: proto.Bool(false),
+	Skipped:       proto.Bool(false),
+	Tags:          []string{"foo", "bar"},
+	ExecutionTime: proto.Int64(113163),
+}
+
 var suiteRes2 = &gauge_messages.ProtoSuiteResult{
 	SpecResults: []*gauge_messages.ProtoSpecResult{specRes1, specRes2, specRes3},
 }
@@ -209,6 +216,20 @@ func TestToSpec(t *testing.T) {
 	}
 
 	got := toSpec(specRes1)
+	if !reflect.DeepEqual(got, want) {
+		t.Errorf("want:\n%q\ngot:\n%q\n", want, got)
+	}
+}
+
+func TestToScenario(t *testing.T) {
+	want := &scenario{
+		Heading:  "Vowel counts in single word",
+		ExecTime: "00:01:53",
+		Res:      PASS,
+		Tags:     []string{"foo", "bar"},
+	}
+
+	got := toScenario(scenario1)
 	if !reflect.DeepEqual(got, want) {
 		t.Errorf("want:\n%q\ngot:\n%q\n", want, got)
 	}

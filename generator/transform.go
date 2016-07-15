@@ -102,6 +102,23 @@ func toSpec(res *gauge_messages.ProtoSpecResult) *spec {
 	return spec
 }
 
+func toScenario(scn *gauge_messages.ProtoScenario) *scenario {
+	var r result
+	if scn.GetFailed() {
+		r = FAIL
+	} else if scn.GetSkipped() {
+		r = SKIP
+	} else {
+		r = PASS
+	}
+	return &scenario{
+		Heading:  scn.GetScenarioHeading(),
+		ExecTime: formatTime(scn.GetExecutionTime()),
+		Tags:     scn.GetTags(),
+		Res:      r,
+	}
+}
+
 func formatTime(ms int64) string {
 	return time.Unix(0, ms*int64(time.Millisecond)).UTC().Format(execTimeFormat)
 }
