@@ -64,6 +64,33 @@ type specHeader struct {
 	Tags     []string
 }
 
+type spec struct {
+	CommentsBeforeTable []string
+	Table               *table
+	CommentsAfterTable  []string
+	Scenarios           []*scenario
+}
+
+type table struct {
+	Headers []string
+	Rows    []*row
+}
+
+type row struct {
+	Cells []string
+	Res   result
+}
+
+type result int
+
+const (
+	PASS result = iota
+	FAIL
+	SKIP
+)
+
+type scenario struct{}
+
 func gen(tmplName string, w io.Writer, data interface{}) {
 	tmpl, err := template.New("Reports").Parse(tmplName)
 	if err != nil {

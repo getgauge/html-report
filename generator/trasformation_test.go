@@ -31,14 +31,57 @@ type transformTest struct {
 	output interface{}
 }
 
+func newCommentItem(str string) *gauge_messages.ProtoItem {
+	return &gauge_messages.ProtoItem{
+		ItemType: gauge_messages.ProtoItem_Comment.Enum(),
+		Comment: &gauge_messages.ProtoComment{
+			Text: proto.String(str),
+		},
+	}
+}
+
+func newTableItem(headers []string, rows [][]string) *gauge_messages.ProtoItem {
+	r := make([]*gauge_messages.ProtoTableRow, len(rows))
+	for i, row := range rows {
+		r[i] = &gauge_messages.ProtoTableRow{
+			Cells: row,
+		}
+	}
+	return &gauge_messages.ProtoItem{
+		ItemType: gauge_messages.ProtoItem_Table.Enum(),
+		Table: &gauge_messages.ProtoTable{
+			Headers: &gauge_messages.ProtoTableRow{
+				Cells: headers,
+			},
+			Rows: r,
+		},
+	}
+}
+
 var specRes1 = &gauge_messages.ProtoSpecResult{
 	Failed:        proto.Bool(false),
 	Skipped:       proto.Bool(false),
 	ExecutionTime: proto.Int64(211316),
 	ProtoSpec: &gauge_messages.ProtoSpec{
-		SpecHeading: proto.String("specRes1"),
-		Tags:        []string{"tag1", "tag2"},
-		FileName:    proto.String("/tmp/gauge/specs/foobar.spec"),
+		SpecHeading:   proto.String("specRes1"),
+		Tags:          []string{"tag1", "tag2"},
+		FileName:      proto.String("/tmp/gauge/specs/foobar.spec"),
+		IsTableDriven: proto.Bool(false),
+		Items: []*gauge_messages.ProtoItem{
+			newCommentItem("\n"),
+			newCommentItem("This is an executable specification file. This file follows markdown syntax."),
+			newCommentItem("\n"),
+			newCommentItem("To execute this specification, run"),
+			newCommentItem("\tgauge specs"),
+			newCommentItem("\n"),
+			newTableItem([]string{"Word", "Count"}, [][]string{
+				[]string{"Gauge", "3"},
+				[]string{"Mingle", "2"},
+			}),
+			newCommentItem("Comment 1"),
+			newCommentItem("Comment 2"),
+			newCommentItem("Comment 3"),
+		},
 	},
 }
 
@@ -141,6 +184,31 @@ func TestTransformSpecHeader(t *testing.T) {
 	}
 
 	got := toSpecHeader(specRes1)
+	if !reflect.DeepEqual(got, want) {
+		t.Errorf("want:\n%q\ngot:\n%q\n", want, got)
+	}
+}
+
+func TestToSpec(t *testing.T) {
+	want := &spec{
+		CommentsBeforeTable: []string{"\n", "This is an executable specification file. This file follows markdown syntax.", "\n", "To execute this specification, run", "\tgauge specs", "\n"},
+		Table: &table{
+			Headers: []string{"Word", "Count"},
+			Rows: []*row{
+				&row{
+					Cells: []string{"Gauge", "3"},
+					Res:   PASS,
+				},
+				&row{
+					Cells: []string{"Mingle", "2"},
+					Res:   PASS,
+				},
+			},
+		},
+		CommentsAfterTable: []string{"Comment 1", "Comment 2", "Comment 3"},
+	}
+
+	got := toSpec(specRes1)
 	if !reflect.DeepEqual(got, want) {
 		t.Errorf("want:\n%q\ngot:\n%q\n", want, got)
 	}

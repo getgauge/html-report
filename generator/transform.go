@@ -71,6 +71,37 @@ func toSpecHeader(res *gauge_messages.ProtoSpecResult) *specHeader {
 	}
 }
 
+func toSpec(res *gauge_messages.ProtoSpecResult) *spec {
+	spec := &spec{
+		CommentsBeforeTable: make([]string, 0),
+		Table:               &table{},
+		CommentsAfterTable:  make([]string, 0),
+	}
+	isTableScanned := false
+	for _, item := range res.GetProtoSpec().GetItems() {
+		switch item.GetItemType() {
+		case gauge_messages.ProtoItem_Comment:
+			if isTableScanned {
+				spec.CommentsAfterTable = append(spec.CommentsAfterTable, item.GetComment().GetText())
+			} else {
+				spec.CommentsBeforeTable = append(spec.CommentsBeforeTable, item.GetComment().GetText())
+			}
+		case gauge_messages.ProtoItem_Table:
+			rows := make([]*row, len(item.GetTable().GetRows()))
+			for i, r := range item.GetTable().GetRows() {
+				rows[i] = &row{
+					Cells: r.GetCells(),
+					Res:   PASS,
+				}
+			}
+			spec.Table.Headers = item.GetTable().GetHeaders().GetCells()
+			spec.Table.Rows = rows
+			isTableScanned = true
+		}
+	}
+	return spec
+}
+
 func formatTime(ms int64) string {
 	return time.Unix(0, ms*int64(time.Millisecond)).UTC().Format(execTimeFormat)
 }
