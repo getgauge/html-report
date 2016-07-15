@@ -156,6 +156,27 @@ var wTagsDiv string = `<div class="tags scenario_tags contentSection">
   <span> tag2</span>
 </div>`
 
+var wTableTag string = `<table class="data-table">
+  <tr>
+    <th>Word</th>
+    <th>Count</th>
+  </tr>
+  <tbody>
+    <tr class='passed'>
+      <td>Gauge</td>
+      <td>3</td>
+    </tr>
+    <tr class='failed'>
+      <td>Mingle</td>
+      <td>2</td>
+    </tr>
+    <tr class='skipped'>
+      <td>foobar</td>
+      <td>1</td>
+    </tr>
+  </tbody>
+</table>`
+
 var re *regexp.Regexp = regexp.MustCompile("[ ]*[\n\t][ ]*")
 
 var reportGenTests = []reportGenTest{
@@ -232,5 +253,25 @@ func newSpecsMeta(name, execTime string, failed, skipped bool, tags []string) *s
 		Failed:   failed,
 		Skipped:  skipped,
 		Tags:     tags,
+	}
+}
+
+func newTable() *table {
+	return &table{
+		Headers: []string{"Word", "Count"},
+		Rows: []*row{
+			&row{
+				Cells: []string{"Gauge", "3"},
+				Res:   PASS,
+			},
+			&row{
+				Cells: []string{"Mingle", "2"},
+				Res:   FAIL,
+			},
+			&row{
+				Cells: []string{"foobar", "1"},
+				Res:   SKIP,
+			},
+		},
 	}
 }

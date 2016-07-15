@@ -155,6 +155,24 @@ const scenarioHeaderStartDiv = `<div class="scenario-head">
   <h3 class="head borderBottom"> {{.ScenarioHeading}} </h3>
   <span class="time">{{.ExecTime)}}</span>`
 
+// TODO 1. Implement onclick of row
+//      2. Set class as 'selected' on click
+const dataTableTag = `<table class="data-table">
+  <tr>
+    {{range .Headers}}<th>{{.}}</th>{{end}}
+  </tr>
+  <tbody>
+    {{range .Rows}}
+      {{if .Res eq 0}}<tr class='passed'>
+      {{else if .Res eq 1}}<tr class='failed'>
+      {{else}}<tr class='skipped'>
+      {{end}}
+        {{range .Cells}}<td>{{.}}</td>{{end}}
+    </tr>
+    {{end}}
+  </tbody>
+</table>`
+
 // Common HTML tags templates
 
 const htmlStartTag = `<!doctype html>
