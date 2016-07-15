@@ -151,13 +151,17 @@ const specHeaderStartTag = `<header class="curr-spec">
   <h3 class="spec-head" title="{{.FileName}}">{{.SpecName}}</h3>
   <span class="time">{{.ExecTime}}</span>`
 
+const scenarioContainerStartDiv = `{{if eq .Res 0}}<div class='scenario-container passed'>
+{{else if eq .Res 1}}<div class='scenario-container failed'>
+{{else}}<div class='scenario-container skipped'>{{end}}`
+
 const scenarioHeaderStartDiv = `<div class="scenario-head">
-  <h3 class="head borderBottom"> {{.ScenarioHeading}} </h3>
-  <span class="time">{{.ExecTime)}}</span>`
+  <h3 class="head borderBottom">{{.Heading}}</h3>
+  <span class="time">{{.ExecTime}}</span>`
 
 // TODO 1. Implement onclick of row
 //      2. Set class as 'selected' on click
-//      3. Convert comments to markdown. Check that this adds <p> tag 
+//      3. Convert comments to markdown. Check that this adds <p> tag
 //         for every new line which is not happening right now.
 const specCommentsAndTableTag = `{{range .CommentsBeforeTable}}<span>{{.}}</span>{{end}}
 {{if .Table}}<table class="data-table">

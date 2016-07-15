@@ -76,6 +76,7 @@ func toSpec(res *gauge_messages.ProtoSpecResult) *spec {
 		CommentsBeforeTable: make([]string, 0),
 		Table:               &table{},
 		CommentsAfterTable:  make([]string, 0),
+		Scenarios:           make([]*scenario, 0),
 	}
 	isTableScanned := false
 	for _, item := range res.GetProtoSpec().GetItems() {
@@ -97,6 +98,8 @@ func toSpec(res *gauge_messages.ProtoSpecResult) *spec {
 			spec.Table.Headers = item.GetTable().GetHeaders().GetCells()
 			spec.Table.Rows = rows
 			isTableScanned = true
+		case gauge_messages.ProtoItem_Scenario:
+			spec.Scenarios = append(spec.Scenarios, toScenario(item.GetScenario()))
 		}
 	}
 	return spec

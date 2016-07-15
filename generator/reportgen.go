@@ -64,6 +64,13 @@ type specHeader struct {
 	Tags     []string
 }
 
+type scenario struct {
+	Heading  string
+	ExecTime string
+	Tags     []string
+	Res      result
+}
+
 type spec struct {
 	CommentsBeforeTable []string
 	Table               *table
@@ -88,13 +95,6 @@ const (
 	FAIL
 	SKIP
 )
-
-type scenario struct {
-	Heading  string
-	ExecTime string
-	Tags     []string
-	Res      result
-}
 
 func gen(tmplName string, w io.Writer, data interface{}) {
 	tmpl, err := template.New("Reports").Parse(tmplName)
@@ -128,6 +128,10 @@ func generate(suiteRes *gauge_messages.ProtoSuiteResult, w io.Writer) {
 	gen(headerEndTag, w, nil)
 	gen(specsItemsContainerDiv, w, nil)
 	gen(specCommentsAndTableTag, w, spec)
+	gen(scenarioContainerStartDiv, w, spec.Scenarios[0])
+	gen(scenarioHeaderStartDiv, w, spec.Scenarios[0])
+	gen(endDiv, w, nil)
+	gen(endDiv, w, nil)
 	gen(endDiv, w, nil)
 	gen(endDiv, w, nil)
 	gen(endDiv, w, nil)

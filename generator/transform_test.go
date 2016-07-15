@@ -40,6 +40,13 @@ func newCommentItem(str string) *gauge_messages.ProtoItem {
 	}
 }
 
+func newScenarioItem(scn *gauge_messages.ProtoScenario) *gauge_messages.ProtoItem {
+	return &gauge_messages.ProtoItem{
+		ItemType: gauge_messages.ProtoItem_Scenario.Enum(),
+		Scenario: scn,
+	}
+}
+
 func newTableItem(headers []string, rows [][]string) *gauge_messages.ProtoItem {
 	r := make([]*gauge_messages.ProtoTableRow, len(rows))
 	for i, row := range rows {
@@ -117,11 +124,12 @@ var suiteRes1 = &gauge_messages.ProtoSuiteResult{
 	SpecsSkippedCount: proto.Int32(5),
 }
 
-var scenario1 = &gauge_messages.ProtoScenario{
-	ScenarioHeading: proto.String("Vowel counts in single word"), Failed: proto.Bool(false),
-	Skipped:       proto.Bool(false),
-	Tags:          []string{"foo", "bar"},
-	ExecutionTime: proto.Int64(113163),
+var scn = &gauge_messages.ProtoScenario{
+	ScenarioHeading: proto.String("Vowel counts in single word"),
+	Failed:          proto.Bool(false),
+	Skipped:         proto.Bool(false),
+	Tags:            []string{"foo", "bar"},
+	ExecutionTime:   proto.Int64(113163),
 }
 
 var suiteRes2 = &gauge_messages.ProtoSuiteResult{
@@ -213,6 +221,7 @@ func TestToSpec(t *testing.T) {
 			},
 		},
 		CommentsAfterTable: []string{"Comment 1", "Comment 2", "Comment 3"},
+		Scenarios:          make([]*scenario, 0),
 	}
 
 	got := toSpec(specRes1)
@@ -229,7 +238,7 @@ func TestToScenario(t *testing.T) {
 		Tags:     []string{"foo", "bar"},
 	}
 
-	got := toScenario(scenario1)
+	got := toScenario(scn)
 	if !reflect.DeepEqual(got, want) {
 		t.Errorf("want:\n%q\ngot:\n%q\n", want, got)
 	}

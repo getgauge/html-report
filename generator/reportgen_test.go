@@ -193,6 +193,14 @@ var wSpecCommentsWithoutTableTag string = `<span></span>
 <span>gauge specs</span>
 <span></span>`
 
+var wScenarioContainerStartPassDiv string = `<div class='scenario-container passed'>`
+var wScenarioContainerStartFailDiv string = `<div class='scenario-container failed'>`
+var wScenarioContainerStartSkipDiv string = `<div class='scenario-container skipped'>`
+
+var wscenarioHeaderStartDiv string = `<div class="scenario-head">
+  <h3 class="head borderBottom">Scenario Heading</h3>
+  <span class="time">00:01:01</span>`
+
 var re *regexp.Regexp = regexp.MustCompile("[ ]*[\n\t][ ]*")
 
 var reportGenTests = []reportGenTest{
@@ -220,6 +228,10 @@ var reportGenTests = []reportGenTest{
 	{"generate div for tags", tagsDiv, &specHeader{Tags: []string{"tag1", "tag2"}}, wTagsDiv},
 	{"generate spec comments with data table (if present)", specCommentsAndTableTag, newSpec(true), wSpecCommentsWithTableTag},
 	{"generate spec comments without data table", specCommentsAndTableTag, newSpec(false), wSpecCommentsWithoutTableTag},
+	{"generate passing scenario container", scenarioContainerStartDiv, &scenario{Res: PASS}, wScenarioContainerStartPassDiv},
+	{"generate failed scenario container", scenarioContainerStartDiv, &scenario{Res: FAIL}, wScenarioContainerStartFailDiv},
+	{"generate skipped scenario container", scenarioContainerStartDiv, &scenario{Res: SKIP}, wScenarioContainerStartSkipDiv},
+	{"generate scenario header", scenarioHeaderStartDiv, &scenario{Heading: "Scenario Heading", ExecTime: "00:01:01"}, wscenarioHeaderStartDiv},
 }
 
 func TestExecute(t *testing.T) {

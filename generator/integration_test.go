@@ -26,6 +26,14 @@ import (
 	"github.com/golang/protobuf/proto"
 )
 
+var scenario1 = &gauge_messages.ProtoScenario{
+	ScenarioHeading: proto.String("Vowel counts in single word"),
+	Failed:          proto.Bool(false),
+	Skipped:         proto.Bool(false),
+	Tags:            []string{"foo", "bar"},
+	ExecutionTime:   proto.Int64(113163),
+}
+
 var passSpecRes1 = &gauge_messages.ProtoSpecResult{
 	Failed:        proto.Bool(false),
 	Skipped:       proto.Bool(false),
@@ -48,6 +56,7 @@ var passSpecRes1 = &gauge_messages.ProtoSpecResult{
 			newCommentItem("Comment 1"),
 			newCommentItem("Comment 2"),
 			newCommentItem("Comment 3"),
+			newScenarioItem(scenario1),
 		},
 	},
 }
