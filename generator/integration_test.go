@@ -34,6 +34,21 @@ var passSpecRes1 = &gauge_messages.ProtoSpecResult{
 		SpecHeading: proto.String("Passing Specification 1"),
 		Tags:        []string{"tag1", "tag2"},
 		FileName:    proto.String("/tmp/gauge/specs/foobar.spec"),
+		Items: []*gauge_messages.ProtoItem{
+			newCommentItem("\n"),
+			newCommentItem("This is an executable specification file. This file follows markdown syntax."),
+			newCommentItem("\n"),
+			newCommentItem("To execute this specification, run"),
+			newCommentItem("\tgauge specs"),
+			newCommentItem("\n"),
+			newTableItem([]string{"Word", "Count"}, [][]string{
+				[]string{"Gauge", "3"},
+				[]string{"Mingle", "2"},
+			}),
+			newCommentItem("Comment 1"),
+			newCommentItem("Comment 2"),
+			newCommentItem("Comment 3"),
+		},
 	},
 }
 

@@ -106,6 +106,7 @@ func generate(suiteRes *gauge_messages.ProtoSuiteResult, w io.Writer) {
 	overview := toOverview(suiteRes)
 	sidebar := toSidebar(suiteRes)
 	specHeader := toSpecHeader(suiteRes.GetSpecResults()[0])
+	spec := toSpec(suiteRes.GetSpecResults()[0])
 
 	gen(htmlStartTag, w, nil)
 	gen(pageHeaderTag, w, nil)
@@ -121,6 +122,7 @@ func generate(suiteRes *gauge_messages.ProtoSuiteResult, w io.Writer) {
 	gen(tagsDiv, w, specHeader)
 	gen(headerEndTag, w, nil)
 	gen(specsItemsContainerDiv, w, nil)
+	gen(specCommentsAndTableTag, w, spec)
 	gen(endDiv, w, nil)
 	gen(endDiv, w, nil)
 	gen(endDiv, w, nil)

@@ -157,21 +157,25 @@ const scenarioHeaderStartDiv = `<div class="scenario-head">
 
 // TODO 1. Implement onclick of row
 //      2. Set class as 'selected' on click
-const dataTableTag = `<table class="data-table">
+//      3. Convert comments to markdown. Check that this adds <p> tag 
+//         for every new line which is not happening right now.
+const specCommentsAndTableTag = `{{range .CommentsBeforeTable}}<span>{{.}}</span>{{end}}
+{{if .Table}}<table class="data-table">
   <tr>
-    {{range .Headers}}<th>{{.}}</th>{{end}}
+    {{range .Table.Headers}}<th>{{.}}</th>{{end}}
   </tr>
   <tbody>
-    {{range .Rows}}
-      {{if .Res eq 0}}<tr class='passed'>
-      {{else if .Res eq 1}}<tr class='failed'>
+    {{range .Table.Rows}}
+      {{if eq .Res 0}}<tr class='passed'>
+      {{else if eq .Res 1}}<tr class='failed'>
       {{else}}<tr class='skipped'>
       {{end}}
         {{range .Cells}}<td>{{.}}</td>{{end}}
     </tr>
     {{end}}
   </tbody>
-</table>`
+</table>{{end}}
+{{range .CommentsAfterTable}}<span>{{.}}</span>{{end}}`
 
 // Common HTML tags templates
 

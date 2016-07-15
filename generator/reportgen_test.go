@@ -156,7 +156,13 @@ var wTagsDiv string = `<div class="tags scenario_tags contentSection">
   <span> tag2</span>
 </div>`
 
-var wTableTag string = `<table class="data-table">
+var wSpecCommentsWithTableTag string = `<span></span>
+<span>This is an executable specification file. This file follows markdown syntax.</span>
+<span></span>
+<span>To execute this specification, run</span>
+<span>gauge specs</span>
+<span></span>
+<table class="data-table">
   <tr>
     <th>Word</th>
     <th>Count</th>
@@ -175,7 +181,17 @@ var wTableTag string = `<table class="data-table">
       <td>1</td>
     </tr>
   </tbody>
-</table>`
+</table>
+<span>Comment 1</span>
+<span>Comment 2</span>
+<span>Comment 3</span>`
+
+var wSpecCommentsWithoutTableTag string = `<span></span>
+<span>This is an executable specification file. This file follows markdown syntax.</span>
+<span></span>
+<span>To execute this specification, run</span>
+<span>gauge specs</span>
+<span></span>`
 
 var re *regexp.Regexp = regexp.MustCompile("[ ]*[\n\t][ ]*")
 
@@ -202,6 +218,8 @@ var reportGenTests = []reportGenTest{
 	{"generate hook failure div without screenshot", hookFailureDiv, newHookFailure("BeforeSuite", "SomeError", "", "Stack trace"), wHookFailureWithoutScreenhotDiv},
 	{"generate spec header with tags", specHeaderStartTag, &specHeader{"Spec heading", "00:01:01", "/tmp/gauge/specs/foobar.spec", []string{"foo", "bar"}}, wSpecHeaderStartWithTags},
 	{"generate div for tags", tagsDiv, &specHeader{Tags: []string{"tag1", "tag2"}}, wTagsDiv},
+	{"generate spec comments with data table (if present)", specCommentsAndTableTag, newSpec(true), wSpecCommentsWithTableTag},
+	{"generate spec comments without data table", specCommentsAndTableTag, newSpec(false), wSpecCommentsWithoutTableTag},
 }
 
 func TestExecute(t *testing.T) {
@@ -256,8 +274,8 @@ func newSpecsMeta(name, execTime string, failed, skipped bool, tags []string) *s
 	}
 }
 
-func newTable() *table {
-	return &table{
+func newSpec(withTable bool) *spec {
+	t := &table{
 		Headers: []string{"Word", "Count"},
 		Rows: []*row{
 			&row{
@@ -273,5 +291,20 @@ func newTable() *table {
 				Res:   SKIP,
 			},
 		},
+	}
+
+	c1 := []string{"\n", "This is an executable specification file. This file follows markdown syntax.", "\n", "To execute this specification, run", "\tgauge specs", "\n"}
+	c2 := []string{"Comment 1", "Comment 2", "Comment 3"}
+
+	if withTable {
+		return &spec{
+			CommentsBeforeTable: c1,
+			Table:               t,
+			CommentsAfterTable:  c2,
+		}
+	}
+
+	return &spec{
+		CommentsBeforeTable: c1,
 	}
 }
