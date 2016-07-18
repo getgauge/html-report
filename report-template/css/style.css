@@ -519,10 +519,12 @@ header.top .project {
     font-size: 0.8rem;
 }
 
+/* TODO: remove class curr-spec */
 .curr-spec .tags span:last-child:after {
     content: "";
 }
 
+/* TODO: remove class curr-spec */
 .curr-spec .tags span:after {
     content: ",";
 }

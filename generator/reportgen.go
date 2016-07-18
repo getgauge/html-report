@@ -130,6 +130,7 @@ func generate(suiteRes *gauge_messages.ProtoSuiteResult, w io.Writer) {
 	gen(specCommentsAndTableTag, w, spec)
 	gen(scenarioContainerStartDiv, w, spec.Scenarios[0])
 	gen(scenarioHeaderStartDiv, w, spec.Scenarios[0])
+	gen(tagsDiv, w, spec.Scenarios[0])
 	gen(endDiv, w, nil)
 	gen(endDiv, w, nil)
 	gen(endDiv, w, nil)
