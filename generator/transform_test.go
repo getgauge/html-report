@@ -65,6 +65,25 @@ func newTableItem(headers []string, rows [][]string) *gauge_messages.ProtoItem {
 	}
 }
 
+func newStepItem(text string, failed bool) *gauge_messages.ProtoItem {
+	return &gauge_messages.ProtoItem{
+		ItemType: gauge_messages.ProtoItem_Step.Enum(),
+		Step: &gauge_messages.ProtoStep{
+			StepExecutionResult: &gauge_messages.ProtoStepExecutionResult{
+				ExecutionResult: &gauge_messages.ProtoExecutionResult{
+					Failed: proto.Bool(failed),
+				},
+			},
+			Fragments: []*gauge_messages.Fragment{
+				{
+					FragmentType: gauge_messages.Fragment_Text.Enum(),
+					Text:         proto.String(text),
+				},
+			},
+		},
+	}
+}
+
 var specRes1 = &gauge_messages.ProtoSpecResult{
 	Failed:        proto.Bool(false),
 	Skipped:       proto.Bool(false),
@@ -130,6 +149,22 @@ var scn = &gauge_messages.ProtoScenario{
 	Skipped:         proto.Bool(false),
 	Tags:            []string{"foo", "bar"},
 	ExecutionTime:   proto.Int64(113163),
+	Contexts: []*gauge_messages.ProtoItem{
+		newStepItem("Context Step1", false),
+		newStepItem("Context Step2", true),
+	},
+	ScenarioItems: []*gauge_messages.ProtoItem{
+		newCommentItem("Comment0"),
+		newStepItem("Step1", true),
+		newCommentItem("Comment1"),
+		newCommentItem("Comment2"),
+		newStepItem("Step2", false),
+		newCommentItem("Comment3"),
+	},
+	TearDownSteps: []*gauge_messages.ProtoItem{
+		newStepItem("Teardown Step1", false),
+		newStepItem("Teardown Step2", true),
+	},
 }
 
 var suiteRes2 = &gauge_messages.ProtoSuiteResult{
@@ -305,6 +340,40 @@ func TestToScenario(t *testing.T) {
 		ExecTime: "00:01:53",
 		Res:      pass,
 		Tags:     []string{"foo", "bar"},
+		Contexts: []item{
+			&step{
+				Fragments: []fragment{&textFragment{Text: "Context Step1"}},
+				Res:       &result{Status: pass},
+			},
+			&step{
+				Fragments: []fragment{&textFragment{Text: "Context Step2"}},
+				Res:       &result{Status: fail},
+			},
+		},
+		Items: []item{
+			&comment{Text: "Comment0"},
+			&step{
+				Fragments: []fragment{&textFragment{Text: "Step1"}},
+				Res:       &result{Status: fail},
+			},
+			&comment{Text: "Comment1"},
+			&comment{Text: "Comment2"},
+			&step{
+				Fragments: []fragment{&textFragment{Text: "Step2"}},
+				Res:       &result{Status: pass},
+			},
+			&comment{Text: "Comment3"},
+		},
+		TearDown: []item{
+			&step{
+				Fragments: []fragment{&textFragment{Text: "Teardown Step1"}},
+				Res:       &result{Status: pass},
+			},
+			&step{
+				Fragments: []fragment{&textFragment{Text: "Teardown Step2"}},
+				Res:       &result{Status: fail},
+			},
+		},
 	}
 
 	got := toScenario(scn)
@@ -364,6 +433,15 @@ func TestToStepWithSpecialParams(t *testing.T) {
 	}
 
 	got := toStep(protoStepWithSpecialParams)
+	if !reflect.DeepEqual(got, want) {
+		t.Errorf("want:\n%q\ngot:\n%q\n", want, got)
+	}
+}
+
+func TestToComment(t *testing.T) {
+	want := &comment{Text: "Whatever"}
+
+	got := toComment(newCommentItem("Whatever").GetComment())
 	if !reflect.DeepEqual(got, want) {
 		t.Errorf("want:\n%q\ngot:\n%q\n", want, got)
 	}

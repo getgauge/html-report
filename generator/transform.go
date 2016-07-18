@@ -102,7 +102,14 @@ func toScenario(scn *gauge_messages.ProtoScenario) *scenario {
 		ExecTime: formatTime(scn.GetExecutionTime()),
 		Tags:     scn.GetTags(),
 		Res:      getStatus(scn.GetFailed(), scn.GetSkipped()),
+		Contexts: getItems(scn.GetContexts()),
+		Items:    getItems(scn.GetScenarioItems()),
+		TearDown: getItems(scn.GetTearDownSteps()),
 	}
+}
+
+func toComment(protoComment *gauge_messages.ProtoComment) *comment {
+	return &comment{Text: protoComment.GetText()}
 }
 
 func toStep(protoStep *gauge_messages.ProtoStep) *step {
@@ -155,6 +162,19 @@ func toTable(protoTable *gauge_messages.ProtoTable) *table {
 		}
 	}
 	return &table{Headers: protoTable.GetHeaders().GetCells(), Rows: rows}
+}
+
+func getItems(protoItems []*gauge_messages.ProtoItem) []item {
+	items := make([]item, 0)
+	for _, i := range protoItems {
+		switch i.GetItemType() {
+		case gauge_messages.ProtoItem_Step:
+			items = append(items, toStep(i.GetStep()))
+		case gauge_messages.ProtoItem_Comment:
+			items = append(items, toComment(i.GetComment()))
+		}
+	}
+	return items
 }
 
 func getStatus(failed, skipped bool) status {
