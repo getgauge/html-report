@@ -74,7 +74,6 @@ func toSpecHeader(res *gauge_messages.ProtoSpecResult) *specHeader {
 func toSpec(res *gauge_messages.ProtoSpecResult) *spec {
 	spec := &spec{
 		CommentsBeforeTable: make([]string, 0),
-		Table:               &table{},
 		CommentsAfterTable:  make([]string, 0),
 		Scenarios:           make([]*scenario, 0),
 	}
@@ -88,15 +87,7 @@ func toSpec(res *gauge_messages.ProtoSpecResult) *spec {
 				spec.CommentsBeforeTable = append(spec.CommentsBeforeTable, item.GetComment().GetText())
 			}
 		case gauge_messages.ProtoItem_Table:
-			rows := make([]*row, len(item.GetTable().GetRows()))
-			for i, r := range item.GetTable().GetRows() {
-				rows[i] = &row{
-					Cells: r.GetCells(),
-					Res:   pass,
-				}
-			}
-			spec.Table.Headers = item.GetTable().GetHeaders().GetCells()
-			spec.Table.Rows = rows
+			spec.Table = toTable(item.GetTable())
 			isTableScanned = true
 		case gauge_messages.ProtoItem_Scenario:
 			spec.Scenarios = append(spec.Scenarios, toScenario(item.GetScenario()))
@@ -106,20 +97,73 @@ func toSpec(res *gauge_messages.ProtoSpecResult) *spec {
 }
 
 func toScenario(scn *gauge_messages.ProtoScenario) *scenario {
-	var r result
-	if scn.GetFailed() {
-		r = fail
-	} else if scn.GetSkipped() {
-		r = skip
-	} else {
-		r = pass
-	}
 	return &scenario{
 		Heading:  scn.GetScenarioHeading(),
 		ExecTime: formatTime(scn.GetExecutionTime()),
 		Tags:     scn.GetTags(),
-		Res:      r,
+		Res:      getStatus(scn.GetFailed(), scn.GetSkipped()),
 	}
+}
+
+func toStep(protoStep *gauge_messages.ProtoStep) *step {
+	res := protoStep.GetStepExecutionResult().GetExecutionResult()
+	result := &result{
+		Status:     getStatus(res.GetFailed(), protoStep.GetStepExecutionResult().GetSkipped()),
+		ScreenShot: string(res.GetScreenShot()),
+		StackTrace: res.GetStackTrace(),
+		Message:    res.GetErrorMessage(),
+	}
+	if protoStep.GetStepExecutionResult().GetSkipped() {
+		result.Message = protoStep.GetStepExecutionResult().GetSkippedReason()
+	}
+	return &step{
+		Fragments: toFragments(protoStep.GetFragments()),
+		Res:       result,
+	}
+}
+
+func toFragments(protoFragments []*gauge_messages.Fragment) []fragment {
+	fragments := make([]fragment, 0)
+	for _, f := range protoFragments {
+		switch f.GetFragmentType() {
+		case gauge_messages.Fragment_Text:
+			fragments = append(fragments, &textFragment{Text: f.GetText()})
+		case gauge_messages.Fragment_Parameter:
+			switch f.GetParameter().GetParameterType() {
+			case gauge_messages.Parameter_Static:
+				fragments = append(fragments, &staticFragment{Text: f.GetParameter().GetValue()})
+			case gauge_messages.Parameter_Dynamic:
+				fragments = append(fragments, &dynamicFragment{Text: f.GetParameter().GetValue()})
+			case gauge_messages.Parameter_Table:
+				fragments = append(fragments, &tableFragment{Table: toTable(f.GetParameter().GetTable())})
+			case gauge_messages.Parameter_Special_Table:
+				fragments = append(fragments, &specialTableFragment{Name: f.GetParameter().GetName(), Table: toTable(f.GetParameter().GetTable())})
+			case gauge_messages.Parameter_Special_String:
+				fragments = append(fragments, &specialStringFragment{Name: f.GetParameter().GetName(), Text: f.GetParameter().GetValue()})
+			}
+		}
+	}
+	return fragments
+}
+
+func toTable(protoTable *gauge_messages.ProtoTable) *table {
+	rows := make([]*row, len(protoTable.GetRows()))
+	for i, r := range protoTable.GetRows() {
+		rows[i] = &row{
+			Cells: r.GetCells(),
+			Res:   pass,
+		}
+	}
+	return &table{Headers: protoTable.GetHeaders().GetCells(), Rows: rows}
+}
+
+func getStatus(failed, skipped bool) status {
+	if failed {
+		return fail
+	} else if skipped {
+		return skip
+	}
+	return pass
 }
 
 func formatTime(ms int64) string {

@@ -64,11 +64,14 @@ type specHeader struct {
 	Tags     []string
 }
 
-type scenario struct {
-	Heading  string
-	ExecTime string
-	Tags     []string
-	Res      result
+type row struct {
+	Cells []string
+	Res   status
+}
+
+type table struct {
+	Headers []string
+	Rows    []*row
 }
 
 type spec struct {
@@ -78,20 +81,55 @@ type spec struct {
 	Scenarios           []*scenario
 }
 
-type table struct {
-	Headers []string
-	Rows    []*row
+type scenario struct {
+	Heading  string
+	ExecTime string
+	Tags     []string
+	Res      status
+	Contexts []item
+	Items    []item
+	TearDown []item
 }
-
-type row struct {
-	Cells []string
-	Res   result
-}
-
-type result int
 
 const (
-	pass result = iota
+	stepKind kind = iota
+	commentKind
+)
+
+type kind int
+
+type item interface {
+	kind() kind
+}
+
+type step struct {
+	Fragments []fragment
+	Res       *result
+}
+
+func (s *step) kind() kind {
+	return stepKind
+}
+
+type comment struct {
+	Text string
+}
+
+func (c *comment) kind() kind {
+	return commentKind
+}
+
+type result struct {
+	Status     status
+	StackTrace string
+	ScreenShot string
+	Message    string
+}
+
+type status int
+
+const (
+	pass status = iota
 	fail
 	skip
 )

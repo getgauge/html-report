@@ -136,6 +136,75 @@ var suiteRes2 = &gauge_messages.ProtoSuiteResult{
 	SpecResults: []*gauge_messages.ProtoSpecResult{specRes1, specRes2, specRes3},
 }
 
+var protoStep = &gauge_messages.ProtoStep{
+	Fragments: []*gauge_messages.Fragment{
+		{
+			FragmentType: gauge_messages.Fragment_Text.Enum(),
+			Text:         proto.String("Say "),
+		},
+		{
+			FragmentType: gauge_messages.Fragment_Parameter.Enum(),
+			Parameter: &gauge_messages.Parameter{
+				ParameterType: gauge_messages.Parameter_Static.Enum(),
+				Value:         proto.String("hi"),
+			},
+		},
+		{
+			FragmentType: gauge_messages.Fragment_Text.Enum(),
+			Text:         proto.String(" to "),
+		},
+		{
+			FragmentType: gauge_messages.Fragment_Parameter.Enum(),
+			Parameter: &gauge_messages.Parameter{
+				ParameterType: gauge_messages.Parameter_Dynamic.Enum(),
+				Value:         proto.String("gauge"),
+			},
+		},
+		{
+			FragmentType: gauge_messages.Fragment_Parameter.Enum(),
+			Parameter: &gauge_messages.Parameter{
+				ParameterType: gauge_messages.Parameter_Table.Enum(),
+				Table: newTableItem([]string{"Word", "Count"}, [][]string{
+					[]string{"Gauge", "3"},
+					[]string{"Mingle", "2"},
+				}).GetTable(),
+			},
+		},
+	},
+}
+
+var protoStepWithSpecialParams = &gauge_messages.ProtoStep{
+	Fragments: []*gauge_messages.Fragment{
+		{
+			FragmentType: gauge_messages.Fragment_Text.Enum(),
+			Text:         proto.String("Say "),
+		},
+		{
+			FragmentType: gauge_messages.Fragment_Parameter.Enum(),
+			Parameter: &gauge_messages.Parameter{
+				Name:          proto.String("foo.txt"),
+				ParameterType: gauge_messages.Parameter_Special_String.Enum(),
+				Value:         proto.String("hi"),
+			},
+		},
+		{
+			FragmentType: gauge_messages.Fragment_Text.Enum(),
+			Text:         proto.String(" to "),
+		},
+		{
+			FragmentType: gauge_messages.Fragment_Parameter.Enum(),
+			Parameter: &gauge_messages.Parameter{
+				ParameterType: gauge_messages.Parameter_Special_Table.Enum(),
+				Name:          proto.String("myTable.csv"),
+				Table: newTableItem([]string{"Word", "Count"}, [][]string{
+					[]string{"Gauge", "3"},
+					[]string{"Mingle", "2"},
+				}).GetTable(),
+			},
+		},
+	},
+}
+
 func TestTransformOverview(t *testing.T) {
 	want := &overview{
 		ProjectName: "projName",
@@ -160,21 +229,21 @@ func TestTransformSidebar(t *testing.T) {
 	want := &sidebar{
 		IsPreHookFailure: false,
 		Specs: []*specsMeta{
-			&specsMeta{
+			{
 				SpecName: "specRes1",
 				ExecTime: "00:03:31",
 				Failed:   false,
 				Skipped:  false,
 				Tags:     []string{"tag1", "tag2"},
 			},
-			&specsMeta{
+			{
 				SpecName: "specRes2",
 				ExecTime: "00:03:31",
 				Failed:   true,
 				Skipped:  false,
 				Tags:     []string{"tag1", "tag2", "tag3"},
 			},
-			&specsMeta{
+			{
 				SpecName: "specRes3",
 				ExecTime: "00:03:31",
 				Failed:   false,
@@ -210,11 +279,11 @@ func TestToSpec(t *testing.T) {
 		Table: &table{
 			Headers: []string{"Word", "Count"},
 			Rows: []*row{
-				&row{
+				{
 					Cells: []string{"Gauge", "3"},
 					Res:   pass,
 				},
-				&row{
+				{
 					Cells: []string{"Mingle", "2"},
 					Res:   pass,
 				},
@@ -239,6 +308,62 @@ func TestToScenario(t *testing.T) {
 	}
 
 	got := toScenario(scn)
+	if !reflect.DeepEqual(got, want) {
+		t.Errorf("want:\n%q\ngot:\n%q\n", want, got)
+	}
+}
+
+func TestToStep(t *testing.T) {
+	want := &step{
+		Fragments: []fragment{
+			&textFragment{Text: "Say "},
+			&staticFragment{Text: "hi"},
+			&textFragment{Text: " to "},
+			&dynamicFragment{Text: "gauge"},
+			&tableFragment{
+				Table: &table{
+					Headers: []string{"Word", "Count"},
+					Rows: []*row{
+						{Cells: []string{"Gauge", "3"}},
+						{Cells: []string{"Mingle", "2"}},
+					},
+				},
+			},
+		},
+		Res: &result{
+			Status: pass,
+		},
+	}
+
+	got := toStep(protoStep)
+	if !reflect.DeepEqual(got, want) {
+		t.Errorf("want:\n%q\ngot:\n%q\n", want, got)
+	}
+}
+
+func TestToStepWithSpecialParams(t *testing.T) {
+	want := &step{
+		Fragments: []fragment{
+			&textFragment{Text: "Say "},
+			&specialStringFragment{Name: "foo.txt", Text: "hi"},
+			&textFragment{Text: " to "},
+			&specialTableFragment{
+				Name: "myTable.csv",
+				Table: &table{
+					Headers: []string{"Word", "Count"},
+					Rows: []*row{
+						{Cells: []string{"Gauge", "3"}},
+						{Cells: []string{"Mingle", "2"}},
+					},
+				},
+			},
+		},
+		Res: &result{
+			Status: pass,
+		},
+	}
+
+	got := toStep(protoStepWithSpecialParams)
 	if !reflect.DeepEqual(got, want) {
 		t.Errorf("want:\n%q\ngot:\n%q\n", want, got)
 	}
