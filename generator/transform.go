@@ -92,7 +92,7 @@ func toSpec(res *gauge_messages.ProtoSpecResult) *spec {
 			for i, r := range item.GetTable().GetRows() {
 				rows[i] = &row{
 					Cells: r.GetCells(),
-					Res:   PASS,
+					Res:   pass,
 				}
 			}
 			spec.Table.Headers = item.GetTable().GetHeaders().GetCells()
@@ -108,11 +108,11 @@ func toSpec(res *gauge_messages.ProtoSpecResult) *spec {
 func toScenario(scn *gauge_messages.ProtoScenario) *scenario {
 	var r result
 	if scn.GetFailed() {
-		r = FAIL
+		r = fail
 	} else if scn.GetSkipped() {
-		r = SKIP
+		r = skip
 	} else {
-		r = PASS
+		r = pass
 	}
 	return &scenario{
 		Heading:  scn.GetScenarioHeading(),

@@ -212,11 +212,11 @@ func TestToSpec(t *testing.T) {
 			Rows: []*row{
 				&row{
 					Cells: []string{"Gauge", "3"},
-					Res:   PASS,
+					Res:   pass,
 				},
 				&row{
 					Cells: []string{"Mingle", "2"},
-					Res:   PASS,
+					Res:   pass,
 				},
 			},
 		},
@@ -234,7 +234,7 @@ func TestToScenario(t *testing.T) {
 	want := &scenario{
 		Heading:  "Vowel counts in single word",
 		ExecTime: "00:01:53",
-		Res:      PASS,
+		Res:      pass,
 		Tags:     []string{"foo", "bar"},
 	}
 

@@ -91,9 +91,9 @@ type row struct {
 type result int
 
 const (
-	PASS result = iota
-	FAIL
-	SKIP
+	pass result = iota
+	fail
+	skip
 )
 
 func gen(tmplName string, w io.Writer, data interface{}) {

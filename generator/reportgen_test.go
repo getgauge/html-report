@@ -228,9 +228,9 @@ var reportGenTests = []reportGenTest{
 	{"generate div for tags", tagsDiv, &specHeader{Tags: []string{"tag1", "tag2"}}, wTagsDiv},
 	{"generate spec comments with data table (if present)", specCommentsAndTableTag, newSpec(true), wSpecCommentsWithTableTag},
 	{"generate spec comments without data table", specCommentsAndTableTag, newSpec(false), wSpecCommentsWithoutTableTag},
-	{"generate passing scenario container", scenarioContainerStartDiv, &scenario{Res: PASS}, wScenarioContainerStartPassDiv},
-	{"generate failed scenario container", scenarioContainerStartDiv, &scenario{Res: FAIL}, wScenarioContainerStartFailDiv},
-	{"generate skipped scenario container", scenarioContainerStartDiv, &scenario{Res: SKIP}, wScenarioContainerStartSkipDiv},
+	{"generate passing scenario container", scenarioContainerStartDiv, &scenario{Res: pass}, wScenarioContainerStartPassDiv},
+	{"generate failed scenario container", scenarioContainerStartDiv, &scenario{Res: fail}, wScenarioContainerStartFailDiv},
+	{"generate skipped scenario container", scenarioContainerStartDiv, &scenario{Res: skip}, wScenarioContainerStartSkipDiv},
 	{"generate scenario header", scenarioHeaderStartDiv, &scenario{Heading: "Scenario Heading", ExecTime: "00:01:01"}, wscenarioHeaderStartDiv},
 }
 
@@ -292,15 +292,15 @@ func newSpec(withTable bool) *spec {
 		Rows: []*row{
 			&row{
 				Cells: []string{"Gauge", "3"},
-				Res:   PASS,
+				Res:   pass,
 			},
 			&row{
 				Cells: []string{"Mingle", "2"},
-				Res:   FAIL,
+				Res:   fail,
 			},
 			&row{
 				Cells: []string{"foobar", "1"},
-				Res:   SKIP,
+				Res:   skip,
 			},
 		},
 	}
