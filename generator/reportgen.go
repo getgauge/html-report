@@ -103,7 +103,7 @@ type item interface {
 }
 
 type step struct {
-	Fragments []fragment
+	Fragments []*fragment
 	Res       *result
 }
 
@@ -124,6 +124,7 @@ type result struct {
 	StackTrace string
 	ScreenShot string
 	Message    string
+	ExecTime   string
 }
 
 type status int
@@ -132,6 +133,7 @@ const (
 	pass status = iota
 	fail
 	skip
+	notExecuted
 )
 
 func gen(tmplName string, w io.Writer, data interface{}) {
@@ -170,6 +172,7 @@ func generate(suiteRes *gauge_messages.ProtoSuiteResult, w io.Writer) {
 	gen(scenarioHeaderStartDiv, w, spec.Scenarios[0])
 	gen(tagsDiv, w, spec.Scenarios[0])
 	gen(endDiv, w, nil)
+	gen(stepDiv, w, spec.Scenarios[0].Contexts[0])
 	gen(endDiv, w, nil)
 	gen(endDiv, w, nil)
 	gen(endDiv, w, nil)

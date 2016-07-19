@@ -71,7 +71,8 @@ func newStepItem(text string, failed bool) *gauge_messages.ProtoItem {
 		Step: &gauge_messages.ProtoStep{
 			StepExecutionResult: &gauge_messages.ProtoStepExecutionResult{
 				ExecutionResult: &gauge_messages.ProtoExecutionResult{
-					Failed: proto.Bool(failed),
+					Failed:        proto.Bool(failed),
+					ExecutionTime: proto.Int64(211316),
 				},
 			},
 			Fragments: []*gauge_messages.Fragment{
@@ -206,6 +207,12 @@ var protoStep = &gauge_messages.ProtoStep{
 			},
 		},
 	},
+	StepExecutionResult: &gauge_messages.ProtoStepExecutionResult{
+		ExecutionResult: &gauge_messages.ProtoExecutionResult{
+			Failed:        proto.Bool(false),
+			ExecutionTime: proto.Int64(211316),
+		},
+	},
 }
 
 var protoStepWithSpecialParams = &gauge_messages.ProtoStep{
@@ -236,6 +243,12 @@ var protoStepWithSpecialParams = &gauge_messages.ProtoStep{
 					[]string{"Mingle", "2"},
 				}).GetTable(),
 			},
+		},
+	},
+	StepExecutionResult: &gauge_messages.ProtoStepExecutionResult{
+		ExecutionResult: &gauge_messages.ProtoExecutionResult{
+			Failed:        proto.Bool(false),
+			ExecutionTime: proto.Int64(211316),
 		},
 	},
 }
@@ -342,36 +355,36 @@ func TestToScenario(t *testing.T) {
 		Tags:     []string{"foo", "bar"},
 		Contexts: []item{
 			&step{
-				Fragments: []fragment{&textFragment{Text: "Context Step1"}},
-				Res:       &result{Status: pass},
+				Fragments: []*fragment{{FragmentKind: textFragmentKind, Text: "Context Step1"}},
+				Res:       &result{Status: pass, ExecTime: "00:03:31"},
 			},
 			&step{
-				Fragments: []fragment{&textFragment{Text: "Context Step2"}},
-				Res:       &result{Status: fail},
+				Fragments: []*fragment{{FragmentKind: textFragmentKind, Text: "Context Step2"}},
+				Res:       &result{Status: fail, ExecTime: "00:03:31"},
 			},
 		},
 		Items: []item{
 			&comment{Text: "Comment0"},
 			&step{
-				Fragments: []fragment{&textFragment{Text: "Step1"}},
-				Res:       &result{Status: fail},
+				Fragments: []*fragment{{FragmentKind: textFragmentKind, Text: "Step1"}},
+				Res:       &result{Status: fail, ExecTime: "00:03:31"},
 			},
 			&comment{Text: "Comment1"},
 			&comment{Text: "Comment2"},
 			&step{
-				Fragments: []fragment{&textFragment{Text: "Step2"}},
-				Res:       &result{Status: pass},
+				Fragments: []*fragment{{FragmentKind: textFragmentKind, Text: "Step2"}},
+				Res:       &result{Status: pass, ExecTime: "00:03:31"},
 			},
 			&comment{Text: "Comment3"},
 		},
 		TearDown: []item{
 			&step{
-				Fragments: []fragment{&textFragment{Text: "Teardown Step1"}},
-				Res:       &result{Status: pass},
+				Fragments: []*fragment{{FragmentKind: textFragmentKind, Text: "Teardown Step1"}},
+				Res:       &result{Status: pass, ExecTime: "00:03:31"},
 			},
 			&step{
-				Fragments: []fragment{&textFragment{Text: "Teardown Step2"}},
-				Res:       &result{Status: fail},
+				Fragments: []*fragment{{FragmentKind: textFragmentKind, Text: "Teardown Step2"}},
+				Res:       &result{Status: fail, ExecTime: "00:03:31"},
 			},
 		},
 	}
@@ -384,12 +397,12 @@ func TestToScenario(t *testing.T) {
 
 func TestToStep(t *testing.T) {
 	want := &step{
-		Fragments: []fragment{
-			&textFragment{Text: "Say "},
-			&staticFragment{Text: "hi"},
-			&textFragment{Text: " to "},
-			&dynamicFragment{Text: "gauge"},
-			&tableFragment{
+		Fragments: []*fragment{
+			{FragmentKind: textFragmentKind, Text: "Say "},
+			{FragmentKind: staticFragmentKind, Text: "hi"},
+			{FragmentKind: textFragmentKind, Text: " to "},
+			{FragmentKind: dynamicFragmentKind, Text: "gauge"},
+			{FragmentKind: tableFragmentKind,
 				Table: &table{
 					Headers: []string{"Word", "Count"},
 					Rows: []*row{
@@ -400,7 +413,8 @@ func TestToStep(t *testing.T) {
 			},
 		},
 		Res: &result{
-			Status: pass,
+			Status:   pass,
+			ExecTime: "00:03:31",
 		},
 	}
 
@@ -412,11 +426,11 @@ func TestToStep(t *testing.T) {
 
 func TestToStepWithSpecialParams(t *testing.T) {
 	want := &step{
-		Fragments: []fragment{
-			&textFragment{Text: "Say "},
-			&specialStringFragment{Name: "foo.txt", Text: "hi"},
-			&textFragment{Text: " to "},
-			&specialTableFragment{
+		Fragments: []*fragment{
+			{FragmentKind: textFragmentKind, Text: "Say "},
+			{FragmentKind: specialStringFragmentKind, Name: "foo.txt", Text: "hi"},
+			{FragmentKind: textFragmentKind, Text: " to "},
+			{FragmentKind: specialTableFragmentKind,
 				Name: "myTable.csv",
 				Table: &table{
 					Headers: []string{"Word", "Count"},
@@ -428,7 +442,8 @@ func TestToStepWithSpecialParams(t *testing.T) {
 			},
 		},
 		Res: &result{
-			Status: pass,
+			Status:   pass,
+			ExecTime: "00:03:31",
 		},
 	}
 

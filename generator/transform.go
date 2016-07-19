@@ -119,6 +119,7 @@ func toStep(protoStep *gauge_messages.ProtoStep) *step {
 		ScreenShot: string(res.GetScreenShot()),
 		StackTrace: res.GetStackTrace(),
 		Message:    res.GetErrorMessage(),
+		ExecTime:   formatTime(res.GetExecutionTime()),
 	}
 	if protoStep.GetStepExecutionResult().GetSkipped() {
 		result.Message = protoStep.GetStepExecutionResult().GetSkippedReason()
@@ -129,24 +130,24 @@ func toStep(protoStep *gauge_messages.ProtoStep) *step {
 	}
 }
 
-func toFragments(protoFragments []*gauge_messages.Fragment) []fragment {
-	fragments := make([]fragment, 0)
+func toFragments(protoFragments []*gauge_messages.Fragment) []*fragment {
+	fragments := make([]*fragment, 0)
 	for _, f := range protoFragments {
 		switch f.GetFragmentType() {
 		case gauge_messages.Fragment_Text:
-			fragments = append(fragments, &textFragment{Text: f.GetText()})
+			fragments = append(fragments, &fragment{FragmentKind: textFragmentKind, Text: f.GetText()})
 		case gauge_messages.Fragment_Parameter:
 			switch f.GetParameter().GetParameterType() {
 			case gauge_messages.Parameter_Static:
-				fragments = append(fragments, &staticFragment{Text: f.GetParameter().GetValue()})
+				fragments = append(fragments, &fragment{FragmentKind: staticFragmentKind, Text: f.GetParameter().GetValue()})
 			case gauge_messages.Parameter_Dynamic:
-				fragments = append(fragments, &dynamicFragment{Text: f.GetParameter().GetValue()})
+				fragments = append(fragments, &fragment{FragmentKind: dynamicFragmentKind, Text: f.GetParameter().GetValue()})
 			case gauge_messages.Parameter_Table:
-				fragments = append(fragments, &tableFragment{Table: toTable(f.GetParameter().GetTable())})
+				fragments = append(fragments, &fragment{FragmentKind: tableFragmentKind, Table: toTable(f.GetParameter().GetTable())})
 			case gauge_messages.Parameter_Special_Table:
-				fragments = append(fragments, &specialTableFragment{Name: f.GetParameter().GetName(), Table: toTable(f.GetParameter().GetTable())})
+				fragments = append(fragments, &fragment{FragmentKind: specialTableFragmentKind, Name: f.GetParameter().GetName(), Table: toTable(f.GetParameter().GetTable())})
 			case gauge_messages.Parameter_Special_String:
-				fragments = append(fragments, &specialStringFragment{Name: f.GetParameter().GetName(), Text: f.GetParameter().GetValue()})
+				fragments = append(fragments, &fragment{FragmentKind: specialStringFragmentKind, Name: f.GetParameter().GetName(), Text: f.GetParameter().GetValue()})
 			}
 		}
 	}

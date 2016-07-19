@@ -201,6 +201,42 @@ var wscenarioHeaderStartDiv string = `<div class="scenario-head">
   <h3 class="head borderBottom">Scenario Heading</h3>
   <span class="time">00:01:01</span>`
 
+var wStepDiv string = `<div class='step'>
+  <h5 class='execution-time'><span class='time'>Execution Time : 00:03:31</span></h5>
+  <div class='step-info passed'>
+    <ul collapsable>
+      <li class='step'>
+        <div class='step-txt'>
+          <span><span>Say</span></span><span><span class='parameter'>"hi"</span></span><span><span>to</span></span><span><span class='parameter'>"gauge"</span></span>
+          <span>
+            <div class='inline-table'>
+              <div>
+                <table>
+                  <tr>
+                    <th>Word</th>
+                    <th>Count</th>
+                  </tr>
+                  <tbody>
+                    <tr>
+                      <td>Gauge</td>
+                      <td>3</td>
+                    </tr>
+                    <tr>
+                      <td>Mingle</td>
+                      <td>2</td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </span>
+        </div>
+      </li>
+    </ul>
+  </div>
+</div>
+`
+
 var re *regexp.Regexp = regexp.MustCompile("[ ]*[\n\t][ ]*")
 
 var reportGenTests = []reportGenTest{
@@ -232,6 +268,7 @@ var reportGenTests = []reportGenTest{
 	{"generate failed scenario container", scenarioContainerStartDiv, &scenario{Res: fail}, wScenarioContainerStartFailDiv},
 	{"generate skipped scenario container", scenarioContainerStartDiv, &scenario{Res: skip}, wScenarioContainerStartSkipDiv},
 	{"generate scenario header", scenarioHeaderStartDiv, &scenario{Heading: "Scenario Heading", ExecTime: "00:01:01"}, wscenarioHeaderStartDiv},
+	{"generate step", stepDiv, newStep(), wStepDiv},
 }
 
 func TestExecute(t *testing.T) {
@@ -290,15 +327,15 @@ func newSpec(withTable bool) *spec {
 	t := &table{
 		Headers: []string{"Word", "Count"},
 		Rows: []*row{
-			&row{
+			{
 				Cells: []string{"Gauge", "3"},
 				Res:   pass,
 			},
-			&row{
+			{
 				Cells: []string{"Mingle", "2"},
 				Res:   fail,
 			},
-			&row{
+			{
 				Cells: []string{"foobar", "1"},
 				Res:   skip,
 			},
@@ -318,5 +355,29 @@ func newSpec(withTable bool) *spec {
 
 	return &spec{
 		CommentsBeforeTable: c1,
+	}
+}
+
+func newStep() *step {
+	return &step{
+		Fragments: []*fragment{
+			{FragmentKind: textFragmentKind, Text: "Say "},
+			{FragmentKind: staticFragmentKind, Text: "hi"},
+			{FragmentKind: textFragmentKind, Text: " to "},
+			{FragmentKind: dynamicFragmentKind, Text: "gauge"},
+			{FragmentKind: tableFragmentKind,
+				Table: &table{
+					Headers: []string{"Word", "Count"},
+					Rows: []*row{
+						{Cells: []string{"Gauge", "3"}},
+						{Cells: []string{"Mingle", "2"}},
+					},
+				},
+			},
+		},
+		Res: &result{
+			Status:   pass,
+			ExecTime: "00:03:31",
+		},
 	}
 }

@@ -32,6 +32,9 @@ var scenario1 = &gauge_messages.ProtoScenario{
 	Skipped:         proto.Bool(false),
 	Tags:            []string{"foo", "bar"},
 	ExecutionTime:   proto.Int64(113163),
+	Contexts: []*gauge_messages.ProtoItem{
+		newStepItem("Context Step1", false),
+	},
 }
 
 var passSpecRes1 = &gauge_messages.ProtoSpecResult{
