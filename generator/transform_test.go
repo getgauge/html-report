@@ -65,7 +65,7 @@ func newTableItem(headers []string, rows [][]string) *gauge_messages.ProtoItem {
 	}
 }
 
-func newStepItem(text string, failed bool) *gauge_messages.ProtoItem {
+func newStepItem(failed bool, frags []*gauge_messages.Fragment) *gauge_messages.ProtoItem {
 	return &gauge_messages.ProtoItem{
 		ItemType: gauge_messages.ProtoItem_Step.Enum(),
 		Step: &gauge_messages.ProtoStep{
@@ -75,12 +75,7 @@ func newStepItem(text string, failed bool) *gauge_messages.ProtoItem {
 					ExecutionTime: proto.Int64(211316),
 				},
 			},
-			Fragments: []*gauge_messages.Fragment{
-				{
-					FragmentType: gauge_messages.Fragment_Text.Enum(),
-					Text:         proto.String(text),
-				},
-			},
+			Fragments: frags,
 		},
 	}
 }
@@ -151,20 +146,20 @@ var scn = &gauge_messages.ProtoScenario{
 	Tags:            []string{"foo", "bar"},
 	ExecutionTime:   proto.Int64(113163),
 	Contexts: []*gauge_messages.ProtoItem{
-		newStepItem("Context Step1", false),
-		newStepItem("Context Step2", true),
+		newStepItem(false, []*gauge_messages.Fragment{{FragmentType: gauge_messages.Fragment_Text.Enum(), Text: proto.String("Context Step1")}}),
+		newStepItem(true, []*gauge_messages.Fragment{{FragmentType: gauge_messages.Fragment_Text.Enum(), Text: proto.String("Context Step2")}}),
 	},
 	ScenarioItems: []*gauge_messages.ProtoItem{
 		newCommentItem("Comment0"),
-		newStepItem("Step1", true),
+		newStepItem(true, []*gauge_messages.Fragment{{FragmentType: gauge_messages.Fragment_Text.Enum(), Text: proto.String("Step1")}}),
 		newCommentItem("Comment1"),
 		newCommentItem("Comment2"),
-		newStepItem("Step2", false),
+		newStepItem(false, []*gauge_messages.Fragment{{FragmentType: gauge_messages.Fragment_Text.Enum(), Text: proto.String("Step2")}}),
 		newCommentItem("Comment3"),
 	},
 	TearDownSteps: []*gauge_messages.ProtoItem{
-		newStepItem("Teardown Step1", false),
-		newStepItem("Teardown Step2", true),
+		newStepItem(false, []*gauge_messages.Fragment{{FragmentType: gauge_messages.Fragment_Text.Enum(), Text: proto.String("Teardown Step1")}}),
+		newStepItem(true, []*gauge_messages.Fragment{{FragmentType: gauge_messages.Fragment_Text.Enum(), Text: proto.String("Teardown Step2")}}),
 	},
 }
 

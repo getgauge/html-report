@@ -172,7 +172,9 @@ func generate(suiteRes *gauge_messages.ProtoSuiteResult, w io.Writer) {
 	gen(scenarioHeaderStartDiv, w, spec.Scenarios[0])
 	gen(tagsDiv, w, spec.Scenarios[0])
 	gen(endDiv, w, nil)
-	gen(stepDiv, w, spec.Scenarios[0].Contexts[0])
+	generateItems(w, spec.Scenarios[0].Contexts, generateStep)
+	generateItems(w, spec.Scenarios[0].Items, generateItem)
+	generateItems(w, spec.Scenarios[0].TearDown, generateStep)
 	gen(endDiv, w, nil)
 	gen(endDiv, w, nil)
 	gen(endDiv, w, nil)
@@ -183,4 +185,20 @@ func generate(suiteRes *gauge_messages.ProtoSuiteResult, w io.Writer) {
 	gen(bodyFooterTag, w, nil)
 	gen(bodyEndTag, w, nil)
 	gen(htmlEndTag, w, nil)
+}
+
+func generateItems(w io.Writer, items []item, predicate func(w io.Writer, item item)) {
+	for _, item := range items {
+		predicate(w, item)
+	}
+}
+
+func generateStep(w io.Writer, item item) {
+	gen(contextStepStartDiv, w, nil)
+	generateItem(w, item)
+	gen(endDiv, w, nil)
+}
+
+func generateItem(w io.Writer, item item) {
+	gen(stepDiv, w, item.(*step))
 }

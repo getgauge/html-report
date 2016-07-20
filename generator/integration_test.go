@@ -33,7 +33,49 @@ var scenario1 = &gauge_messages.ProtoScenario{
 	Tags:            []string{"foo", "bar"},
 	ExecutionTime:   proto.Int64(113163),
 	Contexts: []*gauge_messages.ProtoItem{
-		newStepItem("Context Step1", false),
+		newStepItem(false, []*gauge_messages.Fragment{{FragmentType: gauge_messages.Fragment_Text.Enum(), Text: proto.String("Context Step1")}}),
+		newStepItem(false, []*gauge_messages.Fragment{
+			{FragmentType: gauge_messages.Fragment_Text.Enum(), Text: proto.String("Say ")},
+			{FragmentType: gauge_messages.Fragment_Parameter.Enum(), Parameter: &gauge_messages.Parameter{
+				ParameterType: gauge_messages.Parameter_Static.Enum(),
+				Value:         proto.String("hi"),
+			}},
+			{FragmentType: gauge_messages.Fragment_Text.Enum(), Text: proto.String(" to ")},
+			{FragmentType: gauge_messages.Fragment_Parameter.Enum(), Parameter: &gauge_messages.Parameter{
+				ParameterType: gauge_messages.Parameter_Dynamic.Enum(),
+				Value:         proto.String("gauge"),
+			}},
+		}),
+	},
+	ScenarioItems: []*gauge_messages.ProtoItem{
+		newStepItem(false, []*gauge_messages.Fragment{{FragmentType: gauge_messages.Fragment_Text.Enum(), Text: proto.String("Step1")}}),
+		newStepItem(false, []*gauge_messages.Fragment{
+			{FragmentType: gauge_messages.Fragment_Text.Enum(), Text: proto.String("Say ")},
+			{FragmentType: gauge_messages.Fragment_Parameter.Enum(), Parameter: &gauge_messages.Parameter{
+				ParameterType: gauge_messages.Parameter_Static.Enum(),
+				Value:         proto.String("hi"),
+			}},
+			{FragmentType: gauge_messages.Fragment_Text.Enum(), Text: proto.String(" to ")},
+			{FragmentType: gauge_messages.Fragment_Parameter.Enum(), Parameter: &gauge_messages.Parameter{
+				ParameterType: gauge_messages.Parameter_Dynamic.Enum(),
+				Value:         proto.String("gauge"),
+			}},
+		}),
+	},
+	TearDownSteps: []*gauge_messages.ProtoItem{
+		newStepItem(false, []*gauge_messages.Fragment{{FragmentType: gauge_messages.Fragment_Text.Enum(), Text: proto.String("Teardown Step1")}}),
+		newStepItem(false, []*gauge_messages.Fragment{
+			{FragmentType: gauge_messages.Fragment_Text.Enum(), Text: proto.String("Say ")},
+			{FragmentType: gauge_messages.Fragment_Parameter.Enum(), Parameter: &gauge_messages.Parameter{
+				ParameterType: gauge_messages.Parameter_Static.Enum(),
+				Value:         proto.String("hi"),
+			}},
+			{FragmentType: gauge_messages.Fragment_Text.Enum(), Text: proto.String(" to ")},
+			{FragmentType: gauge_messages.Fragment_Parameter.Enum(), Parameter: &gauge_messages.Parameter{
+				ParameterType: gauge_messages.Parameter_Dynamic.Enum(),
+				Value:         proto.String("gauge"),
+			}},
+		}),
 	},
 }
 

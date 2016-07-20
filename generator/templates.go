@@ -247,7 +247,6 @@ const stepDiv = `
       <li class='step'>
         <div class='step-txt'>
           {{range .Fragments}}
-          <span>
             {{if eq .FragmentKind 0}}
             <span>
               {{.Text}}
@@ -255,7 +254,7 @@ const stepDiv = `
             {{else if eq .FragmentKind 1}}
             <span class='parameter'>"{{.Text}}"</span>
             {{else if eq .FragmentKind 2}}
-            <span class='parameter'>"{{.Text}}"</span>
+            <span class='parameter'>&lt;{{.Text}}&gt;</span>
             {{else if eq .FragmentKind 3}}
             <span><hovercard hover-tmpl-url="{{.Text}}">&lt;{{.Name}}&gt;</hovercard></span>
             {{else if eq .FragmentKind 4}}
@@ -269,7 +268,6 @@ const stepDiv = `
               </div>
             </div>
             {{end}}
-          </span>
           {{end}}
         </div>
       </li>
@@ -277,3 +275,5 @@ const stepDiv = `
   </div>
 </div>
 `
+
+const contextStepStartDiv = `<div class='context-step'>`

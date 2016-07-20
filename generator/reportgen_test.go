@@ -207,29 +207,27 @@ var wStepDiv string = `<div class='step'>
     <ul collapsable>
       <li class='step'>
         <div class='step-txt'>
-          <span><span>Say</span></span><span><span class='parameter'>"hi"</span></span><span><span>to</span></span><span><span class='parameter'>"gauge"</span></span>
-          <span>
-            <div class='inline-table'>
-              <div>
-                <table>
+          <span>Say</span><span class='parameter'>"hi"</span><span>to</span><span class='parameter'>&lt;gauge&gt;</span>
+          <div class='inline-table'>
+            <div>
+              <table>
+                <tr>
+                  <th>Word</th>
+                  <th>Count</th>
+                </tr>
+                <tbody>
                   <tr>
-                    <th>Word</th>
-                    <th>Count</th>
+                    <td>Gauge</td>
+                    <td>3</td>
                   </tr>
-                  <tbody>
-                    <tr>
-                      <td>Gauge</td>
-                      <td>3</td>
-                    </tr>
-                    <tr>
-                      <td>Mingle</td>
-                      <td>2</td>
-                    </tr>
-                  </tbody>
-                </table>
-              </div>
+                  <tr>
+                    <td>Mingle</td>
+                    <td>2</td>
+                  </tr>
+                </tbody>
+              </table>
             </div>
-          </span>
+          </div>
         </div>
       </li>
     </ul>

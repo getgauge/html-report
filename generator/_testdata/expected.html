@@ -1,28 +1,26 @@
 <!doctype html>
 <html>
-
-<head>
-  <meta http-equiv="X-UA-Compatible" content="IE=9; IE=8; IE=7; IE=EDGE" />
-  <title>Gauge Test Results</title>
-  <link rel="shortcut icon" type="image/x-icon" href="images/favicon.ico">
-  <link rel="stylesheet" type="text/css" href="css/open-sans.css">
-  <link rel="stylesheet" type="text/css" href="css/font-awesome.css">
-  <link rel="stylesheet" type="text/css" href="css/normalize.css" />
-  <link rel="stylesheet" type="text/css" href="css/angular-hovercard.css" />
-  <link rel="stylesheet" type="text/css" href="css/style.css" />
-  <script src="js/lightbox.js"></script>
-</head>
-
-<body>
-  <header class="top">
-    <div class="header">
-      <div class="container">
-        <div class="logo"><img src="images/logo.png" alt="Report logo"></div>
-        <h2 class="project">Project: Gauge Project</h2>
+  <head>
+    <meta http-equiv="X-UA-Compatible" content="IE=9; IE=8; IE=7; IE=EDGE" />
+    <title>Gauge Test Results</title>
+    <link rel="shortcut icon" type="image/x-icon" href="images/favicon.ico">
+    <link rel="stylesheet" type="text/css" href="css/open-sans.css">
+    <link rel="stylesheet" type="text/css" href="css/font-awesome.css">
+    <link rel="stylesheet" type="text/css" href="css/normalize.css" />
+    <link rel="stylesheet" type="text/css" href="css/angular-hovercard.css" />
+    <link rel="stylesheet" type="text/css" href="css/style.css" />
+    <script src="js/lightbox.js"></script>
+  </head>
+  <body>
+    <header class="top">
+      <div class="header">
+        <div class="container">
+          <div class="logo"><img src="images/logo.png" alt="Report logo"></div>
+          <h2 class="project">Project: Gauge Project</h2>
+        </div>
       </div>
-    </div>
-  </header>
-  <main class="main-container">
+    </header>
+    <main class="main-container">
     <div class="container">
       <div class="report-overview">
         <div class="report_chart">
@@ -138,6 +136,43 @@
                     <span> bar</span>
                   </div>
                 </div>
+                <div class='context-step'>
+                  <div class='step'>
+                    <h5 class='execution-time'>
+                    <span class='time'>Execution Time : 00:03:31</span>
+                    </h5>
+                    <div class='step-info passed'>
+                      <ul collapsable>
+                        <li class='step'>
+                          <div class='step-txt'>
+                            <span>
+                              Context Step1
+                            </span>
+                          </div>
+                        </li>
+                      </ul>
+                    </div>
+                  </div>
+                </div>
+                <div class='context-step'>
+                  <div class='step'>
+                    <h5 class='execution-time'>
+                    <span class='time'>Execution Time : 00:03:31</span>
+                    </h5>
+                    <div class='step-info passed'>
+                      <ul collapsable>
+                        <li class='step'>
+                          <div class='step-txt'>
+                            <span>Say</span>
+                            <span class='parameter'>"hi"</span>
+                            <span>to</span>
+                            <span class='parameter'>&lt;gauge&gt;</span>
+                          </div>
+                        </li>
+                      </ul>
+                    </div>
+                  </div>
+                </div>
                 <div class='step'>
                   <h5 class='execution-time'>
                   <span class='time'>Execution Time : 00:03:31</span>
@@ -147,13 +182,65 @@
                       <li class='step'>
                         <div class='step-txt'>
                           <span>
-                            <span>
-                              Context Step1
-                            </span>
+                            Step1
                           </span>
                         </div>
                       </li>
                     </ul>
+                  </div>
+                </div>
+                <div class='step'>
+                  <h5 class='execution-time'>
+                  <span class='time'>Execution Time : 00:03:31</span>
+                  </h5>
+                  <div class='step-info passed'>
+                    <ul collapsable>
+                      <li class='step'>
+                        <div class='step-txt'>
+                          <span>Say</span>
+                          <span class='parameter'>"hi"</span>
+                          <span>to</span>
+                          <span class='parameter'>&lt;gauge&gt;</span>
+                        </div>
+                      </li>
+                    </ul>
+                  </div>
+                </div>
+                <div class='context-step'>
+                  <div class='step'>
+                    <h5 class='execution-time'>
+                    <span class='time'>Execution Time : 00:03:31</span>
+                    </h5>
+                    <div class='step-info passed'>
+                      <ul collapsable>
+                        <li class='step'>
+                          <div class='step-txt'>
+                            <span>
+                              Teardown Step1
+                            </span>
+                          </div>
+                        </li>
+                      </ul>
+                    </div>
+                  </div>
+                </div>
+                <div class='context-step'>
+                  <div class='step'>
+                    <h5 class='execution-time'>
+                    <span class='time'>Execution Time : 00:03:31</span>
+                    </h5>
+                    <div class='step-info passed'>
+                      <ul collapsable>
+                        <li class='step'>
+                          <div class='step-txt'>
+                            <span>Say</span>
+                            <span class='parameter'>"hi"</span>
+                            <span>to</span>
+                            <span class='parameter'>&lt;gauge&gt;</span>
+                          </div>
+                        </li>
+                      </ul>
+                    </div>
                   </div>
                 </div>
               </div>
@@ -162,12 +249,11 @@
         </div>
       </div>
     </div>
-  </main>
-  <footer class="footer">
-    <div class="container">
-      <p>Generated by Gauge HTML Report</p>
-    </div>
-  </footer>
-</body>
-
+    </main>
+    <footer class="footer">
+      <div class="container">
+        <p>Generated by Gauge HTML Report</p>
+      </div>
+    </footer>
+  </body>
 </html>
