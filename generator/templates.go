@@ -280,3 +280,8 @@ const contextStepStartDiv = `<div class='context-step'>`
 
 //TODO: 1. Show comments in markdown style
 const commentSpan = `<span>{{.Text}}</span>`
+
+//TODO: Make concept collapsible
+const conceptStepsStartDiv = `<div class='concept-steps'>`
+
+const nestedConceptDiv = `<div class="nested concept-steps">`
