@@ -94,6 +94,7 @@ type scenario struct {
 const (
 	stepKind kind = iota
 	commentKind
+	conceptKind
 )
 
 type kind int
@@ -109,6 +110,15 @@ type step struct {
 
 func (s *step) kind() kind {
 	return stepKind
+}
+
+type concept struct {
+	CptStep *step
+	Items   []item
+}
+
+func (c *concept) kind() kind {
+	return conceptKind
 }
 
 type comment struct {

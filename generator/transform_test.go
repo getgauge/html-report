@@ -210,6 +210,71 @@ var protoStep = &gauge_messages.ProtoStep{
 	},
 }
 
+var protoConcept = &gauge_messages.ProtoConcept{
+	ConceptStep: newStepItem(false, []*gauge_messages.Fragment{
+		{FragmentType: gauge_messages.Fragment_Text.Enum(), Text: proto.String("Say ")},
+		{
+			FragmentType: gauge_messages.Fragment_Parameter.Enum(),
+			Parameter:    &gauge_messages.Parameter{ParameterType: gauge_messages.Parameter_Dynamic.Enum(), Value: proto.String("hello")},
+		},
+		{FragmentType: gauge_messages.Fragment_Text.Enum(), Text: proto.String(" to ")},
+		{
+			FragmentType: gauge_messages.Fragment_Parameter.Enum(),
+			Parameter: &gauge_messages.Parameter{
+				ParameterType: gauge_messages.Parameter_Table.Enum(),
+				Table: newTableItem([]string{"Word", "Count"}, [][]string{
+					[]string{"Gauge", "3"},
+					[]string{"Mingle", "2"},
+				}).GetTable(),
+			},
+		},
+	}).GetStep(),
+	Steps: []*gauge_messages.ProtoItem{
+		{
+			ItemType: gauge_messages.ProtoItem_Concept.Enum(),
+			Concept: &gauge_messages.ProtoConcept{
+				ConceptStep: newStepItem(false, []*gauge_messages.Fragment{
+					{FragmentType: gauge_messages.Fragment_Text.Enum(), Text: proto.String("Tell ")},
+					{
+						FragmentType: gauge_messages.Fragment_Parameter.Enum(),
+						Parameter:    &gauge_messages.Parameter{ParameterType: gauge_messages.Parameter_Dynamic.Enum(), Value: proto.String("hello")},
+					},
+				}).GetStep(),
+				Steps: []*gauge_messages.ProtoItem{
+					newStepItem(false, []*gauge_messages.Fragment{
+						{FragmentType: gauge_messages.Fragment_Text.Enum(), Text: proto.String("Say Hi")},
+					}),
+				},
+			},
+		},
+		newStepItem(false, []*gauge_messages.Fragment{
+			{FragmentType: gauge_messages.Fragment_Text.Enum(), Text: proto.String("Say ")},
+			{
+				FragmentType: gauge_messages.Fragment_Parameter.Enum(),
+				Parameter:    &gauge_messages.Parameter{ParameterType: gauge_messages.Parameter_Static.Enum(), Value: proto.String("hi")},
+			},
+			{FragmentType: gauge_messages.Fragment_Text.Enum(), Text: proto.String(" to ")},
+			{
+				FragmentType: gauge_messages.Fragment_Parameter.Enum(),
+				Parameter:    &gauge_messages.Parameter{ParameterType: gauge_messages.Parameter_Dynamic.Enum(), Value: proto.String("gauge")},
+			},
+			{
+				FragmentType: gauge_messages.Fragment_Parameter.Enum(),
+				Parameter: &gauge_messages.Parameter{
+					ParameterType: gauge_messages.Parameter_Table.Enum(),
+					Table: newTableItem([]string{"Word", "Count"}, [][]string{
+						[]string{"Gauge", "3"},
+						[]string{"Mingle", "2"},
+					}).GetTable(),
+				},
+			},
+		}),
+	},
+	ConceptExecutionResult: &gauge_messages.ProtoStepExecutionResult{
+		ExecutionResult: &gauge_messages.ProtoExecutionResult{Failed: proto.Bool(false), ExecutionTime: proto.Int64(211316)},
+	},
+}
+
 var protoStepWithSpecialParams = &gauge_messages.ProtoStep{
 	Fragments: []*gauge_messages.Fragment{
 		{
@@ -414,6 +479,82 @@ func TestToStep(t *testing.T) {
 	}
 
 	got := toStep(protoStep)
+	if !reflect.DeepEqual(got, want) {
+		t.Errorf("want:\n%q\ngot:\n%q\n", want, got)
+	}
+}
+
+func TestToConcept(t *testing.T) {
+	want := &concept{
+		CptStep: &step{
+			Fragments: []*fragment{
+				{FragmentKind: textFragmentKind, Text: "Say "},
+				{FragmentKind: dynamicFragmentKind, Text: "hello"},
+				{FragmentKind: textFragmentKind, Text: " to "},
+				{FragmentKind: tableFragmentKind,
+					Table: &table{
+						Headers: []string{"Word", "Count"},
+						Rows: []*row{
+							{Cells: []string{"Gauge", "3"}},
+							{Cells: []string{"Mingle", "2"}},
+						},
+					},
+				},
+			},
+			Res: &result{
+				Status:   pass,
+				ExecTime: "00:03:31",
+			},
+		},
+		Items: []item{
+			&concept{
+				CptStep: &step{
+					Fragments: []*fragment{
+						{FragmentKind: textFragmentKind, Text: "Tell "},
+						{FragmentKind: dynamicFragmentKind, Text: "hello"},
+					},
+					Res: &result{
+						Status:   pass,
+						ExecTime: "00:03:31",
+					},
+				},
+				Items: []item{
+					&step{
+						Fragments: []*fragment{
+							{FragmentKind: textFragmentKind, Text: "Say Hi"},
+						},
+						Res: &result{
+							Status:   pass,
+							ExecTime: "00:03:31",
+						},
+					},
+				},
+			},
+			&step{
+				Fragments: []*fragment{
+					{FragmentKind: textFragmentKind, Text: "Say "},
+					{FragmentKind: staticFragmentKind, Text: "hi"},
+					{FragmentKind: textFragmentKind, Text: " to "},
+					{FragmentKind: dynamicFragmentKind, Text: "gauge"},
+					{FragmentKind: tableFragmentKind,
+						Table: &table{
+							Headers: []string{"Word", "Count"},
+							Rows: []*row{
+								{Cells: []string{"Gauge", "3"}},
+								{Cells: []string{"Mingle", "2"}},
+							},
+						},
+					},
+				},
+				Res: &result{
+					Status:   pass,
+					ExecTime: "00:03:31",
+				},
+			},
+		},
+	}
+
+	got := toConcept(protoConcept)
 	if !reflect.DeepEqual(got, want) {
 		t.Errorf("want:\n%q\ngot:\n%q\n", want, got)
 	}

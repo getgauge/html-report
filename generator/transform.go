@@ -130,6 +130,13 @@ func toStep(protoStep *gauge_messages.ProtoStep) *step {
 	}
 }
 
+func toConcept(protoConcept *gauge_messages.ProtoConcept) *concept {
+	return &concept{
+		CptStep: toStep(protoConcept.ConceptStep),
+		Items:   getItems(protoConcept.Steps),
+	}
+}
+
 func toFragments(protoFragments []*gauge_messages.Fragment) []*fragment {
 	fragments := make([]*fragment, 0)
 	for _, f := range protoFragments {
@@ -173,6 +180,8 @@ func getItems(protoItems []*gauge_messages.ProtoItem) []item {
 			items = append(items, toStep(i.GetStep()))
 		case gauge_messages.ProtoItem_Comment:
 			items = append(items, toComment(i.GetComment()))
+		case gauge_messages.ProtoItem_Concept:
+			items = append(items, &concept{CptStep: toStep(i.GetConcept().GetConceptStep()), Items: getItems(i.GetConcept().GetSteps())})
 		}
 	}
 	return items
