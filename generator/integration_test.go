@@ -22,74 +22,74 @@ import (
 	"io/ioutil"
 	"testing"
 
-	"github.com/getgauge/html-report/gauge_messages"
+	gm "github.com/getgauge/html-report/gauge_messages"
 	"github.com/golang/protobuf/proto"
 )
 
-var scenario1 = &gauge_messages.ProtoScenario{
+var scenario1 = &gm.ProtoScenario{
 	ScenarioHeading: proto.String("Vowel counts in single word"),
 	Failed:          proto.Bool(false),
 	Skipped:         proto.Bool(false),
 	Tags:            []string{"foo", "bar"},
 	ExecutionTime:   proto.Int64(113163),
-	Contexts: []*gauge_messages.ProtoItem{
-		newStepItem(false, []*gauge_messages.Fragment{{FragmentType: gauge_messages.Fragment_Text.Enum(), Text: proto.String("Context Step1")}}),
-		newStepItem(false, []*gauge_messages.Fragment{
-			{FragmentType: gauge_messages.Fragment_Text.Enum(), Text: proto.String("Say ")},
-			{FragmentType: gauge_messages.Fragment_Parameter.Enum(), Parameter: &gauge_messages.Parameter{
-				ParameterType: gauge_messages.Parameter_Static.Enum(),
+	Contexts: []*gm.ProtoItem{
+		newStepItem(false, []*gm.Fragment{{FragmentType: gm.Fragment_Text.Enum(), Text: proto.String("Context Step1")}}),
+		newStepItem(false, []*gm.Fragment{
+			{FragmentType: gm.Fragment_Text.Enum(), Text: proto.String("Say ")},
+			{FragmentType: gm.Fragment_Parameter.Enum(), Parameter: &gm.Parameter{
+				ParameterType: gm.Parameter_Static.Enum(),
 				Value:         proto.String("hi"),
 			}},
-			{FragmentType: gauge_messages.Fragment_Text.Enum(), Text: proto.String(" to ")},
-			{FragmentType: gauge_messages.Fragment_Parameter.Enum(), Parameter: &gauge_messages.Parameter{
-				ParameterType: gauge_messages.Parameter_Dynamic.Enum(),
+			{FragmentType: gm.Fragment_Text.Enum(), Text: proto.String(" to ")},
+			{FragmentType: gm.Fragment_Parameter.Enum(), Parameter: &gm.Parameter{
+				ParameterType: gm.Parameter_Dynamic.Enum(),
 				Value:         proto.String("gauge"),
 			}},
 		}),
 	},
-	ScenarioItems: []*gauge_messages.ProtoItem{
-		newStepItem(false, []*gauge_messages.Fragment{{FragmentType: gauge_messages.Fragment_Text.Enum(), Text: proto.String("Step1")}}),
+	ScenarioItems: []*gm.ProtoItem{
+		newStepItem(false, []*gm.Fragment{{FragmentType: gm.Fragment_Text.Enum(), Text: proto.String("Step1")}}),
 		newCommentItem("Comment1"),
-		newStepItem(false, []*gauge_messages.Fragment{
-			{FragmentType: gauge_messages.Fragment_Text.Enum(), Text: proto.String("Say ")},
-			{FragmentType: gauge_messages.Fragment_Parameter.Enum(), Parameter: &gauge_messages.Parameter{
-				ParameterType: gauge_messages.Parameter_Static.Enum(),
+		newStepItem(false, []*gm.Fragment{
+			{FragmentType: gm.Fragment_Text.Enum(), Text: proto.String("Say ")},
+			{FragmentType: gm.Fragment_Parameter.Enum(), Parameter: &gm.Parameter{
+				ParameterType: gm.Parameter_Static.Enum(),
 				Value:         proto.String("hi"),
 			}},
-			{FragmentType: gauge_messages.Fragment_Text.Enum(), Text: proto.String(" to ")},
-			{FragmentType: gauge_messages.Fragment_Parameter.Enum(), Parameter: &gauge_messages.Parameter{
-				ParameterType: gauge_messages.Parameter_Dynamic.Enum(),
+			{FragmentType: gm.Fragment_Text.Enum(), Text: proto.String(" to ")},
+			{FragmentType: gm.Fragment_Parameter.Enum(), Parameter: &gm.Parameter{
+				ParameterType: gm.Parameter_Dynamic.Enum(),
 				Value:         proto.String("gauge"),
 			}},
 		}),
 		newCommentItem("Comment2"),
 	},
-	TearDownSteps: []*gauge_messages.ProtoItem{
-		newStepItem(false, []*gauge_messages.Fragment{{FragmentType: gauge_messages.Fragment_Text.Enum(), Text: proto.String("Teardown Step1")}}),
-		newStepItem(false, []*gauge_messages.Fragment{
-			{FragmentType: gauge_messages.Fragment_Text.Enum(), Text: proto.String("Say ")},
-			{FragmentType: gauge_messages.Fragment_Parameter.Enum(), Parameter: &gauge_messages.Parameter{
-				ParameterType: gauge_messages.Parameter_Static.Enum(),
+	TearDownSteps: []*gm.ProtoItem{
+		newStepItem(false, []*gm.Fragment{{FragmentType: gm.Fragment_Text.Enum(), Text: proto.String("Teardown Step1")}}),
+		newStepItem(false, []*gm.Fragment{
+			{FragmentType: gm.Fragment_Text.Enum(), Text: proto.String("Say ")},
+			{FragmentType: gm.Fragment_Parameter.Enum(), Parameter: &gm.Parameter{
+				ParameterType: gm.Parameter_Static.Enum(),
 				Value:         proto.String("hi"),
 			}},
-			{FragmentType: gauge_messages.Fragment_Text.Enum(), Text: proto.String(" to ")},
-			{FragmentType: gauge_messages.Fragment_Parameter.Enum(), Parameter: &gauge_messages.Parameter{
-				ParameterType: gauge_messages.Parameter_Dynamic.Enum(),
+			{FragmentType: gm.Fragment_Text.Enum(), Text: proto.String(" to ")},
+			{FragmentType: gm.Fragment_Parameter.Enum(), Parameter: &gm.Parameter{
+				ParameterType: gm.Parameter_Dynamic.Enum(),
 				Value:         proto.String("gauge"),
 			}},
 		}),
 	},
 }
 
-var passSpecRes1 = &gauge_messages.ProtoSpecResult{
+var passSpecRes1 = &gm.ProtoSpecResult{
 	Failed:        proto.Bool(false),
 	Skipped:       proto.Bool(false),
 	ExecutionTime: proto.Int64(211316),
-	ProtoSpec: &gauge_messages.ProtoSpec{
+	ProtoSpec: &gm.ProtoSpec{
 		SpecHeading: proto.String("Passing Specification 1"),
 		Tags:        []string{"tag1", "tag2"},
 		FileName:    proto.String("/tmp/gauge/specs/foobar.spec"),
-		Items: []*gauge_messages.ProtoItem{
+		Items: []*gm.ProtoItem{
 			newCommentItem("\n"),
 			newCommentItem("This is an executable specification file. This file follows markdown syntax."),
 			newCommentItem("\n"),
@@ -108,48 +108,48 @@ var passSpecRes1 = &gauge_messages.ProtoSpecResult{
 	},
 }
 
-var passSpecRes2 = &gauge_messages.ProtoSpecResult{
+var passSpecRes2 = &gm.ProtoSpecResult{
 	Failed:        proto.Bool(false),
 	Skipped:       proto.Bool(false),
 	ExecutionTime: proto.Int64(211316),
-	ProtoSpec: &gauge_messages.ProtoSpec{
+	ProtoSpec: &gm.ProtoSpec{
 		SpecHeading: proto.String("Passing Specification 2"),
 		Tags:        []string{},
 	},
 }
 
-var passSpecRes3 = &gauge_messages.ProtoSpecResult{
+var passSpecRes3 = &gm.ProtoSpecResult{
 	Failed:        proto.Bool(false),
 	Skipped:       proto.Bool(false),
 	ExecutionTime: proto.Int64(211316),
-	ProtoSpec: &gauge_messages.ProtoSpec{
+	ProtoSpec: &gm.ProtoSpec{
 		SpecHeading: proto.String("Passing Specification 3"),
 		Tags:        []string{"foo"},
 	},
 }
 
-var failSpecRes1 = &gauge_messages.ProtoSpecResult{
+var failSpecRes1 = &gm.ProtoSpecResult{
 	Failed:        proto.Bool(true),
 	Skipped:       proto.Bool(false),
 	ExecutionTime: proto.Int64(0),
-	ProtoSpec: &gauge_messages.ProtoSpec{
+	ProtoSpec: &gm.ProtoSpec{
 		SpecHeading: proto.String("Failing Specification 1"),
 		Tags:        []string{},
 	},
 }
 
-var skipSpecRes1 = &gauge_messages.ProtoSpecResult{
+var skipSpecRes1 = &gm.ProtoSpecResult{
 	Failed:        proto.Bool(false),
 	Skipped:       proto.Bool(true),
 	ExecutionTime: proto.Int64(0),
-	ProtoSpec: &gauge_messages.ProtoSpec{
+	ProtoSpec: &gm.ProtoSpec{
 		SpecHeading: proto.String("Skipped Specification 1"),
 		Tags:        []string{"bar"},
 	},
 }
 
-var suiteRes = &gauge_messages.ProtoSuiteResult{
-	SpecResults:       []*gauge_messages.ProtoSpecResult{passSpecRes1, passSpecRes2, passSpecRes3, failSpecRes1, skipSpecRes1},
+var suiteRes = &gm.ProtoSuiteResult{
+	SpecResults:       []*gm.ProtoSpecResult{passSpecRes1, passSpecRes2, passSpecRes3, failSpecRes1, skipSpecRes1},
 	Failed:            proto.Bool(false),
 	SpecsFailedCount:  proto.Int32(1),
 	ExecutionTime:     proto.Int64(122609),

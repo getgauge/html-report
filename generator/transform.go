@@ -20,14 +20,14 @@ package generator
 import (
 	"time"
 
-	"github.com/getgauge/html-report/gauge_messages"
+	gm "github.com/getgauge/html-report/gauge_messages"
 )
 
 const (
 	execTimeFormat = "15:04:05"
 )
 
-func toOverview(res *gauge_messages.ProtoSuiteResult) *overview {
+func toOverview(res *gm.ProtoSuiteResult) *overview {
 	passed := len(res.GetSpecResults()) - int(res.GetSpecsFailedCount()) - int(res.GetSpecsSkippedCount())
 	return &overview{
 		ProjectName: res.GetProjectName(),
@@ -43,7 +43,7 @@ func toOverview(res *gauge_messages.ProtoSuiteResult) *overview {
 	}
 }
 
-func toSidebar(res *gauge_messages.ProtoSuiteResult) *sidebar {
+func toSidebar(res *gm.ProtoSuiteResult) *sidebar {
 	specsMetaList := make([]*specsMeta, 0)
 	for _, specRes := range res.SpecResults {
 		sm := &specsMeta{
@@ -62,7 +62,7 @@ func toSidebar(res *gauge_messages.ProtoSuiteResult) *sidebar {
 	}
 }
 
-func toSpecHeader(res *gauge_messages.ProtoSpecResult) *specHeader {
+func toSpecHeader(res *gm.ProtoSpecResult) *specHeader {
 	return &specHeader{
 		SpecName: res.ProtoSpec.GetSpecHeading(),
 		ExecTime: formatTime(res.GetExecutionTime()),
@@ -71,7 +71,7 @@ func toSpecHeader(res *gauge_messages.ProtoSpecResult) *specHeader {
 	}
 }
 
-func toSpec(res *gauge_messages.ProtoSpecResult) *spec {
+func toSpec(res *gm.ProtoSpecResult) *spec {
 	spec := &spec{
 		CommentsBeforeTable: make([]string, 0),
 		CommentsAfterTable:  make([]string, 0),
@@ -80,23 +80,23 @@ func toSpec(res *gauge_messages.ProtoSpecResult) *spec {
 	isTableScanned := false
 	for _, item := range res.GetProtoSpec().GetItems() {
 		switch item.GetItemType() {
-		case gauge_messages.ProtoItem_Comment:
+		case gm.ProtoItem_Comment:
 			if isTableScanned {
 				spec.CommentsAfterTable = append(spec.CommentsAfterTable, item.GetComment().GetText())
 			} else {
 				spec.CommentsBeforeTable = append(spec.CommentsBeforeTable, item.GetComment().GetText())
 			}
-		case gauge_messages.ProtoItem_Table:
+		case gm.ProtoItem_Table:
 			spec.Table = toTable(item.GetTable())
 			isTableScanned = true
-		case gauge_messages.ProtoItem_Scenario:
+		case gm.ProtoItem_Scenario:
 			spec.Scenarios = append(spec.Scenarios, toScenario(item.GetScenario()))
 		}
 	}
 	return spec
 }
 
-func toScenario(scn *gauge_messages.ProtoScenario) *scenario {
+func toScenario(scn *gm.ProtoScenario) *scenario {
 	return &scenario{
 		Heading:  scn.GetScenarioHeading(),
 		ExecTime: formatTime(scn.GetExecutionTime()),
@@ -108,11 +108,11 @@ func toScenario(scn *gauge_messages.ProtoScenario) *scenario {
 	}
 }
 
-func toComment(protoComment *gauge_messages.ProtoComment) *comment {
+func toComment(protoComment *gm.ProtoComment) *comment {
 	return &comment{Text: protoComment.GetText()}
 }
 
-func toStep(protoStep *gauge_messages.ProtoStep) *step {
+func toStep(protoStep *gm.ProtoStep) *step {
 	res := protoStep.GetStepExecutionResult().GetExecutionResult()
 	result := &result{
 		Status:     getStatus(res.GetFailed(), protoStep.GetStepExecutionResult().GetSkipped()),
@@ -130,30 +130,30 @@ func toStep(protoStep *gauge_messages.ProtoStep) *step {
 	}
 }
 
-func toConcept(protoConcept *gauge_messages.ProtoConcept) *concept {
+func toConcept(protoConcept *gm.ProtoConcept) *concept {
 	return &concept{
 		CptStep: toStep(protoConcept.ConceptStep),
 		Items:   getItems(protoConcept.Steps),
 	}
 }
 
-func toFragments(protoFragments []*gauge_messages.Fragment) []*fragment {
+func toFragments(protoFragments []*gm.Fragment) []*fragment {
 	fragments := make([]*fragment, 0)
 	for _, f := range protoFragments {
 		switch f.GetFragmentType() {
-		case gauge_messages.Fragment_Text:
+		case gm.Fragment_Text:
 			fragments = append(fragments, &fragment{FragmentKind: textFragmentKind, Text: f.GetText()})
-		case gauge_messages.Fragment_Parameter:
+		case gm.Fragment_Parameter:
 			switch f.GetParameter().GetParameterType() {
-			case gauge_messages.Parameter_Static:
+			case gm.Parameter_Static:
 				fragments = append(fragments, &fragment{FragmentKind: staticFragmentKind, Text: f.GetParameter().GetValue()})
-			case gauge_messages.Parameter_Dynamic:
+			case gm.Parameter_Dynamic:
 				fragments = append(fragments, &fragment{FragmentKind: dynamicFragmentKind, Text: f.GetParameter().GetValue()})
-			case gauge_messages.Parameter_Table:
+			case gm.Parameter_Table:
 				fragments = append(fragments, &fragment{FragmentKind: tableFragmentKind, Table: toTable(f.GetParameter().GetTable())})
-			case gauge_messages.Parameter_Special_Table:
+			case gm.Parameter_Special_Table:
 				fragments = append(fragments, &fragment{FragmentKind: specialTableFragmentKind, Name: f.GetParameter().GetName(), Table: toTable(f.GetParameter().GetTable())})
-			case gauge_messages.Parameter_Special_String:
+			case gm.Parameter_Special_String:
 				fragments = append(fragments, &fragment{FragmentKind: specialStringFragmentKind, Name: f.GetParameter().GetName(), Text: f.GetParameter().GetValue()})
 			}
 		}
@@ -161,7 +161,7 @@ func toFragments(protoFragments []*gauge_messages.Fragment) []*fragment {
 	return fragments
 }
 
-func toTable(protoTable *gauge_messages.ProtoTable) *table {
+func toTable(protoTable *gm.ProtoTable) *table {
 	rows := make([]*row, len(protoTable.GetRows()))
 	for i, r := range protoTable.GetRows() {
 		rows[i] = &row{
@@ -172,15 +172,15 @@ func toTable(protoTable *gauge_messages.ProtoTable) *table {
 	return &table{Headers: protoTable.GetHeaders().GetCells(), Rows: rows}
 }
 
-func getItems(protoItems []*gauge_messages.ProtoItem) []item {
+func getItems(protoItems []*gm.ProtoItem) []item {
 	items := make([]item, 0)
 	for _, i := range protoItems {
 		switch i.GetItemType() {
-		case gauge_messages.ProtoItem_Step:
+		case gm.ProtoItem_Step:
 			items = append(items, toStep(i.GetStep()))
-		case gauge_messages.ProtoItem_Comment:
+		case gm.ProtoItem_Comment:
 			items = append(items, toComment(i.GetComment()))
-		case gauge_messages.ProtoItem_Concept:
+		case gm.ProtoItem_Concept:
 			items = append(items, &concept{CptStep: toStep(i.GetConcept().GetConceptStep()), Items: getItems(i.GetConcept().GetSteps())})
 		}
 	}

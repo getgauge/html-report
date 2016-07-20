@@ -21,7 +21,7 @@ import (
 	"log"
 	"text/template"
 
-	"github.com/getgauge/html-report/gauge_messages"
+	gm "github.com/getgauge/html-report/gauge_messages"
 )
 
 type overview struct {
@@ -157,7 +157,7 @@ func gen(tmplName string, w io.Writer, data interface{}) {
 	}
 }
 
-func generate(suiteRes *gauge_messages.ProtoSuiteResult, w io.Writer) {
+func generate(suiteRes *gm.ProtoSuiteResult, w io.Writer) {
 	overview := toOverview(suiteRes)
 	sidebar := toSidebar(suiteRes)
 	specHeader := toSpecHeader(suiteRes.GetSpecResults()[0])
