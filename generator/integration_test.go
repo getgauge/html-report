@@ -49,6 +49,7 @@ var scenario1 = &gauge_messages.ProtoScenario{
 	},
 	ScenarioItems: []*gauge_messages.ProtoItem{
 		newStepItem(false, []*gauge_messages.Fragment{{FragmentType: gauge_messages.Fragment_Text.Enum(), Text: proto.String("Step1")}}),
+		newCommentItem("Comment1"),
 		newStepItem(false, []*gauge_messages.Fragment{
 			{FragmentType: gauge_messages.Fragment_Text.Enum(), Text: proto.String("Say ")},
 			{FragmentType: gauge_messages.Fragment_Parameter.Enum(), Parameter: &gauge_messages.Parameter{
@@ -61,6 +62,7 @@ var scenario1 = &gauge_messages.ProtoScenario{
 				Value:         proto.String("gauge"),
 			}},
 		}),
+		newCommentItem("Comment2"),
 	},
 	TearDownSteps: []*gauge_messages.ProtoItem{
 		newStepItem(false, []*gauge_messages.Fragment{{FragmentType: gauge_messages.Fragment_Text.Enum(), Text: proto.String("Teardown Step1")}}),

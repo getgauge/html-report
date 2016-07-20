@@ -277,3 +277,6 @@ const stepDiv = `
 `
 
 const contextStepStartDiv = `<div class='context-step'>`
+
+//TODO: 1. Show comments in markdown style
+const commentSpan = `<span>{{.Text}}</span>`

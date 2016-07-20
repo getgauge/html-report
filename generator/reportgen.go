@@ -200,5 +200,10 @@ func generateStep(w io.Writer, item item) {
 }
 
 func generateItem(w io.Writer, item item) {
-	gen(stepDiv, w, item.(*step))
+	switch item.kind() {
+	case stepKind:
+		gen(stepDiv, w, item.(*step))
+	case commentKind:
+		gen(commentSpan, w, item.(*comment))
+	}
 }
