@@ -207,7 +207,7 @@ var wStepDiv string = `<div class='step'>
     <ul collapsable>
       <li class='step'>
         <div class='step-txt'>
-          <span>Say</span><span class='parameter'>"hi"</span><span>to</span><span class='parameter'>&lt;gauge&gt;</span>
+          <span>Say</span><span class='parameter'>"hi"</span><span>to</span><span class='parameter'>"gauge"</span>
           <div class='inline-table'>
             <div>
               <table>

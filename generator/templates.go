@@ -251,10 +251,8 @@ const stepDiv = `
             <span>
               {{.Text}}
             </span>
-            {{else if eq .FragmentKind 1}}
+            {{else if eq .FragmentKind 1 2}}
             <span class='parameter'>"{{.Text}}"</span>
-            {{else if eq .FragmentKind 2}}
-            <span class='parameter'>&lt;{{.Text}}&gt;</span>
             {{else if eq .FragmentKind 3}}
             <span><hovercard hover-tmpl-url="{{.Text}}">&lt;{{.Name}}&gt;</hovercard></span>
             {{else if eq .FragmentKind 4}}
