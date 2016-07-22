@@ -219,20 +219,7 @@ const endDiv = `</div>`
 //	2. Print Gauge Messages
 //	3. Print Pre/Post hook failures, Step failure
 //	4. Add hovercard for special params
-const stepDiv = `
-{{define "Table"}}
-<table>
-  <tr>
-    {{range .Table.Headers}}<th>{{.}}</th>{{end}}
-  </tr>
-  <tbody>
-    {{range .Table.Rows}}
-    <tr>{{range .Cells}}<td>{{.}}</td>{{end}}</tr>
-    {{end}}
-  </tbody>
-</table>
-{{end}}
-<div class='step'>
+const stepStartDiv = `<div class='step'>
   {{if ne .Res.Status 2}}
   <h5 class='execution-time'>
   <span class='time'>Execution Time : {{.Res.ExecTime}}</span>
@@ -245,34 +232,46 @@ const stepDiv = `
     {{end}}
     <ul collapsable>
       <li class='step'>
-        <div class='step-txt'>
-          {{range .Fragments}}
-            {{if eq .FragmentKind 0}}
-            <span>
-              {{.Text}}
-            </span>
-            {{else if eq .FragmentKind 1 2}}
-            <span class='parameter'>"{{.Text}}"</span>
-            {{else if eq .FragmentKind 3}}
-            <span><hovercard hover-tmpl-url="{{.Text}}">&lt;{{.Name}}&gt;</hovercard></span>
-            {{else if eq .FragmentKind 4}}
-            <span><hovercard hover-tmpl-url="&lt;{{.Name}}&gt;">
-              {{template "Table"}}
-            </hovercard></span>
-            {{else if eq .FragmentKind 5}}
-            <div class='inline-table'>
-              <div>
-                {{template "Table" .}}
-              </div>
-            </div>
-            {{end}}
-          {{end}}
-        </div>
-      </li>
-    </ul>
-  </div>
-</div>
-`
+        <div class='step-txt'>`
+
+//TODO:
+//  1. Print Gauge Messages
+//  2. Print Pre/Post hook failures, Step failure
+//  3. Add hovercard for special params
+const stepEndDiv = `
+{{define "Table"}}<table>
+  <tr>
+    {{range .Table.Headers}}<th>{{.}}</th>{{end}}
+  </tr>
+  <tbody>
+    {{range .Table.Rows}}
+    <tr>{{range .Cells}}<td>{{.}}</td>{{end}}</tr>
+    {{end}}
+  </tbody>
+</table>
+{{end}}
+{{range .Fragments}}
+  {{if eq .FragmentKind 0}}
+    <span>
+      {{.Text}}
+    </span>
+  {{else if eq .FragmentKind 1 2}}
+    <span class='parameter'>"{{.Text}}"</span>
+  {{else if eq .FragmentKind 3}}
+    <span><hovercard hover-tmpl-url="{{.Text}}">&lt;{{.Name}}&gt;</hovercard></span>
+  {{else if eq .FragmentKind 4}}
+    <span><hovercard hover-tmpl-url="&lt;{{.Name}}&gt;">
+      {{template "Table"}}
+    </hovercard></span>
+  {{else if eq .FragmentKind 5}}
+    <div class='inline-table'>
+      <div>
+        {{template "Table" .}}
+      </div>
+    </div>
+  {{end}}
+{{end}}
+</div></li></ul></div></div>`
 
 const contextStepStartDiv = `<div class='context-step'>`
 

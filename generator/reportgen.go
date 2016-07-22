@@ -212,8 +212,13 @@ func generateStep(w io.Writer, item item) {
 func generateItem(w io.Writer, item item) {
 	switch item.kind() {
 	case stepKind:
-		gen(stepDiv, w, item.(*step))
+		gen(stepStartDiv, w, item.(*step))
+		gen(stepEndDiv, w, item.(*step))
 	case commentKind:
 		gen(commentSpan, w, item.(*comment))
+	case conceptKind:
+		gen(stepStartDiv, w, item.(*concept).CptStep)
+		gen(stepEndDiv, w, item.(*concept).CptStep)
+		generateItems(w, item.(*concept).Items, generateItem)
 	}
 }

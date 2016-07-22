@@ -63,6 +63,16 @@ var scenario1 = &gm.ProtoScenario{
 			}},
 		}),
 		newCommentItem("Comment2"),
+		&gm.ProtoItem{
+			ItemType: gm.ProtoItem_Concept.Enum(),
+			Concept: &gm.ProtoConcept{
+				ConceptStep: newStepItem(false, []*gm.Fragment{{FragmentType: gm.Fragment_Text.Enum(), Text: proto.String("Concept Heading")}}).GetStep(),
+				Steps: []*gm.ProtoItem{
+					newStepItem(false, []*gm.Fragment{{FragmentType: gm.Fragment_Text.Enum(), Text: proto.String("Concept Step1")}}),
+					newStepItem(false, []*gm.Fragment{{FragmentType: gm.Fragment_Text.Enum(), Text: proto.String("Concept Step2")}}),
+				},
+			},
+		},
 	},
 	TearDownSteps: []*gm.ProtoItem{
 		newStepItem(false, []*gm.Fragment{{FragmentType: gm.Fragment_Text.Enum(), Text: proto.String("Teardown Step1")}}),

@@ -201,13 +201,27 @@ var wscenarioHeaderStartDiv string = `<div class="scenario-head">
   <h3 class="head borderBottom">Scenario Heading</h3>
   <span class="time">00:01:01</span>`
 
-var wStepDiv string = `<div class='step'>
+var wPassStepStartDiv string = `<div class='step'>
   <h5 class='execution-time'><span class='time'>Execution Time : 00:03:31</span></h5>
   <div class='step-info passed'>
     <ul collapsable>
       <li class='step'>
-        <div class='step-txt'>
-          <span>Say</span><span class='parameter'>"hi"</span><span>to</span><span class='parameter'>"gauge"</span>
+        <div class='step-txt'>`
+
+var wFailStepStartDiv string = `<div class='step'>
+  <h5 class='execution-time'><span class='time'>Execution Time : 00:03:31</span></h5>
+  <div class='step-info failed'>
+    <ul collapsable>
+      <li class='step'>
+        <div class='step-txt'>`
+
+var wSkipStepStartDiv string = `<div class='step'>
+  <div class='step-info skipped'>
+    <ul collapsable>
+      <li class='step'>
+        <div class='step-txt'>`
+
+var wStepEndDiv string = `<span>Say</span><span class='parameter'>"hi"</span><span>to</span><span class='parameter'>"gauge"</span>
           <div class='inline-table'>
             <div>
               <table>
@@ -266,7 +280,9 @@ var reportGenTests = []reportGenTest{
 	{"generate failed scenario container", scenarioContainerStartDiv, &scenario{Res: fail}, wScenarioContainerStartFailDiv},
 	{"generate skipped scenario container", scenarioContainerStartDiv, &scenario{Res: skip}, wScenarioContainerStartSkipDiv},
 	{"generate scenario header", scenarioHeaderStartDiv, &scenario{Heading: "Scenario Heading", ExecTime: "00:01:01"}, wscenarioHeaderStartDiv},
-	{"generate step", stepDiv, newStep(), wStepDiv},
+	{"generate pass step start div", stepStartDiv, newStep(pass), wPassStepStartDiv},
+	{"generate fail step start div", stepStartDiv, newStep(fail), wFailStepStartDiv},
+	{"generate skipped step start div", stepStartDiv, newStep(skip), wSkipStepStartDiv},
 }
 
 func TestExecute(t *testing.T) {
@@ -356,7 +372,7 @@ func newSpec(withTable bool) *spec {
 	}
 }
 
-func newStep() *step {
+func newStep(s status) *step {
 	return &step{
 		Fragments: []*fragment{
 			{FragmentKind: textFragmentKind, Text: "Say "},
@@ -374,7 +390,7 @@ func newStep() *step {
 			},
 		},
 		Res: &result{
-			Status:   pass,
+			Status:   s,
 			ExecTime: "00:03:31",
 		},
 	}
