@@ -204,20 +204,20 @@ var wscenarioHeaderStartDiv string = `<div class="scenario-head">
 var wPassStepStartDiv string = `<div class='step'>
   <h5 class='execution-time'><span class='time'>Execution Time : 00:03:31</span></h5>
   <div class='step-info passed'>
-    <ul collapsable>
+    <ul>
       <li class='step'>
         <div class='step-txt'>`
 
 var wFailStepStartDiv string = `<div class='step'>
   <h5 class='execution-time'><span class='time'>Execution Time : 00:03:31</span></h5>
   <div class='step-info failed'>
-    <ul collapsable>
+    <ul>
       <li class='step'>
         <div class='step-txt'>`
 
 var wSkipStepStartDiv string = `<div class='step'>
   <div class='step-info skipped'>
-    <ul collapsable>
+    <ul>
       <li class='step'>
         <div class='step-txt'>`
 

@@ -215,10 +215,8 @@ const containerStartDiv = `<div class="container">`
 
 const endDiv = `</div>`
 
-//TODO: 1. Handle concept
-//	2. Print Gauge Messages
-//	3. Print Pre/Post hook failures, Step failure
-//	4. Add hovercard for special params
+//TODO:
+//  1. Collapse UL if concept
 const stepStartDiv = `<div class='step'>
   {{if ne .Res.Status 2}}
   <h5 class='execution-time'>
@@ -230,7 +228,7 @@ const stepStartDiv = `<div class='step'>
     {{else if eq .Res.Status 2}}<div class='step-info skipped'>
     {{else}}<div class='step-info not-executed'>
     {{end}}
-    <ul collapsable>
+    <ul>
       <li class='step'>
         <div class='step-txt'>`
 
@@ -272,6 +270,8 @@ const stepEndDiv = `
   {{end}}
 {{end}}
 </div></li></ul></div></div>`
+
+const conceptSpan = `<span>+ </span>`
 
 const contextStepStartDiv = `<div class='context-step'>`
 

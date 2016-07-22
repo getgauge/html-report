@@ -218,7 +218,10 @@ func generateItem(w io.Writer, item item) {
 		gen(commentSpan, w, item.(*comment))
 	case conceptKind:
 		gen(stepStartDiv, w, item.(*concept).CptStep)
+		gen(conceptSpan, w, nil)
 		gen(stepEndDiv, w, item.(*concept).CptStep)
+		gen(conceptStepsStartDiv, w, nil)
 		generateItems(w, item.(*concept).Items, generateItem)
+		gen(endDiv, w, nil)
 	}
 }
