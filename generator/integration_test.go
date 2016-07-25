@@ -34,12 +34,7 @@ var scenario1 = &gm.ProtoScenario{
 	ExecutionTime:   proto.Int64(113163),
 	Contexts: []*gm.ProtoItem{
 		newStepItem(false, []*gm.Fragment{newTextFragment("Context Step1")}),
-		newStepItem(false, []*gm.Fragment{
-			newTextFragment("Say "),
-			newParamFragment(newStaticParam("hi")),
-			newTextFragment(" to "),
-			newParamFragment(newDynamicParam("gauge")),
-		}),
+		newStepItem(false, []*gm.Fragment{newTextFragment("Context Step2")}),
 	},
 	ScenarioItems: []*gm.ProtoItem{
 		newStepItem(false, []*gm.Fragment{newTextFragment("Step1")}),
@@ -66,12 +61,7 @@ var scenario1 = &gm.ProtoScenario{
 	},
 	TearDownSteps: []*gm.ProtoItem{
 		newStepItem(false, []*gm.Fragment{newTextFragment("Teardown Step1")}),
-		newStepItem(false, []*gm.Fragment{
-			newTextFragment("Say "),
-			newParamFragment(newStaticParam("hi")),
-			newTextFragment(" to "),
-			newParamFragment(newDynamicParam("gauge")),
-		}),
+		newStepItem(false, []*gm.Fragment{newTextFragment("Teardown Step2")}),
 	},
 }
 
