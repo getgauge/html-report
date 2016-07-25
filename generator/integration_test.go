@@ -73,6 +73,26 @@ var scenario1 = &gm.ProtoScenario{
 				},
 			},
 		},
+		&gm.ProtoItem{
+			ItemType: gm.ProtoItem_Concept.Enum(),
+			Concept: &gm.ProtoConcept{
+				ConceptStep: newStepItem(false, []*gm.Fragment{{FragmentType: gm.Fragment_Text.Enum(), Text: proto.String("Outer Concept")}}).GetStep(),
+				Steps: []*gm.ProtoItem{
+					newStepItem(false, []*gm.Fragment{{FragmentType: gm.Fragment_Text.Enum(), Text: proto.String("Outer Concept Step 1")}}),
+					&gm.ProtoItem{
+						ItemType: gm.ProtoItem_Concept.Enum(),
+						Concept: &gm.ProtoConcept{
+							ConceptStep: newStepItem(false, []*gm.Fragment{{FragmentType: gm.Fragment_Text.Enum(), Text: proto.String("Inner Concept")}}).GetStep(),
+							Steps: []*gm.ProtoItem{
+								newStepItem(false, []*gm.Fragment{{FragmentType: gm.Fragment_Text.Enum(), Text: proto.String("Inner Concept Step 1")}}),
+								newStepItem(false, []*gm.Fragment{{FragmentType: gm.Fragment_Text.Enum(), Text: proto.String("Inner Concept Step 2")}}),
+							},
+						},
+					},
+					newStepItem(false, []*gm.Fragment{{FragmentType: gm.Fragment_Text.Enum(), Text: proto.String("Outer Concept Step 2")}}),
+				},
+			},
+		},
 	},
 	TearDownSteps: []*gm.ProtoItem{
 		newStepItem(false, []*gm.Fragment{{FragmentType: gm.Fragment_Text.Enum(), Text: proto.String("Teardown Step1")}}),
