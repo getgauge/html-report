@@ -44,6 +44,10 @@ func toOverview(res *gm.ProtoSuiteResult) *overview {
 }
 
 func toHookFailure(failure *gm.ProtoHookFailure, hookName string) *hookFailure {
+	if failure == nil {
+		return nil
+	}
+
 	return &hookFailure{
 		ErrMsg:     failure.GetErrorMessage(),
 		HookName:   hookName,
@@ -107,13 +111,15 @@ func toSpec(res *gm.ProtoSpecResult) *spec {
 
 func toScenario(scn *gm.ProtoScenario) *scenario {
 	return &scenario{
-		Heading:  scn.GetScenarioHeading(),
-		ExecTime: formatTime(scn.GetExecutionTime()),
-		Tags:     scn.GetTags(),
-		Res:      getStatus(scn.GetFailed(), scn.GetSkipped()),
-		Contexts: getItems(scn.GetContexts()),
-		Items:    getItems(scn.GetScenarioItems()),
-		TearDown: getItems(scn.GetTearDownSteps()),
+		Heading:         scn.GetScenarioHeading(),
+		ExecTime:        formatTime(scn.GetExecutionTime()),
+		Tags:            scn.GetTags(),
+		Res:             getStatus(scn.GetFailed(), scn.GetSkipped()),
+		Contexts:        getItems(scn.GetContexts()),
+		Items:           getItems(scn.GetScenarioItems()),
+		TearDown:        getItems(scn.GetTearDownSteps()),
+		PreHookFailure:  toHookFailure(scn.GetPreHookFailure(), "Before Scenario"),
+		PostHookFailure: toHookFailure(scn.GetPostHookFailure(), "After Scenario"),
 	}
 }
 

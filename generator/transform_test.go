@@ -221,6 +221,26 @@ var scn = &gm.ProtoScenario{
 	},
 }
 
+var scnWithHookFailure = &gm.ProtoScenario{
+	ScenarioHeading: proto.String("Vowel counts in single word"),
+	Failed:          proto.Bool(true),
+	Skipped:         proto.Bool(false),
+	ExecutionTime:   proto.Int64(113163),
+	ScenarioItems: []*gm.ProtoItem{
+		newStepItem(true, []*gm.Fragment{{FragmentType: gm.Fragment_Text.Enum(), Text: proto.String("Step1")}}),
+	},
+	PreHookFailure: &gm.ProtoHookFailure{
+		ErrorMessage: proto.String("err"),
+		StackTrace:   proto.String("Stacktrace"),
+		ScreenShot:   []byte("Screenshot"),
+	},
+	PostHookFailure: &gm.ProtoHookFailure{
+		ErrorMessage: proto.String("err"),
+		StackTrace:   proto.String("Stacktrace"),
+		ScreenShot:   []byte("Screenshot"),
+	},
+}
+
 var suiteRes2 = &gm.ProtoSuiteResult{
 	SpecResults: []*gm.ProtoSpecResult{specRes1, specRes2, specRes3},
 }
@@ -519,6 +539,30 @@ func TestToScenario(t *testing.T) {
 	}
 }
 
+func TestToScenarioWithHookFailures(t *testing.T) {
+	want := &scenario{
+		Heading:  "Vowel counts in single word",
+		ExecTime: "00:01:53",
+		Res:      fail,
+		Contexts: []item{},
+		Items: []item{
+			&step{
+				Fragments: []*fragment{{FragmentKind: textFragmentKind, Text: "Step1"}},
+				Res:       &result{Status: fail, ExecTime: "00:03:31"},
+			},
+		},
+		TearDown:        []item{},
+		PreHookFailure:  newHookFailure("Before Scenario", "err", "Screenshot", "Stacktrace"),
+		PostHookFailure: newHookFailure("After Scenario", "err", "Screenshot", "Stacktrace"),
+	}
+
+	got := toScenario(scnWithHookFailure)
+	if !reflect.DeepEqual(got, want) {
+		t.Errorf("want:\n%q\ngot:\n%q\n", want, got)
+	}
+
+}
+
 func TestToStep(t *testing.T) {
 	want := &step{
 		Fragments: []*fragment{
@@ -662,11 +706,20 @@ func TestToComment(t *testing.T) {
 	}
 }
 
-func TestToPreHookFailure(t *testing.T) {
+func TestToHookFailure(t *testing.T) {
 	want := newHookFailure("Before Suite", "java.lang.RuntimeException", newScreenshot(), newStackTrace())
 
 	got := toHookFailure(failedHookFailure, "Before Suite")
 	if !reflect.DeepEqual(got, want) {
+		t.Errorf("want:\n%q\ngot:\n%q\n", want, got)
+	}
+}
+
+func TestHookFailureWithNilInput(t *testing.T) {
+	var want *hookFailure = nil
+	got := toHookFailure(nil, "foobar")
+
+	if got != want {
 		t.Errorf("want:\n%q\ngot:\n%q\n", want, got)
 	}
 }

@@ -82,13 +82,15 @@ type spec struct {
 }
 
 type scenario struct {
-	Heading  string
-	ExecTime string
-	Tags     []string
-	Res      status
-	Contexts []item
-	Items    []item
-	TearDown []item
+	Heading         string
+	ExecTime        string
+	Tags            []string
+	Res             status
+	Contexts        []item
+	Items           []item
+	TearDown        []item
+	PreHookFailure  *hookFailure
+	PostHookFailure *hookFailure
 }
 
 const (
@@ -216,6 +218,9 @@ func generateScenario(w io.Writer, scn *scenario) {
 	generateItems(w, scn.Contexts, generateStep)
 	generateItems(w, scn.Items, generateItem)
 	generateItems(w, scn.TearDown, generateStep)
+	if scn.PostHookFailure != nil {
+		gen(hookFailureDiv, w, scn.PostHookFailure)
+	}
 	gen(endDiv, w, nil)
 }
 

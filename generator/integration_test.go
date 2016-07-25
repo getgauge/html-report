@@ -90,6 +90,21 @@ var scenario2 = &gm.ProtoScenario{
 	},
 }
 
+var scenarioWithAfterHookFail = &gm.ProtoScenario{
+	ScenarioHeading: proto.String("Scenario Heading"),
+	Failed:          proto.Bool(true),
+	Skipped:         proto.Bool(false),
+	ExecutionTime:   proto.Int64(113163),
+	ScenarioItems: []*gm.ProtoItem{
+		newStepItem(false, []*gm.Fragment{newTextFragment("Some step")}),
+	},
+	PostHookFailure: &gm.ProtoHookFailure{
+		ErrorMessage: proto.String("java.lang.RuntimeException"),
+		StackTrace:   proto.String(newStackTrace()),
+		ScreenShot:   []byte(newScreenshot()),
+	},
+}
+
 var passSpecRes1 = &gm.ProtoSpecResult{
 	Failed:        proto.Bool(false),
 	Skipped:       proto.Bool(false),
@@ -141,10 +156,14 @@ var passSpecRes3 = &gm.ProtoSpecResult{
 var failSpecRes1 = &gm.ProtoSpecResult{
 	Failed:        proto.Bool(true),
 	Skipped:       proto.Bool(false),
-	ExecutionTime: proto.Int64(0),
+	ExecutionTime: proto.Int64(211316),
 	ProtoSpec: &gm.ProtoSpec{
 		SpecHeading: proto.String("Failing Specification 1"),
 		Tags:        []string{},
+		FileName:    proto.String("/tmp/gauge/specs/foobar.spec"),
+		Items: []*gm.ProtoItem{
+			newScenarioItem(scenarioWithAfterHookFail),
+		},
 	},
 }
 
@@ -228,6 +247,19 @@ var suiteResWithBeforeAfterSuiteFailure = &gm.ProtoSuiteResult{
 	},
 }
 
+var suiteResWithAfterScenarioFailure = &gm.ProtoSuiteResult{
+	SpecResults:       []*gm.ProtoSpecResult{failSpecRes1},
+	Failed:            proto.Bool(true),
+	SpecsFailedCount:  proto.Int32(1),
+	ExecutionTime:     proto.Int64(122609),
+	SuccessRate:       proto.Float32(0),
+	Environment:       proto.String("default"),
+	Tags:              proto.String(""),
+	ProjectName:       proto.String("Gauge Project"),
+	Timestamp:         proto.String("Jul 13, 2016 at 11:49am"),
+	SpecsSkippedCount: proto.Int32(0),
+}
+
 type HTMLGenerationTest struct {
 	name         string
 	res          *gm.ProtoSuiteResult
@@ -239,6 +271,7 @@ var HTMLGenerationTests = []*HTMLGenerationTest{
 	{"before suite failure", suiteResWithBeforeSuiteFailure, "before_suite_fail.html"},
 	{"after suite failure", suiteResWithAfterSuiteFailure, "after_suite_fail.html"},
 	{"both before and after suite failure", suiteResWithBeforeAfterSuiteFailure, "before_after_suite_fail.html"},
+	{"after scenario failure", suiteResWithAfterScenarioFailure, "after_scenario_fail.html"},
 }
 
 func TestHTMLGeneration(t *testing.T) {
