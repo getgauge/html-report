@@ -118,7 +118,7 @@ var wCongratsDiv string = `<div class="congratulations details">
 </div>`
 
 var wHookFailureWithScreenhotDiv string = `<div class="error-container failed">
-  <div collapsable class="error-heading">BeforeSuite Failed: <span class="error-message">SomeError</span></div>
+<div collapsable class="error-heading">BeforeSuite Failed:<span class="error-message"> SomeError</span></div>
   <div class="toggleShow" data-toggle="collapse" data-target="#hookFailureDetails">
     <span>[Show details]</span>
   </div>
@@ -128,14 +128,14 @@ var wHookFailureWithScreenhotDiv string = `<div class="error-container failed">
       </div>
       <div class="screenshot-container">
         <a href="data:image/png;base64,iVBO" rel="lightbox">
-          <img src="data:image/png;base64,iVBO" class="screenshot-thumbnail"/>
+          <img src="data:image/png;base64,iVBO" class="screenshot-thumbnail" />
         </a>
       </div>
   </div>
 </div>`
 
 var wHookFailureWithoutScreenhotDiv string = `<div class="error-container failed">
-  <div collapsable class="error-heading">BeforeSuite Failed: <span class="error-message">SomeError</span></div>
+  <div collapsable class="error-heading">BeforeSuite Failed:<span class="error-message"> SomeError</span></div>
   <div class="toggleShow" data-toggle="collapse" data-target="#hookFailureDetails">
     <span>[Show details]</span>
   </div>

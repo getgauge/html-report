@@ -159,7 +159,6 @@ func gen(tmplName string, w io.Writer, data interface{}) {
 
 func generate(suiteRes *gm.ProtoSuiteResult, w io.Writer) {
 	overview := toOverview(suiteRes)
-	sidebar := toSidebar(suiteRes)
 
 	gen(htmlStartTag, w, nil)
 	gen(pageHeaderTag, w, nil)
@@ -168,10 +167,14 @@ func generate(suiteRes *gm.ProtoSuiteResult, w io.Writer) {
 	gen(mainStartTag, w, nil)
 	gen(containerStartDiv, w, nil)
 	gen(reportOverviewTag, w, overview)
-	gen(specsStartDiv, w, nil)
-	gen(sidebarDiv, w, sidebar)
-	generateSpec(w, suiteRes.GetSpecResults()[0])
-	gen(endDiv, w, nil)
+	if suiteRes.GetPreHookFailure() != nil {
+		gen(hookFailureDiv, w, toHookFailure(suiteRes.GetPreHookFailure(), "Before Suite"))
+	} else {
+		gen(specsStartDiv, w, nil)
+		gen(sidebarDiv, w, toSidebar(suiteRes))
+		generateSpec(w, suiteRes.GetSpecResults()[0])
+		gen(endDiv, w, nil)
+	}
 	gen(endDiv, w, nil)
 	gen(mainEndTag, w, nil)
 	gen(bodyFooterTag, w, nil)

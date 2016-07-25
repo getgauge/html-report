@@ -109,7 +109,7 @@ const congratsDiv = `{{if not .Failed}}
 //TODO 1. Change text on toggle collapse
 //     2. Check for collapsible
 const hookFailureDiv = `<div class="error-container failed">
-  <div collapsable class="error-heading">{{.HookName}} Failed: <span class="error-message">{{.ErrMsg}}</span></div>
+  <div collapsable class="error-heading">{{.HookName}} Failed:<span class="error-message"> {{.ErrMsg}}</span></div>
   <div class="toggleShow" data-toggle="collapse" data-target="#hookFailureDetails">
     <span>[Show details]</span>
   </div>
@@ -119,7 +119,7 @@ const hookFailureDiv = `<div class="error-container failed">
       </div>
       {{if .Screenshot}}<div class="screenshot-container">
         <a href="data:image/png;base64,{{.Screenshot}}" rel="lightbox">
-          <img src="data:image/png;base64,{{.Screenshot}}" class="screenshot-thumbnail"/>
+          <img src="data:image/png;base64,{{.Screenshot}}" class="screenshot-thumbnail" />
         </a>
       </div>{{end}}
   </div>
