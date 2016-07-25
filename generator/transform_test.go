@@ -50,18 +50,11 @@ func newScenarioItem(scn *gm.ProtoScenario) *gm.ProtoItem {
 func newTableItem(headers []string, rows [][]string) *gm.ProtoItem {
 	r := make([]*gm.ProtoTableRow, len(rows))
 	for i, row := range rows {
-		r[i] = &gm.ProtoTableRow{
-			Cells: row,
-		}
+		r[i] = &gm.ProtoTableRow{Cells: row}
 	}
 	return &gm.ProtoItem{
 		ItemType: gm.ProtoItem_Table.Enum(),
-		Table: &gm.ProtoTable{
-			Headers: &gm.ProtoTableRow{
-				Cells: headers,
-			},
-			Rows: r,
-		},
+		Table:    &gm.ProtoTable{Headers: &gm.ProtoTableRow{Cells: headers}, Rows: r},
 	}
 }
 
@@ -91,6 +84,13 @@ func newStaticParam(val string) *gm.Parameter {
 	return &gm.Parameter{
 		ParameterType: gm.Parameter_Static.Enum(),
 		Value:         proto.String(val),
+	}
+}
+
+func newTableParam(headers []string, rows [][]string) *gm.Parameter {
+	return &gm.Parameter{
+		ParameterType: gm.Parameter_Table.Enum(),
+		Table:         newTableItem(headers, rows).GetTable(),
 	}
 }
 
@@ -204,20 +204,20 @@ var scn = &gm.ProtoScenario{
 	Tags:            []string{"foo", "bar"},
 	ExecutionTime:   proto.Int64(113163),
 	Contexts: []*gm.ProtoItem{
-		newStepItem(false, []*gm.Fragment{{FragmentType: gm.Fragment_Text.Enum(), Text: proto.String("Context Step1")}}),
-		newStepItem(true, []*gm.Fragment{{FragmentType: gm.Fragment_Text.Enum(), Text: proto.String("Context Step2")}}),
+		newStepItem(false, []*gm.Fragment{newTextFragment("Context Step1")}),
+		newStepItem(true, []*gm.Fragment{newTextFragment("Context Step2")}),
 	},
 	ScenarioItems: []*gm.ProtoItem{
 		newCommentItem("Comment0"),
-		newStepItem(true, []*gm.Fragment{{FragmentType: gm.Fragment_Text.Enum(), Text: proto.String("Step1")}}),
+		newStepItem(true, []*gm.Fragment{newTextFragment("Step1")}),
 		newCommentItem("Comment1"),
 		newCommentItem("Comment2"),
-		newStepItem(false, []*gm.Fragment{{FragmentType: gm.Fragment_Text.Enum(), Text: proto.String("Step2")}}),
+		newStepItem(false, []*gm.Fragment{newTextFragment("Step2")}),
 		newCommentItem("Comment3"),
 	},
 	TearDownSteps: []*gm.ProtoItem{
-		newStepItem(false, []*gm.Fragment{{FragmentType: gm.Fragment_Text.Enum(), Text: proto.String("Teardown Step1")}}),
-		newStepItem(true, []*gm.Fragment{{FragmentType: gm.Fragment_Text.Enum(), Text: proto.String("Teardown Step2")}}),
+		newStepItem(false, []*gm.Fragment{newTextFragment("Teardown Step1")}),
+		newStepItem(true, []*gm.Fragment{newTextFragment("Teardown Step2")}),
 	},
 }
 
@@ -227,7 +227,7 @@ var scnWithHookFailure = &gm.ProtoScenario{
 	Skipped:         proto.Bool(false),
 	ExecutionTime:   proto.Int64(113163),
 	ScenarioItems: []*gm.ProtoItem{
-		newStepItem(true, []*gm.Fragment{{FragmentType: gm.Fragment_Text.Enum(), Text: proto.String("Step1")}}),
+		newStepItem(true, []*gm.Fragment{newTextFragment("Step1")}),
 	},
 	PreHookFailure: &gm.ProtoHookFailure{
 		ErrorMessage: proto.String("err"),
@@ -247,38 +247,14 @@ var suiteRes2 = &gm.ProtoSuiteResult{
 
 var protoStep = &gm.ProtoStep{
 	Fragments: []*gm.Fragment{
-		{
-			FragmentType: gm.Fragment_Text.Enum(),
-			Text:         proto.String("Say "),
-		},
-		{
-			FragmentType: gm.Fragment_Parameter.Enum(),
-			Parameter: &gm.Parameter{
-				ParameterType: gm.Parameter_Static.Enum(),
-				Value:         proto.String("hi"),
-			},
-		},
-		{
-			FragmentType: gm.Fragment_Text.Enum(),
-			Text:         proto.String(" to "),
-		},
-		{
-			FragmentType: gm.Fragment_Parameter.Enum(),
-			Parameter: &gm.Parameter{
-				ParameterType: gm.Parameter_Dynamic.Enum(),
-				Value:         proto.String("gauge"),
-			},
-		},
-		{
-			FragmentType: gm.Fragment_Parameter.Enum(),
-			Parameter: &gm.Parameter{
-				ParameterType: gm.Parameter_Table.Enum(),
-				Table: newTableItem([]string{"Word", "Count"}, [][]string{
-					[]string{"Gauge", "3"},
-					[]string{"Mingle", "2"},
-				}).GetTable(),
-			},
-		},
+		newTextFragment("Say "),
+		newParamFragment(newStaticParam("hi")),
+		newTextFragment(" to "),
+		newParamFragment(newDynamicParam("gauge")),
+		newParamFragment(newTableParam([]string{"Word", "Count"}, [][]string{
+			[]string{"Gauge", "3"},
+			[]string{"Mingle", "2"},
+		})),
 	},
 	StepExecutionResult: &gm.ProtoStepExecutionResult{
 		ExecutionResult: &gm.ProtoExecutionResult{
@@ -290,62 +266,34 @@ var protoStep = &gm.ProtoStep{
 
 var protoConcept = &gm.ProtoConcept{
 	ConceptStep: newStepItem(false, []*gm.Fragment{
-		{FragmentType: gm.Fragment_Text.Enum(), Text: proto.String("Say ")},
-		{
-			FragmentType: gm.Fragment_Parameter.Enum(),
-			Parameter:    &gm.Parameter{ParameterType: gm.Parameter_Dynamic.Enum(), Value: proto.String("hello")},
-		},
-		{FragmentType: gm.Fragment_Text.Enum(), Text: proto.String(" to ")},
-		{
-			FragmentType: gm.Fragment_Parameter.Enum(),
-			Parameter: &gm.Parameter{
-				ParameterType: gm.Parameter_Table.Enum(),
-				Table: newTableItem([]string{"Word", "Count"}, [][]string{
-					[]string{"Gauge", "3"},
-					[]string{"Mingle", "2"},
-				}).GetTable(),
-			},
-		},
+		newTextFragment("Say "),
+		newParamFragment(newDynamicParam("hello")),
+		newTextFragment(" to "),
+		newParamFragment(newTableParam([]string{"Word", "Count"}, [][]string{
+			[]string{"Gauge", "3"},
+			[]string{"Mingle", "2"},
+		})),
 	}).GetStep(),
 	Steps: []*gm.ProtoItem{
 		{
 			ItemType: gm.ProtoItem_Concept.Enum(),
 			Concept: &gm.ProtoConcept{
 				ConceptStep: newStepItem(false, []*gm.Fragment{
-					{FragmentType: gm.Fragment_Text.Enum(), Text: proto.String("Tell ")},
-					{
-						FragmentType: gm.Fragment_Parameter.Enum(),
-						Parameter:    &gm.Parameter{ParameterType: gm.Parameter_Dynamic.Enum(), Value: proto.String("hello")},
-					},
+					newTextFragment("Tell "),
+					newParamFragment(newDynamicParam("hello")),
 				}).GetStep(),
-				Steps: []*gm.ProtoItem{
-					newStepItem(false, []*gm.Fragment{
-						{FragmentType: gm.Fragment_Text.Enum(), Text: proto.String("Say Hi")},
-					}),
-				},
+				Steps: []*gm.ProtoItem{newStepItem(false, []*gm.Fragment{newTextFragment("Say Hi")})},
 			},
 		},
 		newStepItem(false, []*gm.Fragment{
-			{FragmentType: gm.Fragment_Text.Enum(), Text: proto.String("Say ")},
-			{
-				FragmentType: gm.Fragment_Parameter.Enum(),
-				Parameter:    &gm.Parameter{ParameterType: gm.Parameter_Static.Enum(), Value: proto.String("hi")},
-			},
-			{FragmentType: gm.Fragment_Text.Enum(), Text: proto.String(" to ")},
-			{
-				FragmentType: gm.Fragment_Parameter.Enum(),
-				Parameter:    &gm.Parameter{ParameterType: gm.Parameter_Dynamic.Enum(), Value: proto.String("gauge")},
-			},
-			{
-				FragmentType: gm.Fragment_Parameter.Enum(),
-				Parameter: &gm.Parameter{
-					ParameterType: gm.Parameter_Table.Enum(),
-					Table: newTableItem([]string{"Word", "Count"}, [][]string{
-						[]string{"Gauge", "3"},
-						[]string{"Mingle", "2"},
-					}).GetTable(),
-				},
-			},
+			newTextFragment("Say "),
+			newParamFragment(newStaticParam("hi")),
+			newTextFragment(" to "),
+			newParamFragment(newDynamicParam("gauge")),
+			newParamFragment(newTableParam([]string{"Word", "Count"}, [][]string{
+				[]string{"Gauge", "3"},
+				[]string{"Mingle", "2"},
+			})),
 		}),
 	},
 	ConceptExecutionResult: &gm.ProtoStepExecutionResult{
@@ -355,10 +303,7 @@ var protoConcept = &gm.ProtoConcept{
 
 var protoStepWithSpecialParams = &gm.ProtoStep{
 	Fragments: []*gm.Fragment{
-		{
-			FragmentType: gm.Fragment_Text.Enum(),
-			Text:         proto.String("Say "),
-		},
+		newTextFragment("Say "),
 		{
 			FragmentType: gm.Fragment_Parameter.Enum(),
 			Parameter: &gm.Parameter{
@@ -367,10 +312,7 @@ var protoStepWithSpecialParams = &gm.ProtoStep{
 				Value:         proto.String("hi"),
 			},
 		},
-		{
-			FragmentType: gm.Fragment_Text.Enum(),
-			Text:         proto.String(" to "),
-		},
+		newTextFragment(" to "),
 		{
 			FragmentType: gm.Fragment_Parameter.Enum(),
 			Parameter: &gm.Parameter{
@@ -470,16 +412,7 @@ func TestToSpec(t *testing.T) {
 		CommentsBeforeTable: []string{"\n", "This is an executable specification file. This file follows markdown syntax.", "\n", "To execute this specification, run", "\tgauge specs", "\n"},
 		Table: &table{
 			Headers: []string{"Word", "Count"},
-			Rows: []*row{
-				{
-					Cells: []string{"Gauge", "3"},
-					Res:   pass,
-				},
-				{
-					Cells: []string{"Mingle", "2"},
-					Res:   pass,
-				},
-			},
+			Rows:    []*row{{Cells: []string{"Gauge", "3"}, Res: pass}, {Cells: []string{"Mingle", "2"}, Res: pass}},
 		},
 		CommentsAfterTable: []string{"Comment 1", "Comment 2", "Comment 3"},
 		Scenarios:          make([]*scenario, 0),
@@ -573,17 +506,11 @@ func TestToStep(t *testing.T) {
 			{FragmentKind: tableFragmentKind,
 				Table: &table{
 					Headers: []string{"Word", "Count"},
-					Rows: []*row{
-						{Cells: []string{"Gauge", "3"}},
-						{Cells: []string{"Mingle", "2"}},
-					},
+					Rows:    []*row{{Cells: []string{"Gauge", "3"}}, {Cells: []string{"Mingle", "2"}}},
 				},
 			},
 		},
-		Res: &result{
-			Status:   pass,
-			ExecTime: "00:03:31",
-		},
+		Res: &result{Status: pass, ExecTime: "00:03:31"},
 	}
 
 	got := toStep(protoStep)
@@ -602,17 +529,11 @@ func TestToConcept(t *testing.T) {
 				{FragmentKind: tableFragmentKind,
 					Table: &table{
 						Headers: []string{"Word", "Count"},
-						Rows: []*row{
-							{Cells: []string{"Gauge", "3"}},
-							{Cells: []string{"Mingle", "2"}},
-						},
+						Rows:    []*row{{Cells: []string{"Gauge", "3"}}, {Cells: []string{"Mingle", "2"}}},
 					},
 				},
 			},
-			Res: &result{
-				Status:   pass,
-				ExecTime: "00:03:31",
-			},
+			Res: &result{Status: pass, ExecTime: "00:03:31"},
 		},
 		Items: []item{
 			&concept{
@@ -621,20 +542,12 @@ func TestToConcept(t *testing.T) {
 						{FragmentKind: textFragmentKind, Text: "Tell "},
 						{FragmentKind: dynamicFragmentKind, Text: "hello"},
 					},
-					Res: &result{
-						Status:   pass,
-						ExecTime: "00:03:31",
-					},
+					Res: &result{Status: pass, ExecTime: "00:03:31"},
 				},
 				Items: []item{
 					&step{
-						Fragments: []*fragment{
-							{FragmentKind: textFragmentKind, Text: "Say Hi"},
-						},
-						Res: &result{
-							Status:   pass,
-							ExecTime: "00:03:31",
-						},
+						Fragments: []*fragment{{FragmentKind: textFragmentKind, Text: "Say Hi"}},
+						Res:       &result{Status: pass, ExecTime: "00:03:31"},
 					},
 				},
 			},
@@ -647,17 +560,11 @@ func TestToConcept(t *testing.T) {
 					{FragmentKind: tableFragmentKind,
 						Table: &table{
 							Headers: []string{"Word", "Count"},
-							Rows: []*row{
-								{Cells: []string{"Gauge", "3"}},
-								{Cells: []string{"Mingle", "2"}},
-							},
+							Rows:    []*row{{Cells: []string{"Gauge", "3"}}, {Cells: []string{"Mingle", "2"}}},
 						},
 					},
 				},
-				Res: &result{
-					Status:   pass,
-					ExecTime: "00:03:31",
-				},
+				Res: &result{Status: pass, ExecTime: "00:03:31"},
 			},
 		},
 	}
@@ -678,10 +585,7 @@ func TestToStepWithSpecialParams(t *testing.T) {
 				Name: "myTable.csv",
 				Table: &table{
 					Headers: []string{"Word", "Count"},
-					Rows: []*row{
-						{Cells: []string{"Gauge", "3"}},
-						{Cells: []string{"Mingle", "2"}},
-					},
+					Rows:    []*row{{Cells: []string{"Gauge", "3"}}, {Cells: []string{"Mingle", "2"}}},
 				},
 			},
 		},

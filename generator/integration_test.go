@@ -76,13 +76,13 @@ var scenario2 = &gm.ProtoScenario{
 		newStepItem(false, []*gm.Fragment{newTextFragment("Context Step2")}),
 	},
 	ScenarioItems: []*gm.ProtoItem{
-		newStepItem(false, []*gm.Fragment{newTextFragment("Almost all words have vowels"), newParamFragment(&gm.Parameter{
-			ParameterType: gm.Parameter_Table.Enum(),
-			Table: newTableItem([]string{"Word", "Count"}, [][]string{
+		newStepItem(false, []*gm.Fragment{
+			newTextFragment("Almost all words have vowels"),
+			newParamFragment(newTableParam([]string{"Word", "Count"}, [][]string{
 				[]string{"Gauge", "3"},
 				[]string{"Mingle", "2"},
-			}).Table,
-		})}),
+			})),
+		}),
 	},
 	TearDownSteps: []*gm.ProtoItem{
 		newStepItem(false, []*gm.Fragment{newTextFragment("Teardown Step1")}),
