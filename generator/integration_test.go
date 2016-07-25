@@ -20,6 +20,7 @@ package generator
 import (
 	"bytes"
 	"io/ioutil"
+	"path/filepath"
 	"testing"
 
 	gm "github.com/getgauge/html-report/gauge_messages"
@@ -227,70 +228,35 @@ var suiteResWithBeforeAfterSuiteFailure = &gm.ProtoSuiteResult{
 	},
 }
 
-func TestHTMLGenerationHappyPath(t *testing.T) {
-	content, err := ioutil.ReadFile("_testdata/pass.html")
-	if err != nil {
-		t.Errorf("Error reading expected HTML file: %s", err.Error())
-	}
-
-	buf := new(bytes.Buffer)
-	generate(suiteRes, buf)
-
-	want := removeNewline(string(content))
-	got := removeNewline(buf.String())
-
-	if got != want {
-		t.Errorf("want:\n%q\ngot:\n%q\n", want, got)
-	}
+type HTMLGenerationTest struct {
+	name         string
+	res          *gm.ProtoSuiteResult
+	expectedFile string
 }
 
-func TestHTMLGenerationForBeforeSuiteFailure(t *testing.T) {
-	content, err := ioutil.ReadFile("_testdata/before_suite_fail.html")
-	if err != nil {
-		t.Errorf("Error reading expected HTML file: %s", err.Error())
-	}
-
-	buf := new(bytes.Buffer)
-	generate(suiteResWithBeforeSuiteFailure, buf)
-
-	want := removeNewline(string(content))
-	got := removeNewline(buf.String())
-
-	if got != want {
-		t.Errorf("want:\n%q\ngot:\n%q\n", want, got)
-	}
+var HTMLGenerationTests = []*HTMLGenerationTest{
+	{"happy path", suiteRes, "pass.html"},
+	{"before suite failure", suiteResWithBeforeSuiteFailure, "before_suite_fail.html"},
+	{"after suite failure", suiteResWithAfterSuiteFailure, "after_suite_fail.html"},
+	{"both before and after suite failure", suiteResWithBeforeAfterSuiteFailure, "before_after_suite_fail.html"},
 }
 
-func TestHTMLGenerationForAfterSuiteFailure(t *testing.T) {
-	content, err := ioutil.ReadFile("_testdata/after_suite_fail.html")
-	if err != nil {
-		t.Errorf("Error reading expected HTML file: %s", err.Error())
-	}
+func TestHTMLGeneration(t *testing.T) {
+	for _, test := range HTMLGenerationTests {
+		content, err := ioutil.ReadFile(filepath.Join("_testdata", test.expectedFile))
+		if err != nil {
+			t.Errorf("Error reading expected HTML file: %s", err.Error())
+		}
 
-	buf := new(bytes.Buffer)
-	generate(suiteResWithAfterSuiteFailure, buf)
+		buf := new(bytes.Buffer)
+		generate(test.res, buf)
 
-	want := removeNewline(string(content))
-	got := removeNewline(buf.String())
+		want := removeNewline(string(content))
+		got := removeNewline(buf.String())
 
-	if got != want {
-		t.Errorf("want:\n%q\ngot:\n%q\n", want, got)
-	}
-}
+		if got != want {
+			t.Errorf("%s:\nwant:\n%q\ngot:\n%q\n", test.name, want, got)
+		}
 
-func TestHTMLGenerationForBeforeAfterSuiteFailure(t *testing.T) {
-	content, err := ioutil.ReadFile("_testdata/before_after_suite_fail.html")
-	if err != nil {
-		t.Errorf("Error reading expected HTML file: %s", err.Error())
-	}
-
-	buf := new(bytes.Buffer)
-	generate(suiteResWithBeforeAfterSuiteFailure, buf)
-
-	want := removeNewline(string(content))
-	got := removeNewline(buf.String())
-
-	if got != want {
-		t.Errorf("want:\n%q\ngot:\n%q\n", want, got)
 	}
 }
