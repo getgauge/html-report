@@ -43,6 +43,15 @@ func toOverview(res *gm.ProtoSuiteResult) *overview {
 	}
 }
 
+func toHookFailure(failure *gm.ProtoHookFailure, hookName string) *hookFailure {
+	return &hookFailure{
+		ErrMsg:     failure.GetErrorMessage(),
+		HookName:   hookName,
+		Screenshot: string(failure.GetScreenShot()),
+		Stacktrace: failure.GetStackTrace(),
+	}
+}
+
 func toSidebar(res *gm.ProtoSuiteResult) *sidebar {
 	specsMetaList := make([]*specsMeta, 0)
 	for _, specRes := range res.SpecResults {
