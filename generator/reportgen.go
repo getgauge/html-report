@@ -167,14 +167,22 @@ func generate(suiteRes *gm.ProtoSuiteResult, w io.Writer) {
 	gen(mainStartTag, w, nil)
 	gen(containerStartDiv, w, nil)
 	gen(reportOverviewTag, w, overview)
+
 	if suiteRes.GetPreHookFailure() != nil {
 		gen(hookFailureDiv, w, toHookFailure(suiteRes.GetPreHookFailure(), "Before Suite"))
-	} else {
+	}
+
+	if suiteRes.GetPostHookFailure() != nil {
+		gen(hookFailureDiv, w, toHookFailure(suiteRes.GetPostHookFailure(), "After Suite"))
+	}
+
+	if suiteRes.GetPreHookFailure() == nil {
 		gen(specsStartDiv, w, nil)
 		gen(sidebarDiv, w, toSidebar(suiteRes))
 		generateSpec(w, suiteRes.GetSpecResults()[0])
 		gen(endDiv, w, nil)
 	}
+
 	gen(endDiv, w, nil)
 	gen(mainEndTag, w, nil)
 	gen(bodyFooterTag, w, nil)

@@ -187,6 +187,24 @@ var suiteResWithBeforeSuiteFailure = &gm.ProtoSuiteResult{
 	},
 }
 
+var suiteResWithAfterSuiteFailure = &gm.ProtoSuiteResult{
+	SpecResults:       []*gm.ProtoSpecResult{passSpecRes1, passSpecRes2, passSpecRes3, failSpecRes1, skipSpecRes1},
+	Failed:            proto.Bool(true),
+	SpecsFailedCount:  proto.Int32(1),
+	ExecutionTime:     proto.Int64(122609),
+	SuccessRate:       proto.Float32(60),
+	Environment:       proto.String("default"),
+	Tags:              proto.String(""),
+	ProjectName:       proto.String("Gauge Project"),
+	Timestamp:         proto.String("Jul 13, 2016 at 11:49am"),
+	SpecsSkippedCount: proto.Int32(1),
+	PostHookFailure: &gm.ProtoHookFailure{
+		ErrorMessage: proto.String("java.lang.RuntimeException"),
+		StackTrace:   proto.String(newStackTrace()),
+		ScreenShot:   []byte(newScreenshot()),
+	},
+}
+
 func TestHTMLGenerationHappyPath(t *testing.T) {
 	content, err := ioutil.ReadFile("_testdata/pass.html")
 	if err != nil {
@@ -212,6 +230,23 @@ func TestHTMLGenerationForBeforeSuiteFailure(t *testing.T) {
 
 	buf := new(bytes.Buffer)
 	generate(suiteResWithBeforeSuiteFailure, buf)
+
+	want := removeNewline(string(content))
+	got := removeNewline(buf.String())
+
+	if got != want {
+		t.Errorf("want:\n%q\ngot:\n%q\n", want, got)
+	}
+}
+
+func TestHTMLGenerationForAfterSuiteFailure(t *testing.T) {
+	content, err := ioutil.ReadFile("_testdata/after_suite_fail.html")
+	if err != nil {
+		t.Errorf("Error reading expected HTML file: %s", err.Error())
+	}
+
+	buf := new(bytes.Buffer)
+	generate(suiteResWithAfterSuiteFailure, buf)
 
 	want := removeNewline(string(content))
 	got := removeNewline(buf.String())
