@@ -160,8 +160,6 @@ func gen(tmplName string, w io.Writer, data interface{}) {
 func generate(suiteRes *gm.ProtoSuiteResult, w io.Writer) {
 	overview := toOverview(suiteRes)
 	sidebar := toSidebar(suiteRes)
-	specHeader := toSpecHeader(suiteRes.GetSpecResults()[0])
-	spec := toSpec(suiteRes.GetSpecResults()[0])
 
 	gen(htmlStartTag, w, nil)
 	gen(pageHeaderTag, w, nil)
@@ -172,6 +170,19 @@ func generate(suiteRes *gm.ProtoSuiteResult, w io.Writer) {
 	gen(reportOverviewTag, w, overview)
 	gen(specsStartDiv, w, nil)
 	gen(sidebarDiv, w, sidebar)
+	generateSpec(w, suiteRes.GetSpecResults()[0])
+	gen(endDiv, w, nil)
+	gen(endDiv, w, nil)
+	gen(mainEndTag, w, nil)
+	gen(bodyFooterTag, w, nil)
+	gen(bodyEndTag, w, nil)
+	gen(htmlEndTag, w, nil)
+}
+
+func generateSpec(w io.Writer, res *gm.ProtoSpecResult) {
+	specHeader := toSpecHeader(res)
+	spec := toSpec(res)
+
 	gen(specContainerStartDiv, w, nil)
 	gen(specHeaderStartTag, w, specHeader)
 	gen(tagsDiv, w, specHeader)
@@ -184,12 +195,6 @@ func generate(suiteRes *gm.ProtoSuiteResult, w io.Writer) {
 	gen(endDiv, w, nil)
 	gen(endDiv, w, nil)
 	gen(endDiv, w, nil)
-	gen(endDiv, w, nil)
-	gen(endDiv, w, nil)
-	gen(mainEndTag, w, nil)
-	gen(bodyFooterTag, w, nil)
-	gen(bodyEndTag, w, nil)
-	gen(htmlEndTag, w, nil)
 }
 
 func generateScenario(w io.Writer, scn *scenario) {

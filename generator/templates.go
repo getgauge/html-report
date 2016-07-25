@@ -119,7 +119,7 @@ const hookFailureDiv = `<div class="error-container failed">
       </div>
       {{if .Screenshot}}<div class="screenshot-container">
         <a href="data:image/png;base64,{{.Screenshot}}" rel="lightbox">
-          <img ng-src="data:image/png;base64,{{.Screenshot}}" class="screenshot-thumbnail"/>
+          <img src="data:image/png;base64,{{.Screenshot}}" class="screenshot-thumbnail"/>
         </a>
       </div>{{end}}
   </div>

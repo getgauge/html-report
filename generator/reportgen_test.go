@@ -128,7 +128,7 @@ var wHookFailureWithScreenhotDiv string = `<div class="error-container failed">
       </div>
       <div class="screenshot-container">
         <a href="data:image/png;base64,iVBO" rel="lightbox">
-          <img ng-src="data:image/png;base64,iVBO" class="screenshot-thumbnail"/>
+          <img src="data:image/png;base64,iVBO" class="screenshot-thumbnail"/>
         </a>
       </div>
   </div>
