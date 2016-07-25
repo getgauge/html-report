@@ -54,7 +54,7 @@ type hookFailure struct {
 	HookName   string
 	ErrMsg     string
 	Screenshot string
-	Stacktrace string
+	StackTrace string
 }
 
 type specHeader struct {
@@ -132,7 +132,7 @@ func (c *comment) kind() kind {
 type result struct {
 	Status     status
 	StackTrace string
-	ScreenShot string
+	Screenshot string
 	Message    string
 	ExecTime   string
 }

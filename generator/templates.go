@@ -115,7 +115,7 @@ const hookFailureDiv = `<div class="error-container failed">
   </div>
   <div class="exception-container" id="hookFailureDetails">
       <div class="exception">
-        <pre class="stacktrace">{{.Stacktrace}}</pre>
+        <pre class="stacktrace">{{.StackTrace}}</pre>
       </div>
       {{if .Screenshot}}<div class="screenshot-container">
         <a href="data:image/png;base64,{{.Screenshot}}" rel="lightbox">

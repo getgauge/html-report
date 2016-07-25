@@ -313,7 +313,7 @@ func newHookFailure(name, errMsg, screenshot, stacktrace string) *hookFailure {
 		HookName:   name,
 		ErrMsg:     errMsg,
 		Screenshot: screenshot,
-		Stacktrace: stacktrace,
+		StackTrace: stacktrace,
 	}
 }
 

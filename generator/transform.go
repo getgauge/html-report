@@ -48,7 +48,7 @@ func toHookFailure(failure *gm.ProtoHookFailure, hookName string) *hookFailure {
 		ErrMsg:     failure.GetErrorMessage(),
 		HookName:   hookName,
 		Screenshot: string(failure.GetScreenShot()),
-		Stacktrace: failure.GetStackTrace(),
+		StackTrace: failure.GetStackTrace(),
 	}
 }
 
@@ -125,7 +125,7 @@ func toStep(protoStep *gm.ProtoStep) *step {
 	res := protoStep.GetStepExecutionResult().GetExecutionResult()
 	result := &result{
 		Status:     getStatus(res.GetFailed(), protoStep.GetStepExecutionResult().GetSkipped()),
-		ScreenShot: string(res.GetScreenShot()),
+		Screenshot: string(res.GetScreenShot()),
 		StackTrace: res.GetStackTrace(),
 		Message:    res.GetErrorMessage(),
 		ExecTime:   formatTime(res.GetExecutionTime()),
