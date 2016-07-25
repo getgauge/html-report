@@ -170,8 +170,8 @@ var suiteRes = &gm.ProtoSuiteResult{
 	SpecsSkippedCount: proto.Int32(1),
 }
 
-func TestHTMLGeneration(t *testing.T) {
-	content, err := ioutil.ReadFile("_testdata/expected.html")
+func TestHTMLGenerationHappyPath(t *testing.T) {
+	content, err := ioutil.ReadFile("_testdata/pass.html")
 	if err != nil {
 		t.Errorf("Error reading expected HTML file: %s", err.Error())
 	}
