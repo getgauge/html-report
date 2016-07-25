@@ -178,14 +178,9 @@ func generate(suiteRes *gm.ProtoSuiteResult, w io.Writer) {
 	gen(headerEndTag, w, nil)
 	gen(specsItemsContainerDiv, w, nil)
 	gen(specCommentsAndTableTag, w, spec)
-	gen(scenarioContainerStartDiv, w, spec.Scenarios[0])
-	gen(scenarioHeaderStartDiv, w, spec.Scenarios[0])
-	gen(tagsDiv, w, spec.Scenarios[0])
-	gen(endDiv, w, nil)
-	generateItems(w, spec.Scenarios[0].Contexts, generateStep)
-	generateItems(w, spec.Scenarios[0].Items, generateItem)
-	generateItems(w, spec.Scenarios[0].TearDown, generateStep)
-	gen(endDiv, w, nil)
+	for _, scn := range spec.Scenarios {
+		generateScenario(w, scn)
+	}
 	gen(endDiv, w, nil)
 	gen(endDiv, w, nil)
 	gen(endDiv, w, nil)
@@ -195,6 +190,17 @@ func generate(suiteRes *gm.ProtoSuiteResult, w io.Writer) {
 	gen(bodyFooterTag, w, nil)
 	gen(bodyEndTag, w, nil)
 	gen(htmlEndTag, w, nil)
+}
+
+func generateScenario(w io.Writer, scn *scenario) {
+	gen(scenarioContainerStartDiv, w, scn)
+	gen(scenarioHeaderStartDiv, w, scn)
+	gen(tagsDiv, w, scn)
+	gen(endDiv, w, nil)
+	generateItems(w, scn.Contexts, generateStep)
+	generateItems(w, scn.Items, generateItem)
+	generateItems(w, scn.TearDown, generateStep)
+	gen(endDiv, w, nil)
 }
 
 func generateItems(w io.Writer, items []item, predicate func(w io.Writer, item item)) {

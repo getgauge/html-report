@@ -44,15 +44,15 @@ var wChartDiv string = `<div class="report-overview">
     <div class="chart">
       <nvd3 options="options" data="data"></nvd3>
     </div>
-    <div class="total-specs"><span class="value">41</span> <span class="txt">Total specs</span></div>
+    <div class="total-specs"><span class="value">41</span><span class="txt">Total specs</span></div>
   </div>`
 
 var wResCntDiv string = `
   <div class="report_test-results">
     <ul>
-      <li class="fail"><span class="value">2</span> <span class="txt">Failed</span></li>
-      <li class="pass"><span class="value">39</span> <span class="txt">Passed</span></li>
-      <li class="skip"><span class="value">0</span> <span class="txt">Skipped</span></li>
+      <li class="fail"><span class="value">2</span><span class="txt">Failed</span></li>
+      <li class="pass"><span class="value">39</span><span class="txt">Passed</span></li>
+      <li class="skip"><span class="value">0</span><span class="txt">Skipped</span></li>
     </ul>
   </div>`
 

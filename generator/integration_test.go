@@ -65,6 +65,30 @@ var scenario1 = &gm.ProtoScenario{
 	},
 }
 
+var scenario2 = &gm.ProtoScenario{
+	ScenarioHeading: proto.String("Vowel counts in multiple words"),
+	Failed:          proto.Bool(false),
+	Skipped:         proto.Bool(false),
+	ExecutionTime:   proto.Int64(113163),
+	Contexts: []*gm.ProtoItem{
+		newStepItem(false, []*gm.Fragment{newTextFragment("Context Step1")}),
+		newStepItem(false, []*gm.Fragment{newTextFragment("Context Step2")}),
+	},
+	ScenarioItems: []*gm.ProtoItem{
+		newStepItem(false, []*gm.Fragment{newTextFragment("Almost all words have vowels"), newParamFragment(&gm.Parameter{
+			ParameterType: gm.Parameter_Table.Enum(),
+			Table: newTableItem([]string{"Word", "Count"}, [][]string{
+				[]string{"Gauge", "3"},
+				[]string{"Mingle", "2"},
+			}).Table,
+		})}),
+	},
+	TearDownSteps: []*gm.ProtoItem{
+		newStepItem(false, []*gm.Fragment{newTextFragment("Teardown Step1")}),
+		newStepItem(false, []*gm.Fragment{newTextFragment("Teardown Step2")}),
+	},
+}
+
 var passSpecRes1 = &gm.ProtoSpecResult{
 	Failed:        proto.Bool(false),
 	Skipped:       proto.Bool(false),
@@ -88,6 +112,7 @@ var passSpecRes1 = &gm.ProtoSpecResult{
 			newCommentItem("Comment 2"),
 			newCommentItem("Comment 3"),
 			newScenarioItem(scenario1),
+			newScenarioItem(scenario2),
 		},
 	},
 }
