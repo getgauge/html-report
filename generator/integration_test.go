@@ -33,80 +33,44 @@ var scenario1 = &gm.ProtoScenario{
 	Tags:            []string{"foo", "bar"},
 	ExecutionTime:   proto.Int64(113163),
 	Contexts: []*gm.ProtoItem{
-		newStepItem(false, []*gm.Fragment{{FragmentType: gm.Fragment_Text.Enum(), Text: proto.String("Context Step1")}}),
+		newStepItem(false, []*gm.Fragment{newTextFragment("Context Step1")}),
 		newStepItem(false, []*gm.Fragment{
-			{FragmentType: gm.Fragment_Text.Enum(), Text: proto.String("Say ")},
-			{FragmentType: gm.Fragment_Parameter.Enum(), Parameter: &gm.Parameter{
-				ParameterType: gm.Parameter_Static.Enum(),
-				Value:         proto.String("hi"),
-			}},
-			{FragmentType: gm.Fragment_Text.Enum(), Text: proto.String(" to ")},
-			{FragmentType: gm.Fragment_Parameter.Enum(), Parameter: &gm.Parameter{
-				ParameterType: gm.Parameter_Dynamic.Enum(),
-				Value:         proto.String("gauge"),
-			}},
+			newTextFragment("Say "),
+			newParamFragment(newStaticParam("hi")),
+			newTextFragment(" to "),
+			newParamFragment(newDynamicParam("gauge")),
 		}),
 	},
 	ScenarioItems: []*gm.ProtoItem{
-		newStepItem(false, []*gm.Fragment{{FragmentType: gm.Fragment_Text.Enum(), Text: proto.String("Step1")}}),
+		newStepItem(false, []*gm.Fragment{newTextFragment("Step1")}),
 		newCommentItem("Comment1"),
 		newStepItem(false, []*gm.Fragment{
-			{FragmentType: gm.Fragment_Text.Enum(), Text: proto.String("Say ")},
-			{FragmentType: gm.Fragment_Parameter.Enum(), Parameter: &gm.Parameter{
-				ParameterType: gm.Parameter_Static.Enum(),
-				Value:         proto.String("hi"),
-			}},
-			{FragmentType: gm.Fragment_Text.Enum(), Text: proto.String(" to ")},
-			{FragmentType: gm.Fragment_Parameter.Enum(), Parameter: &gm.Parameter{
-				ParameterType: gm.Parameter_Dynamic.Enum(),
-				Value:         proto.String("gauge"),
-			}},
+			newTextFragment("Say "),
+			newParamFragment(newStaticParam("hi")),
+			newTextFragment(" to "),
+			newParamFragment(newDynamicParam("gauge")),
 		}),
 		newCommentItem("Comment2"),
-		&gm.ProtoItem{
-			ItemType: gm.ProtoItem_Concept.Enum(),
-			Concept: &gm.ProtoConcept{
-				ConceptStep: newStepItem(false, []*gm.Fragment{{FragmentType: gm.Fragment_Text.Enum(), Text: proto.String("Concept Heading")}}).GetStep(),
-				Steps: []*gm.ProtoItem{
-					newStepItem(false, []*gm.Fragment{{FragmentType: gm.Fragment_Text.Enum(), Text: proto.String("Concept Step1")}}),
-					newStepItem(false, []*gm.Fragment{{FragmentType: gm.Fragment_Text.Enum(), Text: proto.String("Concept Step2")}}),
-				},
-			},
-		},
-		&gm.ProtoItem{
-			ItemType: gm.ProtoItem_Concept.Enum(),
-			Concept: &gm.ProtoConcept{
-				ConceptStep: newStepItem(false, []*gm.Fragment{{FragmentType: gm.Fragment_Text.Enum(), Text: proto.String("Outer Concept")}}).GetStep(),
-				Steps: []*gm.ProtoItem{
-					newStepItem(false, []*gm.Fragment{{FragmentType: gm.Fragment_Text.Enum(), Text: proto.String("Outer Concept Step 1")}}),
-					&gm.ProtoItem{
-						ItemType: gm.ProtoItem_Concept.Enum(),
-						Concept: &gm.ProtoConcept{
-							ConceptStep: newStepItem(false, []*gm.Fragment{{FragmentType: gm.Fragment_Text.Enum(), Text: proto.String("Inner Concept")}}).GetStep(),
-							Steps: []*gm.ProtoItem{
-								newStepItem(false, []*gm.Fragment{{FragmentType: gm.Fragment_Text.Enum(), Text: proto.String("Inner Concept Step 1")}}),
-								newStepItem(false, []*gm.Fragment{{FragmentType: gm.Fragment_Text.Enum(), Text: proto.String("Inner Concept Step 2")}}),
-							},
-						},
-					},
-					newStepItem(false, []*gm.Fragment{{FragmentType: gm.Fragment_Text.Enum(), Text: proto.String("Outer Concept Step 2")}}),
-				},
-			},
-		},
+		newConceptItem("Concept Heading", []*gm.ProtoItem{
+			newStepItem(false, []*gm.Fragment{newTextFragment("Concept Step1")}),
+			newStepItem(false, []*gm.Fragment{newTextFragment("Concept Step2")}),
+		}),
+		newConceptItem("Outer Concept", []*gm.ProtoItem{
+			newStepItem(false, []*gm.Fragment{newTextFragment("Outer Concept Step 1")}),
+			newConceptItem("Inner Concept", []*gm.ProtoItem{
+				newStepItem(false, []*gm.Fragment{newTextFragment("Inner Concept Step 1")}),
+				newStepItem(false, []*gm.Fragment{newTextFragment("Inner Concept Step 2")}),
+			}),
+			newStepItem(false, []*gm.Fragment{newTextFragment("Outer Concept Step 2")}),
+		}),
 	},
 	TearDownSteps: []*gm.ProtoItem{
-		newStepItem(false, []*gm.Fragment{{FragmentType: gm.Fragment_Text.Enum(), Text: proto.String("Teardown Step1")}}),
+		newStepItem(false, []*gm.Fragment{newTextFragment("Teardown Step1")}),
 		newStepItem(false, []*gm.Fragment{
-			{FragmentType: gm.Fragment_Text.Enum(), Text: proto.String("Say ")},
-			{FragmentType: gm.Fragment_Parameter.Enum(), Parameter: &gm.Parameter{
-				ParameterType: gm.Parameter_Static.Enum(),
-				Value:         proto.String("hi"),
-			}},
-			{FragmentType: gm.Fragment_Text.Enum(), Text: proto.String(" to ")},
-			{FragmentType: gm.Fragment_Parameter.Enum(), Parameter: &gm.Parameter{
-				ParameterType: gm.Parameter_Dynamic.Enum(),
-				Value:         proto.String("gauge"),
-			}},
+			newTextFragment("Say "),
+			newParamFragment(newStaticParam("hi")),
+			newTextFragment(" to "),
+			newParamFragment(newDynamicParam("gauge")),
 		}),
 	},
 }

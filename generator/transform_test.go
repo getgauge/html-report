@@ -80,6 +80,44 @@ func newStepItem(failed bool, frags []*gm.Fragment) *gm.ProtoItem {
 	}
 }
 
+func newDynamicParam(val string) *gm.Parameter {
+	return &gm.Parameter{
+		ParameterType: gm.Parameter_Dynamic.Enum(),
+		Value:         proto.String(val),
+	}
+}
+
+func newStaticParam(val string) *gm.Parameter {
+	return &gm.Parameter{
+		ParameterType: gm.Parameter_Static.Enum(),
+		Value:         proto.String(val),
+	}
+}
+
+func newTextFragment(val string) *gm.Fragment {
+	return &gm.Fragment{
+		FragmentType: gm.Fragment_Text.Enum(),
+		Text:         proto.String(val),
+	}
+}
+
+func newParamFragment(p *gm.Parameter) *gm.Fragment {
+	return &gm.Fragment{
+		FragmentType: gm.Fragment_Parameter.Enum(),
+		Parameter:    p,
+	}
+}
+
+func newConceptItem(heading string, steps []*gm.ProtoItem) *gm.ProtoItem {
+	return &gm.ProtoItem{
+		ItemType: gm.ProtoItem_Concept.Enum(),
+		Concept: &gm.ProtoConcept{
+			ConceptStep: newStepItem(false, []*gm.Fragment{newTextFragment(heading)}).GetStep(),
+			Steps:       steps,
+		},
+	}
+}
+
 var specRes1 = &gm.ProtoSpecResult{
 	Failed:        proto.Bool(false),
 	Skipped:       proto.Bool(false),
