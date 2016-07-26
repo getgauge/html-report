@@ -79,6 +79,8 @@ type spec struct {
 	Table               *table
 	CommentsAfterTable  []string
 	Scenarios           []*scenario
+	PreHookFailure      *hookFailure
+	PostHookFailure     *hookFailure
 }
 
 type scenario struct {
@@ -202,6 +204,12 @@ func generateSpec(w io.Writer, res *gm.ProtoSpecResult) {
 	gen(tagsDiv, w, specHeader)
 	gen(headerEndTag, w, nil)
 	gen(specsItemsContainerDiv, w, nil)
+
+	if spec.PostHookFailure != nil {
+		gen(hookFailureDiv, w, spec.PostHookFailure)
+	}
+
+	gen(specsItemsContentsDiv, w, nil)
 	gen(specCommentsAndTableTag, w, spec)
 	for _, scn := range spec.Scenarios {
 		generateScenario(w, scn)

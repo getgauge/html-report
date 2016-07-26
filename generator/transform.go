@@ -89,6 +89,8 @@ func toSpec(res *gm.ProtoSpecResult) *spec {
 		CommentsBeforeTable: make([]string, 0),
 		CommentsAfterTable:  make([]string, 0),
 		Scenarios:           make([]*scenario, 0),
+		PreHookFailure:      toHookFailure(res.GetProtoSpec().GetPreHookFailure(), "Before Spec"),
+		PostHookFailure:     toHookFailure(res.GetProtoSpec().GetPostHookFailure(), "After Spec"),
 	}
 	isTableScanned := false
 	for _, item := range res.GetProtoSpec().GetItems() {

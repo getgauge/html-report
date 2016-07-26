@@ -220,6 +220,38 @@ var failSpecRes2 = &gm.ProtoSpecResult{
 	},
 }
 
+var failSpecRes3 = &gm.ProtoSpecResult{
+	Failed:        proto.Bool(true),
+	Skipped:       proto.Bool(false),
+	ExecutionTime: proto.Int64(211316),
+	ProtoSpec: &gm.ProtoSpec{
+		SpecHeading: proto.String("Failing Specification 1"),
+		Tags:        []string{},
+		FileName:    proto.String("/tmp/gauge/specs/foobar.spec"),
+		Items: []*gm.ProtoItem{
+			newCommentItem("\n"),
+			newCommentItem("This is an executable specification file. This file follows markdown syntax."),
+			newCommentItem("\n"),
+			newCommentItem("To execute this specification, run"),
+			newCommentItem("\tgauge specs"),
+			newCommentItem("\n"),
+			newTableItem([]string{"Word", "Count"}, [][]string{
+				[]string{"Gauge", "3"},
+				[]string{"Mingle", "2"},
+			}),
+			newCommentItem("Comment 1"),
+			newCommentItem("Comment 2"),
+			newCommentItem("Comment 3"),
+			newScenarioItem(scenario2),
+		},
+		PostHookFailure: &gm.ProtoHookFailure{
+			ErrorMessage: proto.String("java.lang.RuntimeException"),
+			StackTrace:   proto.String(newStackTrace()),
+			ScreenShot:   []byte(newScreenshot()),
+		},
+	},
+}
+
 var skipSpecRes1 = &gm.ProtoSpecResult{
 	Failed:        proto.Bool(false),
 	Skipped:       proto.Bool(true),
@@ -326,6 +358,19 @@ var suiteResWithAfterStepFailure = &gm.ProtoSuiteResult{
 	SpecsSkippedCount: proto.Int32(0),
 }
 
+var suiteResWithAfterSpecFailure = &gm.ProtoSuiteResult{
+	SpecResults:       []*gm.ProtoSpecResult{failSpecRes3},
+	Failed:            proto.Bool(true),
+	SpecsFailedCount:  proto.Int32(1),
+	ExecutionTime:     proto.Int64(122609),
+	SuccessRate:       proto.Float32(0),
+	Environment:       proto.String("default"),
+	Tags:              proto.String(""),
+	ProjectName:       proto.String("Gauge Project"),
+	Timestamp:         proto.String("Jul 13, 2016 at 11:49am"),
+	SpecsSkippedCount: proto.Int32(0),
+}
+
 type HTMLGenerationTest struct {
 	name         string
 	res          *gm.ProtoSuiteResult
@@ -339,6 +384,7 @@ var HTMLGenerationTests = []*HTMLGenerationTest{
 	{"both before and after suite failure", suiteResWithBeforeAfterSuiteFailure, "before_after_suite_fail.html"},
 	{"after scenario failure", suiteResWithAfterScenarioFailure, "after_scenario_fail.html"},
 	{"after step failure", suiteResWithAfterStepFailure, "after_step_fail.html"},
+	{"after spec failure", suiteResWithAfterSpecFailure, "after_spec_fail.html"},
 }
 
 func TestHTMLGeneration(t *testing.T) {

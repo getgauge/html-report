@@ -185,6 +185,26 @@ var specRes3 = &gm.ProtoSpecResult{
 	},
 }
 
+var specResWithSpecHookFailure = &gm.ProtoSpecResult{
+	Failed:        proto.Bool(false),
+	Skipped:       proto.Bool(true),
+	ExecutionTime: proto.Int64(211316),
+	ProtoSpec: &gm.ProtoSpec{
+		SpecHeading: proto.String("specRes3"),
+		Tags:        []string{"tag1"},
+		PreHookFailure: &gm.ProtoHookFailure{
+			ErrorMessage: proto.String("err"),
+			StackTrace:   proto.String("Stacktrace"),
+			ScreenShot:   []byte("Screenshot"),
+		},
+		PostHookFailure: &gm.ProtoHookFailure{
+			ErrorMessage: proto.String("err"),
+			StackTrace:   proto.String("Stacktrace"),
+			ScreenShot:   []byte("Screenshot"),
+		},
+	},
+}
+
 var suiteRes1 = &gm.ProtoSuiteResult{
 	ProjectName:       proto.String("projName"),
 	Environment:       proto.String("ci-java"),
@@ -354,7 +374,7 @@ var failedHookFailure = &gm.ProtoHookFailure{
 	ScreenShot:   []byte(newScreenshot()),
 }
 
-func TestTransformOverview(t *testing.T) {
+func TestToOverview(t *testing.T) {
 	want := &overview{
 		ProjectName: "projName",
 		Env:         "ci-java",
@@ -374,7 +394,7 @@ func TestTransformOverview(t *testing.T) {
 	}
 }
 
-func TestTransformSidebar(t *testing.T) {
+func TestToSidebar(t *testing.T) {
 	want := &sidebar{
 		IsPreHookFailure: false,
 		Specs: []*specsMeta{
@@ -390,7 +410,7 @@ func TestTransformSidebar(t *testing.T) {
 	}
 }
 
-func TestTransformSpecHeader(t *testing.T) {
+func TestToSpecHeader(t *testing.T) {
 	want := &specHeader{
 		SpecName: "specRes1",
 		ExecTime: "00:03:31",
@@ -416,6 +436,21 @@ func TestToSpec(t *testing.T) {
 	}
 
 	got := toSpec(specRes1)
+	if !reflect.DeepEqual(got, want) {
+		t.Errorf("want:\n%q\ngot:\n%q\n", want, got)
+	}
+}
+
+func TestToSpecWithHookFailure(t *testing.T) {
+	want := &spec{
+		CommentsBeforeTable: []string{},
+		CommentsAfterTable:  []string{},
+		Scenarios:           make([]*scenario, 0),
+		PreHookFailure:      newHookFailure("Before Spec", "err", "Screenshot", "Stacktrace"),
+		PostHookFailure:     newHookFailure("After Spec", "err", "Screenshot", "Stacktrace"),
+	}
+
+	got := toSpec(specResWithSpecHookFailure)
 	if !reflect.DeepEqual(got, want) {
 		t.Errorf("want:\n%q\ngot:\n%q\n", want, got)
 	}

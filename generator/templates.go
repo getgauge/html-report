@@ -144,8 +144,8 @@ const specsStartDiv = `<div class="specifications">`
 //TODO: Hide this if there is a pre hook failure
 const specContainerStartDiv = `<div id="specificationContainer" class="details">`
 
-const specsItemsContainerDiv = `<div id="specItemsContainer">
-  <div class="content">`
+const specsItemsContainerDiv = `<div id="specItemsContainer">`
+const specsItemsContentsDiv = `<div class="content">`
 
 const specHeaderStartTag = `<header class="curr-spec">
   <h3 class="spec-head" title="{{.FileName}}">{{.SpecName}}</h3>
