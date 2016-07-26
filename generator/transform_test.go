@@ -378,27 +378,9 @@ func TestTransformSidebar(t *testing.T) {
 	want := &sidebar{
 		IsPreHookFailure: false,
 		Specs: []*specsMeta{
-			{
-				SpecName: "specRes1",
-				ExecTime: "00:03:31",
-				Failed:   false,
-				Skipped:  false,
-				Tags:     []string{"tag1", "tag2"},
-			},
-			{
-				SpecName: "specRes2",
-				ExecTime: "00:03:31",
-				Failed:   true,
-				Skipped:  false,
-				Tags:     []string{"tag1", "tag2", "tag3"},
-			},
-			{
-				SpecName: "specRes3",
-				ExecTime: "00:03:31",
-				Failed:   false,
-				Skipped:  true,
-				Tags:     []string{"tag1"},
-			},
+			newSpecsMeta("specRes1", "00:03:31", false, false, []string{"tag1", "tag2"}),
+			newSpecsMeta("specRes2", "00:03:31", true, false, []string{"tag1", "tag2", "tag3"}),
+			newSpecsMeta("specRes3", "00:03:31", false, true, []string{"tag1"}),
 		},
 	}
 
@@ -441,10 +423,10 @@ func TestToSpec(t *testing.T) {
 
 func TestToScenario(t *testing.T) {
 	want := &scenario{
-		Heading:  "Vowel counts in single word",
-		ExecTime: "00:01:53",
-		Res:      pass,
-		Tags:     []string{"foo", "bar"},
+		Heading:    "Vowel counts in single word",
+		ExecTime:   "00:01:53",
+		ExecStatus: pass,
+		Tags:       []string{"foo", "bar"},
 		Contexts: []item{
 			&step{
 				Fragments: []*fragment{{FragmentKind: textFragmentKind, Text: "Context Step1"}},
@@ -469,7 +451,7 @@ func TestToScenario(t *testing.T) {
 			},
 			&comment{Text: "Comment3"},
 		},
-		TearDown: []item{
+		Teardown: []item{
 			&step{
 				Fragments: []*fragment{{FragmentKind: textFragmentKind, Text: "Teardown Step1"}},
 				Res:       &result{Status: pass, ExecTime: "00:03:31"},
@@ -489,17 +471,17 @@ func TestToScenario(t *testing.T) {
 
 func TestToScenarioWithHookFailures(t *testing.T) {
 	want := &scenario{
-		Heading:  "Vowel counts in single word",
-		ExecTime: "00:01:53",
-		Res:      fail,
-		Contexts: []item{},
+		Heading:    "Vowel counts in single word",
+		ExecTime:   "00:01:53",
+		ExecStatus: fail,
+		Contexts:   []item{},
 		Items: []item{
 			&step{
 				Fragments: []*fragment{{FragmentKind: textFragmentKind, Text: "Step1"}},
 				Res:       &result{Status: fail, ExecTime: "00:03:31"},
 			},
 		},
-		TearDown:        []item{},
+		Teardown:        []item{},
 		PreHookFailure:  newHookFailure("Before Scenario", "err", "Screenshot", "Stacktrace"),
 		PostHookFailure: newHookFailure("After Scenario", "err", "Screenshot", "Stacktrace"),
 	}

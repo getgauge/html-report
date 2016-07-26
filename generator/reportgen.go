@@ -85,10 +85,10 @@ type scenario struct {
 	Heading         string
 	ExecTime        string
 	Tags            []string
-	Res             status
+	ExecStatus      status
 	Contexts        []item
 	Items           []item
-	TearDown        []item
+	Teardown        []item
 	PreHookFailure  *hookFailure
 	PostHookFailure *hookFailure
 }
@@ -147,7 +147,6 @@ const (
 	pass status = iota
 	fail
 	skip
-	notExecuted
 )
 
 func gen(tmplName string, w io.Writer, data interface{}) {
@@ -217,9 +216,9 @@ func generateScenario(w io.Writer, scn *scenario) {
 	gen(scenarioHeaderStartDiv, w, scn)
 	gen(tagsDiv, w, scn)
 	gen(endDiv, w, nil)
-	generateItems(w, scn.Contexts, generateStep)
+	generateItems(w, scn.Contexts, generateContextOrTeardown)
 	generateItems(w, scn.Items, generateItem)
-	generateItems(w, scn.TearDown, generateStep)
+	generateItems(w, scn.Teardown, generateContextOrTeardown)
 	if scn.PostHookFailure != nil {
 		gen(hookFailureDiv, w, scn.PostHookFailure)
 	}
@@ -232,8 +231,8 @@ func generateItems(w io.Writer, items []item, predicate func(w io.Writer, item i
 	}
 }
 
-func generateStep(w io.Writer, item item) {
-	gen(contextStepStartDiv, w, nil)
+func generateContextOrTeardown(w io.Writer, item item) {
+	gen(contextOrTeardownStartDiv, w, nil)
 	generateItem(w, item)
 	gen(endDiv, w, nil)
 }

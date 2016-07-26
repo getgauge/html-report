@@ -114,10 +114,10 @@ func toScenario(scn *gm.ProtoScenario) *scenario {
 		Heading:         scn.GetScenarioHeading(),
 		ExecTime:        formatTime(scn.GetExecutionTime()),
 		Tags:            scn.GetTags(),
-		Res:             getStatus(scn.GetFailed(), scn.GetSkipped()),
+		ExecStatus:      getStatus(scn.GetFailed(), scn.GetSkipped()),
 		Contexts:        getItems(scn.GetContexts()),
 		Items:           getItems(scn.GetScenarioItems()),
-		TearDown:        getItems(scn.GetTearDownSteps()),
+		Teardown:        getItems(scn.GetTearDownSteps()),
 		PreHookFailure:  toHookFailure(scn.GetPreHookFailure(), "Before Scenario"),
 		PostHookFailure: toHookFailure(scn.GetPostHookFailure(), "After Scenario"),
 	}
@@ -198,7 +198,10 @@ func getItems(protoItems []*gm.ProtoItem) []item {
 		case gm.ProtoItem_Comment:
 			items = append(items, toComment(i.GetComment()))
 		case gm.ProtoItem_Concept:
-			items = append(items, &concept{CptStep: toStep(i.GetConcept().GetConceptStep()), Items: getItems(i.GetConcept().GetSteps())})
+			items = append(items, &concept{
+				CptStep: toStep(i.GetConcept().GetConceptStep()),
+				Items:   getItems(i.GetConcept().GetSteps()),
+			})
 		}
 	}
 	return items

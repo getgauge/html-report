@@ -151,8 +151,8 @@ const specHeaderStartTag = `<header class="curr-spec">
   <h3 class="spec-head" title="{{.FileName}}">{{.SpecName}}</h3>
   <span class="time">{{.ExecTime}}</span>`
 
-const scenarioContainerStartDiv = `{{if eq .Res 0}}<div class='scenario-container passed'>
-{{else if eq .Res 1}}<div class='scenario-container failed'>
+const scenarioContainerStartDiv = `{{if eq .ExecStatus 0}}<div class='scenario-container passed'>
+{{else if eq .ExecStatus 1}}<div class='scenario-container failed'>
 {{else}}<div class='scenario-container skipped'>{{end}}`
 
 const scenarioHeaderStartDiv = `<div class="scenario-head">
@@ -274,7 +274,7 @@ const stepEndDiv = `</li></ul></div></div>`
 
 const conceptSpan = `<span>+ </span>`
 
-const contextStepStartDiv = `<div class='context-step'>`
+const contextOrTeardownStartDiv = `<div class='context-step'>`
 
 //TODO: 1. Show comments in markdown style
 const commentSpan = `<span>{{.Text}}</span>`
