@@ -140,8 +140,10 @@ func toStep(protoStep *gm.ProtoStep) *step {
 		result.Message = protoStep.GetStepExecutionResult().GetSkippedReason()
 	}
 	return &step{
-		Fragments: toFragments(protoStep.GetFragments()),
-		Res:       result,
+		Fragments:       toFragments(protoStep.GetFragments()),
+		Res:             result,
+		PreHookFailure:  toHookFailure(protoStep.GetStepExecutionResult().GetPreHookFailure(), "Before Step"),
+		PostHookFailure: toHookFailure(protoStep.GetStepExecutionResult().GetPostHookFailure(), "After Step"),
 	}
 }
 

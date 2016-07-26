@@ -106,8 +106,10 @@ type item interface {
 }
 
 type step struct {
-	Fragments []*fragment
-	Res       *result
+	Fragments       []*fragment
+	Res             *result
+	PreHookFailure  *hookFailure
+	PostHookFailure *hookFailure
 }
 
 func (s *step) kind() kind {
@@ -240,12 +242,17 @@ func generateItem(w io.Writer, item item) {
 	switch item.kind() {
 	case stepKind:
 		gen(stepStartDiv, w, item.(*step))
+		gen(stepBodyDiv, w, item.(*step))
+		if item.(*step).PostHookFailure != nil {
+			gen(hookFailureDiv, w, item.(*step).PostHookFailure)
+		}
 		gen(stepEndDiv, w, item.(*step))
 	case commentKind:
 		gen(commentSpan, w, item.(*comment))
 	case conceptKind:
 		gen(stepStartDiv, w, item.(*concept).CptStep)
 		gen(conceptSpan, w, nil)
+		gen(stepBodyDiv, w, item.(*concept).CptStep)
 		gen(stepEndDiv, w, item.(*concept).CptStep)
 		gen(conceptStepsStartDiv, w, nil)
 		generateItems(w, item.(*concept).Items, generateItem)

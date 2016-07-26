@@ -226,7 +226,6 @@ const stepStartDiv = `<div class='step'>
     {{if eq .Res.Status 0}}<div class='step-info passed'>
     {{else if eq .Res.Status 1}}<div class='step-info failed'>
     {{else if eq .Res.Status 2}}<div class='step-info skipped'>
-    {{else}}<div class='step-info not-executed'>
     {{end}}
     <ul>
       <li class='step'>
@@ -236,7 +235,7 @@ const stepStartDiv = `<div class='step'>
 //  1. Print Gauge Messages
 //  2. Print Pre/Post hook failures, Step failure
 //  3. Add hovercard for special params
-const stepEndDiv = `
+const stepBodyDiv = `
 {{define "Table"}}<table>
   <tr>
     {{range .Table.Headers}}<th>{{.}}</th>{{end}}
@@ -269,7 +268,9 @@ const stepEndDiv = `
     </div>
   {{end}}
 {{end}}
-</div></li></ul></div></div>`
+</div>`
+
+const stepEndDiv = `</li></ul></div></div>`
 
 const conceptSpan = `<span>+ </span>`
 

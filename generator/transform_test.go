@@ -333,6 +333,21 @@ var protoStepWithSpecialParams = &gm.ProtoStep{
 	},
 }
 
+var protoStepWithAfterHookFailure = &gm.ProtoStep{
+	Fragments: []*gm.Fragment{newTextFragment("Some Step")},
+	StepExecutionResult: &gm.ProtoStepExecutionResult{
+		ExecutionResult: &gm.ProtoExecutionResult{
+			Failed:        proto.Bool(true),
+			ExecutionTime: proto.Int64(211316),
+		},
+		PostHookFailure: &gm.ProtoHookFailure{
+			ErrorMessage: proto.String("err"),
+			StackTrace:   proto.String("Stacktrace"),
+			ScreenShot:   []byte("Screenshot"),
+		},
+	},
+}
+
 var failedHookFailure = &gm.ProtoHookFailure{
 	ErrorMessage: proto.String("java.lang.RuntimeException"),
 	StackTrace:   proto.String(newStackTrace()),
@@ -493,30 +508,6 @@ func TestToScenarioWithHookFailures(t *testing.T) {
 	if !reflect.DeepEqual(got, want) {
 		t.Errorf("want:\n%q\ngot:\n%q\n", want, got)
 	}
-
-}
-
-func TestToStep(t *testing.T) {
-	want := &step{
-		Fragments: []*fragment{
-			{FragmentKind: textFragmentKind, Text: "Say "},
-			{FragmentKind: staticFragmentKind, Text: "hi"},
-			{FragmentKind: textFragmentKind, Text: " to "},
-			{FragmentKind: dynamicFragmentKind, Text: "gauge"},
-			{FragmentKind: tableFragmentKind,
-				Table: &table{
-					Headers: []string{"Word", "Count"},
-					Rows:    []*row{{Cells: []string{"Gauge", "3"}}, {Cells: []string{"Mingle", "2"}}},
-				},
-			},
-		},
-		Res: &result{Status: pass, ExecTime: "00:03:31"},
-	}
-
-	got := toStep(protoStep)
-	if !reflect.DeepEqual(got, want) {
-		t.Errorf("want:\n%q\ngot:\n%q\n", want, got)
-	}
 }
 
 func TestToConcept(t *testing.T) {
@@ -575,6 +566,29 @@ func TestToConcept(t *testing.T) {
 	}
 }
 
+func TestToStep(t *testing.T) {
+	want := &step{
+		Fragments: []*fragment{
+			{FragmentKind: textFragmentKind, Text: "Say "},
+			{FragmentKind: staticFragmentKind, Text: "hi"},
+			{FragmentKind: textFragmentKind, Text: " to "},
+			{FragmentKind: dynamicFragmentKind, Text: "gauge"},
+			{FragmentKind: tableFragmentKind,
+				Table: &table{
+					Headers: []string{"Word", "Count"},
+					Rows:    []*row{{Cells: []string{"Gauge", "3"}}, {Cells: []string{"Mingle", "2"}}},
+				},
+			},
+		},
+		Res: &result{Status: pass, ExecTime: "00:03:31"},
+	}
+
+	got := toStep(protoStep)
+	if !reflect.DeepEqual(got, want) {
+		t.Errorf("want:\n%q\ngot:\n%q\n", want, got)
+	}
+}
+
 func TestToStepWithSpecialParams(t *testing.T) {
 	want := &step{
 		Fragments: []*fragment{
@@ -601,6 +615,24 @@ func TestToStepWithSpecialParams(t *testing.T) {
 	}
 }
 
+func TestToStepWithAfterHookFailure(t *testing.T) {
+	want := &step{
+		Fragments: []*fragment{
+			{FragmentKind: textFragmentKind, Text: "Some Step"},
+		},
+		Res: &result{
+			Status:   fail,
+			ExecTime: "00:03:31",
+		},
+		PostHookFailure: newHookFailure("After Step", "err", "Screenshot", "Stacktrace"),
+	}
+
+	got := toStep(protoStepWithAfterHookFailure)
+	if !reflect.DeepEqual(got, want) {
+		t.Errorf("want:\n%q\ngot:\n%q\n", want, got)
+	}
+}
+
 func TestToComment(t *testing.T) {
 	want := &comment{Text: "Whatever"}
 
@@ -619,7 +651,7 @@ func TestToHookFailure(t *testing.T) {
 	}
 }
 
-func TestHookFailureWithNilInput(t *testing.T) {
+func TestToHookFailureWithNilInput(t *testing.T) {
 	var want *hookFailure = nil
 	got := toHookFailure(nil, "foobar")
 
