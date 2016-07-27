@@ -58,7 +58,7 @@ func newTableItem(headers []string, rows [][]string) *gm.ProtoItem {
 	}
 }
 
-func newStepItem(failed bool, frags []*gm.Fragment) *gm.ProtoItem {
+func newStepItem(failed, skipped bool, frags []*gm.Fragment) *gm.ProtoItem {
 	return &gm.ProtoItem{
 		ItemType: gm.ProtoItem_Step.Enum(),
 		Step: &gm.ProtoStep{
@@ -67,6 +67,7 @@ func newStepItem(failed bool, frags []*gm.Fragment) *gm.ProtoItem {
 					Failed:        proto.Bool(failed),
 					ExecutionTime: proto.Int64(211316),
 				},
+				Skipped: proto.Bool(skipped),
 			},
 			Fragments: frags,
 		},
@@ -112,7 +113,7 @@ func newConceptItem(heading string, steps []*gm.ProtoItem) *gm.ProtoItem {
 	return &gm.ProtoItem{
 		ItemType: gm.ProtoItem_Concept.Enum(),
 		Concept: &gm.ProtoConcept{
-			ConceptStep: newStepItem(false, []*gm.Fragment{newTextFragment(heading)}).GetStep(),
+			ConceptStep: newStepItem(false, false, []*gm.Fragment{newTextFragment(heading)}).GetStep(),
 			Steps:       steps,
 		},
 	}
@@ -224,20 +225,20 @@ var scn = &gm.ProtoScenario{
 	Tags:            []string{"foo", "bar"},
 	ExecutionTime:   proto.Int64(113163),
 	Contexts: []*gm.ProtoItem{
-		newStepItem(false, []*gm.Fragment{newTextFragment("Context Step1")}),
-		newStepItem(true, []*gm.Fragment{newTextFragment("Context Step2")}),
+		newStepItem(false, false, []*gm.Fragment{newTextFragment("Context Step1")}),
+		newStepItem(true, false, []*gm.Fragment{newTextFragment("Context Step2")}),
 	},
 	ScenarioItems: []*gm.ProtoItem{
 		newCommentItem("Comment0"),
-		newStepItem(true, []*gm.Fragment{newTextFragment("Step1")}),
+		newStepItem(true, false, []*gm.Fragment{newTextFragment("Step1")}),
 		newCommentItem("Comment1"),
 		newCommentItem("Comment2"),
-		newStepItem(false, []*gm.Fragment{newTextFragment("Step2")}),
+		newStepItem(false, false, []*gm.Fragment{newTextFragment("Step2")}),
 		newCommentItem("Comment3"),
 	},
 	TearDownSteps: []*gm.ProtoItem{
-		newStepItem(false, []*gm.Fragment{newTextFragment("Teardown Step1")}),
-		newStepItem(true, []*gm.Fragment{newTextFragment("Teardown Step2")}),
+		newStepItem(false, false, []*gm.Fragment{newTextFragment("Teardown Step1")}),
+		newStepItem(true, false, []*gm.Fragment{newTextFragment("Teardown Step2")}),
 	},
 }
 
@@ -247,7 +248,7 @@ var scnWithHookFailure = &gm.ProtoScenario{
 	Skipped:         proto.Bool(false),
 	ExecutionTime:   proto.Int64(113163),
 	ScenarioItems: []*gm.ProtoItem{
-		newStepItem(true, []*gm.Fragment{newTextFragment("Step1")}),
+		newStepItem(true, false, []*gm.Fragment{newTextFragment("Step1")}),
 	},
 	PreHookFailure: &gm.ProtoHookFailure{
 		ErrorMessage: proto.String("err"),
@@ -285,7 +286,7 @@ var protoStep = &gm.ProtoStep{
 }
 
 var protoConcept = &gm.ProtoConcept{
-	ConceptStep: newStepItem(false, []*gm.Fragment{
+	ConceptStep: newStepItem(false, false, []*gm.Fragment{
 		newTextFragment("Say "),
 		newParamFragment(newDynamicParam("hello")),
 		newTextFragment(" to "),
@@ -298,14 +299,14 @@ var protoConcept = &gm.ProtoConcept{
 		{
 			ItemType: gm.ProtoItem_Concept.Enum(),
 			Concept: &gm.ProtoConcept{
-				ConceptStep: newStepItem(false, []*gm.Fragment{
+				ConceptStep: newStepItem(false, false, []*gm.Fragment{
 					newTextFragment("Tell "),
 					newParamFragment(newDynamicParam("hello")),
 				}).GetStep(),
-				Steps: []*gm.ProtoItem{newStepItem(false, []*gm.Fragment{newTextFragment("Say Hi")})},
+				Steps: []*gm.ProtoItem{newStepItem(false, false, []*gm.Fragment{newTextFragment("Say Hi")})},
 			},
 		},
-		newStepItem(false, []*gm.Fragment{
+		newStepItem(false, false, []*gm.Fragment{
 			newTextFragment("Say "),
 			newParamFragment(newStaticParam("hi")),
 			newTextFragment(" to "),

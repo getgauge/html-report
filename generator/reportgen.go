@@ -231,9 +231,14 @@ func generateScenario(w io.Writer, scn *scenario) {
 	gen(scenarioHeaderStartDiv, w, scn)
 	gen(tagsDiv, w, scn)
 	gen(endDiv, w, nil)
+	if scn.PreHookFailure != nil {
+		gen(hookFailureDiv, w, scn.PreHookFailure)
+	}
+
 	generateItems(w, scn.Contexts, generateContextOrTeardown)
 	generateItems(w, scn.Items, generateItem)
 	generateItems(w, scn.Teardown, generateContextOrTeardown)
+
 	if scn.PostHookFailure != nil {
 		gen(hookFailureDiv, w, scn.PostHookFailure)
 	}

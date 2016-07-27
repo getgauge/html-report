@@ -34,13 +34,13 @@ var scenario1 = &gm.ProtoScenario{
 	Tags:            []string{"foo", "bar"},
 	ExecutionTime:   proto.Int64(113163),
 	Contexts: []*gm.ProtoItem{
-		newStepItem(false, []*gm.Fragment{newTextFragment("Context Step1")}),
-		newStepItem(false, []*gm.Fragment{newTextFragment("Context Step2")}),
+		newStepItem(false, false, []*gm.Fragment{newTextFragment("Context Step1")}),
+		newStepItem(false, false, []*gm.Fragment{newTextFragment("Context Step2")}),
 	},
 	ScenarioItems: []*gm.ProtoItem{
-		newStepItem(false, []*gm.Fragment{newTextFragment("Step1")}),
+		newStepItem(false, false, []*gm.Fragment{newTextFragment("Step1")}),
 		newCommentItem("Comment1"),
-		newStepItem(false, []*gm.Fragment{
+		newStepItem(false, false, []*gm.Fragment{
 			newTextFragment("Say "),
 			newParamFragment(newStaticParam("hi")),
 			newTextFragment(" to "),
@@ -48,21 +48,21 @@ var scenario1 = &gm.ProtoScenario{
 		}),
 		newCommentItem("Comment2"),
 		newConceptItem("Concept Heading", []*gm.ProtoItem{
-			newStepItem(false, []*gm.Fragment{newTextFragment("Concept Step1")}),
-			newStepItem(false, []*gm.Fragment{newTextFragment("Concept Step2")}),
+			newStepItem(false, false, []*gm.Fragment{newTextFragment("Concept Step1")}),
+			newStepItem(false, false, []*gm.Fragment{newTextFragment("Concept Step2")}),
 		}),
 		newConceptItem("Outer Concept", []*gm.ProtoItem{
-			newStepItem(false, []*gm.Fragment{newTextFragment("Outer Concept Step 1")}),
+			newStepItem(false, false, []*gm.Fragment{newTextFragment("Outer Concept Step 1")}),
 			newConceptItem("Inner Concept", []*gm.ProtoItem{
-				newStepItem(false, []*gm.Fragment{newTextFragment("Inner Concept Step 1")}),
-				newStepItem(false, []*gm.Fragment{newTextFragment("Inner Concept Step 2")}),
+				newStepItem(false, false, []*gm.Fragment{newTextFragment("Inner Concept Step 1")}),
+				newStepItem(false, false, []*gm.Fragment{newTextFragment("Inner Concept Step 2")}),
 			}),
-			newStepItem(false, []*gm.Fragment{newTextFragment("Outer Concept Step 2")}),
+			newStepItem(false, false, []*gm.Fragment{newTextFragment("Outer Concept Step 2")}),
 		}),
 	},
 	TearDownSteps: []*gm.ProtoItem{
-		newStepItem(false, []*gm.Fragment{newTextFragment("Teardown Step1")}),
-		newStepItem(false, []*gm.Fragment{newTextFragment("Teardown Step2")}),
+		newStepItem(false, false, []*gm.Fragment{newTextFragment("Teardown Step1")}),
+		newStepItem(false, false, []*gm.Fragment{newTextFragment("Teardown Step2")}),
 	},
 }
 
@@ -72,11 +72,11 @@ var scenario2 = &gm.ProtoScenario{
 	Skipped:         proto.Bool(false),
 	ExecutionTime:   proto.Int64(113163),
 	Contexts: []*gm.ProtoItem{
-		newStepItem(false, []*gm.Fragment{newTextFragment("Context Step1")}),
-		newStepItem(false, []*gm.Fragment{newTextFragment("Context Step2")}),
+		newStepItem(false, false, []*gm.Fragment{newTextFragment("Context Step1")}),
+		newStepItem(false, false, []*gm.Fragment{newTextFragment("Context Step2")}),
 	},
 	ScenarioItems: []*gm.ProtoItem{
-		newStepItem(false, []*gm.Fragment{
+		newStepItem(false, false, []*gm.Fragment{
 			newTextFragment("Almost all words have vowels"),
 			newParamFragment(newTableParam([]string{"Word", "Count"}, [][]string{
 				[]string{"Gauge", "3"},
@@ -85,8 +85,8 @@ var scenario2 = &gm.ProtoScenario{
 		}),
 	},
 	TearDownSteps: []*gm.ProtoItem{
-		newStepItem(false, []*gm.Fragment{newTextFragment("Teardown Step1")}),
-		newStepItem(false, []*gm.Fragment{newTextFragment("Teardown Step2")}),
+		newStepItem(false, false, []*gm.Fragment{newTextFragment("Teardown Step1")}),
+		newStepItem(false, false, []*gm.Fragment{newTextFragment("Teardown Step2")}),
 	},
 }
 
@@ -96,9 +96,24 @@ var scenarioWithAfterHookFail = &gm.ProtoScenario{
 	Skipped:         proto.Bool(false),
 	ExecutionTime:   proto.Int64(113163),
 	ScenarioItems: []*gm.ProtoItem{
-		newStepItem(false, []*gm.Fragment{newTextFragment("Some step")}),
+		newStepItem(false, false, []*gm.Fragment{newTextFragment("Some step")}),
 	},
 	PostHookFailure: &gm.ProtoHookFailure{
+		ErrorMessage: proto.String("java.lang.RuntimeException"),
+		StackTrace:   proto.String(newStackTrace()),
+		ScreenShot:   []byte(newScreenshot()),
+	},
+}
+
+var scenarioWithBeforeHookFail = &gm.ProtoScenario{
+	ScenarioHeading: proto.String("Scenario Heading"),
+	Failed:          proto.Bool(true),
+	Skipped:         proto.Bool(false),
+	ExecutionTime:   proto.Int64(113163),
+	ScenarioItems: []*gm.ProtoItem{
+		newStepItem(false, true, []*gm.Fragment{newTextFragment("Some step")}),
+	},
+	PreHookFailure: &gm.ProtoHookFailure{
 		ErrorMessage: proto.String("java.lang.RuntimeException"),
 		StackTrace:   proto.String(newStackTrace()),
 		ScreenShot:   []byte(newScreenshot()),
@@ -202,6 +217,20 @@ var failSpecRes1 = &gm.ProtoSpecResult{
 		FileName:    proto.String("/tmp/gauge/specs/foobar.spec"),
 		Items: []*gm.ProtoItem{
 			newScenarioItem(scenarioWithAfterHookFail),
+		},
+	},
+}
+
+var failSpecRes5 = &gm.ProtoSpecResult{
+	Failed:        proto.Bool(true),
+	Skipped:       proto.Bool(false),
+	ExecutionTime: proto.Int64(211316),
+	ProtoSpec: &gm.ProtoSpec{
+		SpecHeading: proto.String("Failing Specification 1"),
+		Tags:        []string{},
+		FileName:    proto.String("/tmp/gauge/specs/foobar.spec"),
+		Items: []*gm.ProtoItem{
+			newScenarioItem(scenarioWithBeforeHookFail),
 		},
 	},
 }
@@ -360,6 +389,19 @@ var suiteResWithBeforeAfterSuiteFailure = &gm.ProtoSuiteResult{
 	},
 }
 
+var suiteResWithBeforeScenarioFailure = &gm.ProtoSuiteResult{
+	SpecResults:       []*gm.ProtoSpecResult{failSpecRes5},
+	Failed:            proto.Bool(true),
+	SpecsFailedCount:  proto.Int32(1),
+	ExecutionTime:     proto.Int64(122609),
+	SuccessRate:       proto.Float32(0),
+	Environment:       proto.String("default"),
+	Tags:              proto.String(""),
+	ProjectName:       proto.String("Gauge Project"),
+	Timestamp:         proto.String("Jul 13, 2016 at 11:49am"),
+	SpecsSkippedCount: proto.Int32(0),
+}
+
 var suiteResWithAfterScenarioFailure = &gm.ProtoSuiteResult{
 	SpecResults:       []*gm.ProtoSpecResult{failSpecRes1},
 	Failed:            proto.Bool(true),
@@ -386,8 +428,8 @@ var suiteResWithAfterStepFailure = &gm.ProtoSuiteResult{
 	SpecsSkippedCount: proto.Int32(0),
 }
 
-var suiteResWithAfterSpecFailure = &gm.ProtoSuiteResult{
-	SpecResults:       []*gm.ProtoSpecResult{failSpecRes3},
+var suiteResWithBeforeSpecFailure = &gm.ProtoSuiteResult{
+	SpecResults:       []*gm.ProtoSpecResult{failSpecRes4},
 	Failed:            proto.Bool(true),
 	SpecsFailedCount:  proto.Int32(1),
 	ExecutionTime:     proto.Int64(122609),
@@ -399,8 +441,8 @@ var suiteResWithAfterSpecFailure = &gm.ProtoSuiteResult{
 	SpecsSkippedCount: proto.Int32(0),
 }
 
-var suiteResWithBeforeSpecFailure = &gm.ProtoSuiteResult{
-	SpecResults:       []*gm.ProtoSpecResult{failSpecRes4},
+var suiteResWithAfterSpecFailure = &gm.ProtoSuiteResult{
+	SpecResults:       []*gm.ProtoSpecResult{failSpecRes3},
 	Failed:            proto.Bool(true),
 	SpecsFailedCount:  proto.Int32(1),
 	ExecutionTime:     proto.Int64(122609),
@@ -423,6 +465,7 @@ var HTMLGenerationTests = []*HTMLGenerationTest{
 	{"before suite failure", suiteResWithBeforeSuiteFailure, "before_suite_fail.html"},
 	{"after suite failure", suiteResWithAfterSuiteFailure, "after_suite_fail.html"},
 	{"both before and after suite failure", suiteResWithBeforeAfterSuiteFailure, "before_after_suite_fail.html"},
+	{"before scenario failure", suiteResWithBeforeScenarioFailure, "before_scenario_fail.html"},
 	{"after scenario failure", suiteResWithAfterScenarioFailure, "after_scenario_fail.html"},
 	{"after step failure", suiteResWithAfterStepFailure, "after_step_fail.html"},
 	{"before spec failure", suiteResWithBeforeSpecFailure, "before_spec_fail.html"},
