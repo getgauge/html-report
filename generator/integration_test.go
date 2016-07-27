@@ -232,7 +232,7 @@ var passSpecRes3 = &gm.ProtoSpecResult{
 	},
 }
 
-var failSpecRes1 = &gm.ProtoSpecResult{
+var failSpecResWithAfterScenarioFailure = &gm.ProtoSpecResult{
 	Failed:        proto.Bool(true),
 	Skipped:       proto.Bool(false),
 	ExecutionTime: proto.Int64(211316),
@@ -246,7 +246,7 @@ var failSpecRes1 = &gm.ProtoSpecResult{
 	},
 }
 
-var failSpecRes5 = &gm.ProtoSpecResult{
+var failSpecResWithBeforeScenarioFailure = &gm.ProtoSpecResult{
 	Failed:        proto.Bool(true),
 	Skipped:       proto.Bool(false),
 	ExecutionTime: proto.Int64(211316),
@@ -274,7 +274,7 @@ var failSpecResWithBeforeStepFailure = &gm.ProtoSpecResult{
 	},
 }
 
-var failSpecRes2 = &gm.ProtoSpecResult{
+var failSpecResWithAfterStepFailure = &gm.ProtoSpecResult{
 	Failed:        proto.Bool(true),
 	Skipped:       proto.Bool(false),
 	ExecutionTime: proto.Int64(211316),
@@ -288,7 +288,7 @@ var failSpecRes2 = &gm.ProtoSpecResult{
 	},
 }
 
-var failSpecRes3 = &gm.ProtoSpecResult{
+var failSpecResWithAfterSpecFailure = &gm.ProtoSpecResult{
 	Failed:        proto.Bool(true),
 	Skipped:       proto.Bool(false),
 	ExecutionTime: proto.Int64(211316),
@@ -320,7 +320,7 @@ var failSpecRes3 = &gm.ProtoSpecResult{
 	},
 }
 
-var failSpecRes4 = &gm.ProtoSpecResult{
+var failSpecResWithBeforeSpecFailure = &gm.ProtoSpecResult{
 	Failed:        proto.Bool(true),
 	Skipped:       proto.Bool(false),
 	ExecutionTime: proto.Int64(211316),
@@ -359,7 +359,7 @@ var skipSpecRes1 = &gm.ProtoSpecResult{
 }
 
 var suiteRes = &gm.ProtoSuiteResult{
-	SpecResults:       []*gm.ProtoSpecResult{passSpecRes1, passSpecRes2, passSpecRes3, failSpecRes1, skipSpecRes1},
+	SpecResults:       []*gm.ProtoSpecResult{passSpecRes1, passSpecRes2, passSpecRes3, failSpecResWithAfterScenarioFailure, skipSpecRes1},
 	Failed:            proto.Bool(false),
 	SpecsFailedCount:  proto.Int32(1),
 	ExecutionTime:     proto.Int64(122609),
@@ -389,7 +389,7 @@ var suiteResWithBeforeSuiteFailure = &gm.ProtoSuiteResult{
 }
 
 var suiteResWithAfterSuiteFailure = &gm.ProtoSuiteResult{
-	SpecResults:       []*gm.ProtoSpecResult{passSpecRes1, passSpecRes2, passSpecRes3, failSpecRes1, skipSpecRes1},
+	SpecResults:       []*gm.ProtoSpecResult{passSpecRes1, passSpecRes2, passSpecRes3, failSpecResWithAfterScenarioFailure, skipSpecRes1},
 	Failed:            proto.Bool(true),
 	SpecsFailedCount:  proto.Int32(1),
 	ExecutionTime:     proto.Int64(122609),
@@ -429,7 +429,7 @@ var suiteResWithBeforeAfterSuiteFailure = &gm.ProtoSuiteResult{
 }
 
 var suiteResWithBeforeScenarioFailure = &gm.ProtoSuiteResult{
-	SpecResults:       []*gm.ProtoSpecResult{failSpecRes5},
+	SpecResults:       []*gm.ProtoSpecResult{failSpecResWithBeforeScenarioFailure},
 	Failed:            proto.Bool(true),
 	SpecsFailedCount:  proto.Int32(1),
 	ExecutionTime:     proto.Int64(122609),
@@ -442,7 +442,7 @@ var suiteResWithBeforeScenarioFailure = &gm.ProtoSuiteResult{
 }
 
 var suiteResWithAfterScenarioFailure = &gm.ProtoSuiteResult{
-	SpecResults:       []*gm.ProtoSpecResult{failSpecRes1},
+	SpecResults:       []*gm.ProtoSpecResult{failSpecResWithAfterScenarioFailure},
 	Failed:            proto.Bool(true),
 	SpecsFailedCount:  proto.Int32(1),
 	ExecutionTime:     proto.Int64(122609),
@@ -468,7 +468,7 @@ var suiteResWithBeforeStepFailure = &gm.ProtoSuiteResult{
 }
 
 var suiteResWithAfterStepFailure = &gm.ProtoSuiteResult{
-	SpecResults:       []*gm.ProtoSpecResult{failSpecRes2},
+	SpecResults:       []*gm.ProtoSpecResult{failSpecResWithAfterStepFailure},
 	Failed:            proto.Bool(true),
 	SpecsFailedCount:  proto.Int32(1),
 	ExecutionTime:     proto.Int64(122609),
@@ -481,7 +481,7 @@ var suiteResWithAfterStepFailure = &gm.ProtoSuiteResult{
 }
 
 var suiteResWithBeforeSpecFailure = &gm.ProtoSuiteResult{
-	SpecResults:       []*gm.ProtoSpecResult{failSpecRes4},
+	SpecResults:       []*gm.ProtoSpecResult{failSpecResWithBeforeSpecFailure},
 	Failed:            proto.Bool(true),
 	SpecsFailedCount:  proto.Int32(1),
 	ExecutionTime:     proto.Int64(122609),
@@ -494,7 +494,7 @@ var suiteResWithBeforeSpecFailure = &gm.ProtoSuiteResult{
 }
 
 var suiteResWithAfterSpecFailure = &gm.ProtoSuiteResult{
-	SpecResults:       []*gm.ProtoSpecResult{failSpecRes3},
+	SpecResults:       []*gm.ProtoSpecResult{failSpecResWithAfterSpecFailure},
 	Failed:            proto.Bool(true),
 	SpecsFailedCount:  proto.Int32(1),
 	ExecutionTime:     proto.Int64(122609),
