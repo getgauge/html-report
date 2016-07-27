@@ -1,0 +1,196 @@
+<!doctype html>
+<html>
+
+<head>
+  <meta http-equiv="X-UA-Compatible" content="IE=9; IE=8; IE=7; IE=EDGE" />
+  <title>Gauge Test Results</title>
+  <link rel="shortcut icon" type="image/x-icon" href="images/favicon.ico">
+  <link rel="stylesheet" type="text/css" href="css/open-sans.css">
+  <link rel="stylesheet" type="text/css" href="css/font-awesome.css">
+  <link rel="stylesheet" type="text/css" href="css/normalize.css" />
+  <link rel="stylesheet" type="text/css" href="css/angular-hovercard.css" />
+  <link rel="stylesheet" type="text/css" href="css/style.css" />
+  <script src="js/lightbox.js"></script>
+</head>
+
+<body>
+<header class="top">
+  <div class="header">
+    <div class="container">
+      <div class="logo"><img src="images/logo.png" alt="Report logo"></div>
+      <h2 class="project">Project: Gauge Project</h2>
+    </div>
+  </div>
+</header>
+
+<main class="main-container">
+  <div class="container">
+    <div class="report-overview">
+      <div class="report_chart">
+        <div class="chart">
+          <nvd3 options="options" data="data"></nvd3>
+        </div>
+        <div class="total-specs">
+          <span class="value">1</span>
+          <span class="txt">Total specs</span>
+        </div>
+      </div>
+      <div class="report_test-results">
+        <ul>
+          <li class="fail">
+            <span class="value">1</span>
+            <span class="txt">Failed</span>
+          </li>
+          <li class="pass">
+            <span class="value">0</span>
+            <span class="txt">Passed</span>
+          </li>
+          <li class="skip">
+            <span class="value">0</span>
+            <span class="txt">Skipped</span>
+          </li>
+        </ul>
+      </div>
+      <div class="report_details">
+        <ul>
+          <li>
+            <label>Environment </label>
+            <span>default</span>
+          </li>
+          <li>
+            <label>Success Rate </label>
+            <span>0%</span>
+          </li>
+          <li>
+            <label>Total Time </label>
+            <span>00:02:02</span>
+          </li>
+          <li>
+            <label>Generated On </label>
+            <span>Jul 13, 2016 at 11:49am</span>
+          </li>
+        </ul>
+      </div>
+    </div>
+    <div class="specifications">
+      <aside class="sidebar">
+        <h3 class="title">Specifications</h3>
+        <div class="searchbar">
+          <input id="searchSpecifications" placeholder="Type specification or tag name" type="text" />
+          <i class="fa fa-search"></i>
+        </div>
+        <div id="listOfSpecifications">
+          <ul id="scenarios" class="spec-list">
+            <li class='failed spec-name'>
+              <span id="scenarioName" class="scenarioname">Failing Specification 1</span>
+              <span id="time" class="time">00:03:31</span>
+            </li>
+          </ul>
+        </div>
+      </aside>
+
+      <div id="specificationContainer" class="details">
+        <header class="curr-spec">
+          <h3 class="spec-head" title="/tmp/gauge/specs/foobar.spec">Failing Specification 1</h3>
+          <span class="time">00:03:31</span>
+        </header>
+
+        <div id="specItemsContainer">
+          <div class="content">
+            <div class='scenario-container failed'>
+              <div class="scenario-head">
+                <h3 class="head borderBottom">Scenario Heading</h3>
+                <span class="time">00:01:53</span>
+              </div>
+              <div class="error-container failed">
+                <div collapsable class="error-heading">Before Scenario Failed:
+                  <span class="error-message"> java.lang.RuntimeException</span>
+                </div>
+                <div class="toggleShow" data-toggle="collapse" data-target="#hookFailureDetails">
+                  <span>[Show details]</span>
+                </div>
+                <div class="exception-container" id="hookFailureDetails">
+                  <div class="exception">
+                      <pre class="stacktrace">
+StepImplementation.foo(StepImplementation.java:16)
+sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
+sun.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:62)
+sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43)
+java.lang.reflect.Method.invoke(Method.java:483)
+com.thoughtworks.gauge.execution.MethodExecutor.execute(MethodExecutor.java:32)
+com.thoughtworks.gauge.execution.HooksExecutor$TaggedHookExecutor.executeHook(HooksExecutor.java:98)
+com.thoughtworks.gauge.execution.HooksExecutor$TaggedHookExecutor.execute(HooksExecutor.java:84)
+com.thoughtworks.gauge.execution.HooksExecutor.execute(HooksExecutor.java:41)
+com.thoughtworks.gauge.processor.MethodExecutionMessageProcessor.executeHooks(MethodExecutionMessageProcessor.java:55)
+com.thoughtworks.gauge.processor.SuiteExecutionStartingProcessor.process(SuiteExecutionStartingProcessor.java:26)
+com.thoughtworks.gauge.connection.MessageDispatcher.dispatchMessages(MessageDispatcher.java:72)
+com.thoughtworks.gauge.GaugeRuntime.main(GaugeRuntime.java:37)
+                      </pre>
+                  </div>
+                  <div class="screenshot-container">
+                    <a href="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAGwAAABsCAYAAACPZlfNAAAFG0lEQVR4nOyd/3HbNhTHYV0HaCeofF3AnaDyBLUmsDRBzhMknsDOBJYmiDOBmQ3s/+MzvYE3UPClAAWkRIkEH0D8eJ87VKpigoA+BAiCxNMfooV//p4u5Mv/Ms1k+tP4p1KmQqb163tZtG0fIrJOM/lyLdOVqNcJPMu0lmkl6/XhuWid2Gw24qz5oawUKnMn07RDHoVMS1nBkrRkxMg6XYhtnWYd/hyyvso6fXFZJhv2hMmKPciXRc98UEFIe6QqGCXqAES9mi3qFKjPMqTWVhNmKcsElVsNLRQlqgt8GpAFusnLUKTthKmj8BtBnsFIk3VCi3oT/VtWk2CkQdhEVeyBKM8HNVgJAZyzhsoCOP89qe9pdCbi8IhpCKNLU1/uFWGWwUiDsGsH+Y4tjfogBEFIg7CZo7zHlDZ1lO/o0iaO8x9L2n8O8x5VmmthYOzu0QWjSfMhDPiW5mMIPoo0CPN1feFT2oun/XiXBmGFr50Jf9J8TpN5lQZhax87MnAu7fW9xOxE6XIfDbxJm6hJ22fXO2rgo6XdOs6/iRdpetCxdLmTFpxKU3Oahav8W3AurRKmupDkpEnmwn/v4VTablivjsikpKkZ9kuRkLTadRhLI8WJtL0LZ5ZGCrm0gzMdLI0UUmmtU1MsjRQyaUfnElkaKSTSTk7+sjRSBkvrNFvP0kgZJK3z7RWWRoq1tF73w1gaKVbSet/AZGmk9JZmdceZpZHSS5r1IwIsjZTO0gY908HSSOkkbfBDOCyNlJPSSJ6aYmmkHJVG9pgbSyOlVRrpc4ksjZSD0sgfJGVppEDanfnB3hpnKtSXR7XurA/OFhWqox0rOi9c5H8ELCgsqgV9rvbALY2UT/qNsxam4ZZGxl8/y7cP54shuKWRUR0cXlavsDQS/AkDLG0w1fDemzDA0gZRLQvzKgywNGuqvJ2PEtvg0WM/ZJnPDgYHaxRgIRxGdGNpnUGEuWWrMIuIbjdqBUxvWFonzhEx7+BMh9wZRCHu1LRjZjOxnaRc2JSEz2knuTfDG1KE3zOZ24bh45Z2kEKW7VL/T62FqW5wMaiE26N2arNh4i1tZbH5ypSlMbvEO8tymeCI+my7carSMGAQ23qVHTbB38zVNnvoeIkLQdsdnQ8JK5ti96hRPRlCKzW7SZzvfhw7pZgBLjHIuCIsF0aN90MySFmaLeY5bEac9+DgXCl2jxRoYdSLp0nyY2n7eJ9L7AtLqxO8MMDSfhOFMMDStkQjDLC0yISB3KVFJwzkLC1KYSBXadEKAzlKi1oYyE1a9MJATtKSEAZykZaMMJCDtKSEgdSlJScMpCwtSWEgVWnJCgMpSktaGEhNWvLCQErSshAGUpGWjTCQgrSshIHYpWUnDMQsLUthIFZp2QoDMUrLWhiITVr2wkBM0liYwpD24XnXvaSxMAMlDYvogpXGwhqoxfXBStPrwzbOi8N0pXV9mtN4iYw1R1saCwuTVmksLFwOSmNhYQNptcXrLCx8auE4WFj4zMxWxsLi4Fq/YWFxwC0sMlhYZOzinrCwOCj1m0nzAyZISv1GCytGKQbTle/6jRa2HqkgTDd2IfkqYSoydjFSYZjj1GL+moOOG+H/ph1znFKmW/ODnTB1p/XGc4GYdtB45ipu8I7asH7EZxqYOqXY/irfXhj1veswdT47F3aRoJlhoKGgC/y37YcbTv2UB66wdVDhKXXpmB2Q8yLTY7MLNKmCNOM/TDzw1FRk/AoAAP//H/csAQ85/aEAAAAASUVORK5CYII=" rel="lightbox">
+                      <img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAGwAAABsCAYAAACPZlfNAAAFG0lEQVR4nOyd/3HbNhTHYV0HaCeofF3AnaDyBLUmsDRBzhMknsDOBJYmiDOBmQ3s/+MzvYE3UPClAAWkRIkEH0D8eJ87VKpigoA+BAiCxNMfooV//p4u5Mv/Ms1k+tP4p1KmQqb163tZtG0fIrJOM/lyLdOVqNcJPMu0lmkl6/XhuWid2Gw24qz5oawUKnMn07RDHoVMS1nBkrRkxMg6XYhtnWYd/hyyvso6fXFZJhv2hMmKPciXRc98UEFIe6QqGCXqAES9mi3qFKjPMqTWVhNmKcsElVsNLRQlqgt8GpAFusnLUKTthKmj8BtBnsFIk3VCi3oT/VtWk2CkQdhEVeyBKM8HNVgJAZyzhsoCOP89qe9pdCbi8IhpCKNLU1/uFWGWwUiDsGsH+Y4tjfogBEFIg7CZo7zHlDZ1lO/o0iaO8x9L2n8O8x5VmmthYOzu0QWjSfMhDPiW5mMIPoo0CPN1feFT2oun/XiXBmGFr50Jf9J8TpN5lQZhax87MnAu7fW9xOxE6XIfDbxJm6hJ22fXO2rgo6XdOs6/iRdpetCxdLmTFpxKU3Oahav8W3AurRKmupDkpEnmwn/v4VTablivjsikpKkZ9kuRkLTadRhLI8WJtL0LZ5ZGCrm0gzMdLI0UUmmtU1MsjRQyaUfnElkaKSTSTk7+sjRSBkvrNFvP0kgZJK3z7RWWRoq1tF73w1gaKVbSet/AZGmk9JZmdceZpZHSS5r1IwIsjZTO0gY908HSSOkkbfBDOCyNlJPSSJ6aYmmkHJVG9pgbSyOlVRrpc4ksjZSD0sgfJGVppEDanfnB3hpnKtSXR7XurA/OFhWqox0rOi9c5H8ELCgsqgV9rvbALY2UT/qNsxam4ZZGxl8/y7cP54shuKWRUR0cXlavsDQS/AkDLG0w1fDemzDA0gZRLQvzKgywNGuqvJ2PEtvg0WM/ZJnPDgYHaxRgIRxGdGNpnUGEuWWrMIuIbjdqBUxvWFonzhEx7+BMh9wZRCHu1LRjZjOxnaRc2JSEz2knuTfDG1KE3zOZ24bh45Z2kEKW7VL/T62FqW5wMaiE26N2arNh4i1tZbH5ypSlMbvEO8tymeCI+my7carSMGAQ23qVHTbB38zVNnvoeIkLQdsdnQ8JK5ti96hRPRlCKzW7SZzvfhw7pZgBLjHIuCIsF0aN90MySFmaLeY5bEac9+DgXCl2jxRoYdSLp0nyY2n7eJ9L7AtLqxO8MMDSfhOFMMDStkQjDLC0yISB3KVFJwzkLC1KYSBXadEKAzlKi1oYyE1a9MJATtKSEAZykZaMMJCDtKSEgdSlJScMpCwtSWEgVWnJCgMpSktaGEhNWvLCQErSshAGUpGWjTCQgrSshIHYpWUnDMQsLUthIFZp2QoDMUrLWhiITVr2wkBM0liYwpD24XnXvaSxMAMlDYvogpXGwhqoxfXBStPrwzbOi8N0pXV9mtN4iYw1R1saCwuTVmksLFwOSmNhYQNptcXrLCx8auE4WFj4zMxWxsLi4Fq/YWFxwC0sMlhYZOzinrCwOCj1m0nzAyZISv1GCytGKQbTle/6jRa2HqkgTDd2IfkqYSoydjFSYZjj1GL+moOOG+H/ph1znFKmW/ODnTB1p/XGc4GYdtB45ipu8I7asH7EZxqYOqXY/irfXhj1veswdT47F3aRoJlhoKGgC/y37YcbTv2UB66wdVDhKXXpmB2Q8yLTY7MLNKmCNOM/TDzw1FRk/AoAAP//H/csAQ85/aEAAAAASUVORK5CYII=" class="screenshot-thumbnail" />
+                    </a>
+                  </div>
+                </div>
+              </div>
+              <div class='step'>
+                <div class='step-info skipped'>
+                  <ul>
+                    <li class='step'>
+                      <div class='step-txt'>
+                        <span>Some step</span>
+                      </div>
+                    </li>
+                  </ul>
+                </div>
+              </div>
+              <div class="error-container failed">
+                <div collapsable class="error-heading">After Scenario Failed:
+                  <span class="error-message"> java.lang.RuntimeException</span>
+                </div>
+                <div class="toggleShow" data-toggle="collapse" data-target="#hookFailureDetails">
+                  <span>[Show details]</span>
+                </div>
+                <div class="exception-container" id="hookFailureDetails">
+                  <div class="exception">
+                      <pre class="stacktrace">
+                StepImplementation.foo(StepImplementation.java:16)
+                sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
+                sun.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:62)
+                sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43)
+                java.lang.reflect.Method.invoke(Method.java:483)
+                com.thoughtworks.gauge.execution.MethodExecutor.execute(MethodExecutor.java:32)
+                com.thoughtworks.gauge.execution.HooksExecutor$TaggedHookExecutor.executeHook(HooksExecutor.java:98)
+                com.thoughtworks.gauge.execution.HooksExecutor$TaggedHookExecutor.execute(HooksExecutor.java:84)
+                com.thoughtworks.gauge.execution.HooksExecutor.execute(HooksExecutor.java:41)
+                com.thoughtworks.gauge.processor.MethodExecutionMessageProcessor.executeHooks(MethodExecutionMessageProcessor.java:55)
+                com.thoughtworks.gauge.processor.SuiteExecutionStartingProcessor.process(SuiteExecutionStartingProcessor.java:26)
+                com.thoughtworks.gauge.connection.MessageDispatcher.dispatchMessages(MessageDispatcher.java:72)
+                com.thoughtworks.gauge.GaugeRuntime.main(GaugeRuntime.java:37)
+                      </pre>
+                  </div>
+
+                  <div class="screenshot-container">
+                    <a href="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAGwAAABsCAYAAACPZlfNAAAFG0lEQVR4nOyd/3HbNhTHYV0HaCeofF3AnaDyBLUmsDRBzhMknsDOBJYmiDOBmQ3s/+MzvYE3UPClAAWkRIkEH0D8eJ87VKpigoA+BAiCxNMfooV//p4u5Mv/Ms1k+tP4p1KmQqb163tZtG0fIrJOM/lyLdOVqNcJPMu0lmkl6/XhuWid2Gw24qz5oawUKnMn07RDHoVMS1nBkrRkxMg6XYhtnWYd/hyyvso6fXFZJhv2hMmKPciXRc98UEFIe6QqGCXqAES9mi3qFKjPMqTWVhNmKcsElVsNLRQlqgt8GpAFusnLUKTthKmj8BtBnsFIk3VCi3oT/VtWk2CkQdhEVeyBKM8HNVgJAZyzhsoCOP89qe9pdCbi8IhpCKNLU1/uFWGWwUiDsGsH+Y4tjfogBEFIg7CZo7zHlDZ1lO/o0iaO8x9L2n8O8x5VmmthYOzu0QWjSfMhDPiW5mMIPoo0CPN1feFT2oun/XiXBmGFr50Jf9J8TpN5lQZhax87MnAu7fW9xOxE6XIfDbxJm6hJ22fXO2rgo6XdOs6/iRdpetCxdLmTFpxKU3Oahav8W3AurRKmupDkpEnmwn/v4VTablivjsikpKkZ9kuRkLTadRhLI8WJtL0LZ5ZGCrm0gzMdLI0UUmmtU1MsjRQyaUfnElkaKSTSTk7+sjRSBkvrNFvP0kgZJK3z7RWWRoq1tF73w1gaKVbSet/AZGmk9JZmdceZpZHSS5r1IwIsjZTO0gY908HSSOkkbfBDOCyNlJPSSJ6aYmmkHJVG9pgbSyOlVRrpc4ksjZSD0sgfJGVppEDanfnB3hpnKtSXR7XurA/OFhWqox0rOi9c5H8ELCgsqgV9rvbALY2UT/qNsxam4ZZGxl8/y7cP54shuKWRUR0cXlavsDQS/AkDLG0w1fDemzDA0gZRLQvzKgywNGuqvJ2PEtvg0WM/ZJnPDgYHaxRgIRxGdGNpnUGEuWWrMIuIbjdqBUxvWFonzhEx7+BMh9wZRCHu1LRjZjOxnaRc2JSEz2knuTfDG1KE3zOZ24bh45Z2kEKW7VL/T62FqW5wMaiE26N2arNh4i1tZbH5ypSlMbvEO8tymeCI+my7carSMGAQ23qVHTbB38zVNnvoeIkLQdsdnQ8JK5ti96hRPRlCKzW7SZzvfhw7pZgBLjHIuCIsF0aN90MySFmaLeY5bEac9+DgXCl2jxRoYdSLp0nyY2n7eJ9L7AtLqxO8MMDSfhOFMMDStkQjDLC0yISB3KVFJwzkLC1KYSBXadEKAzlKi1oYyE1a9MJATtKSEAZykZaMMJCDtKSEgdSlJScMpCwtSWEgVWnJCgMpSktaGEhNWvLCQErSshAGUpGWjTCQgrSshIHYpWUnDMQsLUthIFZp2QoDMUrLWhiITVr2wkBM0liYwpD24XnXvaSxMAMlDYvogpXGwhqoxfXBStPrwzbOi8N0pXV9mtN4iYw1R1saCwuTVmksLFwOSmNhYQNptcXrLCx8auE4WFj4zMxWxsLi4Fq/YWFxwC0sMlhYZOzinrCwOCj1m0nzAyZISv1GCytGKQbTle/6jRa2HqkgTDd2IfkqYSoydjFSYZjj1GL+moOOG+H/ph1znFKmW/ODnTB1p/XGc4GYdtB45ipu8I7asH7EZxqYOqXY/irfXhj1veswdT47F3aRoJlhoKGgC/y37YcbTv2UB66wdVDhKXXpmB2Q8yLTY7MLNKmCNOM/TDzw1FRk/AoAAP//H/csAQ85/aEAAAAASUVORK5CYII=" rel="lightbox">
+                      <img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAGwAAABsCAYAAACPZlfNAAAFG0lEQVR4nOyd/3HbNhTHYV0HaCeofF3AnaDyBLUmsDRBzhMknsDOBJYmiDOBmQ3s/+MzvYE3UPClAAWkRIkEH0D8eJ87VKpigoA+BAiCxNMfooV//p4u5Mv/Ms1k+tP4p1KmQqb163tZtG0fIrJOM/lyLdOVqNcJPMu0lmkl6/XhuWid2Gw24qz5oawUKnMn07RDHoVMS1nBkrRkxMg6XYhtnWYd/hyyvso6fXFZJhv2hMmKPciXRc98UEFIe6QqGCXqAES9mi3qFKjPMqTWVhNmKcsElVsNLRQlqgt8GpAFusnLUKTthKmj8BtBnsFIk3VCi3oT/VtWk2CkQdhEVeyBKM8HNVgJAZyzhsoCOP89qe9pdCbi8IhpCKNLU1/uFWGWwUiDsGsH+Y4tjfogBEFIg7CZo7zHlDZ1lO/o0iaO8x9L2n8O8x5VmmthYOzu0QWjSfMhDPiW5mMIPoo0CPN1feFT2oun/XiXBmGFr50Jf9J8TpN5lQZhax87MnAu7fW9xOxE6XIfDbxJm6hJ22fXO2rgo6XdOs6/iRdpetCxdLmTFpxKU3Oahav8W3AurRKmupDkpEnmwn/v4VTablivjsikpKkZ9kuRkLTadRhLI8WJtL0LZ5ZGCrm0gzMdLI0UUmmtU1MsjRQyaUfnElkaKSTSTk7+sjRSBkvrNFvP0kgZJK3z7RWWRoq1tF73w1gaKVbSet/AZGmk9JZmdceZpZHSS5r1IwIsjZTO0gY908HSSOkkbfBDOCyNlJPSSJ6aYmmkHJVG9pgbSyOlVRrpc4ksjZSD0sgfJGVppEDanfnB3hpnKtSXR7XurA/OFhWqox0rOi9c5H8ELCgsqgV9rvbALY2UT/qNsxam4ZZGxl8/y7cP54shuKWRUR0cXlavsDQS/AkDLG0w1fDemzDA0gZRLQvzKgywNGuqvJ2PEtvg0WM/ZJnPDgYHaxRgIRxGdGNpnUGEuWWrMIuIbjdqBUxvWFonzhEx7+BMh9wZRCHu1LRjZjOxnaRc2JSEz2knuTfDG1KE3zOZ24bh45Z2kEKW7VL/T62FqW5wMaiE26N2arNh4i1tZbH5ypSlMbvEO8tymeCI+my7carSMGAQ23qVHTbB38zVNnvoeIkLQdsdnQ8JK5ti96hRPRlCKzW7SZzvfhw7pZgBLjHIuCIsF0aN90MySFmaLeY5bEac9+DgXCl2jxRoYdSLp0nyY2n7eJ9L7AtLqxO8MMDSfhOFMMDStkQjDLC0yISB3KVFJwzkLC1KYSBXadEKAzlKi1oYyE1a9MJATtKSEAZykZaMMJCDtKSEgdSlJScMpCwtSWEgVWnJCgMpSktaGEhNWvLCQErSshAGUpGWjTCQgrSshIHYpWUnDMQsLUthIFZp2QoDMUrLWhiITVr2wkBM0liYwpD24XnXvaSxMAMlDYvogpXGwhqoxfXBStPrwzbOi8N0pXV9mtN4iYw1R1saCwuTVmksLFwOSmNhYQNptcXrLCx8auE4WFj4zMxWxsLi4Fq/YWFxwC0sMlhYZOzinrCwOCj1m0nzAyZISv1GCytGKQbTle/6jRa2HqkgTDd2IfkqYSoydjFSYZjj1GL+moOOG+H/ph1znFKmW/ODnTB1p/XGc4GYdtB45ipu8I7asH7EZxqYOqXY/irfXhj1veswdT47F3aRoJlhoKGgC/y37YcbTv2UB66wdVDhKXXpmB2Q8yLTY7MLNKmCNOM/TDzw1FRk/AoAAP//H/csAQ85/aEAAAAASUVORK5CYII=" class="screenshot-thumbnail" />
+                    </a>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</main>
+
+<footer class="footer">
+  <div class="container">
+    <p>Generated by Gauge HTML Report</p>
+  </div>
+</footer>
+</body>
+
+</html>

@@ -119,6 +119,27 @@ var scenarioWithBeforeHookFail = &gm.ProtoScenario{
 		ScreenShot:   []byte(newScreenshot()),
 	},
 }
+
+var scenarioWithBeforeAndAfterHookFail = &gm.ProtoScenario{
+	ScenarioHeading: proto.String("Scenario Heading"),
+	Failed:          proto.Bool(true),
+	Skipped:         proto.Bool(false),
+	ExecutionTime:   proto.Int64(113163),
+	ScenarioItems: []*gm.ProtoItem{
+		newStepItem(false, true, []*gm.Fragment{newTextFragment("Some step")}),
+	},
+	PreHookFailure: &gm.ProtoHookFailure{
+		ErrorMessage: proto.String("java.lang.RuntimeException"),
+		StackTrace:   proto.String(newStackTrace()),
+		ScreenShot:   []byte(newScreenshot()),
+	},
+	PostHookFailure: &gm.ProtoHookFailure{
+		ErrorMessage: proto.String("java.lang.RuntimeException"),
+		StackTrace:   proto.String(newStackTrace()),
+		ScreenShot:   []byte(newScreenshot()),
+	},
+}
+
 var stepWithBeforeHookFail = &gm.ProtoItem{
 	ItemType: gm.ProtoItem_Step.Enum(),
 	Step: &gm.ProtoStep{
@@ -144,6 +165,29 @@ var stepWithAfterHookFail = &gm.ProtoItem{
 			ExecutionResult: &gm.ProtoExecutionResult{
 				Failed:        proto.Bool(true),
 				ExecutionTime: proto.Int64(211316),
+			},
+			PostHookFailure: &gm.ProtoHookFailure{
+				ErrorMessage: proto.String("java.lang.RuntimeException"),
+				StackTrace:   proto.String(newStackTrace()),
+				ScreenShot:   []byte(newScreenshot()),
+			},
+		},
+		Fragments: []*gm.Fragment{newTextFragment("This is a failing step")},
+	},
+}
+
+var stepWithBeforeAndAfterHookFail = &gm.ProtoItem{
+	ItemType: gm.ProtoItem_Step.Enum(),
+	Step: &gm.ProtoStep{
+		StepExecutionResult: &gm.ProtoStepExecutionResult{
+			ExecutionResult: &gm.ProtoExecutionResult{
+				Failed:        proto.Bool(true),
+				ExecutionTime: proto.Int64(211316),
+			},
+			PreHookFailure: &gm.ProtoHookFailure{
+				ErrorMessage: proto.String("java.lang.RuntimeException"),
+				StackTrace:   proto.String(newStackTrace()),
+				ScreenShot:   []byte(newScreenshot()),
 			},
 			PostHookFailure: &gm.ProtoHookFailure{
 				ErrorMessage: proto.String("java.lang.RuntimeException"),
@@ -182,6 +226,14 @@ var scenarioWithAfterStepFail = &gm.ProtoScenario{
 	Skipped:         proto.Bool(false),
 	ExecutionTime:   proto.Int64(113163),
 	ScenarioItems:   []*gm.ProtoItem{stepWithAfterHookFail, stepNotExecuted},
+}
+
+var scenarioWithBeforeAndAfterStepFail = &gm.ProtoScenario{
+	ScenarioHeading: proto.String("Scenario Heading"),
+	Failed:          proto.Bool(true),
+	Skipped:         proto.Bool(false),
+	ExecutionTime:   proto.Int64(113163),
+	ScenarioItems:   []*gm.ProtoItem{stepWithBeforeAndAfterHookFail, stepNotExecuted},
 }
 
 var passSpecRes1 = &gm.ProtoSpecResult{
@@ -260,6 +312,20 @@ var failSpecResWithBeforeScenarioFailure = &gm.ProtoSpecResult{
 	},
 }
 
+var failSpecResWithBeforeAndAfterScenarioFailure = &gm.ProtoSpecResult{
+	Failed:        proto.Bool(true),
+	Skipped:       proto.Bool(false),
+	ExecutionTime: proto.Int64(211316),
+	ProtoSpec: &gm.ProtoSpec{
+		SpecHeading: proto.String("Failing Specification 1"),
+		Tags:        []string{},
+		FileName:    proto.String("/tmp/gauge/specs/foobar.spec"),
+		Items: []*gm.ProtoItem{
+			newScenarioItem(scenarioWithBeforeAndAfterHookFail),
+		},
+	},
+}
+
 var failSpecResWithBeforeStepFailure = &gm.ProtoSpecResult{
 	Failed:        proto.Bool(true),
 	Skipped:       proto.Bool(false),
@@ -284,6 +350,20 @@ var failSpecResWithAfterStepFailure = &gm.ProtoSpecResult{
 		FileName:    proto.String("/tmp/gauge/specs/foobar.spec"),
 		Items: []*gm.ProtoItem{
 			newScenarioItem(scenarioWithAfterStepFail),
+		},
+	},
+}
+
+var failSpecResWithBeforeAndAfterStepFailure = &gm.ProtoSpecResult{
+	Failed:        proto.Bool(true),
+	Skipped:       proto.Bool(false),
+	ExecutionTime: proto.Int64(211316),
+	ProtoSpec: &gm.ProtoSpec{
+		SpecHeading: proto.String("Failing Specification 1"),
+		Tags:        []string{},
+		FileName:    proto.String("/tmp/gauge/specs/foobar.spec"),
+		Items: []*gm.ProtoItem{
+			newScenarioItem(scenarioWithBeforeAndAfterStepFail),
 		},
 	},
 }
@@ -341,6 +421,39 @@ var failSpecResWithBeforeSpecFailure = &gm.ProtoSpecResult{
 			newScenarioItem(scenario2),
 		},
 		PreHookFailure: &gm.ProtoHookFailure{
+			ErrorMessage: proto.String("java.lang.RuntimeException"),
+			StackTrace:   proto.String(newStackTrace()),
+			ScreenShot:   []byte(newScreenshot()),
+		},
+	},
+}
+
+var failSpecResWithBeforeAfterSpecFailure = &gm.ProtoSpecResult{
+	Failed:        proto.Bool(true),
+	Skipped:       proto.Bool(false),
+	ExecutionTime: proto.Int64(211316),
+	ProtoSpec: &gm.ProtoSpec{
+		SpecHeading: proto.String("Failing Specification 1"),
+		Tags:        []string{},
+		FileName:    proto.String("/tmp/gauge/specs/foobar.spec"),
+		Items: []*gm.ProtoItem{
+			newCommentItem("\n"),
+			newCommentItem("This is an executable specification file. This file follows markdown syntax."),
+			newCommentItem("\n"),
+			newCommentItem("To execute this specification, run"),
+			newCommentItem("\tgauge specs"),
+			newCommentItem("\n"),
+			newCommentItem("Comment 1"),
+			newCommentItem("Comment 2"),
+			newCommentItem("Comment 3"),
+			newScenarioItem(scenario2),
+		},
+		PreHookFailure: &gm.ProtoHookFailure{
+			ErrorMessage: proto.String("java.lang.RuntimeException"),
+			StackTrace:   proto.String(newStackTrace()),
+			ScreenShot:   []byte(newScreenshot()),
+		},
+		PostHookFailure: &gm.ProtoHookFailure{
 			ErrorMessage: proto.String("java.lang.RuntimeException"),
 			StackTrace:   proto.String(newStackTrace()),
 			ScreenShot:   []byte(newScreenshot()),
@@ -454,6 +567,19 @@ var suiteResWithAfterScenarioFailure = &gm.ProtoSuiteResult{
 	SpecsSkippedCount: proto.Int32(0),
 }
 
+var suiteResWithBeforeAndAfterScenarioFailure = &gm.ProtoSuiteResult{
+	SpecResults:       []*gm.ProtoSpecResult{failSpecResWithBeforeAndAfterScenarioFailure},
+	Failed:            proto.Bool(true),
+	SpecsFailedCount:  proto.Int32(1),
+	ExecutionTime:     proto.Int64(122609),
+	SuccessRate:       proto.Float32(0),
+	Environment:       proto.String("default"),
+	Tags:              proto.String(""),
+	ProjectName:       proto.String("Gauge Project"),
+	Timestamp:         proto.String("Jul 13, 2016 at 11:49am"),
+	SpecsSkippedCount: proto.Int32(0),
+}
+
 var suiteResWithBeforeStepFailure = &gm.ProtoSuiteResult{
 	SpecResults:       []*gm.ProtoSpecResult{failSpecResWithBeforeStepFailure},
 	Failed:            proto.Bool(true),
@@ -469,6 +595,19 @@ var suiteResWithBeforeStepFailure = &gm.ProtoSuiteResult{
 
 var suiteResWithAfterStepFailure = &gm.ProtoSuiteResult{
 	SpecResults:       []*gm.ProtoSpecResult{failSpecResWithAfterStepFailure},
+	Failed:            proto.Bool(true),
+	SpecsFailedCount:  proto.Int32(1),
+	ExecutionTime:     proto.Int64(122609),
+	SuccessRate:       proto.Float32(0),
+	Environment:       proto.String("default"),
+	Tags:              proto.String(""),
+	ProjectName:       proto.String("Gauge Project"),
+	Timestamp:         proto.String("Jul 13, 2016 at 11:49am"),
+	SpecsSkippedCount: proto.Int32(0),
+}
+
+var suiteResWithBeforeAndAfterStepFailure = &gm.ProtoSuiteResult{
+	SpecResults:       []*gm.ProtoSpecResult{failSpecResWithBeforeAndAfterStepFailure},
 	Failed:            proto.Bool(true),
 	SpecsFailedCount:  proto.Int32(1),
 	ExecutionTime:     proto.Int64(122609),
@@ -506,6 +645,19 @@ var suiteResWithAfterSpecFailure = &gm.ProtoSuiteResult{
 	SpecsSkippedCount: proto.Int32(0),
 }
 
+var suiteResWithBeforeAfterSpecFailure = &gm.ProtoSuiteResult{
+	SpecResults:       []*gm.ProtoSpecResult{failSpecResWithBeforeAfterSpecFailure},
+	Failed:            proto.Bool(true),
+	SpecsFailedCount:  proto.Int32(1),
+	ExecutionTime:     proto.Int64(122609),
+	SuccessRate:       proto.Float32(0),
+	Environment:       proto.String("default"),
+	Tags:              proto.String(""),
+	ProjectName:       proto.String("Gauge Project"),
+	Timestamp:         proto.String("Jul 13, 2016 at 11:49am"),
+	SpecsSkippedCount: proto.Int32(0),
+}
+
 type HTMLGenerationTest struct {
 	name         string
 	res          *gm.ProtoSuiteResult
@@ -517,12 +669,15 @@ var HTMLGenerationTests = []*HTMLGenerationTest{
 	{"before suite failure", suiteResWithBeforeSuiteFailure, "before_suite_fail.html"},
 	{"after suite failure", suiteResWithAfterSuiteFailure, "after_suite_fail.html"},
 	{"both before and after suite failure", suiteResWithBeforeAfterSuiteFailure, "before_after_suite_fail.html"},
-	{"before scenario failure", suiteResWithBeforeScenarioFailure, "before_scenario_fail.html"},
-	{"after scenario failure", suiteResWithAfterScenarioFailure, "after_scenario_fail.html"},
-	{"before step failure", suiteResWithBeforeStepFailure, "before_step_fail.html"},
-	{"after step failure", suiteResWithAfterStepFailure, "after_step_fail.html"},
 	{"before spec failure", suiteResWithBeforeSpecFailure, "before_spec_fail.html"},
 	{"after spec failure", suiteResWithAfterSpecFailure, "after_spec_fail.html"},
+	{"both before and after spec failure", suiteResWithBeforeAfterSpecFailure, "before_after_spec_fail.html"},
+	{"before scenario failure", suiteResWithBeforeScenarioFailure, "before_scenario_fail.html"},
+	{"after scenario failure", suiteResWithAfterScenarioFailure, "after_scenario_fail.html"},
+	{"both before and after scenario failure", suiteResWithBeforeAndAfterScenarioFailure, "before_after_scenario_fail.html"},
+	{"before step failure", suiteResWithBeforeStepFailure, "before_step_fail.html"},
+	{"after step failure", suiteResWithAfterStepFailure, "after_step_fail.html"},
+	{"both before after step failure", suiteResWithBeforeAndAfterStepFailure, "before_after_step_fail.html"},
 }
 
 func TestHTMLGeneration(t *testing.T) {
