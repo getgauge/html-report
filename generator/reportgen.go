@@ -262,6 +262,11 @@ func generateItem(w io.Writer, item item) {
 	case stepKind:
 		gen(stepStartDiv, w, item.(*step))
 		gen(stepBodyDiv, w, item.(*step))
+
+		if item.(*step).PreHookFailure != nil {
+			gen(hookFailureDiv, w, item.(*step).PreHookFailure)
+		}
+
 		if item.(*step).PostHookFailure != nil {
 			gen(hookFailureDiv, w, item.(*step).PostHookFailure)
 		}

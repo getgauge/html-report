@@ -119,6 +119,23 @@ var scenarioWithBeforeHookFail = &gm.ProtoScenario{
 		ScreenShot:   []byte(newScreenshot()),
 	},
 }
+var stepWithBeforeHookFail = &gm.ProtoItem{
+	ItemType: gm.ProtoItem_Step.Enum(),
+	Step: &gm.ProtoStep{
+		StepExecutionResult: &gm.ProtoStepExecutionResult{
+			ExecutionResult: &gm.ProtoExecutionResult{
+				Failed:        proto.Bool(true),
+				ExecutionTime: proto.Int64(211316),
+			},
+			PreHookFailure: &gm.ProtoHookFailure{
+				ErrorMessage: proto.String("java.lang.RuntimeException"),
+				StackTrace:   proto.String(newStackTrace()),
+				ScreenShot:   []byte(newScreenshot()),
+			},
+		},
+		Fragments: []*gm.Fragment{newTextFragment("This is a failing step")},
+	},
+}
 
 var stepWithAfterHookFail = &gm.ProtoItem{
 	ItemType: gm.ProtoItem_Step.Enum(),
@@ -149,6 +166,14 @@ var stepNotExecuted = &gm.ProtoItem{
 		},
 		Fragments: []*gm.Fragment{newTextFragment("This step is skipped because previous one failed")},
 	},
+}
+
+var scenarioWithBeforeStepFail = &gm.ProtoScenario{
+	ScenarioHeading: proto.String("Scenario Heading"),
+	Failed:          proto.Bool(true),
+	Skipped:         proto.Bool(false),
+	ExecutionTime:   proto.Int64(113163),
+	ScenarioItems:   []*gm.ProtoItem{stepWithBeforeHookFail, stepNotExecuted},
 }
 
 var scenarioWithAfterStepFail = &gm.ProtoScenario{
@@ -231,6 +256,20 @@ var failSpecRes5 = &gm.ProtoSpecResult{
 		FileName:    proto.String("/tmp/gauge/specs/foobar.spec"),
 		Items: []*gm.ProtoItem{
 			newScenarioItem(scenarioWithBeforeHookFail),
+		},
+	},
+}
+
+var failSpecResWithBeforeStepFailure = &gm.ProtoSpecResult{
+	Failed:        proto.Bool(true),
+	Skipped:       proto.Bool(false),
+	ExecutionTime: proto.Int64(211316),
+	ProtoSpec: &gm.ProtoSpec{
+		SpecHeading: proto.String("Failing Specification 1"),
+		Tags:        []string{},
+		FileName:    proto.String("/tmp/gauge/specs/foobar.spec"),
+		Items: []*gm.ProtoItem{
+			newScenarioItem(scenarioWithBeforeStepFail),
 		},
 	},
 }
@@ -415,6 +454,19 @@ var suiteResWithAfterScenarioFailure = &gm.ProtoSuiteResult{
 	SpecsSkippedCount: proto.Int32(0),
 }
 
+var suiteResWithBeforeStepFailure = &gm.ProtoSuiteResult{
+	SpecResults:       []*gm.ProtoSpecResult{failSpecResWithBeforeStepFailure},
+	Failed:            proto.Bool(true),
+	SpecsFailedCount:  proto.Int32(1),
+	ExecutionTime:     proto.Int64(122609),
+	SuccessRate:       proto.Float32(0),
+	Environment:       proto.String("default"),
+	Tags:              proto.String(""),
+	ProjectName:       proto.String("Gauge Project"),
+	Timestamp:         proto.String("Jul 13, 2016 at 11:49am"),
+	SpecsSkippedCount: proto.Int32(0),
+}
+
 var suiteResWithAfterStepFailure = &gm.ProtoSuiteResult{
 	SpecResults:       []*gm.ProtoSpecResult{failSpecRes2},
 	Failed:            proto.Bool(true),
@@ -467,6 +519,7 @@ var HTMLGenerationTests = []*HTMLGenerationTest{
 	{"both before and after suite failure", suiteResWithBeforeAfterSuiteFailure, "before_after_suite_fail.html"},
 	{"before scenario failure", suiteResWithBeforeScenarioFailure, "before_scenario_fail.html"},
 	{"after scenario failure", suiteResWithAfterScenarioFailure, "after_scenario_fail.html"},
+	{"before step failure", suiteResWithBeforeStepFailure, "before_step_fail.html"},
 	{"after step failure", suiteResWithAfterStepFailure, "after_step_fail.html"},
 	{"before spec failure", suiteResWithBeforeSpecFailure, "before_spec_fail.html"},
 	{"after spec failure", suiteResWithAfterSpecFailure, "after_spec_fail.html"},
