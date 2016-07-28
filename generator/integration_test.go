@@ -349,6 +349,21 @@ var failSpecResWithBeforeAndAfterScenarioFailure = &gm.ProtoSpecResult{
 	},
 }
 
+var specResWithMultipleScenarios = &gm.ProtoSpecResult{
+	Failed:        proto.Bool(true),
+	Skipped:       proto.Bool(false),
+	ExecutionTime: proto.Int64(211316),
+	ProtoSpec: &gm.ProtoSpec{
+		SpecHeading: proto.String("Failing Specification 1"),
+		Tags:        []string{},
+		FileName:    proto.String("/tmp/gauge/specs/foobar.spec"),
+		Items: []*gm.ProtoItem{
+			newScenarioItem(scenarioWithStepFail),
+			newScenarioItem(scenario2),
+		},
+	},
+}
+
 var failSpecResWithBeforeStepFailure = &gm.ProtoSpecResult{
 	Failed:        proto.Bool(true),
 	Skipped:       proto.Bool(false),
@@ -617,6 +632,19 @@ var suiteResWithBeforeAndAfterScenarioFailure = &gm.ProtoSuiteResult{
 	SpecsSkippedCount: proto.Int32(0),
 }
 
+var suiteResWithMultipleScenarios = &gm.ProtoSuiteResult{
+	SpecResults:       []*gm.ProtoSpecResult{specResWithMultipleScenarios},
+	Failed:            proto.Bool(true),
+	SpecsFailedCount:  proto.Int32(1),
+	ExecutionTime:     proto.Int64(122609),
+	SuccessRate:       proto.Float32(0),
+	Environment:       proto.String("default"),
+	Tags:              proto.String(""),
+	ProjectName:       proto.String("Gauge Project"),
+	Timestamp:         proto.String("Jul 13, 2016 at 11:49am"),
+	SpecsSkippedCount: proto.Int32(0),
+}
+
 var suiteResWithBeforeStepFailure = &gm.ProtoSuiteResult{
 	SpecResults:       []*gm.ProtoSpecResult{failSpecResWithBeforeStepFailure},
 	Failed:            proto.Bool(true),
@@ -655,6 +683,7 @@ var suiteResWithBeforeAndAfterStepFailure = &gm.ProtoSuiteResult{
 	Timestamp:         proto.String("Jul 13, 2016 at 11:49am"),
 	SpecsSkippedCount: proto.Int32(0),
 }
+
 var suiteResWithStepFailure = &gm.ProtoSuiteResult{
 	SpecResults:       []*gm.ProtoSpecResult{failSpecResWithStepFailure},
 	Failed:            proto.Bool(true),
@@ -724,6 +753,7 @@ var HTMLGenerationTests = []*HTMLGenerationTest{
 	{"before scenario failure", suiteResWithBeforeScenarioFailure, "before_scenario_fail.html"},
 	{"after scenario failure", suiteResWithAfterScenarioFailure, "after_scenario_fail.html"},
 	{"both before and after scenario failure", suiteResWithBeforeAndAfterScenarioFailure, "before_after_scenario_fail.html"},
+	{"multiple scenarios", suiteResWithMultipleScenarios, "multiple_scenarios.html"},
 	{"before step failure", suiteResWithBeforeStepFailure, "before_step_fail.html"},
 	{"after step failure", suiteResWithAfterStepFailure, "after_step_fail.html"},
 	{"both before after step failure", suiteResWithBeforeAndAfterStepFailure, "before_after_step_fail.html"},
