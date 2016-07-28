@@ -150,9 +150,10 @@ func toStep(protoStep *gm.ProtoStep) *step {
 }
 
 func toConcept(protoConcept *gm.ProtoConcept) *concept {
+	protoConcept.ConceptStep.StepExecutionResult = protoConcept.GetConceptExecutionResult()
 	return &concept{
-		CptStep: toStep(protoConcept.ConceptStep),
-		Items:   getItems(protoConcept.Steps),
+		CptStep: toStep(protoConcept.GetConceptStep()),
+		Items:   getItems(protoConcept.GetSteps()),
 	}
 }
 
@@ -200,10 +201,7 @@ func getItems(protoItems []*gm.ProtoItem) []item {
 		case gm.ProtoItem_Comment:
 			items = append(items, toComment(i.GetComment()))
 		case gm.ProtoItem_Concept:
-			items = append(items, &concept{
-				CptStep: toStep(i.GetConcept().GetConceptStep()),
-				Items:   getItems(i.GetConcept().GetSteps()),
-			})
+			items = append(items, toConcept(i.GetConcept()))
 		}
 	}
 	return items

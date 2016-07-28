@@ -50,19 +50,44 @@ var scenario1 = &gm.ProtoScenario{
 		newConceptItem("Concept Heading", []*gm.ProtoItem{
 			newStepItem(false, false, []*gm.Fragment{newTextFragment("Concept Step1")}),
 			newStepItem(false, false, []*gm.Fragment{newTextFragment("Concept Step2")}),
+		}, &gm.ProtoStepExecutionResult{
+			ExecutionResult: &gm.ProtoExecutionResult{Failed: proto.Bool(false), ExecutionTime: proto.Int64(211316)},
 		}),
 		newConceptItem("Outer Concept", []*gm.ProtoItem{
 			newStepItem(false, false, []*gm.Fragment{newTextFragment("Outer Concept Step 1")}),
 			newConceptItem("Inner Concept", []*gm.ProtoItem{
 				newStepItem(false, false, []*gm.Fragment{newTextFragment("Inner Concept Step 1")}),
 				newStepItem(false, false, []*gm.Fragment{newTextFragment("Inner Concept Step 2")}),
+			}, &gm.ProtoStepExecutionResult{
+				ExecutionResult: &gm.ProtoExecutionResult{Failed: proto.Bool(false), ExecutionTime: proto.Int64(211316)},
 			}),
 			newStepItem(false, false, []*gm.Fragment{newTextFragment("Outer Concept Step 2")}),
+		}, &gm.ProtoStepExecutionResult{
+			ExecutionResult: &gm.ProtoExecutionResult{Failed: proto.Bool(false), ExecutionTime: proto.Int64(211316)},
 		}),
 	},
 	TearDownSteps: []*gm.ProtoItem{
 		newStepItem(false, false, []*gm.Fragment{newTextFragment("Teardown Step1")}),
 		newStepItem(false, false, []*gm.Fragment{newTextFragment("Teardown Step2")}),
+	},
+}
+var scenarioWithConceptFailure = &gm.ProtoScenario{
+	ScenarioHeading: proto.String("Vowel counts in single word"),
+	Failed:          proto.Bool(true),
+	Skipped:         proto.Bool(false),
+	Tags:            []string{"foo", "bar"},
+	ExecutionTime:   proto.Int64(113163),
+	ScenarioItems: []*gm.ProtoItem{
+		newStepItem(false, false, []*gm.Fragment{newTextFragment("Step1")}),
+		newConceptItem("Outer Concept", []*gm.ProtoItem{
+			newStepItem(false, false, []*gm.Fragment{newTextFragment("Outer Concept Step 1")}),
+			newConceptItem("Inner Concept", []*gm.ProtoItem{
+				newStepItem(false, false, []*gm.Fragment{newTextFragment("Inner Concept Step 1")}),
+				failedStep,
+				newStepItem(false, true, []*gm.Fragment{newTextFragment("Inner Concept Step 3")}),
+			}, &gm.ProtoStepExecutionResult{ExecutionResult: &gm.ProtoExecutionResult{Failed: proto.Bool(true), ExecutionTime: proto.Int64(113163)}}),
+			newStepItem(false, true, []*gm.Fragment{newTextFragment("Outer Concept Step 2")}),
+		}, &gm.ProtoStepExecutionResult{ExecutionResult: &gm.ProtoExecutionResult{Failed: proto.Bool(true), ExecutionTime: proto.Int64(113163)}}),
 	},
 }
 
@@ -420,6 +445,20 @@ var failSpecResWithStepFailure = &gm.ProtoSpecResult{
 	},
 }
 
+var failSpecResWithConceptFailure = &gm.ProtoSpecResult{
+	Failed:        proto.Bool(true),
+	Skipped:       proto.Bool(false),
+	ExecutionTime: proto.Int64(211316),
+	ProtoSpec: &gm.ProtoSpec{
+		SpecHeading: proto.String("Failing Specification"),
+		Tags:        []string{},
+		FileName:    proto.String("/tmp/gauge/specs/foobar.spec"),
+		Items: []*gm.ProtoItem{
+			newScenarioItem(scenarioWithConceptFailure),
+		},
+	},
+}
+
 var failSpecResWithAfterSpecFailure = &gm.ProtoSpecResult{
 	Failed:        proto.Bool(true),
 	Skipped:       proto.Bool(false),
@@ -736,6 +775,19 @@ var suiteResWithBeforeAfterSpecFailure = &gm.ProtoSuiteResult{
 	SpecsSkippedCount: proto.Int32(0),
 }
 
+var suiteResWithConceptFailure = &gm.ProtoSuiteResult{
+	SpecResults:       []*gm.ProtoSpecResult{failSpecResWithConceptFailure},
+	Failed:            proto.Bool(true),
+	SpecsFailedCount:  proto.Int32(1),
+	ExecutionTime:     proto.Int64(122609),
+	SuccessRate:       proto.Float32(60),
+	Environment:       proto.String("default"),
+	Tags:              proto.String(""),
+	ProjectName:       proto.String("Gauge Project"),
+	Timestamp:         proto.String("Jul 13, 2016 at 11:49am"),
+	SpecsSkippedCount: proto.Int32(0),
+}
+
 type HTMLGenerationTest struct {
 	name         string
 	res          *gm.ProtoSuiteResult
@@ -758,6 +810,7 @@ var HTMLGenerationTests = []*HTMLGenerationTest{
 	{"after step failure", suiteResWithAfterStepFailure, "after_step_fail.html"},
 	{"both before after step failure", suiteResWithBeforeAndAfterStepFailure, "before_after_step_fail.html"},
 	{"step failure", suiteResWithStepFailure, "step_fail.html"},
+	{"concept failure", suiteResWithConceptFailure, "concept_fail.html"},
 }
 
 func TestHTMLGeneration(t *testing.T) {

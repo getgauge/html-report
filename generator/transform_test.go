@@ -109,12 +109,13 @@ func newParamFragment(p *gm.Parameter) *gm.Fragment {
 	}
 }
 
-func newConceptItem(heading string, steps []*gm.ProtoItem) *gm.ProtoItem {
+func newConceptItem(heading string, steps []*gm.ProtoItem, cptRes *gm.ProtoStepExecutionResult) *gm.ProtoItem {
 	return &gm.ProtoItem{
 		ItemType: gm.ProtoItem_Concept.Enum(),
 		Concept: &gm.ProtoConcept{
 			ConceptStep: newStepItem(false, false, []*gm.Fragment{newTextFragment(heading)}).GetStep(),
 			Steps:       steps,
+			ConceptExecutionResult: cptRes,
 		},
 	}
 }
@@ -304,6 +305,9 @@ var protoConcept = &gm.ProtoConcept{
 					newParamFragment(newDynamicParam("hello")),
 				}).GetStep(),
 				Steps: []*gm.ProtoItem{newStepItem(false, false, []*gm.Fragment{newTextFragment("Say Hi")})},
+				ConceptExecutionResult: &gm.ProtoStepExecutionResult{
+					ExecutionResult: &gm.ProtoExecutionResult{Failed: proto.Bool(false), ExecutionTime: proto.Int64(211316)},
+				},
 			},
 		},
 		newStepItem(false, false, []*gm.Fragment{
