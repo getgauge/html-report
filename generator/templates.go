@@ -270,6 +270,22 @@ const stepBodyDiv = `
 {{end}}
 </div>`
 
+const stepFailureDiv = `<div class="error-container failed">
+  <div class="exception-container">
+      <div class="exception">
+        <h4 class="error-message">
+          <pre>{{.Message}}</pre>
+        </h4>
+        <pre class="stacktrace">{{.StackTrace}}</pre>
+      </div>
+      {{if .Screenshot}}<div class="screenshot-container">
+        <a href="data:image/png;base64,{{.Screenshot}}" rel="lightbox">
+          <img src="data:image/png;base64,{{.Screenshot}}" class="screenshot-thumbnail" />
+        </a>
+      </div>{{end}}
+  </div>
+</div>`
+
 const stepEndDiv = `</li></ul></div></div>`
 
 const conceptSpan = `<span>+ </span>`

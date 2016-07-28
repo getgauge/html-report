@@ -267,6 +267,10 @@ func generateItem(w io.Writer, item item) {
 			gen(hookFailureDiv, w, item.(*step).PreHookFailure)
 		}
 
+		if item.(*step).Res.Status == fail && item.(*step).Res.Message != "" && item.(*step).Res.StackTrace != "" {
+			gen(stepFailureDiv, w, item.(*step).Res)
+		}
+
 		if item.(*step).PostHookFailure != nil {
 			gen(hookFailureDiv, w, item.(*step).PostHookFailure)
 		}
