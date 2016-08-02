@@ -103,10 +103,10 @@ const sidebarDiv = `{{if not .IsPreHookFailure}}<aside class="sidebar">
 </aside>{{end}}`
 
 //TODO: Hide if pre/post hook failed
-const congratsDiv = `{{if not .Failed}}
+const congratsDiv = `
   <div class="congratulations details">
     <p>Congratulations! You've gone all <span class="green">green</span> and saved the environment!</p>
-  </div>{{end}}`
+  </div>`
 
 //TODO 1. Change text on toggle collapse
 //     2. Check for collapsible

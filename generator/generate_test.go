@@ -119,10 +119,6 @@ var wSidebarAside string = `<aside class="sidebar">
   </div>
 </aside>`
 
-var wCongratsDiv string = `<div class="congratulations details">
-  <p>Congratulations! You've gone all <span class="green">green</span> and saved the environment!</p>
-</div>`
-
 var wHookFailureWithScreenhotDiv string = `<div class="error-container failed">
 <div collapsable class="error-heading">BeforeSuite Failed:<span class="error-message"> SomeError</span></div>
   <div class="toggleShow" data-toggle="collapse" data-target="#hookFailureDetails">
@@ -274,8 +270,6 @@ var reportGenTests = []reportGenTest{
 		IsPreHookFailure: true,
 		Specs:            []*specsMeta{},
 	}, ""},
-	{"generate congratulations bar if all specs are passed", congratsDiv, &overview{}, wCongratsDiv},
-	{"don't generate congratulations bar if some spec failed", congratsDiv, &overview{Failed: 1}, ""},
 	{"generate hook failure div with screenshot", hookFailureDiv, newHookFailure("BeforeSuite", "SomeError", "iVBO", "Stack trace"), wHookFailureWithScreenhotDiv},
 	{"generate hook failure div without screenshot", hookFailureDiv, newHookFailure("BeforeSuite", "SomeError", "", "Stack trace"), wHookFailureWithoutScreenhotDiv},
 	{"generate spec header with tags", specHeaderStartTag, &specHeader{"Spec heading", "00:01:01", "/tmp/gauge/specs/foobar.spec", []string{"foo", "bar"}}, wSpecHeaderStartWithTags},
