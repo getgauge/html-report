@@ -788,6 +788,19 @@ var suiteResWithConceptFailure = &gm.ProtoSuiteResult{
 	SpecsSkippedCount: proto.Int32(0),
 }
 
+var suiteResWithAllPass = &gm.ProtoSuiteResult{
+	SpecResults:       []*gm.ProtoSpecResult{passSpecRes2},
+	Failed:            proto.Bool(false),
+	SpecsFailedCount:  proto.Int32(0),
+	ExecutionTime:     proto.Int64(122609),
+	SuccessRate:       proto.Float32(100),
+	Environment:       proto.String("default"),
+	Tags:              proto.String(""),
+	ProjectName:       proto.String("Gauge Project"),
+	Timestamp:         proto.String("Jul 13, 2016 at 11:49am"),
+	SpecsSkippedCount: proto.Int32(0),
+}
+
 type HTMLGenerationTest struct {
 	name         string
 	res          *gm.ProtoSuiteResult
@@ -831,4 +844,23 @@ func TestHTMLGeneration(t *testing.T) {
 		}
 
 	}
+}
+
+func TestIndexPageGeneration(t *testing.T){
+	content, err := ioutil.ReadFile(filepath.Join("_testdata", "pass_index.html"))
+	if err != nil {
+		t.Errorf("Error reading expected HTML file: %s", err.Error())
+	}
+
+	buf := new(bytes.Buffer)
+	generateIndexPage(suiteResWithAllPass, buf)
+
+	want := removeNewline(string(content))
+	got := removeNewline(buf.String())
+
+	if got != want {
+		t.Errorf("want:\n%q\ngot:\n%q\n", want, got)
+	}
+
+
 }

@@ -163,6 +163,15 @@ func execTemplate(tmplName string, w io.Writer, data interface{}) {
 	}
 }
 
+func generateIndexPage(suiteRes *gm.ProtoSuiteResult, w io.Writer) {
+	generateOverview(suiteRes, w)
+	execTemplate(specsStartDiv, w, nil)
+	execTemplate(sidebarDiv, w, toSidebar(suiteRes))
+	execTemplate(congratsDiv, w, nil)
+	execTemplate(endDiv, w, nil)
+	generatePageFooter(w)
+}
+
 func generateSpecPage(suiteRes *gm.ProtoSuiteResult, w io.Writer) {
 	generateOverview(suiteRes, w)
 
