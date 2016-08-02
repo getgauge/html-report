@@ -152,7 +152,7 @@ const (
 	skip
 )
 
-func gen(tmplName string, w io.Writer, data interface{}) {
+func execTemplate(tmplName string, w io.Writer, data interface{}) {
 	tmpl, err := template.New("Reports").Parse(tmplName)
 	if err != nil {
 		log.Fatalf(err.Error())
@@ -163,58 +163,58 @@ func gen(tmplName string, w io.Writer, data interface{}) {
 	}
 }
 
-func generate(suiteRes *gm.ProtoSuiteResult, w io.Writer) {
+func generateSpecPage(suiteRes *gm.ProtoSuiteResult, w io.Writer) {
 	overview := toOverview(suiteRes)
 
-	gen(htmlStartTag, w, nil)
-	gen(pageHeaderTag, w, nil)
-	gen(bodyStartTag, w, nil)
-	gen(bodyHeaderTag, w, overview)
-	gen(mainStartTag, w, nil)
-	gen(containerStartDiv, w, nil)
-	gen(reportOverviewTag, w, overview)
+	execTemplate(htmlStartTag, w, nil)
+	execTemplate(pageHeaderTag, w, nil)
+	execTemplate(bodyStartTag, w, nil)
+	execTemplate(bodyHeaderTag, w, overview)
+	execTemplate(mainStartTag, w, nil)
+	execTemplate(containerStartDiv, w, nil)
+	execTemplate(reportOverviewTag, w, overview)
 
 	if suiteRes.GetPreHookFailure() != nil {
-		gen(hookFailureDiv, w, toHookFailure(suiteRes.GetPreHookFailure(), "Before Suite"))
+		execTemplate(hookFailureDiv, w, toHookFailure(suiteRes.GetPreHookFailure(), "Before Suite"))
 	}
 
 	if suiteRes.GetPostHookFailure() != nil {
-		gen(hookFailureDiv, w, toHookFailure(suiteRes.GetPostHookFailure(), "After Suite"))
+		execTemplate(hookFailureDiv, w, toHookFailure(suiteRes.GetPostHookFailure(), "After Suite"))
 	}
 
 	if suiteRes.GetPreHookFailure() == nil {
-		gen(specsStartDiv, w, nil)
-		gen(sidebarDiv, w, toSidebar(suiteRes))
-		generateSpec(w, suiteRes.GetSpecResults()[0])
-		gen(endDiv, w, nil)
+		execTemplate(specsStartDiv, w, nil)
+		execTemplate(sidebarDiv, w, toSidebar(suiteRes))
+		generateSpecDiv(w, suiteRes.GetSpecResults()[0])
+		execTemplate(endDiv, w, nil)
 	}
 
-	gen(endDiv, w, nil)
-	gen(mainEndTag, w, nil)
-	gen(bodyFooterTag, w, nil)
-	gen(bodyEndTag, w, nil)
-	gen(htmlEndTag, w, nil)
+	execTemplate(endDiv, w, nil)
+	execTemplate(mainEndTag, w, nil)
+	execTemplate(bodyFooterTag, w, nil)
+	execTemplate(bodyEndTag, w, nil)
+	execTemplate(htmlEndTag, w, nil)
 }
 
-func generateSpec(w io.Writer, res *gm.ProtoSpecResult) {
+func generateSpecDiv(w io.Writer, res *gm.ProtoSpecResult) {
 	specHeader := toSpecHeader(res)
 	spec := toSpec(res)
 
-	gen(specContainerStartDiv, w, nil)
-	gen(specHeaderStartTag, w, specHeader)
-	gen(tagsDiv, w, specHeader)
-	gen(headerEndTag, w, nil)
-	gen(specsItemsContainerDiv, w, nil)
+	execTemplate(specContainerStartDiv, w, nil)
+	execTemplate(specHeaderStartTag, w, specHeader)
+	execTemplate(tagsDiv, w, specHeader)
+	execTemplate(headerEndTag, w, nil)
+	execTemplate(specsItemsContainerDiv, w, nil)
 
 	if spec.PreHookFailure != nil {
-		gen(hookFailureDiv, w, spec.PreHookFailure)
+		execTemplate(hookFailureDiv, w, spec.PreHookFailure)
 	}
 	if spec.PostHookFailure != nil {
-		gen(hookFailureDiv, w, spec.PostHookFailure)
+		execTemplate(hookFailureDiv, w, spec.PostHookFailure)
 	}
 
-	gen(specsItemsContentsDiv, w, nil)
-	gen(specCommentsAndTableTag, w, spec)
+	execTemplate(specsItemsContentsDiv, w, nil)
+	execTemplate(specCommentsAndTableTag, w, spec)
 
 	if spec.PreHookFailure == nil {
 		for _, scn := range spec.Scenarios {
@@ -222,18 +222,18 @@ func generateSpec(w io.Writer, res *gm.ProtoSpecResult) {
 		}
 	}
 
-	gen(endDiv, w, nil)
-	gen(endDiv, w, nil)
-	gen(endDiv, w, nil)
+	execTemplate(endDiv, w, nil)
+	execTemplate(endDiv, w, nil)
+	execTemplate(endDiv, w, nil)
 }
 
 func generateScenario(w io.Writer, scn *scenario) {
-	gen(scenarioContainerStartDiv, w, scn)
-	gen(scenarioHeaderStartDiv, w, scn)
-	gen(tagsDiv, w, scn)
-	gen(endDiv, w, nil)
+	execTemplate(scenarioContainerStartDiv, w, scn)
+	execTemplate(scenarioHeaderStartDiv, w, scn)
+	execTemplate(tagsDiv, w, scn)
+	execTemplate(endDiv, w, nil)
 	if scn.PreHookFailure != nil {
-		gen(hookFailureDiv, w, scn.PreHookFailure)
+		execTemplate(hookFailureDiv, w, scn.PreHookFailure)
 	}
 
 	generateItems(w, scn.Contexts, generateContextOrTeardown)
@@ -241,9 +241,9 @@ func generateScenario(w io.Writer, scn *scenario) {
 	generateItems(w, scn.Teardown, generateContextOrTeardown)
 
 	if scn.PostHookFailure != nil {
-		gen(hookFailureDiv, w, scn.PostHookFailure)
+		execTemplate(hookFailureDiv, w, scn.PostHookFailure)
 	}
-	gen(endDiv, w, nil)
+	execTemplate(endDiv, w, nil)
 }
 
 func generateItems(w io.Writer, items []item, predicate func(w io.Writer, item item)) {
@@ -253,38 +253,38 @@ func generateItems(w io.Writer, items []item, predicate func(w io.Writer, item i
 }
 
 func generateContextOrTeardown(w io.Writer, item item) {
-	gen(contextOrTeardownStartDiv, w, nil)
+	execTemplate(contextOrTeardownStartDiv, w, nil)
 	generateItem(w, item)
-	gen(endDiv, w, nil)
+	execTemplate(endDiv, w, nil)
 }
 
 func generateItem(w io.Writer, item item) {
 	switch item.kind() {
 	case stepKind:
-		gen(stepStartDiv, w, item.(*step))
-		gen(stepBodyDiv, w, item.(*step))
+		execTemplate(stepStartDiv, w, item.(*step))
+		execTemplate(stepBodyDiv, w, item.(*step))
 
 		if item.(*step).PreHookFailure != nil {
-			gen(hookFailureDiv, w, item.(*step).PreHookFailure)
+			execTemplate(hookFailureDiv, w, item.(*step).PreHookFailure)
 		}
 
 		if item.(*step).Res.Status == fail && item.(*step).Res.Message != "" && item.(*step).Res.StackTrace != "" {
-			gen(stepFailureDiv, w, item.(*step).Res)
+			execTemplate(stepFailureDiv, w, item.(*step).Res)
 		}
 
 		if item.(*step).PostHookFailure != nil {
-			gen(hookFailureDiv, w, item.(*step).PostHookFailure)
+			execTemplate(hookFailureDiv, w, item.(*step).PostHookFailure)
 		}
-		gen(stepEndDiv, w, item.(*step))
+		execTemplate(stepEndDiv, w, item.(*step))
 	case commentKind:
-		gen(commentSpan, w, item.(*comment))
+		execTemplate(commentSpan, w, item.(*comment))
 	case conceptKind:
-		gen(stepStartDiv, w, item.(*concept).CptStep)
-		gen(conceptSpan, w, nil)
-		gen(stepBodyDiv, w, item.(*concept).CptStep)
-		gen(stepEndDiv, w, item.(*concept).CptStep)
-		gen(conceptStepsStartDiv, w, nil)
+		execTemplate(stepStartDiv, w, item.(*concept).CptStep)
+		execTemplate(conceptSpan, w, nil)
+		execTemplate(stepBodyDiv, w, item.(*concept).CptStep)
+		execTemplate(stepEndDiv, w, item.(*concept).CptStep)
+		execTemplate(conceptStepsStartDiv, w, nil)
 		generateItems(w, item.(*concept).Items, generateItem)
-		gen(endDiv, w, nil)
+		execTemplate(endDiv, w, nil)
 	}
 }

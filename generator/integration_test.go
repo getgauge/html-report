@@ -821,7 +821,7 @@ func TestHTMLGeneration(t *testing.T) {
 		}
 
 		buf := new(bytes.Buffer)
-		generate(test.res, buf)
+		generateSpecPage(test.res, buf)
 
 		want := removeNewline(string(content))
 		got := removeNewline(buf.String())

@@ -298,7 +298,7 @@ func TestExecute(t *testing.T) {
 func testReportGen(reportGenTests []reportGenTest, t *testing.T) {
 	buf := new(bytes.Buffer)
 	for _, test := range reportGenTests {
-		gen(test.tmpl, buf, test.input)
+		execTemplate(test.tmpl, buf, test.input)
 
 		got := removeNewline(buf.String())
 		want := removeNewline(test.output)
