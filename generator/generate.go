@@ -164,15 +164,7 @@ func execTemplate(tmplName string, w io.Writer, data interface{}) {
 }
 
 func generateSpecPage(suiteRes *gm.ProtoSuiteResult, w io.Writer) {
-	overview := toOverview(suiteRes)
-
-	execTemplate(htmlStartTag, w, nil)
-	execTemplate(pageHeaderTag, w, nil)
-	execTemplate(bodyStartTag, w, nil)
-	execTemplate(bodyHeaderTag, w, overview)
-	execTemplate(mainStartTag, w, nil)
-	execTemplate(containerStartDiv, w, nil)
-	execTemplate(reportOverviewTag, w, overview)
+	generateOverview(suiteRes, w)
 
 	if suiteRes.GetPreHookFailure() != nil {
 		execTemplate(hookFailureDiv, w, toHookFailure(suiteRes.GetPreHookFailure(), "Before Suite"))
@@ -189,6 +181,22 @@ func generateSpecPage(suiteRes *gm.ProtoSuiteResult, w io.Writer) {
 		execTemplate(endDiv, w, nil)
 	}
 
+	generatePageFooter(w)
+}
+
+func generateOverview(suiteRes *gm.ProtoSuiteResult, w io.Writer) {
+	overview := toOverview(suiteRes)
+
+	execTemplate(htmlStartTag, w, nil)
+	execTemplate(pageHeaderTag, w, nil)
+	execTemplate(bodyStartTag, w, nil)
+	execTemplate(bodyHeaderTag, w, overview)
+	execTemplate(mainStartTag, w, nil)
+	execTemplate(containerStartDiv, w, nil)
+	execTemplate(reportOverviewTag, w, overview)
+}
+
+func generatePageFooter(w io.Writer) {
 	execTemplate(endDiv, w, nil)
 	execTemplate(mainEndTag, w, nil)
 	execTemplate(bodyFooterTag, w, nil)
