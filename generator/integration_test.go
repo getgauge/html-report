@@ -71,6 +71,7 @@ var scenario1 = &gm.ProtoScenario{
 		newStepItem(false, false, []*gm.Fragment{newTextFragment("Teardown Step2")}),
 	},
 }
+
 var scenarioWithConceptFailure = &gm.ProtoScenario{
 	ScenarioHeading: proto.String("Vowel counts in single word"),
 	Failed:          proto.Bool(true),
@@ -254,6 +255,7 @@ var failedStep = &gm.ProtoItem{
 		Fragments: []*gm.Fragment{newTextFragment("This is a failing step")},
 	},
 }
+
 var stepNotExecuted = &gm.ProtoItem{
 	ItemType: gm.ProtoItem_Step.Enum(),
 	Step: &gm.ProtoStep{
@@ -591,18 +593,7 @@ var skipSpecRes1 = &gm.ProtoSpecResult{
 	},
 }
 
-var suiteRes = &gm.ProtoSuiteResult{
-	SpecResults:       []*gm.ProtoSpecResult{passSpecRes1, passSpecRes2, passSpecRes3, failSpecResWithAfterScenarioFailure, skipSpecRes1},
-	Failed:            proto.Bool(false),
-	SpecsFailedCount:  proto.Int32(1),
-	ExecutionTime:     proto.Int64(122609),
-	SuccessRate:       proto.Float32(60),
-	Environment:       proto.String("default"),
-	Tags:              proto.String(""),
-	ProjectName:       proto.String("Gauge Project"),
-	Timestamp:         proto.String("Jul 13, 2016 at 11:49am"),
-	SpecsSkippedCount: proto.Int32(1),
-}
+
 
 var suiteResWithBeforeSuiteFailure = &gm.ProtoSuiteResult{
 	SpecResults:       []*gm.ProtoSpecResult{},
@@ -622,23 +613,6 @@ var suiteResWithBeforeSuiteFailure = &gm.ProtoSuiteResult{
 	},
 }
 
-var suiteResWithAfterSuiteFailure = &gm.ProtoSuiteResult{
-	SpecResults:       []*gm.ProtoSpecResult{passSpecRes1, passSpecRes2, passSpecRes3, failSpecResWithAfterScenarioFailure, skipSpecRes1},
-	Failed:            proto.Bool(true),
-	SpecsFailedCount:  proto.Int32(1),
-	ExecutionTime:     proto.Int64(122609),
-	SuccessRate:       proto.Float32(60),
-	Environment:       proto.String("default"),
-	Tags:              proto.String(""),
-	ProjectName:       proto.String("Gauge Project"),
-	Timestamp:         proto.String("Jul 13, 2016 at 11:49am"),
-	SpecsSkippedCount: proto.Int32(1),
-	PostHookFailure: &gm.ProtoHookFailure{
-		ErrorMessage: proto.String("java.lang.RuntimeException"),
-		StackTrace:   proto.String(newStackTrace()),
-		ScreenShot:   []byte(newScreenshot()),
-	},
-}
 
 var suiteResWithBeforeAfterSuiteFailure = &gm.ProtoSuiteResult{
 	Failed:            proto.Bool(true),
@@ -662,188 +636,47 @@ var suiteResWithBeforeAfterSuiteFailure = &gm.ProtoSuiteResult{
 	},
 }
 
-var suiteResWithBeforeScenarioFailure = &gm.ProtoSuiteResult{
-	SpecResults:       []*gm.ProtoSpecResult{failSpecResWithBeforeScenarioFailure},
-	Failed:            proto.Bool(true),
-	SpecsFailedCount:  proto.Int32(1),
-	ExecutionTime:     proto.Int64(122609),
-	SuccessRate:       proto.Float32(0),
-	Environment:       proto.String("default"),
-	Tags:              proto.String(""),
-	ProjectName:       proto.String("Gauge Project"),
-	Timestamp:         proto.String("Jul 13, 2016 at 11:49am"),
-	SpecsSkippedCount: proto.Int32(0),
+var suiteRes = newProtoSuiteRes(false, 1, 1, 60, nil, nil,passSpecRes1, passSpecRes2, passSpecRes3, failSpecResWithAfterScenarioFailure, skipSpecRes1)
+var suiteResWithAfterSuiteFailure = newProtoSuiteRes(true,1,1,60,nil,newProtoHookFailure(), passSpecRes1, passSpecRes2,
+	passSpecRes3, failSpecResWithAfterScenarioFailure, skipSpecRes1)
+var suiteResWithBeforeScenarioFailure = newProtoSuiteRes(true,1,0,0,nil,nil,failSpecResWithBeforeScenarioFailure)
+var suiteResWithAfterScenarioFailure = newProtoSuiteRes(true,1,0,0,nil,nil,failSpecResWithAfterScenarioFailure)
+var suiteResWithBeforeAndAfterScenarioFailure = newProtoSuiteRes(true,1,0,0,nil,nil,failSpecResWithBeforeAndAfterScenarioFailure)
+var suiteResWithMultipleScenarios = newProtoSuiteRes(true,1,0,0,nil,nil,specResWithMultipleScenarios)
+var suiteResWithBeforeStepFailure = newProtoSuiteRes(true,1,0,0,nil,nil,failSpecResWithBeforeStepFailure)
+var suiteResWithAfterStepFailure = newProtoSuiteRes(true,1,0,0,nil,nil,failSpecResWithAfterStepFailure)
+var suiteResWithBeforeAndAfterStepFailure = newProtoSuiteRes(true,1,0,0,nil,nil,failSpecResWithBeforeAndAfterStepFailure)
+var suiteResWithStepFailure = newProtoSuiteRes(true,1,0,0,nil,nil,failSpecResWithStepFailure)
+var suiteResWithBeforeSpecFailure = newProtoSuiteRes(true,1,0,0,nil,nil,failSpecResWithBeforeSpecFailure)
+var suiteResWithAfterSpecFailure = newProtoSuiteRes(true,1,0,0,nil,nil,failSpecResWithAfterSpecFailure)
+var suiteResWithBeforeAfterSpecFailure = newProtoSuiteRes(true,1,0,0,nil,nil,failSpecResWithBeforeAfterSpecFailure)
+var suiteResWithConceptFailure = newProtoSuiteRes(true,1,0,60,nil,nil,failSpecResWithConceptFailure)
+var suiteResWithSkippedSpec = newProtoSuiteRes(false,0,1,0,nil,nil,skippedSpecRes)
+var suiteResWithAllPass = newProtoSuiteRes(false, 0, 0, 100,nil,nil, passSpecRes2)
+
+func newProtoHookFailure() *gm.ProtoHookFailure {
+	return &gm.ProtoHookFailure{
+		ErrorMessage: proto.String("java.lang.RuntimeException"),
+		StackTrace:   proto.String(newStackTrace()),
+		ScreenShot:   []byte(newScreenshot()),
+	}
 }
 
-var suiteResWithAfterScenarioFailure = &gm.ProtoSuiteResult{
-	SpecResults:       []*gm.ProtoSpecResult{failSpecResWithAfterScenarioFailure},
-	Failed:            proto.Bool(true),
-	SpecsFailedCount:  proto.Int32(1),
-	ExecutionTime:     proto.Int64(122609),
-	SuccessRate:       proto.Float32(0),
-	Environment:       proto.String("default"),
-	Tags:              proto.String(""),
-	ProjectName:       proto.String("Gauge Project"),
-	Timestamp:         proto.String("Jul 13, 2016 at 11:49am"),
-	SpecsSkippedCount: proto.Int32(0),
-}
-
-var suiteResWithBeforeAndAfterScenarioFailure = &gm.ProtoSuiteResult{
-	SpecResults:       []*gm.ProtoSpecResult{failSpecResWithBeforeAndAfterScenarioFailure},
-	Failed:            proto.Bool(true),
-	SpecsFailedCount:  proto.Int32(1),
-	ExecutionTime:     proto.Int64(122609),
-	SuccessRate:       proto.Float32(0),
-	Environment:       proto.String("default"),
-	Tags:              proto.String(""),
-	ProjectName:       proto.String("Gauge Project"),
-	Timestamp:         proto.String("Jul 13, 2016 at 11:49am"),
-	SpecsSkippedCount: proto.Int32(0),
-}
-
-var suiteResWithMultipleScenarios = &gm.ProtoSuiteResult{
-	SpecResults:       []*gm.ProtoSpecResult{specResWithMultipleScenarios},
-	Failed:            proto.Bool(true),
-	SpecsFailedCount:  proto.Int32(1),
-	ExecutionTime:     proto.Int64(122609),
-	SuccessRate:       proto.Float32(0),
-	Environment:       proto.String("default"),
-	Tags:              proto.String(""),
-	ProjectName:       proto.String("Gauge Project"),
-	Timestamp:         proto.String("Jul 13, 2016 at 11:49am"),
-	SpecsSkippedCount: proto.Int32(0),
-}
-
-var suiteResWithBeforeStepFailure = &gm.ProtoSuiteResult{
-	SpecResults:       []*gm.ProtoSpecResult{failSpecResWithBeforeStepFailure},
-	Failed:            proto.Bool(true),
-	SpecsFailedCount:  proto.Int32(1),
-	ExecutionTime:     proto.Int64(122609),
-	SuccessRate:       proto.Float32(0),
-	Environment:       proto.String("default"),
-	Tags:              proto.String(""),
-	ProjectName:       proto.String("Gauge Project"),
-	Timestamp:         proto.String("Jul 13, 2016 at 11:49am"),
-	SpecsSkippedCount: proto.Int32(0),
-}
-
-var suiteResWithAfterStepFailure = &gm.ProtoSuiteResult{
-	SpecResults:       []*gm.ProtoSpecResult{failSpecResWithAfterStepFailure},
-	Failed:            proto.Bool(true),
-	SpecsFailedCount:  proto.Int32(1),
-	ExecutionTime:     proto.Int64(122609),
-	SuccessRate:       proto.Float32(0),
-	Environment:       proto.String("default"),
-	Tags:              proto.String(""),
-	ProjectName:       proto.String("Gauge Project"),
-	Timestamp:         proto.String("Jul 13, 2016 at 11:49am"),
-	SpecsSkippedCount: proto.Int32(0),
-}
-
-var suiteResWithBeforeAndAfterStepFailure = &gm.ProtoSuiteResult{
-	SpecResults:       []*gm.ProtoSpecResult{failSpecResWithBeforeAndAfterStepFailure},
-	Failed:            proto.Bool(true),
-	SpecsFailedCount:  proto.Int32(1),
-	ExecutionTime:     proto.Int64(122609),
-	SuccessRate:       proto.Float32(0),
-	Environment:       proto.String("default"),
-	Tags:              proto.String(""),
-	ProjectName:       proto.String("Gauge Project"),
-	Timestamp:         proto.String("Jul 13, 2016 at 11:49am"),
-	SpecsSkippedCount: proto.Int32(0),
-}
-
-var suiteResWithStepFailure = &gm.ProtoSuiteResult{
-	SpecResults:       []*gm.ProtoSpecResult{failSpecResWithStepFailure},
-	Failed:            proto.Bool(true),
-	SpecsFailedCount:  proto.Int32(1),
-	ExecutionTime:     proto.Int64(122609),
-	SuccessRate:       proto.Float32(0),
-	Environment:       proto.String("default"),
-	Tags:              proto.String(""),
-	ProjectName:       proto.String("Gauge Project"),
-	Timestamp:         proto.String("Jul 13, 2016 at 11:49am"),
-	SpecsSkippedCount: proto.Int32(0),
-}
-
-var suiteResWithBeforeSpecFailure = &gm.ProtoSuiteResult{
-	SpecResults:       []*gm.ProtoSpecResult{failSpecResWithBeforeSpecFailure},
-	Failed:            proto.Bool(true),
-	SpecsFailedCount:  proto.Int32(1),
-	ExecutionTime:     proto.Int64(122609),
-	SuccessRate:       proto.Float32(0),
-	Environment:       proto.String("default"),
-	Tags:              proto.String(""),
-	ProjectName:       proto.String("Gauge Project"),
-	Timestamp:         proto.String("Jul 13, 2016 at 11:49am"),
-	SpecsSkippedCount: proto.Int32(0),
-}
-
-var suiteResWithAfterSpecFailure = &gm.ProtoSuiteResult{
-	SpecResults:       []*gm.ProtoSpecResult{failSpecResWithAfterSpecFailure},
-	Failed:            proto.Bool(true),
-	SpecsFailedCount:  proto.Int32(1),
-	ExecutionTime:     proto.Int64(122609),
-	SuccessRate:       proto.Float32(0),
-	Environment:       proto.String("default"),
-	Tags:              proto.String(""),
-	ProjectName:       proto.String("Gauge Project"),
-	Timestamp:         proto.String("Jul 13, 2016 at 11:49am"),
-	SpecsSkippedCount: proto.Int32(0),
-}
-
-var suiteResWithBeforeAfterSpecFailure = &gm.ProtoSuiteResult{
-	SpecResults:       []*gm.ProtoSpecResult{failSpecResWithBeforeAfterSpecFailure},
-	Failed:            proto.Bool(true),
-	SpecsFailedCount:  proto.Int32(1),
-	ExecutionTime:     proto.Int64(122609),
-	SuccessRate:       proto.Float32(0),
-	Environment:       proto.String("default"),
-	Tags:              proto.String(""),
-	ProjectName:       proto.String("Gauge Project"),
-	Timestamp:         proto.String("Jul 13, 2016 at 11:49am"),
-	SpecsSkippedCount: proto.Int32(0),
-}
-
-var suiteResWithConceptFailure = &gm.ProtoSuiteResult{
-	SpecResults:       []*gm.ProtoSpecResult{failSpecResWithConceptFailure},
-	Failed:            proto.Bool(true),
-	SpecsFailedCount:  proto.Int32(1),
-	ExecutionTime:     proto.Int64(122609),
-	SuccessRate:       proto.Float32(60),
-	Environment:       proto.String("default"),
-	Tags:              proto.String(""),
-	ProjectName:       proto.String("Gauge Project"),
-	Timestamp:         proto.String("Jul 13, 2016 at 11:49am"),
-	SpecsSkippedCount: proto.Int32(0),
-}
-
-
-
-var suiteResWithSkippedSpec = &gm.ProtoSuiteResult{
-	SpecResults:       []*gm.ProtoSpecResult{skippedSpecRes},
-	Failed:            proto.Bool(false),
-	SpecsFailedCount:  proto.Int32(0),
-	ExecutionTime:     proto.Int64(122609),
-	SuccessRate:       proto.Float32(60),
-	Environment:       proto.String("default"),
-	Tags:              proto.String(""),
-	ProjectName:       proto.String("Gauge Project"),
-	Timestamp:         proto.String("Jul 13, 2016 at 11:49am"),
-	SpecsSkippedCount: proto.Int32(1),
-}
-
-var suiteResWithAllPass = &gm.ProtoSuiteResult{
-	SpecResults:       []*gm.ProtoSpecResult{passSpecRes2},
-	Failed:            proto.Bool(false),
-	SpecsFailedCount:  proto.Int32(0),
-	ExecutionTime:     proto.Int64(122609),
-	SuccessRate:       proto.Float32(100),
-	Environment:       proto.String("default"),
-	Tags:              proto.String(""),
-	ProjectName:       proto.String("Gauge Project"),
-	Timestamp:         proto.String("Jul 13, 2016 at 11:49am"),
-	SpecsSkippedCount: proto.Int32(0),
+func newProtoSuiteRes(failed bool, failCount, skipCount int32, succRate float32,preHook,postHook *gm.ProtoHookFailure, specRes ...*gm.ProtoSpecResult) *gm.ProtoSuiteResult {
+	return &gm.ProtoSuiteResult{
+		SpecResults: specRes,
+		Failed: proto.Bool(failed),
+		SpecsFailedCount: proto.Int32(failCount),
+		ExecutionTime:     proto.Int64(122609),
+		SuccessRate:       proto.Float32(succRate),
+		Environment:       proto.String("default"),
+		Tags:              proto.String(""),
+		ProjectName:       proto.String("Gauge Project"),
+		Timestamp:         proto.String("Jul 13, 2016 at 11:49am"),
+		SpecsSkippedCount: proto.Int32(skipCount),
+		PostHookFailure:postHook,
+		PreHookFailure:preHook,
+	}
 }
 
 type HTMLGenerationTest struct {
@@ -878,7 +711,7 @@ func TestHTMLGeneration(t *testing.T) {
 		}
 
 		buf := new(bytes.Buffer)
-		generateSpecPage(test.res, test.res.GetSpecResults()[0], buf)
+		generateSpecPage(test.res, buf)
 
 		want := removeNewline(string(content))
 		got := removeNewline(buf.String())
