@@ -18,6 +18,8 @@
 package generator
 
 import (
+	"regexp"
+	"strings"
 	"time"
 
 	gm "github.com/getgauge/html-report/gauge_messages"
@@ -25,6 +27,7 @@ import (
 
 const (
 	execTimeFormat = "15:04:05"
+	dothtml        = ".html"
 )
 
 func toOverview(res *gm.ProtoSuiteResult) *overview {
@@ -56,15 +59,36 @@ func toHookFailure(failure *gm.ProtoHookFailure, hookName string) *hookFailure {
 	}
 }
 
+func toFilename(specName string) string {
+	s := specName
+	disallowedChars := []string{"|", "\\", "/", "*", "?", ":", ";", "<", ">", ".", "\"", "'", "{", "}", "[", "]", "(", ")", "`", "~"}
+	for _, d := range disallowedChars {
+		s = strings.Replace(s, d, "", -1)
+	}
+
+	s = strings.Replace(s, "_", " ", -1) // Remove any existing underscores
+
+	spaceRegex := regexp.MustCompile("\\s+")
+	s = spaceRegex.ReplaceAllLiteralString(s, " ")
+
+	if len(s) > 35 {
+		s = s[0:35]
+	}
+
+	s = strings.Replace(strings.TrimSpace(s), " ", "_", -1) + dothtml
+	return strings.ToLower(s)
+}
+
 func toSidebar(res *gm.ProtoSuiteResult) *sidebar {
 	specsMetaList := make([]*specsMeta, 0)
 	for _, specRes := range res.SpecResults {
 		sm := &specsMeta{
-			SpecName: specRes.ProtoSpec.GetSpecHeading(),
-			ExecTime: formatTime(specRes.GetExecutionTime()),
-			Failed:   specRes.GetFailed(),
-			Skipped:  specRes.GetSkipped(),
-			Tags:     specRes.ProtoSpec.GetTags(),
+			SpecName:   specRes.ProtoSpec.GetSpecHeading(),
+			ExecTime:   formatTime(specRes.GetExecutionTime()),
+			Failed:     specRes.GetFailed(),
+			Skipped:    specRes.GetSkipped(),
+			Tags:       specRes.ProtoSpec.GetTags(),
+			ReportFile: toFilename(specRes.ProtoSpec.GetSpecHeading()),
 		}
 		specsMetaList = append(specsMetaList, sm)
 	}

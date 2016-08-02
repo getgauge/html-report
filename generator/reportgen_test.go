@@ -97,18 +97,24 @@ var wSidebarAside string = `<aside class="sidebar">
   </div>
   <div id="listOfSpecifications">
     <ul id="scenarios" class="spec-list">
-    <li class='passed spec-name'>
-      <span id="scenarioName" class="scenarioname">Passing Spec</span>
-      <span id="time" class="time">00:01:04</span>
-    </li>
-    <li class='failed spec-name'>
-      <span id="scenarioName" class="scenarioname">Failing Spec</span>
-      <span id="time" class="time">00:00:30</span>
-    </li>
-    <li class='skipped spec-name'>
-      <span id="scenarioName" class="scenarioname">Skipped Spec</span>
-      <span id="time" class="time">00:00:00</span>
-    </li>
+		<a href="passing_spec.html">
+    	<li class='passed spec-name'>
+	      <span id="scenarioName" class="scenarioname">Passing Spec</span>
+	      <span id="time" class="time">00:01:04</span>
+    	</li>
+		</a>
+		<a href="failing_spec.html">
+    	<li class='failed spec-name'>
+	      <span id="scenarioName" class="scenarioname">Failing Spec</span>
+	      <span id="time" class="time">00:00:30</span>
+    	</li>
+		</a>
+		<a href="skipped_spec.html">
+    	<li class='skipped spec-name'>
+	      <span id="scenarioName" class="scenarioname">Skipped Spec</span>
+	      <span id="time" class="time">00:00:00</span>
+    	</li>
+		</a>
     </ul>
   </div>
 </aside>`
@@ -260,9 +266,9 @@ var reportGenTests = []reportGenTest{
 	{"generate sidebar with appropriate pass/fail/skip class", sidebarDiv, &sidebar{
 		IsPreHookFailure: false,
 		Specs: []*specsMeta{
-			newSpecsMeta("Passing Spec", "00:01:04", false, false, nil),
-			newSpecsMeta("Failing Spec", "00:00:30", true, false, nil),
-			newSpecsMeta("Skipped Spec", "00:00:00", false, true, nil),
+			newSpecsMeta("Passing Spec", "00:01:04", false, false, nil, "passing_spec.html"),
+			newSpecsMeta("Failing Spec", "00:00:30", true, false, nil, "failing_spec.html"),
+			newSpecsMeta("Skipped Spec", "00:00:00", false, true, nil, "skipped_spec.html"),
 		}}, wSidebarAside},
 	{"do not generate sidebar if presuitehook failure", sidebarDiv, &sidebar{
 		IsPreHookFailure: true,
@@ -327,13 +333,14 @@ func newOverview() *overview {
 	}
 }
 
-func newSpecsMeta(name, execTime string, failed, skipped bool, tags []string) *specsMeta {
+func newSpecsMeta(name, execTime string, failed, skipped bool, tags []string, fileName string) *specsMeta {
 	return &specsMeta{
-		SpecName: name,
-		ExecTime: execTime,
-		Failed:   failed,
-		Skipped:  skipped,
-		Tags:     tags,
+		SpecName:   name,
+		ExecTime:   execTime,
+		Failed:     failed,
+		Skipped:    skipped,
+		Tags:       tags,
+		ReportFile: fileName,
 	}
 }
 

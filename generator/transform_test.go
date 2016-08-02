@@ -403,9 +403,9 @@ func TestToSidebar(t *testing.T) {
 	want := &sidebar{
 		IsPreHookFailure: false,
 		Specs: []*specsMeta{
-			newSpecsMeta("specRes1", "00:03:31", false, false, []string{"tag1", "tag2"}),
-			newSpecsMeta("specRes2", "00:03:31", true, false, []string{"tag1", "tag2", "tag3"}),
-			newSpecsMeta("specRes3", "00:03:31", false, true, []string{"tag1"}),
+			newSpecsMeta("specRes1", "00:03:31", false, false, []string{"tag1", "tag2"}, "specres1.html"),
+			newSpecsMeta("specRes2", "00:03:31", true, false, []string{"tag1", "tag2", "tag3"}, "specres2.html"),
+			newSpecsMeta("specRes3", "00:03:31", false, true, []string{"tag1"}, "specres3.html"),
 		},
 	}
 
@@ -680,4 +680,37 @@ func TestToHookFailureWithNilInput(t *testing.T) {
 	if got != want {
 		t.Errorf("want:\n%q\ngot:\n%q\n", want, got)
 	}
+}
+
+type specNameGenerationTest struct {
+	specName     string
+	HTMLFilename string
+}
+
+var specNameGenerationTests = []*specNameGenerationTest{
+	{"simple specification", "simple_specification.html"},
+	{"specification with -", "specification_with_-.html"},
+	{"specification with $ #", "specification_with_$_#.html"},
+	{"specification with : ;", "specification_with.html"},
+	{"spec < with > special : chars", "spec_with_special_chars.html"},
+	{"spec _ with _ underscore", "spec_with_underscore.html"},
+	{"spec_with_underscore", "spec_with_underscore.html"},
+	{"spec \" with ' quotes", "spec_with_quotes.html"},
+	{"spec \\ with / slashes and | bar", "spec_with_slashes_and_bar.html"},
+	{"spec ? with * wildcards", "spec_with_wildcards.html"},
+	{"   spec starting and ending with spaces      		", "spec_starting_and_ending_with_spac.html"},
+	{".spec.with.periods.", "specwithperiods.html"},
+	{"A very large spec name to test that file names are truncated at 35 chars", "a_very_large_spec_name_to_test_that.html"},
+}
+
+func TestToFileName(t *testing.T) {
+	for _, test := range specNameGenerationTests {
+		got := toFilename(test.specName)
+		want := test.HTMLFilename
+
+		if got != want {
+			t.Errorf("want:\n%q\ngot:\n%q\n", want, got)
+		}
+	}
+
 }

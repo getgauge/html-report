@@ -38,11 +38,12 @@ type overview struct {
 }
 
 type specsMeta struct {
-	SpecName string
-	ExecTime string
-	Failed   bool
-	Skipped  bool
-	Tags     []string
+	SpecName   string
+	ExecTime   string
+	Failed     bool
+	Skipped    bool
+	Tags       []string
+	ReportFile string
 }
 
 type sidebar struct {

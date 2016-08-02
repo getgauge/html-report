@@ -88,13 +88,15 @@ const sidebarDiv = `{{if not .IsPreHookFailure}}<aside class="sidebar">
   <div id="listOfSpecifications">
     <ul id="scenarios" class="spec-list">
     {{range $index, $specMeta := .Specs}}
-      {{if $specMeta.Failed}} <li class='failed spec-name'>
-      {{else if $specMeta.Skipped}} <li class='skipped spec-name'>
-      {{else}} <li class='passed spec-name'>
-      {{end}}
-        <span id="scenarioName" class="scenarioname">{{$specMeta.SpecName}}</span>
-        <span id="time" class="time">{{$specMeta.ExecTime}}</span>
-      </li>
+      <a href="{{.ReportFile}}">
+        {{if $specMeta.Failed}} <li class='failed spec-name'>
+        {{else if $specMeta.Skipped}} <li class='skipped spec-name'>
+        {{else}} <li class='passed spec-name'>
+        {{end}}
+          <span id="scenarioName" class="scenarioname">{{$specMeta.SpecName}}</span>
+          <span id="time" class="time">{{$specMeta.ExecTime}}</span>
+        </li>
+      </a>
       {{end}}
     </ul>
   </div>
