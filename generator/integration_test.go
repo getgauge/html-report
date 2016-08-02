@@ -593,8 +593,6 @@ var skipSpecRes1 = &gm.ProtoSpecResult{
 	},
 }
 
-
-
 var suiteResWithBeforeSuiteFailure = &gm.ProtoSuiteResult{
 	SpecResults:       []*gm.ProtoSpecResult{},
 	Failed:            proto.Bool(true),
@@ -612,7 +610,6 @@ var suiteResWithBeforeSuiteFailure = &gm.ProtoSuiteResult{
 		ScreenShot:   []byte(newScreenshot()),
 	},
 }
-
 
 var suiteResWithBeforeAfterSuiteFailure = &gm.ProtoSuiteResult{
 	Failed:            proto.Bool(true),
@@ -636,23 +633,23 @@ var suiteResWithBeforeAfterSuiteFailure = &gm.ProtoSuiteResult{
 	},
 }
 
-var suiteRes = newProtoSuiteRes(false, 1, 1, 60, nil, nil,passSpecRes1, passSpecRes2, passSpecRes3, failSpecResWithAfterScenarioFailure, skipSpecRes1)
-var suiteResWithAfterSuiteFailure = newProtoSuiteRes(true,1,1,60,nil,newProtoHookFailure(), passSpecRes1, passSpecRes2,
+var suiteRes = newProtoSuiteRes(false, 1, 1, 60, nil, nil, passSpecRes1, passSpecRes2, passSpecRes3, failSpecResWithAfterScenarioFailure, skipSpecRes1)
+var suiteResWithAfterSuiteFailure = newProtoSuiteRes(true, 1, 1, 60, nil, newProtoHookFailure(), passSpecRes1, passSpecRes2,
 	passSpecRes3, failSpecResWithAfterScenarioFailure, skipSpecRes1)
-var suiteResWithBeforeScenarioFailure = newProtoSuiteRes(true,1,0,0,nil,nil,failSpecResWithBeforeScenarioFailure)
-var suiteResWithAfterScenarioFailure = newProtoSuiteRes(true,1,0,0,nil,nil,failSpecResWithAfterScenarioFailure)
-var suiteResWithBeforeAndAfterScenarioFailure = newProtoSuiteRes(true,1,0,0,nil,nil,failSpecResWithBeforeAndAfterScenarioFailure)
-var suiteResWithMultipleScenarios = newProtoSuiteRes(true,1,0,0,nil,nil,specResWithMultipleScenarios)
-var suiteResWithBeforeStepFailure = newProtoSuiteRes(true,1,0,0,nil,nil,failSpecResWithBeforeStepFailure)
-var suiteResWithAfterStepFailure = newProtoSuiteRes(true,1,0,0,nil,nil,failSpecResWithAfterStepFailure)
-var suiteResWithBeforeAndAfterStepFailure = newProtoSuiteRes(true,1,0,0,nil,nil,failSpecResWithBeforeAndAfterStepFailure)
-var suiteResWithStepFailure = newProtoSuiteRes(true,1,0,0,nil,nil,failSpecResWithStepFailure)
-var suiteResWithBeforeSpecFailure = newProtoSuiteRes(true,1,0,0,nil,nil,failSpecResWithBeforeSpecFailure)
-var suiteResWithAfterSpecFailure = newProtoSuiteRes(true,1,0,0,nil,nil,failSpecResWithAfterSpecFailure)
-var suiteResWithBeforeAfterSpecFailure = newProtoSuiteRes(true,1,0,0,nil,nil,failSpecResWithBeforeAfterSpecFailure)
-var suiteResWithConceptFailure = newProtoSuiteRes(true,1,0,60,nil,nil,failSpecResWithConceptFailure)
-var suiteResWithSkippedSpec = newProtoSuiteRes(false,0,1,0,nil,nil,skippedSpecRes)
-var suiteResWithAllPass = newProtoSuiteRes(false, 0, 0, 100,nil,nil, passSpecRes2)
+var suiteResWithBeforeScenarioFailure = newProtoSuiteRes(true, 1, 0, 0, nil, nil, failSpecResWithBeforeScenarioFailure)
+var suiteResWithAfterScenarioFailure = newProtoSuiteRes(true, 1, 0, 0, nil, nil, failSpecResWithAfterScenarioFailure)
+var suiteResWithBeforeAndAfterScenarioFailure = newProtoSuiteRes(true, 1, 0, 0, nil, nil, failSpecResWithBeforeAndAfterScenarioFailure)
+var suiteResWithMultipleScenarios = newProtoSuiteRes(true, 1, 0, 0, nil, nil, specResWithMultipleScenarios)
+var suiteResWithBeforeStepFailure = newProtoSuiteRes(true, 1, 0, 0, nil, nil, failSpecResWithBeforeStepFailure)
+var suiteResWithAfterStepFailure = newProtoSuiteRes(true, 1, 0, 0, nil, nil, failSpecResWithAfterStepFailure)
+var suiteResWithBeforeAndAfterStepFailure = newProtoSuiteRes(true, 1, 0, 0, nil, nil, failSpecResWithBeforeAndAfterStepFailure)
+var suiteResWithStepFailure = newProtoSuiteRes(true, 1, 0, 0, nil, nil, failSpecResWithStepFailure)
+var suiteResWithBeforeSpecFailure = newProtoSuiteRes(true, 1, 0, 0, nil, nil, failSpecResWithBeforeSpecFailure)
+var suiteResWithAfterSpecFailure = newProtoSuiteRes(true, 1, 0, 0, nil, nil, failSpecResWithAfterSpecFailure)
+var suiteResWithBeforeAfterSpecFailure = newProtoSuiteRes(true, 1, 0, 0, nil, nil, failSpecResWithBeforeAfterSpecFailure)
+var suiteResWithConceptFailure = newProtoSuiteRes(true, 1, 0, 60, nil, nil, failSpecResWithConceptFailure)
+var suiteResWithSkippedSpec = newProtoSuiteRes(false, 0, 1, 0, nil, nil, skippedSpecRes)
+var suiteResWithAllPass = newProtoSuiteRes(false, 0, 0, 100, nil, nil, passSpecRes2)
 
 func newProtoHookFailure() *gm.ProtoHookFailure {
 	return &gm.ProtoHookFailure{
@@ -662,11 +659,11 @@ func newProtoHookFailure() *gm.ProtoHookFailure {
 	}
 }
 
-func newProtoSuiteRes(failed bool, failCount, skipCount int32, succRate float32,preHook,postHook *gm.ProtoHookFailure, specRes ...*gm.ProtoSpecResult) *gm.ProtoSuiteResult {
+func newProtoSuiteRes(failed bool, failCount, skipCount int32, succRate float32, preHook, postHook *gm.ProtoHookFailure, specRes ...*gm.ProtoSpecResult) *gm.ProtoSuiteResult {
 	return &gm.ProtoSuiteResult{
-		SpecResults: specRes,
-		Failed: proto.Bool(failed),
-		SpecsFailedCount: proto.Int32(failCount),
+		SpecResults:       specRes,
+		Failed:            proto.Bool(failed),
+		SpecsFailedCount:  proto.Int32(failCount),
 		ExecutionTime:     proto.Int64(122609),
 		SuccessRate:       proto.Float32(succRate),
 		Environment:       proto.String("default"),
@@ -674,8 +671,8 @@ func newProtoSuiteRes(failed bool, failCount, skipCount int32, succRate float32,
 		ProjectName:       proto.String("Gauge Project"),
 		Timestamp:         proto.String("Jul 13, 2016 at 11:49am"),
 		SpecsSkippedCount: proto.Int32(skipCount),
-		PostHookFailure:postHook,
-		PreHookFailure:preHook,
+		PostHookFailure:   postHook,
+		PreHookFailure:    preHook,
 	}
 }
 
@@ -690,7 +687,7 @@ var HTMLGenerationTests = []*HTMLGenerationTest{
 	{"after suite failure", suiteResWithAfterSuiteFailure, "after_suite_fail.html"},
 	{"before spec failure", suiteResWithBeforeSpecFailure, "before_spec_fail.html"},
 	{"after spec failure", suiteResWithAfterSpecFailure, "after_spec_fail.html"},
-	{"skipped specification",suiteResWithSkippedSpec,"skipped_spec.html"},
+	{"skipped specification", suiteResWithSkippedSpec, "skipped_spec.html"},
 	{"both before and after spec failure", suiteResWithBeforeAfterSpecFailure, "before_after_spec_fail.html"},
 	{"before scenario failure", suiteResWithBeforeScenarioFailure, "before_scenario_fail.html"},
 	{"after scenario failure", suiteResWithAfterScenarioFailure, "after_scenario_fail.html"},
@@ -723,8 +720,8 @@ func TestHTMLGeneration(t *testing.T) {
 	}
 }
 
-func TestIndexPageGeneration(t *testing.T){
-	content, err := ioutil.ReadFile(filepath.Join("_testdata","integration", "pass_index.html"))
+func TestIndexPageGeneration(t *testing.T) {
+	content, err := ioutil.ReadFile(filepath.Join("_testdata", "integration", "pass_index.html"))
 	if err != nil {
 		t.Errorf("Error reading expected HTML file: %s", err.Error())
 	}
