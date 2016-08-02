@@ -115,6 +115,21 @@ var scenario2 = &gm.ProtoScenario{
 	},
 }
 
+var skippedScenario = &gm.ProtoScenario{
+	ScenarioHeading: proto.String("skipped scenario"),
+	Failed:          proto.Bool(false),
+	Skipped:         proto.Bool(true),
+	ExecutionTime:   proto.Int64(0),
+	Contexts: []*gm.ProtoItem{
+		newStepItem(false, true, []*gm.Fragment{newTextFragment("Context Step")}),
+	},
+	ScenarioItems: []*gm.ProtoItem{
+		newStepItem(false, true, []*gm.Fragment{
+			newTextFragment("skipped step"),
+		}),
+	},
+}
+
 var scenarioWithAfterHookFail = &gm.ProtoScenario{
 	ScenarioHeading: proto.String("Scenario Heading"),
 	Failed:          proto.Bool(true),
@@ -459,6 +474,20 @@ var failSpecResWithConceptFailure = &gm.ProtoSpecResult{
 	},
 }
 
+var skippedSpecRes = &gm.ProtoSpecResult{
+	Failed:        proto.Bool(false),
+	Skipped:       proto.Bool(true),
+	ExecutionTime: proto.Int64(0),
+	ProtoSpec: &gm.ProtoSpec{
+		SpecHeading: proto.String("Skipped Specification"),
+		Tags:        []string{},
+		FileName:    proto.String("/tmp/gauge/specs/foobar.spec"),
+		Items: []*gm.ProtoItem{
+			newScenarioItem(skippedScenario),
+		},
+	},
+}
+
 var failSpecResWithAfterSpecFailure = &gm.ProtoSpecResult{
 	Failed:        proto.Bool(true),
 	Skipped:       proto.Bool(false),
@@ -576,6 +605,7 @@ var suiteRes = &gm.ProtoSuiteResult{
 }
 
 var suiteResWithBeforeSuiteFailure = &gm.ProtoSuiteResult{
+	SpecResults:       []*gm.ProtoSpecResult{},
 	Failed:            proto.Bool(true),
 	SpecsFailedCount:  proto.Int32(0),
 	ExecutionTime:     proto.Int64(122609),
@@ -788,6 +818,21 @@ var suiteResWithConceptFailure = &gm.ProtoSuiteResult{
 	SpecsSkippedCount: proto.Int32(0),
 }
 
+
+
+var suiteResWithSkippedSpec = &gm.ProtoSuiteResult{
+	SpecResults:       []*gm.ProtoSpecResult{skippedSpecRes},
+	Failed:            proto.Bool(false),
+	SpecsFailedCount:  proto.Int32(0),
+	ExecutionTime:     proto.Int64(122609),
+	SuccessRate:       proto.Float32(60),
+	Environment:       proto.String("default"),
+	Tags:              proto.String(""),
+	ProjectName:       proto.String("Gauge Project"),
+	Timestamp:         proto.String("Jul 13, 2016 at 11:49am"),
+	SpecsSkippedCount: proto.Int32(1),
+}
+
 var suiteResWithAllPass = &gm.ProtoSuiteResult{
 	SpecResults:       []*gm.ProtoSpecResult{passSpecRes2},
 	Failed:            proto.Bool(false),
@@ -809,11 +854,10 @@ type HTMLGenerationTest struct {
 
 var HTMLGenerationTests = []*HTMLGenerationTest{
 	{"happy path", suiteRes, "pass.html"},
-	{"before suite failure", suiteResWithBeforeSuiteFailure, "before_suite_fail.html"},
 	{"after suite failure", suiteResWithAfterSuiteFailure, "after_suite_fail.html"},
-	{"both before and after suite failure", suiteResWithBeforeAfterSuiteFailure, "before_after_suite_fail.html"},
 	{"before spec failure", suiteResWithBeforeSpecFailure, "before_spec_fail.html"},
 	{"after spec failure", suiteResWithAfterSpecFailure, "after_spec_fail.html"},
+	{"skipped specification",suiteResWithSkippedSpec,"skipped_spec.html"},
 	{"both before and after spec failure", suiteResWithBeforeAfterSpecFailure, "before_after_spec_fail.html"},
 	{"before scenario failure", suiteResWithBeforeScenarioFailure, "before_scenario_fail.html"},
 	{"after scenario failure", suiteResWithAfterScenarioFailure, "after_scenario_fail.html"},
@@ -828,13 +872,13 @@ var HTMLGenerationTests = []*HTMLGenerationTest{
 
 func TestHTMLGeneration(t *testing.T) {
 	for _, test := range HTMLGenerationTests {
-		content, err := ioutil.ReadFile(filepath.Join("_testdata", test.expectedFile))
+		content, err := ioutil.ReadFile(filepath.Join("_testdata", "integration", test.expectedFile))
 		if err != nil {
 			t.Errorf("Error reading expected HTML file: %s", err.Error())
 		}
 
 		buf := new(bytes.Buffer)
-		generateSpecPage(test.res, buf)
+		generateSpecPage(test.res, test.res.GetSpecResults()[0], buf)
 
 		want := removeNewline(string(content))
 		got := removeNewline(buf.String())
@@ -847,7 +891,7 @@ func TestHTMLGeneration(t *testing.T) {
 }
 
 func TestIndexPageGeneration(t *testing.T){
-	content, err := ioutil.ReadFile(filepath.Join("_testdata", "pass_index.html"))
+	content, err := ioutil.ReadFile(filepath.Join("_testdata","integration", "pass_index.html"))
 	if err != nil {
 		t.Errorf("Error reading expected HTML file: %s", err.Error())
 	}
@@ -861,6 +905,4 @@ func TestIndexPageGeneration(t *testing.T){
 	if got != want {
 		t.Errorf("want:\n%q\ngot:\n%q\n", want, got)
 	}
-
-
 }
