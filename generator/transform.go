@@ -18,6 +18,7 @@
 package generator
 
 import (
+	"fmt"
 	"regexp"
 	"strings"
 	"time"
@@ -31,7 +32,12 @@ const (
 )
 
 func toOverview(res *gm.ProtoSuiteResult) *overview {
-	passed := len(res.GetSpecResults()) - int(res.GetSpecsFailedCount()) - int(res.GetSpecsSkippedCount())
+	totalSpecs := 0
+	if res.GetSpecResults() != nil {
+		totalSpecs = len(res.GetSpecResults())
+	}
+	passed := totalSpecs - int(res.GetSpecsFailedCount()) - int(res.GetSpecsSkippedCount())
+	fmt.Printf("total specs %v", totalSpecs)
 	return &overview{
 		ProjectName: res.GetProjectName(),
 		Env:         res.GetEnvironment(),
@@ -39,7 +45,7 @@ func toOverview(res *gm.ProtoSuiteResult) *overview {
 		SuccRate:    res.GetSuccessRate(),
 		ExecTime:    formatTime(res.GetExecutionTime()),
 		Timestamp:   res.GetTimestamp(),
-		TotalSpecs:  len(res.GetSpecResults()),
+		TotalSpecs:  totalSpecs,
 		Failed:      int(res.GetSpecsFailedCount()),
 		Passed:      passed,
 		Skipped:     int(res.GetSpecsSkippedCount()),

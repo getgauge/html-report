@@ -19,6 +19,8 @@ package generator
 import (
 	"io"
 	"log"
+	"os"
+	"path/filepath"
 	"text/template"
 
 	gm "github.com/getgauge/html-report/gauge_messages"
@@ -163,16 +165,43 @@ func execTemplate(tmplName string, w io.Writer, data interface{}) {
 	}
 }
 
+func generateReports(suiteRes *gm.ProtoSuiteResult, reportDir string) {
+	f, err := os.Create(filepath.Join(reportDir, "index.html"))
+	if err != nil {
+		log.Fatalf(err.Error())
+	}
+	if suiteRes.GetPreHookFailure() != nil {
+		generateOverview(suiteRes, f)
+		execTemplate(hookFailureDiv, f, toHookFailure(suiteRes.GetPreHookFailure(), "Before Suite"))
+		if suiteRes.GetPostHookFailure() != nil {
+			execTemplate(hookFailureDiv, f, toHookFailure(suiteRes.GetPostHookFailure(), "After Suite"))
+		}
+		generatePageFooter(f)
+	} else {
+		generateIndexPage(suiteRes, f)
+		specRes := suiteRes.GetSpecResults()
+		for _, res := range specRes {
+			sf, err := os.Create(filepath.Join(reportDir, toFilename(res.GetProtoSpec().GetSpecHeading())))
+			if err != nil {
+				log.Fatalf(err.Error())
+			}
+			generateSpecPage(suiteRes, res, sf)
+		}
+	}
+}
+
 func generateIndexPage(suiteRes *gm.ProtoSuiteResult, w io.Writer) {
 	generateOverview(suiteRes, w)
 	execTemplate(specsStartDiv, w, nil)
 	execTemplate(sidebarDiv, w, toSidebar(suiteRes))
-	execTemplate(congratsDiv, w, nil)
+	if !suiteRes.GetFailed() {
+		execTemplate(congratsDiv, w, nil)
+	}
 	execTemplate(endDiv, w, nil)
 	generatePageFooter(w)
 }
 
-func generateSpecPage(suiteRes *gm.ProtoSuiteResult, w io.Writer) {
+func generateSpecPage(suiteRes *gm.ProtoSuiteResult, specRes *gm.ProtoSpecResult, w io.Writer) {
 	generateOverview(suiteRes, w)
 
 	if suiteRes.GetPreHookFailure() != nil {
@@ -186,7 +215,7 @@ func generateSpecPage(suiteRes *gm.ProtoSuiteResult, w io.Writer) {
 	if suiteRes.GetPreHookFailure() == nil {
 		execTemplate(specsStartDiv, w, nil)
 		execTemplate(sidebarDiv, w, toSidebar(suiteRes))
-		generateSpecDiv(w, suiteRes.GetSpecResults()[0])
+		generateSpecDiv(w, specRes)
 		execTemplate(endDiv, w, nil)
 	}
 

@@ -82,8 +82,8 @@ func randomName() string {
 }
 
 func verifyReportTemplateFilesAreCopied(dest string, c *C) {
-	filepath.Walk("report-template", func(path string, info os.FileInfo, err error) error {
-		path = strings.Replace(path, "report-template", "", 1)
+	filepath.Walk(reportTemplateDir, func(path string, info os.FileInfo, err error) error {
+		path = strings.Replace(path, reportTemplateDir, "", 1)
 		destFilePath := filepath.Join(dest, path)
 		if !fileExists(destFilePath) {
 			c.Errorf("File %s not copied.", destFilePath)

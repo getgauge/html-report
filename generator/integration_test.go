@@ -593,46 +593,6 @@ var skipSpecRes1 = &gm.ProtoSpecResult{
 	},
 }
 
-var suiteResWithBeforeSuiteFailure = &gm.ProtoSuiteResult{
-	SpecResults:       []*gm.ProtoSpecResult{},
-	Failed:            proto.Bool(true),
-	SpecsFailedCount:  proto.Int32(0),
-	ExecutionTime:     proto.Int64(122609),
-	SuccessRate:       proto.Float32(0),
-	Environment:       proto.String("default"),
-	Tags:              proto.String(""),
-	ProjectName:       proto.String("Gauge Project"),
-	Timestamp:         proto.String("Jul 13, 2016 at 11:49am"),
-	SpecsSkippedCount: proto.Int32(0),
-	PreHookFailure: &gm.ProtoHookFailure{
-		ErrorMessage: proto.String("java.lang.RuntimeException"),
-		StackTrace:   proto.String(newStackTrace()),
-		ScreenShot:   []byte(newScreenshot()),
-	},
-}
-
-var suiteResWithBeforeAfterSuiteFailure = &gm.ProtoSuiteResult{
-	Failed:            proto.Bool(true),
-	SpecsFailedCount:  proto.Int32(0),
-	ExecutionTime:     proto.Int64(122609),
-	SuccessRate:       proto.Float32(0),
-	Environment:       proto.String("default"),
-	Tags:              proto.String(""),
-	ProjectName:       proto.String("Gauge Project"),
-	Timestamp:         proto.String("Jul 13, 2016 at 11:49am"),
-	SpecsSkippedCount: proto.Int32(0),
-	PreHookFailure: &gm.ProtoHookFailure{
-		ErrorMessage: proto.String("java.lang.RuntimeException"),
-		StackTrace:   proto.String(newStackTrace()),
-		ScreenShot:   []byte(newScreenshot()),
-	},
-	PostHookFailure: &gm.ProtoHookFailure{
-		ErrorMessage: proto.String("java.lang.RuntimeException"),
-		StackTrace:   proto.String(newStackTrace()),
-		ScreenShot:   []byte(newScreenshot()),
-	},
-}
-
 var suiteRes = newProtoSuiteRes(false, 1, 1, 60, nil, nil, passSpecRes1, passSpecRes2, passSpecRes3, failSpecResWithAfterScenarioFailure, skipSpecRes1)
 var suiteResWithAfterSuiteFailure = newProtoSuiteRes(true, 1, 1, 60, nil, newProtoHookFailure(), passSpecRes1, passSpecRes2,
 	passSpecRes3, failSpecResWithAfterScenarioFailure, skipSpecRes1)
@@ -708,7 +668,7 @@ func TestHTMLGeneration(t *testing.T) {
 		}
 
 		buf := new(bytes.Buffer)
-		generateSpecPage(test.res, buf)
+		generateSpecPage(test.res, test.res.GetSpecResults()[0], buf)
 
 		want := removeNewline(string(content))
 		got := removeNewline(buf.String())
