@@ -30,7 +30,7 @@ type reportGenTest struct {
 	output string
 }
 
-var wBodyHeader string = `<header class="top">
+var wBodyHeader = `<header class="top">
 <div class="header">
   <div class="container">
      <div class="logo"><img src="images/logo.png" alt="Report logo"></div>
@@ -39,15 +39,15 @@ var wBodyHeader string = `<header class="top">
   </div>
 </header>`
 
-var wChartDiv string = `<div class="report-overview">
+var wChartDiv = `<div class="report-overview">
   <div class="report_chart">
     <div class="chart">
-      <nvd3 options="options" data="data"></nvd3>
+      <svg></svg>
     </div>
     <div class="total-specs"><span class="value">41</span><span class="txt">Total specs</span></div>
   </div>`
 
-var wResCntDiv string = `
+var wResCntDiv = `
   <div class="report_test-results">
     <ul>
       <li class="fail"><span class="value">2</span><span class="txt">Failed</span></li>
@@ -56,31 +56,31 @@ var wResCntDiv string = `
     </ul>
   </div>`
 
-var wEnvLi string = `<div class="report_details"><ul>
+var wEnvLi = `<div class="report_details"><ul>
       <li>
         <label>Environment </label>
         <span>default</span>
       </li>`
 
-var wTagsLi string = `
+var wTagsLi = `
       <li>
         <label>Tags </label>
         <span>foo</span>
       </li>`
 
-var wSuccRateLi string = `
+var wSuccRateLi = `
       <li>
         <label>Success Rate </label>
         <span>34%</span>
       </li>`
 
-var wExecTimeLi string = `
+var wExecTimeLi = `
      <li>
         <label>Total Time </label>
         <span>00:01:53</span>
       </li>`
 
-var wTimestampLi string = `
+var wTimestampLi = `
      <li>
         <label>Generated On </label>
         <span>Jun 3, 2016 at 12:29pm</span>
@@ -89,7 +89,7 @@ var wTimestampLi string = `
   </div>
 </div>`
 
-var wSidebarAside string = `<aside class="sidebar">
+var wSidebarAside = `<aside class="sidebar">
   <h3 class="title">Specifications</h3>
   <div class="searchbar">
     <input id="searchSpecifications" placeholder="Type specification or tag name" type="text" />
@@ -119,7 +119,7 @@ var wSidebarAside string = `<aside class="sidebar">
   </div>
 </aside>`
 
-var wHookFailureWithScreenhotDiv string = `<div class="error-container failed">
+var wHookFailureWithScreenhotDiv = `<div class="error-container failed">
 <div collapsable class="error-heading">BeforeSuite Failed:<span class="error-message"> SomeError</span></div>
   <div class="toggleShow" data-toggle="collapse" data-target="#hookFailureDetails">
     <span>[Show details]</span>
@@ -136,7 +136,7 @@ var wHookFailureWithScreenhotDiv string = `<div class="error-container failed">
   </div>
 </div>`
 
-var wHookFailureWithoutScreenhotDiv string = `<div class="error-container failed">
+var wHookFailureWithoutScreenhotDiv = `<div class="error-container failed">
   <div collapsable class="error-heading">BeforeSuite Failed:<span class="error-message"> SomeError</span></div>
   <div class="toggleShow" data-toggle="collapse" data-target="#hookFailureDetails">
     <span>[Show details]</span>
@@ -148,17 +148,17 @@ var wHookFailureWithoutScreenhotDiv string = `<div class="error-container failed
   </div>
 </div>`
 
-var wSpecHeaderStartWithTags string = `<header class="curr-spec">
+var wSpecHeaderStartWithTags = `<header class="curr-spec">
   <h3 class="spec-head" title="/tmp/gauge/specs/foobar.spec">Spec heading</h3>
   <span class="time">00:01:01</span>`
 
-var wTagsDiv string = `<div class="tags scenario_tags contentSection">
+var wTagsDiv = `<div class="tags scenario_tags contentSection">
   <strong>Tags:</strong>
   <span> tag1</span>
   <span> tag2</span>
 </div>`
 
-var wSpecCommentsWithTableTag string = `<span></span>
+var wSpecCommentsWithTableTag = `<span></span>
 <span>This is an executable specification file. This file follows markdown syntax.</span>
 <span></span>
 <span>To execute this specification, run</span>
@@ -188,42 +188,42 @@ var wSpecCommentsWithTableTag string = `<span></span>
 <span>Comment 2</span>
 <span>Comment 3</span>`
 
-var wSpecCommentsWithoutTableTag string = `<span></span>
+var wSpecCommentsWithoutTableTag = `<span></span>
 <span>This is an executable specification file. This file follows markdown syntax.</span>
 <span></span>
 <span>To execute this specification, run</span>
 <span>gauge specs</span>
 <span></span>`
 
-var wScenarioContainerStartPassDiv string = `<div class='scenario-container passed'>`
-var wScenarioContainerStartFailDiv string = `<div class='scenario-container failed'>`
-var wScenarioContainerStartSkipDiv string = `<div class='scenario-container skipped'>`
+var wScenarioContainerStartPassDiv = `<div class='scenario-container passed'>`
+var wScenarioContainerStartFailDiv = `<div class='scenario-container failed'>`
+var wScenarioContainerStartSkipDiv = `<div class='scenario-container skipped'>`
 
-var wscenarioHeaderStartDiv string = `<div class="scenario-head">
+var wscenarioHeaderStartDiv = `<div class="scenario-head">
   <h3 class="head borderBottom">Scenario Heading</h3>
   <span class="time">00:01:01</span>`
 
-var wPassStepStartDiv string = `<div class='step'>
+var wPassStepStartDiv = `<div class='step'>
   <h5 class='execution-time'><span class='time'>Execution Time : 00:03:31</span></h5>
   <div class='step-info passed'>
     <ul>
       <li class='step'>
         <div class='step-txt'>`
 
-var wFailStepStartDiv string = `<div class='step'>
+var wFailStepStartDiv = `<div class='step'>
   <h5 class='execution-time'><span class='time'>Execution Time : 00:03:31</span></h5>
   <div class='step-info failed'>
     <ul>
       <li class='step'>
         <div class='step-txt'>`
 
-var wSkipStepStartDiv string = `<div class='step'>
+var wSkipStepStartDiv = `<div class='step'>
   <div class='step-info skipped'>
     <ul>
       <li class='step'>
         <div class='step-txt'>`
 
-var wStepEndDiv string = `<span>Say</span><span class='parameter'>"hi"</span><span>to</span><span class='parameter'>"gauge"</span>
+var wStepEndDiv = `<span>Say</span><span class='parameter'>"hi"</span><span>to</span><span class='parameter'>"gauge"</span>
           <div class='inline-table'>
             <div>
               <table>
@@ -251,7 +251,7 @@ var wStepEndDiv string = `<span>Say</span><span class='parameter'>"hi"</span><sp
 </div>
 `
 
-var re *regexp.Regexp = regexp.MustCompile("[ ]*[\n\t][ ]*")
+var re = regexp.MustCompile("[ ]*[\n\t][ ]*")
 
 var reportGenTests = []reportGenTest{
 	{"generate body header with project name", bodyHeaderTag, &overview{ProjectName: "projname"}, wBodyHeader},

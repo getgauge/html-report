@@ -226,7 +226,7 @@ func generateOverview(suiteRes *gm.ProtoSuiteResult, w io.Writer) {
 	overview := toOverview(suiteRes)
 
 	execTemplate(htmlStartTag, w, nil)
-	execTemplate(pageHeaderTag, w, nil)
+	execTemplate(pageHeaderTag, w, overview)
 	execTemplate(bodyStartTag, w, nil)
 	execTemplate(bodyHeaderTag, w, overview)
 	execTemplate(mainStartTag, w, nil)

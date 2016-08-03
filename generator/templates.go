@@ -35,7 +35,7 @@ const bodyFooterTag = `<footer class="footer">
 const reportOverviewTag = `<div class="report-overview">
   <div class="report_chart">
     <div class="chart">
-      <nvd3 options="options" data="data"></nvd3>
+      <svg></svg>
     </div>
     <div class="total-specs"><span class="value">{{.TotalSpecs}}</span><span class="txt">Total specs</span></div>
   </div>
@@ -200,7 +200,11 @@ const pageHeaderTag = `<head>
   <link rel="stylesheet" type="text/css" href="css/normalize.css" />
   <link rel="stylesheet" type="text/css" href="css/angular-hovercard.css" />
   <link rel="stylesheet" type="text/css" href="css/style.css" />
+  <script src="js/d3.min.js" charset="utf-8"></script>
+  <script src="js/nv.d3.min.js" charset="utf-8"></script>
   <script src="js/lightbox.js"></script>
+  <script src="chart.js" type="text/javascript"></script>
+  <script type="text/javascript">createChart({{.Passed}},{{.Failed}},{{.Skipped}})</script>
 </head>`
 
 const headerEndTag = `</header>`
