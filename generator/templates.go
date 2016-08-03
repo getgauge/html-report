@@ -77,7 +77,7 @@ const reportOverviewTag = `<div class="report-overview">
 //TODO: 1. Set first spec as selected by default and load it
 //      2. Javascript action to load spec on click
 //      3. Filtering based on search query
-const sidebarDiv = `{{if not .IsPreHookFailure}}<aside class="sidebar">
+const sidebarDiv = `{{if not .IsBeforeHookFailure}}<aside class="sidebar">
   <h3 class="title">Specifications</h3>
 
   <div class="searchbar">

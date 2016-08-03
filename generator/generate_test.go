@@ -260,15 +260,15 @@ var reportGenTests = []reportGenTest{
 	{"generate report overview without tags", reportOverviewTag, &overview{"projname", "default", "", 34, "00:01:53", "Jun 3, 2016 at 12:29pm", 41, 2, 39, 0},
 		wChartDiv + wResCntDiv + wEnvLi + wSuccRateLi + wExecTimeLi + wTimestampLi},
 	{"generate sidebar with appropriate pass/fail/skip class", sidebarDiv, &sidebar{
-		IsPreHookFailure: false,
+		IsBeforeHookFailure: false,
 		Specs: []*specsMeta{
 			newSpecsMeta("Passing Spec", "00:01:04", false, false, nil, "passing_spec.html"),
 			newSpecsMeta("Failing Spec", "00:00:30", true, false, nil, "failing_spec.html"),
 			newSpecsMeta("Skipped Spec", "00:00:00", false, true, nil, "skipped_spec.html"),
 		}}, wSidebarAside},
 	{"do not generate sidebar if presuitehook failure", sidebarDiv, &sidebar{
-		IsPreHookFailure: true,
-		Specs:            []*specsMeta{},
+		IsBeforeHookFailure: true,
+		Specs:               []*specsMeta{},
 	}, ""},
 	{"generate hook failure div with screenshot", hookFailureDiv, newHookFailure("BeforeSuite", "SomeError", "iVBO", "Stack trace"), wHookFailureWithScreenhotDiv},
 	{"generate hook failure div without screenshot", hookFailureDiv, newHookFailure("BeforeSuite", "SomeError", "", "Stack trace"), wHookFailureWithoutScreenhotDiv},

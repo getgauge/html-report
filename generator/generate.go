@@ -47,8 +47,8 @@ type specsMeta struct {
 }
 
 type sidebar struct {
-	IsPreHookFailure bool
-	Specs            []*specsMeta
+	IsBeforeHookFailure bool
+	Specs               []*specsMeta
 }
 
 type hookFailure struct {
@@ -80,20 +80,20 @@ type spec struct {
 	Table               *table
 	CommentsAfterTable  []string
 	Scenarios           []*scenario
-	PreHookFailure      *hookFailure
-	PostHookFailure     *hookFailure
+	BeforeHookFailure   *hookFailure
+	AfterHookFailure    *hookFailure
 }
 
 type scenario struct {
-	Heading         string
-	ExecTime        string
-	Tags            []string
-	ExecStatus      status
-	Contexts        []item
-	Items           []item
-	Teardown        []item
-	PreHookFailure  *hookFailure
-	PostHookFailure *hookFailure
+	Heading           string
+	ExecTime          string
+	Tags              []string
+	ExecStatus        status
+	Contexts          []item
+	Items             []item
+	Teardown          []item
+	BeforeHookFailure *hookFailure
+	AfterHookFailure  *hookFailure
 }
 
 const (
@@ -223,17 +223,17 @@ func generateSpecDiv(w io.Writer, res *gm.ProtoSpecResult) {
 	execTemplate(headerEndTag, w, nil)
 	execTemplate(specsItemsContainerDiv, w, nil)
 
-	if spec.PreHookFailure != nil {
-		execTemplate(hookFailureDiv, w, spec.PreHookFailure)
+	if spec.BeforeHookFailure != nil {
+		execTemplate(hookFailureDiv, w, spec.BeforeHookFailure)
 	}
-	if spec.PostHookFailure != nil {
-		execTemplate(hookFailureDiv, w, spec.PostHookFailure)
+	if spec.AfterHookFailure != nil {
+		execTemplate(hookFailureDiv, w, spec.AfterHookFailure)
 	}
 
 	execTemplate(specsItemsContentsDiv, w, nil)
 	execTemplate(specCommentsAndTableTag, w, spec)
 
-	if spec.PreHookFailure == nil {
+	if spec.BeforeHookFailure == nil {
 		for _, scn := range spec.Scenarios {
 			generateScenario(w, scn)
 		}
@@ -249,16 +249,16 @@ func generateScenario(w io.Writer, scn *scenario) {
 	execTemplate(scenarioHeaderStartDiv, w, scn)
 	execTemplate(tagsDiv, w, scn)
 	execTemplate(endDiv, w, nil)
-	if scn.PreHookFailure != nil {
-		execTemplate(hookFailureDiv, w, scn.PreHookFailure)
+	if scn.BeforeHookFailure != nil {
+		execTemplate(hookFailureDiv, w, scn.BeforeHookFailure)
 	}
 
 	generateItems(w, scn.Contexts, generateContextOrTeardown)
 	generateItems(w, scn.Items, generateItem)
 	generateItems(w, scn.Teardown, generateContextOrTeardown)
 
-	if scn.PostHookFailure != nil {
-		execTemplate(hookFailureDiv, w, scn.PostHookFailure)
+	if scn.AfterHookFailure != nil {
+		execTemplate(hookFailureDiv, w, scn.AfterHookFailure)
 	}
 	execTemplate(endDiv, w, nil)
 }

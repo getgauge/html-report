@@ -94,8 +94,8 @@ func toSidebar(res *gm.ProtoSuiteResult) *sidebar {
 	}
 
 	return &sidebar{
-		IsPreHookFailure: res.PreHookFailure != nil,
-		Specs:            specsMetaList,
+		IsBeforeHookFailure: res.PreHookFailure != nil,
+		Specs:               specsMetaList,
 	}
 }
 
@@ -113,8 +113,8 @@ func toSpec(res *gm.ProtoSpecResult) *spec {
 		CommentsBeforeTable: make([]string, 0),
 		CommentsAfterTable:  make([]string, 0),
 		Scenarios:           make([]*scenario, 0),
-		PreHookFailure:      toHookFailure(res.GetProtoSpec().GetPreHookFailure(), "Before Spec"),
-		PostHookFailure:     toHookFailure(res.GetProtoSpec().GetPostHookFailure(), "After Spec"),
+		BeforeHookFailure:   toHookFailure(res.GetProtoSpec().GetPreHookFailure(), "Before Spec"),
+		AfterHookFailure:    toHookFailure(res.GetProtoSpec().GetPostHookFailure(), "After Spec"),
 	}
 	isTableScanned := false
 	for _, item := range res.GetProtoSpec().GetItems() {
@@ -137,15 +137,15 @@ func toSpec(res *gm.ProtoSpecResult) *spec {
 
 func toScenario(scn *gm.ProtoScenario) *scenario {
 	return &scenario{
-		Heading:         scn.GetScenarioHeading(),
-		ExecTime:        formatTime(scn.GetExecutionTime()),
-		Tags:            scn.GetTags(),
-		ExecStatus:      getStatus(scn.GetFailed(), scn.GetSkipped()),
-		Contexts:        getItems(scn.GetContexts()),
-		Items:           getItems(scn.GetScenarioItems()),
-		Teardown:        getItems(scn.GetTearDownSteps()),
-		PreHookFailure:  toHookFailure(scn.GetPreHookFailure(), "Before Scenario"),
-		PostHookFailure: toHookFailure(scn.GetPostHookFailure(), "After Scenario"),
+		Heading:           scn.GetScenarioHeading(),
+		ExecTime:          formatTime(scn.GetExecutionTime()),
+		Tags:              scn.GetTags(),
+		ExecStatus:        getStatus(scn.GetFailed(), scn.GetSkipped()),
+		Contexts:          getItems(scn.GetContexts()),
+		Items:             getItems(scn.GetScenarioItems()),
+		Teardown:          getItems(scn.GetTearDownSteps()),
+		BeforeHookFailure: toHookFailure(scn.GetPreHookFailure(), "Before Scenario"),
+		AfterHookFailure:  toHookFailure(scn.GetPostHookFailure(), "After Scenario"),
 	}
 }
 

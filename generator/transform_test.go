@@ -401,7 +401,7 @@ func TestToOverview(t *testing.T) {
 
 func TestToSidebar(t *testing.T) {
 	want := &sidebar{
-		IsPreHookFailure: false,
+		IsBeforeHookFailure: false,
 		Specs: []*specsMeta{
 			newSpecsMeta("specRes1", "00:03:31", false, false, []string{"tag1", "tag2"}, "specres1.html"),
 			newSpecsMeta("specRes2", "00:03:31", true, false, []string{"tag1", "tag2", "tag3"}, "specres2.html"),
@@ -451,8 +451,8 @@ func TestToSpecWithHookFailure(t *testing.T) {
 		CommentsBeforeTable: []string{},
 		CommentsAfterTable:  []string{},
 		Scenarios:           make([]*scenario, 0),
-		PreHookFailure:      newHookFailure("Before Spec", "err", "Screenshot", "Stacktrace"),
-		PostHookFailure:     newHookFailure("After Spec", "err", "Screenshot", "Stacktrace"),
+		BeforeHookFailure:   newHookFailure("Before Spec", "err", "Screenshot", "Stacktrace"),
+		AfterHookFailure:    newHookFailure("After Spec", "err", "Screenshot", "Stacktrace"),
 	}
 
 	got := toSpec(specResWithSpecHookFailure)
@@ -521,9 +521,9 @@ func TestToScenarioWithHookFailures(t *testing.T) {
 				Res:       &result{Status: fail, ExecTime: "00:03:31"},
 			},
 		},
-		Teardown:        []item{},
-		PreHookFailure:  newHookFailure("Before Scenario", "err", "Screenshot", "Stacktrace"),
-		PostHookFailure: newHookFailure("After Scenario", "err", "Screenshot", "Stacktrace"),
+		Teardown:          []item{},
+		BeforeHookFailure: newHookFailure("Before Scenario", "err", "Screenshot", "Stacktrace"),
+		AfterHookFailure:  newHookFailure("After Scenario", "err", "Screenshot", "Stacktrace"),
 	}
 
 	got := toScenario(scnWithHookFailure)
