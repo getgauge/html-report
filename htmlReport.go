@@ -25,7 +25,6 @@ import (
 	"time"
 
 	"github.com/getgauge/common"
-	"github.com/getgauge/gauge/logger"
 	"github.com/getgauge/html-report/gauge_messages"
 	"github.com/getgauge/html-report/generator"
 	"github.com/getgauge/html-report/listener"
@@ -118,11 +117,13 @@ func createReport(suiteResult *gauge_messages.SuiteExecutionResult) {
 	reportsDir := getReportsDirectory(getNameGen())
 	err := generator.GenerateReports(suiteResult.GetSuiteResult(), reportsDir)
 	if err != nil {
-		logger.Fatalf("Failed to generate reports: %s", err.Error())
+		fmt.Errorf("Failed to generate reports: %s", err.Error())
+		os.Exit(1)
 	}
 	err = copyReportTemplateFiles(reportsDir)
 	if err != nil {
-		logger.Fatalf("Error copying template directory :%s\n", err.Error())
+		fmt.Errorf("Error copying template directory :%s\n", err.Error())
+		os.Exit(1)
 	}
 	fmt.Printf("Successfully generated html-report to => %s\n", reportsDir)
 }
