@@ -165,10 +165,11 @@ func execTemplate(tmplName string, w io.Writer, data interface{}) {
 	}
 }
 
-func generateReports(suiteRes *gm.ProtoSuiteResult, reportDir string) {
+// GenerateReports generates HTML report in the given report dir location
+func GenerateReports(suiteRes *gm.ProtoSuiteResult, reportDir string) error {
 	f, err := os.Create(filepath.Join(reportDir, "index.html"))
 	if err != nil {
-		log.Fatalf(err.Error())
+		return err
 	}
 	if suiteRes.GetPreHookFailure() != nil {
 		generateOverview(suiteRes, f)
@@ -183,11 +184,12 @@ func generateReports(suiteRes *gm.ProtoSuiteResult, reportDir string) {
 		for _, res := range specRes {
 			sf, err := os.Create(filepath.Join(reportDir, toFilename(res.GetProtoSpec().GetSpecHeading())))
 			if err != nil {
-				log.Fatalf(err.Error())
+				return err
 			}
 			generateSpecPage(suiteRes, res, sf)
 		}
 	}
+	return nil
 }
 
 func generateIndexPage(suiteRes *gm.ProtoSuiteResult, w io.Writer) {

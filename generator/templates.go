@@ -203,7 +203,7 @@ const pageHeaderTag = `<head>
   <script src="js/d3.min.js" charset="utf-8"></script>
   <script src="js/nv.d3.min.js" charset="utf-8"></script>
   <script src="js/lightbox.js"></script>
-  <script src="chart.js" type="text/javascript"></script>
+  <script src="js/chart.js" type="text/javascript"></script>
   <script type="text/javascript">createChart({{.Passed}},{{.Failed}},{{.Skipped}})</script>
 </head>`
 

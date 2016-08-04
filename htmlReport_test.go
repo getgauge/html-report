@@ -52,29 +52,34 @@ func (s *MySuite) TestCopyingReportTemplates(c *C) {
 	verifyReportTemplateFilesAreCopied(dirToCopy, c)
 }
 
-func (s *MySuite) TestCreatingReport(c *C) {
-	reportDir := filepath.Join(os.TempDir(), randomName())
-	defer os.RemoveAll(reportDir)
+func (s *MySuite) TestGetReportsDirectory(c *C) {
+	userSetReportsDir := filepath.Join(os.TempDir(), randomName())
+	os.Setenv(gaugeReportsDirEnvName, userSetReportsDir)
+	expectedReportsDir := filepath.Join(userSetReportsDir, htmlReport)
+	defer os.RemoveAll(userSetReportsDir)
 
-	finalReportDir, err := createHtmlReport(reportDir, make([]byte, 0), nil)
-	c.Assert(err, IsNil)
+	reportsDir := getReportsDirectory(nil)
 
-	expectedFinalReportDir := filepath.Join(reportDir, htmlReport)
-	c.Assert(finalReportDir, Equals, expectedFinalReportDir)
-	verifyReportTemplateFilesAreCopied(expectedFinalReportDir, c)
+	c.Assert(reportsDir, Equals, expectedReportsDir)
+	if !fileExists(expectedReportsDir) {
+		c.Errorf("Expected %s report directory doesn't exist", expectedReportsDir)
+	}
 }
 
-func (s *MySuite) TestCreatingReportWithNoOverWrite(c *C) {
-	reportDir := filepath.Join(os.TempDir(), randomName())
-	defer os.RemoveAll(reportDir)
+func (s *MySuite) TestGetReportsDirectoryWithOverrideFlag(c *C) {
+	userSetReportsDir := filepath.Join(os.TempDir(), randomName())
+	os.Setenv(gaugeReportsDirEnvName, userSetReportsDir)
+	os.Setenv(overwriteReportsEnvProperty, "true")
+	nameGen := &testNameGenerator{}
+	expectedReportsDir := filepath.Join(userSetReportsDir, htmlReport, nameGen.randomName())
+	defer os.RemoveAll(userSetReportsDir)
 
-	nameGen := testNameGenerator{}
-	finalReportDir, err := createHtmlReport(reportDir, make([]byte, 0), nameGen)
-	c.Assert(err, IsNil)
+	reportsDir := getReportsDirectory(nameGen)
 
-	expectedFinalReportDir := filepath.Join(reportDir, htmlReport, nameGen.randomName())
-	c.Assert(finalReportDir, Equals, expectedFinalReportDir)
-	verifyReportTemplateFilesAreCopied(expectedFinalReportDir, c)
+	c.Assert(reportsDir, Equals, expectedReportsDir)
+	if !fileExists(expectedReportsDir) {
+		c.Errorf("Expected %s report directory doesn't exist", expectedReportsDir)
+	}
 }
 
 func randomName() string {

@@ -29,7 +29,7 @@ var suiteResWithBeforeSuiteFailure = newProtoSuiteRes(true, 0, 0, 0, newProtoHoo
 
 func TestEndToEndHTMLGenerationWhenBeforeSuiteFails(t *testing.T) {
 	reportDir := filepath.Join("_testdata", "e2e")
-	generateReports(suiteResWithBeforeSuiteFailure, reportDir)
+	GenerateReports(suiteResWithBeforeSuiteFailure, reportDir)
 
 	gotContent, err := ioutil.ReadFile(filepath.Join(reportDir, "index.html"))
 	if err != nil {
@@ -51,7 +51,7 @@ func TestEndToEndHTMLGenerationWhenBeforeSuiteFails(t *testing.T) {
 func TestEndToEndHTMLGeneration(t *testing.T) {
 	expectedFiles := []string{"index.html", "passing_specification_1.html", "failing_specification_1.html", "skipped_specification.html"}
 	reportDir := filepath.Join("_testdata", "e2e")
-	generateReports(suiteRes3, reportDir)
+	GenerateReports(suiteRes3, reportDir)
 	for _, expectedFile := range expectedFiles {
 		gotContent, err := ioutil.ReadFile(filepath.Join(reportDir, expectedFile))
 		if err != nil {

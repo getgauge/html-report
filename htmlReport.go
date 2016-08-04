@@ -18,18 +18,16 @@
 package main
 
 import (
-	"bytes"
-	"encoding/json"
-	"errors"
 	"fmt"
-	"io/ioutil"
 	"os"
 	"path/filepath"
 	"strings"
 	"time"
 
 	"github.com/getgauge/common"
+	"github.com/getgauge/gauge/logger"
 	"github.com/getgauge/html-report/gauge_messages"
+	"github.com/getgauge/html-report/generator"
 	"github.com/getgauge/html-report/listener"
 )
 
@@ -117,15 +115,16 @@ func getDefaultPropertiesFile() string {
 }
 
 func createReport(suiteResult *gauge_messages.SuiteExecutionResult) {
-	jsContents := generateJsFileContents(suiteResult)
-	reportDir, err := createHtmlReport(createReportsDirectory(), jsContents, getNameGen())
+	reportsDir := getReportsDirectory(getNameGen())
+	err := generator.GenerateReports(suiteResult.GetSuiteResult(), reportsDir)
 	if err != nil {
-		fmt.Printf("Report generation failed: %s \n", err)
-		os.Exit(1)
-	} else {
-		fmt.Printf("Successfully generated html-report to => %s\n", reportDir)
+		logger.Fatalf("Failed to generate reports: %s", err.Error())
 	}
-
+	err = copyReportTemplateFiles(reportsDir)
+	if err != nil {
+		logger.Fatalf("Error copying template directory :%s\n", err.Error())
+	}
+	fmt.Printf("Successfully generated html-report to => %s\n", reportsDir)
 }
 
 func getNameGen() nameGenerator {
@@ -138,7 +137,12 @@ func getNameGen() nameGenerator {
 	return nameGen
 }
 
-func createHtmlReport(reportsDir string, jsContents []byte, nameGen nameGenerator) (string, error) {
+func getReportsDirectory(nameGen nameGenerator) string {
+	reportsDir, err := filepath.Abs(os.Getenv(gaugeReportsDirEnvName))
+	if reportsDir == "" || err != nil {
+		reportsDir = defaultReportsDir
+	}
+	createDirectory(reportsDir)
 	var currentReportDir string
 	if nameGen != nil {
 		currentReportDir = filepath.Join(reportsDir, htmlReport, nameGen.randomName())
@@ -146,20 +150,7 @@ func createHtmlReport(reportsDir string, jsContents []byte, nameGen nameGenerato
 		currentReportDir = filepath.Join(reportsDir, htmlReport)
 	}
 	createDirectory(currentReportDir)
-	err := copyReportTemplateFiles(currentReportDir)
-	if err != nil {
-		return "", errors.New(fmt.Sprintf("Error copying template directory :%s\n", err))
-	}
-	return currentReportDir, writeResultJsFile(currentReportDir, jsContents)
-}
-
-func createReportsDirectory() string {
-	reportsDir, err := filepath.Abs(os.Getenv(gaugeReportsDirEnvName))
-	if reportsDir == "" || err != nil {
-		reportsDir = defaultReportsDir
-	}
-	createDirectory(reportsDir)
-	return reportsDir
+	return currentReportDir
 }
 
 func copyReportTemplateFiles(reportDir string) error {
@@ -168,61 +159,12 @@ func copyReportTemplateFiles(reportDir string) error {
 	return err
 }
 
-func writeResultJsFile(reportDir string, jsContents []byte) error {
-	resultJsPath := filepath.Join(reportDir, "js", resultJsFile)
-	err := ioutil.WriteFile(resultJsPath, jsContents, common.NewFilePermissions)
-	if err != nil {
-		return errors.New(fmt.Sprintf("Failed to copy file: %s %s\n", resultJsFile, err))
-	}
-	return nil
-}
-
 func shouldOverwriteReports() bool {
 	envValue := os.Getenv(overwriteReportsEnvProperty)
 	if strings.ToLower(envValue) == "true" {
 		return true
 	}
 	return false
-}
-
-func generateJsFileContents(suiteResult *gauge_messages.SuiteExecutionResult) []byte {
-	var buffer bytes.Buffer
-	executionResultJson := marshal(suiteResult)
-	itemsTypeJson := marshal(convertKeysToString(gauge_messages.ProtoItem_ItemType_name))
-	parameterTypeJson := marshal(convertKeysToString(gauge_messages.Parameter_ParameterType_name))
-	fragmentTypeJson := marshal(convertKeysToString(gauge_messages.Fragment_FragmentType_name))
-
-	buffer.WriteString("var gaugeExecutionResult = ")
-	buffer.Write(executionResultJson)
-	buffer.WriteString(";")
-	buffer.WriteString("\n var itemTypesMap = ")
-	buffer.Write(itemsTypeJson)
-	buffer.WriteString(";")
-	buffer.WriteString("\n var parameterTypesMap = ")
-	buffer.Write(parameterTypeJson)
-	buffer.WriteString(";")
-	buffer.WriteString("\n var fragmentTypesMap = ")
-	buffer.Write(fragmentTypeJson)
-	buffer.WriteString(";")
-
-	return buffer.Bytes()
-}
-
-func convertKeysToString(intKeyMap map[int32]string) map[string]string {
-	stringKeyMap := make(map[string]string, 0)
-	for key, val := range intKeyMap {
-		stringKeyMap[fmt.Sprintf("%d", key)] = val
-	}
-	return stringKeyMap
-}
-
-func marshal(item interface{}) []byte {
-	marshalledResult, err := json.Marshal(item)
-	if err != nil {
-		fmt.Printf("Failed to convert to json :%s\n", err)
-		os.Exit(1)
-	}
-	return marshalledResult
 }
 
 func createDirectory(dir string) {
