@@ -117,12 +117,12 @@ func createReport(suiteResult *gauge_messages.SuiteExecutionResult) {
 	reportsDir := getReportsDirectory(getNameGen())
 	err := generator.GenerateReports(suiteResult.GetSuiteResult(), reportsDir)
 	if err != nil {
-		fmt.Errorf("Failed to generate reports: %s", err.Error())
+		fmt.Printf("Failed to generate reports: %s", err.Error())
 		os.Exit(1)
 	}
 	err = copyReportTemplateFiles(reportsDir)
 	if err != nil {
-		fmt.Errorf("Error copying template directory :%s\n", err.Error())
+		fmt.Printf("Error copying template directory :%s\n", err.Error())
 		os.Exit(1)
 	}
 	fmt.Printf("Successfully generated html-report to => %s\n", reportsDir)
