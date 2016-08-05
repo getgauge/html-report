@@ -18,6 +18,7 @@
 package generator
 
 import (
+	"path/filepath"
 	"reflect"
 	"testing"
 
@@ -172,6 +173,7 @@ var specRes2 = &gm.ProtoSpecResult{
 	Skipped:       proto.Bool(false),
 	ExecutionTime: proto.Int64(211316),
 	ProtoSpec: &gm.ProtoSpec{
+		FileName:    proto.String("specRes2.spec"),
 		SpecHeading: proto.String("specRes2"),
 		Tags:        []string{"tag1", "tag2", "tag3"},
 	},
@@ -182,6 +184,7 @@ var specRes3 = &gm.ProtoSpecResult{
 	Skipped:       proto.Bool(true),
 	ExecutionTime: proto.Int64(211316),
 	ProtoSpec: &gm.ProtoSpec{
+		FileName:    proto.String("specRes3.spec"),
 		SpecHeading: proto.String("specRes3"),
 		Tags:        []string{"tag1"},
 	},
@@ -400,12 +403,13 @@ func TestToOverview(t *testing.T) {
 }
 
 func TestToSidebar(t *testing.T) {
+
 	want := &sidebar{
 		IsBeforeHookFailure: false,
 		Specs: []*specsMeta{
-			newSpecsMeta("specRes1", "00:03:31", false, false, []string{"tag1", "tag2"}, "specres1.html"),
-			newSpecsMeta("specRes2", "00:03:31", true, false, []string{"tag1", "tag2", "tag3"}, "specres2.html"),
-			newSpecsMeta("specRes3", "00:03:31", false, true, []string{"tag1"}, "specres3.html"),
+			newSpecsMeta("specRes1", "00:03:31", false, false, []string{"tag1", "tag2"}, "foobar.html"),
+			newSpecsMeta("specRes2", "00:03:31", true, false, []string{"tag1", "tag2", "tag3"}, "specRes2.html"),
+			newSpecsMeta("specRes3", "00:03:31", false, true, []string{"tag1"}, "specRes3.html"),
 		},
 	}
 
@@ -684,30 +688,24 @@ func TestToHookFailureWithNilInput(t *testing.T) {
 
 type specNameGenerationTest struct {
 	specName     string
+	projectRoot  string
 	HTMLFilename string
 }
 
 var specNameGenerationTests = []*specNameGenerationTest{
-	{"simple specification", "simple_specification.html"},
-	{"specification with -", "specification_with_-.html"},
-	{"specification with $ #", "specification_with_$_#.html"},
-	{"specification with : ;", "specification_with.html"},
-	{"spec < with > special : chars", "spec_with_special_chars.html"},
-	{"spec _ with _ underscore", "spec_with_underscore.html"},
-	{"spec_with_underscore", "spec_with_underscore.html"},
-	{"spec \" with ' quotes", "spec_with_quotes.html"},
-	{"spec \\ with / slashes and | bar", "spec_with_slashes_and_bar.html"},
-	{"spec ? with * wildcards", "spec_with_wildcards.html"},
-	{"   spec starting and ending with spaces      		", "spec_starting_and_ending_with_spac.html"},
-	{".spec.with.periods.", "specwithperiods.html"},
-	{"A very large spec name to test that file names are truncated at 35 chars", "a_very_large_spec_name_to_test_that.html"},
+	{filepath.Join("Users", "gauge", "foo", "simple_specification.spec"), filepath.Join("Users", "gauge", "foo"), "simple_specification.html"},
+	{filepath.Join("Users", "gauge", "foo", "simple_specification.spec"), filepath.Join("Users", "gauge"), "foo_simple_specification.html"},
+	{"simple_specification.spec", "", "simple_specification.html"},
+	{filepath.Join("Users", "gauge", "foo", "abcd1234.spec"), filepath.Join("Users", "gauge", "foo"), "abcd1234.html"},
+	{filepath.Join("Users", "gauge", "foo", "bar", "simple_specification.spec"), filepath.Join("Users", "gauge", "foo"), "bar_simple_specification.html"},
+	{filepath.Join("Users", "gauge", "foo", "bar", "simple_specification.spec"), "Users", "gauge_foo_bar_simple_specification.html"},
+	{filepath.Join("Users", "gauge12", "fo_o", "b###$ar", "simple_specification.spec"), "Users", "gauge12_fo_o_b###$ar_simple_specification.html"},
 }
 
-func TestToFileName(t *testing.T) {
+func TestToHTMLFileName(t *testing.T) {
 	for _, test := range specNameGenerationTests {
-		got := toFilename(test.specName)
+		got := toHTMLFileName(test.specName, test.projectRoot)
 		want := test.HTMLFilename
-
 		if got != want {
 			t.Errorf("want:\n%q\ngot:\n%q\n", want, got)
 		}

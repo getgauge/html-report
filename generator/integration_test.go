@@ -308,7 +308,7 @@ var passSpecRes1 = &gm.ProtoSpecResult{
 	ProtoSpec: &gm.ProtoSpec{
 		SpecHeading: proto.String("Passing Specification 1"),
 		Tags:        []string{"tag1", "tag2"},
-		FileName:    proto.String("/tmp/gauge/specs/foobar.spec"),
+		FileName:    proto.String("passing_specification_1.spec"),
 		Items: []*gm.ProtoItem{
 			newCommentItem("\n"),
 			newCommentItem("This is an executable specification file. This file follows markdown syntax."),
@@ -334,6 +334,7 @@ var passSpecRes2 = &gm.ProtoSpecResult{
 	Skipped:       proto.Bool(false),
 	ExecutionTime: proto.Int64(211316),
 	ProtoSpec: &gm.ProtoSpec{
+		FileName:    proto.String("passing_specification_2.spec"),
 		SpecHeading: proto.String("Passing Specification 2"),
 		Tags:        []string{},
 	},
@@ -344,6 +345,7 @@ var passSpecRes3 = &gm.ProtoSpecResult{
 	Skipped:       proto.Bool(false),
 	ExecutionTime: proto.Int64(211316),
 	ProtoSpec: &gm.ProtoSpec{
+		FileName:    proto.String("passing_specification_3.spec"),
 		SpecHeading: proto.String("Passing Specification 3"),
 		Tags:        []string{"foo"},
 	},
@@ -356,7 +358,7 @@ var failSpecResWithAfterScenarioFailure = &gm.ProtoSpecResult{
 	ProtoSpec: &gm.ProtoSpec{
 		SpecHeading: proto.String("Failing Specification 1"),
 		Tags:        []string{},
-		FileName:    proto.String("/tmp/gauge/specs/foobar.spec"),
+		FileName:    proto.String("failing_specification_1.spec"),
 		Items: []*gm.ProtoItem{
 			newScenarioItem(scenarioWithAfterHookFail),
 		},
@@ -370,7 +372,7 @@ var failSpecResWithBeforeScenarioFailure = &gm.ProtoSpecResult{
 	ProtoSpec: &gm.ProtoSpec{
 		SpecHeading: proto.String("Failing Specification 1"),
 		Tags:        []string{},
-		FileName:    proto.String("/tmp/gauge/specs/foobar.spec"),
+		FileName:    proto.String("failing_specification_1.spec"),
 		Items: []*gm.ProtoItem{
 			newScenarioItem(scenarioWithBeforeHookFail),
 		},
@@ -384,7 +386,7 @@ var failSpecResWithBeforeAndAfterScenarioFailure = &gm.ProtoSpecResult{
 	ProtoSpec: &gm.ProtoSpec{
 		SpecHeading: proto.String("Failing Specification 1"),
 		Tags:        []string{},
-		FileName:    proto.String("/tmp/gauge/specs/foobar.spec"),
+		FileName:    proto.String("failing_specification_1.spec"),
 		Items: []*gm.ProtoItem{
 			newScenarioItem(scenarioWithBeforeAndAfterHookFail),
 		},
@@ -398,7 +400,7 @@ var specResWithMultipleScenarios = &gm.ProtoSpecResult{
 	ProtoSpec: &gm.ProtoSpec{
 		SpecHeading: proto.String("Failing Specification 1"),
 		Tags:        []string{},
-		FileName:    proto.String("/tmp/gauge/specs/foobar.spec"),
+		FileName:    proto.String("failing_specification_1.spec"),
 		Items: []*gm.ProtoItem{
 			newScenarioItem(scenarioWithStepFail),
 			newScenarioItem(scenario2),
@@ -413,7 +415,7 @@ var failSpecResWithBeforeStepFailure = &gm.ProtoSpecResult{
 	ProtoSpec: &gm.ProtoSpec{
 		SpecHeading: proto.String("Failing Specification 1"),
 		Tags:        []string{},
-		FileName:    proto.String("/tmp/gauge/specs/foobar.spec"),
+		FileName:    proto.String("failing_specification_1.spec"),
 		Items: []*gm.ProtoItem{
 			newScenarioItem(scenarioWithBeforeStepFail),
 		},
@@ -427,7 +429,7 @@ var failSpecResWithAfterStepFailure = &gm.ProtoSpecResult{
 	ProtoSpec: &gm.ProtoSpec{
 		SpecHeading: proto.String("Failing Specification 1"),
 		Tags:        []string{},
-		FileName:    proto.String("/tmp/gauge/specs/foobar.spec"),
+		FileName:    proto.String("failing_specification_1.spec"),
 		Items: []*gm.ProtoItem{
 			newScenarioItem(scenarioWithAfterStepFail),
 		},
@@ -441,7 +443,7 @@ var failSpecResWithBeforeAndAfterStepFailure = &gm.ProtoSpecResult{
 	ProtoSpec: &gm.ProtoSpec{
 		SpecHeading: proto.String("Failing Specification 1"),
 		Tags:        []string{},
-		FileName:    proto.String("/tmp/gauge/specs/foobar.spec"),
+		FileName:    proto.String("failing_specification_1.spec"),
 		Items: []*gm.ProtoItem{
 			newScenarioItem(scenarioWithBeforeAndAfterStepFail),
 		},
@@ -455,7 +457,7 @@ var failSpecResWithStepFailure = &gm.ProtoSpecResult{
 	ProtoSpec: &gm.ProtoSpec{
 		SpecHeading: proto.String("Failing Specification 1"),
 		Tags:        []string{},
-		FileName:    proto.String("/tmp/gauge/specs/foobar.spec"),
+		FileName:    proto.String("failing_specification_1.spec"),
 		Items: []*gm.ProtoItem{
 			newScenarioItem(scenarioWithStepFail),
 		},
@@ -469,7 +471,7 @@ var failSpecResWithConceptFailure = &gm.ProtoSpecResult{
 	ProtoSpec: &gm.ProtoSpec{
 		SpecHeading: proto.String("Failing Specification"),
 		Tags:        []string{},
-		FileName:    proto.String("/tmp/gauge/specs/foobar.spec"),
+		FileName:    proto.String("failing_specification.spec"),
 		Items: []*gm.ProtoItem{
 			newScenarioItem(scenarioWithConceptFailure),
 		},
@@ -483,7 +485,7 @@ var skippedSpecRes = &gm.ProtoSpecResult{
 	ProtoSpec: &gm.ProtoSpec{
 		SpecHeading: proto.String("Skipped Specification"),
 		Tags:        []string{},
-		FileName:    proto.String("/tmp/gauge/specs/foobar.spec"),
+		FileName:    proto.String("skipped_specification.spec"),
 		Items: []*gm.ProtoItem{
 			newScenarioItem(skippedScenario),
 		},
@@ -497,7 +499,7 @@ var failSpecResWithAfterSpecFailure = &gm.ProtoSpecResult{
 	ProtoSpec: &gm.ProtoSpec{
 		SpecHeading: proto.String("Failing Specification 1"),
 		Tags:        []string{},
-		FileName:    proto.String("/tmp/gauge/specs/foobar.spec"),
+		FileName:    proto.String("failing_specification_1.spec"),
 		Items: []*gm.ProtoItem{
 			newCommentItem("\n"),
 			newCommentItem("This is an executable specification file. This file follows markdown syntax."),
@@ -529,7 +531,7 @@ var failSpecResWithBeforeSpecFailure = &gm.ProtoSpecResult{
 	ProtoSpec: &gm.ProtoSpec{
 		SpecHeading: proto.String("Failing Specification 1"),
 		Tags:        []string{},
-		FileName:    proto.String("/tmp/gauge/specs/foobar.spec"),
+		FileName:    proto.String("failing_specification_1.spec"),
 		Items: []*gm.ProtoItem{
 			newCommentItem("\n"),
 			newCommentItem("This is an executable specification file. This file follows markdown syntax."),
@@ -557,7 +559,7 @@ var failSpecResWithBeforeAfterSpecFailure = &gm.ProtoSpecResult{
 	ProtoSpec: &gm.ProtoSpec{
 		SpecHeading: proto.String("Failing Specification 1"),
 		Tags:        []string{},
-		FileName:    proto.String("/tmp/gauge/specs/foobar.spec"),
+		FileName:    proto.String("failing_specification_1.spec"),
 		Items: []*gm.ProtoItem{
 			newCommentItem("\n"),
 			newCommentItem("This is an executable specification file. This file follows markdown syntax."),
@@ -589,6 +591,7 @@ var skipSpecRes1 = &gm.ProtoSpecResult{
 	ExecutionTime: proto.Int64(0),
 	ProtoSpec: &gm.ProtoSpec{
 		SpecHeading: proto.String("Skipped Specification 1"),
+		FileName:    proto.String("skipped_specification_1.spec"),
 		Tags:        []string{"bar"},
 	},
 }

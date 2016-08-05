@@ -114,8 +114,14 @@ func getDefaultPropertiesFile() string {
 }
 
 func createReport(suiteResult *gauge_messages.SuiteExecutionResult) {
+	projectRoot, err := common.GetProjectRoot()
+	if err != nil {
+		fmt.Printf("%s", err.Error())
+		os.Exit(1)
+	}
 	reportsDir := getReportsDirectory(getNameGen())
-	err := generator.GenerateReports(suiteResult.GetSuiteResult(), reportsDir)
+	generator.ProjectRoot = projectRoot
+	err = generator.GenerateReports(suiteResult.GetSuiteResult(), reportsDir)
 	if err != nil {
 		fmt.Printf("Failed to generate reports: %s", err.Error())
 		os.Exit(1)
@@ -173,7 +179,7 @@ func createDirectory(dir string) {
 		return
 	}
 	if err := os.MkdirAll(dir, common.NewDirectoryPermissions); err != nil {
-		fmt.Printf("Failed to create directory %s: %s\n", defaultReportsDir, err)
+		fmt.Printf("Failed to create directory %s: %s\n", dir, err)
 		os.Exit(1)
 	}
 }

@@ -165,6 +165,9 @@ func execTemplate(tmplName string, w io.Writer, data interface{}) {
 	}
 }
 
+// ProjectRoot is root dir of current project
+var ProjectRoot string
+
 // GenerateReports generates HTML report in the given report dir location
 func GenerateReports(suiteRes *gm.ProtoSuiteResult, reportDir string) error {
 	f, err := os.Create(filepath.Join(reportDir, "index.html"))
@@ -182,7 +185,7 @@ func GenerateReports(suiteRes *gm.ProtoSuiteResult, reportDir string) error {
 		generateIndexPage(suiteRes, f)
 		specRes := suiteRes.GetSpecResults()
 		for _, res := range specRes {
-			sf, err := os.Create(filepath.Join(reportDir, toFilename(res.GetProtoSpec().GetSpecHeading())))
+			sf, err := os.Create(filepath.Join(reportDir, toHTMLFileName(res.GetProtoSpec().GetFileName(), ProjectRoot)))
 			if err != nil {
 				return err
 			}

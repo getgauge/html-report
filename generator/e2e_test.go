@@ -29,8 +29,13 @@ var suiteResWithBeforeSuiteFailure = newProtoSuiteRes(true, 0, 0, 0, newProtoHoo
 
 func TestEndToEndHTMLGenerationWhenBeforeSuiteFails(t *testing.T) {
 	reportDir := filepath.Join("_testdata", "e2e")
-	GenerateReports(suiteResWithBeforeSuiteFailure, reportDir)
+	ProjectRoot = ""
 
+	err := GenerateReports(suiteResWithBeforeSuiteFailure, reportDir)
+
+	if err != nil {
+		t.Errorf("Expected error to be nil. Got: %s", err.Error())
+	}
 	gotContent, err := ioutil.ReadFile(filepath.Join(reportDir, "index.html"))
 	if err != nil {
 		t.Errorf("Error reading generated HTML file: %s", err.Error())
@@ -42,7 +47,6 @@ func TestEndToEndHTMLGenerationWhenBeforeSuiteFails(t *testing.T) {
 	got := removeNewline(string(gotContent))
 	want := removeNewline(string(wantContent))
 	os.Remove(filepath.Join(reportDir, "index.html"))
-
 	if got != want {
 		t.Errorf("want:\n%q\ngot:\n%q\n", want, got)
 	}
@@ -51,7 +55,13 @@ func TestEndToEndHTMLGenerationWhenBeforeSuiteFails(t *testing.T) {
 func TestEndToEndHTMLGeneration(t *testing.T) {
 	expectedFiles := []string{"index.html", "passing_specification_1.html", "failing_specification_1.html", "skipped_specification.html"}
 	reportDir := filepath.Join("_testdata", "e2e")
-	GenerateReports(suiteRes3, reportDir)
+	ProjectRoot = ""
+
+	err := GenerateReports(suiteRes3, reportDir)
+
+	if err != nil {
+		t.Errorf("Expected error to be nil. Got: %s", err.Error())
+	}
 	for _, expectedFile := range expectedFiles {
 		gotContent, err := ioutil.ReadFile(filepath.Join(reportDir, expectedFile))
 		if err != nil {
@@ -64,7 +74,6 @@ func TestEndToEndHTMLGeneration(t *testing.T) {
 		got := removeNewline(string(gotContent))
 		want := removeNewline(string(wantContent))
 		os.Remove(filepath.Join(reportDir, expectedFile))
-
 		if got != want {
 			t.Errorf("want:\n%q\ngot:\n%q\n", want, got)
 		}

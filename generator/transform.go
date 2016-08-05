@@ -18,7 +18,7 @@
 package generator
 
 import (
-	"regexp"
+	"path/filepath"
 	"strings"
 	"time"
 
@@ -63,24 +63,14 @@ func toHookFailure(failure *gm.ProtoHookFailure, hookName string) *hookFailure {
 	}
 }
 
-func toFilename(specName string) string {
-	s := specName
-	disallowedChars := []string{"|", "\\", "/", "*", "?", ":", ";", "<", ">", ".", "\"", "'", "{", "}", "[", "]", "(", ")", "`", "~"}
-	for _, d := range disallowedChars {
-		s = strings.Replace(s, d, "", -1)
+func toHTMLFileName(specName, projectRoot string) string {
+	specPath, err := filepath.Rel(projectRoot, specName)
+	if err != nil {
+		specPath = filepath.Join(projectRoot, filepath.Base(specName))
 	}
-
-	s = strings.Replace(s, "_", " ", -1) // Remove any existing underscores
-
-	spaceRegex := regexp.MustCompile("\\s+")
-	s = spaceRegex.ReplaceAllLiteralString(s, " ")
-
-	if len(s) > 35 {
-		s = s[0:35]
-	}
-
-	s = strings.Replace(strings.TrimSpace(s), " ", "_", -1) + dothtml
-	return strings.ToLower(s)
+	specPath = strings.Replace(specPath, string(filepath.Separator), "_", -1)
+	ext := filepath.Ext(specPath)
+	return strings.TrimSuffix(specPath, ext) + dothtml
 }
 
 func toSidebar(res *gm.ProtoSuiteResult) *sidebar {
@@ -92,7 +82,7 @@ func toSidebar(res *gm.ProtoSuiteResult) *sidebar {
 			Failed:     specRes.GetFailed(),
 			Skipped:    specRes.GetSkipped(),
 			Tags:       specRes.ProtoSpec.GetTags(),
-			ReportFile: toFilename(specRes.ProtoSpec.GetSpecHeading()),
+			ReportFile: toHTMLFileName(specRes.ProtoSpec.GetFileName(), ProjectRoot),
 		}
 		specsMetaList = append(specsMetaList, sm)
 	}
