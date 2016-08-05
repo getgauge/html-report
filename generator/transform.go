@@ -18,6 +18,7 @@
 package generator
 
 import (
+	"encoding/base64"
 	"path/filepath"
 	"strings"
 	"time"
@@ -58,7 +59,7 @@ func toHookFailure(failure *gm.ProtoHookFailure, hookName string) *hookFailure {
 	return &hookFailure{
 		ErrMsg:     failure.GetErrorMessage(),
 		HookName:   hookName,
-		Screenshot: string(failure.GetScreenShot()),
+		Screenshot: base64.StdEncoding.EncodeToString(failure.GetScreenShot()),
 		StackTrace: failure.GetStackTrace(),
 	}
 }
@@ -151,7 +152,7 @@ func toStep(protoStep *gm.ProtoStep) *step {
 	res := protoStep.GetStepExecutionResult().GetExecutionResult()
 	result := &result{
 		Status:     getStatus(res.GetFailed(), protoStep.GetStepExecutionResult().GetSkipped()),
-		Screenshot: string(res.GetScreenShot()),
+		Screenshot: base64.StdEncoding.EncodeToString(res.GetScreenShot()),
 		StackTrace: res.GetStackTrace(),
 		Message:    res.GetErrorMessage(),
 		ExecTime:   formatTime(res.GetExecutionTime()),

@@ -251,6 +251,26 @@ var wStepEndDiv = `<span>Say</span><span class='parameter'>"hi"</span><span>to</
 </div>
 `
 
+var wPassStepBodyDivWithBracketsInFragment = `
+	<span>Say</span>
+	<span class='parameter'>"good <a> morning"</span>
+	<span>to</span>
+	<span class='parameter'>"gauge"</span>
+</div>`
+
+var stepWithBracketsInFragment = &step{
+	Fragments: []*fragment{
+		{FragmentKind: textFragmentKind, Text: "Say "},
+		{FragmentKind: staticFragmentKind, Text: "good <a> morning"},
+		{FragmentKind: textFragmentKind, Text: " to "},
+		{FragmentKind: dynamicFragmentKind, Text: "gauge"},
+	},
+	Res: &result{
+		Status:   pass,
+		ExecTime: "00:03:31",
+	},
+}
+
 var re = regexp.MustCompile("[ ]*[\n\t][ ]*")
 
 var reportGenTests = []reportGenTest{
@@ -283,6 +303,7 @@ var reportGenTests = []reportGenTest{
 	{"generate pass step start div", stepStartDiv, newStep(pass), wPassStepStartDiv},
 	{"generate fail step start div", stepStartDiv, newStep(fail), wFailStepStartDiv},
 	{"generate skipped step start div", stepStartDiv, newStep(skip), wSkipStepStartDiv},
+	{"generate skipped step body div", stepBodyDiv, stepWithBracketsInFragment, wPassStepBodyDivWithBracketsInFragment},
 }
 
 func TestExecute(t *testing.T) {

@@ -18,6 +18,7 @@
 package generator
 
 import (
+	"encoding/base64"
 	"path/filepath"
 	"reflect"
 	"testing"
@@ -451,12 +452,13 @@ func TestToSpec(t *testing.T) {
 }
 
 func TestToSpecWithHookFailure(t *testing.T) {
+	encodedScreenShot := base64.StdEncoding.EncodeToString([]byte("Screenshot"))
 	want := &spec{
 		CommentsBeforeTable: []string{},
 		CommentsAfterTable:  []string{},
 		Scenarios:           make([]*scenario, 0),
-		BeforeHookFailure:   newHookFailure("Before Spec", "err", "Screenshot", "Stacktrace"),
-		AfterHookFailure:    newHookFailure("After Spec", "err", "Screenshot", "Stacktrace"),
+		BeforeHookFailure:   newHookFailure("Before Spec", "err", encodedScreenShot, "Stacktrace"),
+		AfterHookFailure:    newHookFailure("After Spec", "err", encodedScreenShot, "Stacktrace"),
 	}
 
 	got := toSpec(specResWithSpecHookFailure)
@@ -514,6 +516,7 @@ func TestToScenario(t *testing.T) {
 }
 
 func TestToScenarioWithHookFailures(t *testing.T) {
+	encodedScreenShot := base64.StdEncoding.EncodeToString([]byte("Screenshot"))
 	want := &scenario{
 		Heading:    "Vowel counts in single word",
 		ExecTime:   "00:01:53",
@@ -526,8 +529,8 @@ func TestToScenarioWithHookFailures(t *testing.T) {
 			},
 		},
 		Teardown:          []item{},
-		BeforeHookFailure: newHookFailure("Before Scenario", "err", "Screenshot", "Stacktrace"),
-		AfterHookFailure:  newHookFailure("After Scenario", "err", "Screenshot", "Stacktrace"),
+		BeforeHookFailure: newHookFailure("Before Scenario", "err", encodedScreenShot, "Stacktrace"),
+		AfterHookFailure:  newHookFailure("After Scenario", "err", encodedScreenShot, "Stacktrace"),
 	}
 
 	got := toScenario(scnWithHookFailure)
@@ -642,6 +645,7 @@ func TestToStepWithSpecialParams(t *testing.T) {
 }
 
 func TestToStepWithAfterHookFailure(t *testing.T) {
+	encodedScreenShot := base64.StdEncoding.EncodeToString([]byte("Screenshot"))
 	want := &step{
 		Fragments: []*fragment{
 			{FragmentKind: textFragmentKind, Text: "Some Step"},
@@ -650,7 +654,7 @@ func TestToStepWithAfterHookFailure(t *testing.T) {
 			Status:   fail,
 			ExecTime: "00:03:31",
 		},
-		PostHookFailure: newHookFailure("After Step", "err", "Screenshot", "Stacktrace"),
+		PostHookFailure: newHookFailure("After Step", "err", encodedScreenShot, "Stacktrace"),
 	}
 
 	got := toStep(protoStepWithAfterHookFailure)
@@ -669,7 +673,8 @@ func TestToComment(t *testing.T) {
 }
 
 func TestToHookFailure(t *testing.T) {
-	want := newHookFailure("Before Suite", "java.lang.RuntimeException", newScreenshot(), newStackTrace())
+	encodedScreenShot := base64.StdEncoding.EncodeToString([]byte(newScreenshot()))
+	want := newHookFailure("Before Suite", "java.lang.RuntimeException", encodedScreenShot, newStackTrace())
 
 	got := toHookFailure(failedHookFailure, "Before Suite")
 	if !reflect.DeepEqual(got, want) {
