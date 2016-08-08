@@ -169,16 +169,16 @@ var wSpecCommentsWithTableTag = `<span></span>
     <th>Word</th>
     <th>Count</th>
   </tr>
-  <tbody>
-    <tr class='passed'>
+  <tbody data-rowCount=3>
+    <tr class='row-selector passed selected' data-rowIndex=0>
       <td>Gauge</td>
       <td>3</td>
     </tr>
-    <tr class='failed'>
+    <tr class='row-selector failed' data-rowIndex=1>
       <td>Mingle</td>
       <td>2</td>
     </tr>
-    <tr class='skipped'>
+    <tr class='row-selector skipped' data-rowIndex=2>
       <td>foobar</td>
       <td>1</td>
     </tr>
@@ -296,9 +296,9 @@ var reportGenTests = []reportGenTest{
 	{"generate div for tags", tagsDiv, &specHeader{Tags: []string{"tag1", "tag2"}}, wTagsDiv},
 	{"generate spec comments with data table (if present)", specCommentsAndTableTag, newSpec(true), wSpecCommentsWithTableTag},
 	{"generate spec comments without data table", specCommentsAndTableTag, newSpec(false), wSpecCommentsWithoutTableTag},
-	{"generate passing scenario container", scenarioContainerStartDiv, &scenario{ExecStatus: pass}, wScenarioContainerStartPassDiv},
-	{"generate failed scenario container", scenarioContainerStartDiv, &scenario{ExecStatus: fail}, wScenarioContainerStartFailDiv},
-	{"generate skipped scenario container", scenarioContainerStartDiv, &scenario{ExecStatus: skip}, wScenarioContainerStartSkipDiv},
+	{"generate passing scenario container", scenarioContainerStartDiv, &scenario{ExecStatus: pass, TableRowIndex: -1}, wScenarioContainerStartPassDiv},
+	{"generate failed scenario container", scenarioContainerStartDiv, &scenario{ExecStatus: fail, TableRowIndex: -1}, wScenarioContainerStartFailDiv},
+	{"generate skipped scenario container", scenarioContainerStartDiv, &scenario{ExecStatus: skip, TableRowIndex: -1}, wScenarioContainerStartSkipDiv},
 	{"generate scenario header", scenarioHeaderStartDiv, &scenario{Heading: "Scenario Heading", ExecTime: "00:01:01"}, wscenarioHeaderStartDiv},
 	{"generate pass step start div", stepStartDiv, newStep(pass), wPassStepStartDiv},
 	{"generate fail step start div", stepStartDiv, newStep(fail), wFailStepStartDiv},

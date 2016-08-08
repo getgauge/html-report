@@ -683,6 +683,9 @@ header.top .project {
     background-color: #ffda8b;
 }
 
+.active {
+    background-color: magenta;
+}
 .context-step li {
     font-style: italic;
     border: 1px dashed #cccccc;
@@ -717,7 +720,7 @@ input[type='text']:focus {
   background: #ffffff url("../images/leftarrow.png") no-repeat scroll 17% 75%;
 }
 
-#congratulationsHidden {
+.hidden , #congratulationsHidden {
     display: none;
 }
 

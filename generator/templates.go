@@ -153,9 +153,9 @@ const specHeaderStartTag = `<header class="curr-spec">
   <h3 class="spec-head" title="{{.FileName}}">{{.SpecName}}</h3>
   <span class="time">{{.ExecTime}}</span>`
 
-const scenarioContainerStartDiv = `{{if eq .ExecStatus 0}}<div class='scenario-container passed'>
-{{else if eq .ExecStatus 1}}<div class='scenario-container failed'>
-{{else}}<div class='scenario-container skipped'>{{end}}`
+const scenarioContainerStartDiv = `{{if eq .ExecStatus 0}}<div class='scenario-container passed{{if gt .TableRowIndex 0}} hidden{{end}}'{{if ne .TableRowIndex -1}} data-tablerow={{.TableRowIndex}}{{end}}>
+{{else if eq .ExecStatus 1}}<div class='scenario-container failed{{if gt .TableRowIndex 0}} hidden{{end}}'{{if ne .TableRowIndex -1}}  data-tablerow={{.TableRowIndex}}{{end}}>
+{{else}}<div class='scenario-container skipped{{if gt .TableRowIndex 0}} hidden{{end}}'{{if ne .TableRowIndex -1}}  data-tablerow={{.TableRowIndex}}{{end}}>{{end}}`
 
 const scenarioHeaderStartDiv = `<div class="scenario-head">
   <h3 class="head borderBottom">{{.Heading}}</h3>
@@ -170,13 +170,13 @@ const specCommentsAndTableTag = `{{range .CommentsBeforeTable}}<span>{{.}}</span
   <tr>
     {{range .Table.Headers}}<th>{{.}}</th>{{end}}
   </tr>
-  <tbody>
-    {{range .Table.Rows}}
-      {{if eq .Res 0}}<tr class='passed'>
-      {{else if eq .Res 1}}<tr class='failed'>
-      {{else}}<tr class='skipped'>
+  <tbody data-rowCount={{len .Table.Rows}}>
+    {{range $index, $row := .Table.Rows}}
+      {{if eq $row.Res 0}}<tr class='row-selector passed{{if eq $index 0}} selected{{end}}' data-rowIndex={{$index}}>
+      {{else if eq $row.Res 1}}<tr class='row-selector failed{{if eq $index 0}} selected{{end}}' data-rowIndex={{$index}}>
+      {{else}}<tr class='row-selector skipped{{if eq $index 0}} selected{{end}}' data-rowIndex={{$index}}>
       {{end}}
-        {{range .Cells}}<td>{{.}}</td>{{end}}
+        {{range $row.Cells}}<td>{{.}}</td>{{end}}
     </tr>
     {{end}}
   </tbody>
@@ -204,6 +204,8 @@ const pageHeaderTag = `<head>
   <script src="js/nv.d3.min.js" charset="utf-8"></script>
   <script src="js/lightbox.js"></script>
   <script src="js/chart.js" type="text/javascript"></script>
+  <script src="js/jquery-3.1.0.min.js" type="text/javascript"></script>
+  <script src="js/main.js" type="text/javascript"></script>
   <script type="text/javascript">createChart({{.Passed}},{{.Failed}},{{.Skipped}})</script>
 </head>`
 

@@ -124,13 +124,17 @@ func toSpec(res *gm.ProtoSpecResult) *spec {
 			spec.Table = toTable(item.GetTable())
 			isTableScanned = true
 		case gm.ProtoItem_Scenario:
-			spec.Scenarios = append(spec.Scenarios, toScenario(item.GetScenario()))
+			spec.Scenarios = append(spec.Scenarios, toScenario(item.GetScenario(), -1))
+		case gm.ProtoItem_TableDrivenScenario:
+			for i, sce := range item.GetTableDrivenScenario().GetScenarios() {
+				spec.Scenarios = append(spec.Scenarios, toScenario(sce, i))
+			}
 		}
 	}
 	return spec
 }
 
-func toScenario(scn *gm.ProtoScenario) *scenario {
+func toScenario(scn *gm.ProtoScenario, tableRowIndex int) *scenario {
 	return &scenario{
 		Heading:           scn.GetScenarioHeading(),
 		ExecTime:          formatTime(scn.GetExecutionTime()),
@@ -141,6 +145,7 @@ func toScenario(scn *gm.ProtoScenario) *scenario {
 		Teardown:          getItems(scn.GetTearDownSteps()),
 		BeforeHookFailure: toHookFailure(scn.GetPreHookFailure(), "Before Scenario"),
 		AfterHookFailure:  toHookFailure(scn.GetPostHookFailure(), "After Scenario"),
+		TableRowIndex: tableRowIndex,
 	}
 }
 

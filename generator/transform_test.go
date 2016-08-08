@@ -507,9 +507,10 @@ func TestToScenario(t *testing.T) {
 				Res:       &result{Status: fail, ExecTime: "00:03:31"},
 			},
 		},
+		TableRowIndex: -1,
 	}
 
-	got := toScenario(scn)
+	got := toScenario(scn, -1)
 	if !reflect.DeepEqual(got, want) {
 		t.Errorf("want:\n%q\ngot:\n%q\n", want, got)
 	}
@@ -531,9 +532,10 @@ func TestToScenarioWithHookFailures(t *testing.T) {
 		Teardown:          []item{},
 		BeforeHookFailure: newHookFailure("Before Scenario", "err", encodedScreenShot, "Stacktrace"),
 		AfterHookFailure:  newHookFailure("After Scenario", "err", encodedScreenShot, "Stacktrace"),
+		TableRowIndex: -1,
 	}
 
-	got := toScenario(scnWithHookFailure)
+	got := toScenario(scnWithHookFailure, -1)
 	if !reflect.DeepEqual(got, want) {
 		t.Errorf("want:\n%q\ngot:\n%q\n", want, got)
 	}
