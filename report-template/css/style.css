@@ -173,7 +173,7 @@ header.top .project {
     padding: 0.75rem;
     cursor: pointer;
     margin: 1rem 0.25rem;
-    background-color: #f9f9f9;
+    /*background-color: #f9f9f9;*/
     transition: background-color 0.75s;
 }
 
@@ -182,10 +182,6 @@ header.top .project {
 .report_chart .total-specs:focus,
 .report_chart .total-specs:hover {
     background-color: #f0f0f0;
-}
-
-.report_test-results ul li.spec-filter .active{
-    background-color: #e0e0e0; !important
 }
 
 .report_details {
@@ -954,13 +950,12 @@ footer p {
         border-right: 5px solid #cccccc;
         border-bottom: none;
         padding-right: 2rem;
-        background-color: transparent;
+        /*background-color: transparent;*/
     }
 
-    .report_chart .total-specs .active{
-        background-color: #e0e0e0; !important
+    .report_test-results .active, .report_chart .active {
+        background-color: #ddd;
     }
-
 
     .report_chart .total-specs span {
         text-align: right;
@@ -977,7 +972,7 @@ footer p {
 
     .report_test-results ul li {
         padding: 10px;
-        background-color: transparent;
+        /*background-color: transparent;*/
     }
 
     .report_test-results .value {
