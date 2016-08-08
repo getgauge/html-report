@@ -41,9 +41,9 @@ const reportOverviewTag = `<div class="report-overview">
   </div>
   <div class="report_test-results">
     <ul>
-      <li class="fail"><span class="value">{{.Failed}}</span><span class="txt">Failed</span></li>
-      <li class="pass"><span class="value">{{.Passed}}</span><span class="txt">Passed</span></li>
-      <li class="skip"><span class="value">{{.Skipped}}</span><span class="txt">Skipped</span></li>
+      <li class="fail spec-filter" data-status="failed"><span class="value">{{.Failed}}</span><span class="txt">Failed</span></li>
+      <li class="pass spec-filter" data-status="passed"><span class="value">{{.Passed}}</span><span class="txt">Passed</span></li>
+      <li class="skip spec-filter" data-status="skipped"><span class="value">{{.Skipped}}</span><span class="txt">Skipped</span></li>
     </ul>
   </div>
   <div class="report_details">

@@ -184,6 +184,10 @@ header.top .project {
     background-color: #f0f0f0;
 }
 
+.report_test-results ul li.spec-filter .active{
+    background-color: #e0e0e0; !important
+}
+
 .report_details {
     width: 100%;
 }
@@ -683,9 +687,6 @@ header.top .project {
     background-color: #ffda8b;
 }
 
-.active {
-    background-color: magenta;
-}
 .context-step li {
     font-style: italic;
     border: 1px dashed #cccccc;
@@ -955,6 +956,11 @@ footer p {
         padding-right: 2rem;
         background-color: transparent;
     }
+
+    .report_chart .total-specs .active{
+        background-color: #e0e0e0; !important
+    }
+
 
     .report_chart .total-specs span {
         text-align: right;

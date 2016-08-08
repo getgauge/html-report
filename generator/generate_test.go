@@ -50,9 +50,9 @@ var wChartDiv = `<div class="report-overview">
 var wResCntDiv = `
   <div class="report_test-results">
     <ul>
-      <li class="fail"><span class="value">2</span><span class="txt">Failed</span></li>
-      <li class="pass"><span class="value">39</span><span class="txt">Passed</span></li>
-      <li class="skip"><span class="value">0</span><span class="txt">Skipped</span></li>
+      <li class="fail spec-filter" data-status="failed"><span class="value">2</span><span class="txt">Failed</span></li>
+      <li class="pass spec-filter" data-status="passed"><span class="value">39</span><span class="txt">Passed</span></li>
+      <li class="skip spec-filter" data-status="skipped"><span class="value">0</span><span class="txt">Skipped</span></li>
     </ul>
   </div>`
 

@@ -96,7 +96,7 @@ type scenario struct {
 	Teardown          []item
 	BeforeHookFailure *hookFailure
 	AfterHookFailure  *hookFailure
-	TableRowIndex int
+	TableRowIndex     int
 }
 
 const (

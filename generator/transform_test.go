@@ -532,7 +532,7 @@ func TestToScenarioWithHookFailures(t *testing.T) {
 		Teardown:          []item{},
 		BeforeHookFailure: newHookFailure("Before Scenario", "err", encodedScreenShot, "Stacktrace"),
 		AfterHookFailure:  newHookFailure("After Scenario", "err", encodedScreenShot, "Stacktrace"),
-		TableRowIndex: -1,
+		TableRowIndex:     -1,
 	}
 
 	got := toScenario(scnWithHookFailure, -1)

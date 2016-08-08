@@ -145,7 +145,7 @@ func toScenario(scn *gm.ProtoScenario, tableRowIndex int) *scenario {
 		Teardown:          getItems(scn.GetTearDownSteps()),
 		BeforeHookFailure: toHookFailure(scn.GetPreHookFailure(), "Before Scenario"),
 		AfterHookFailure:  toHookFailure(scn.GetPostHookFailure(), "After Scenario"),
-		TableRowIndex: tableRowIndex,
+		TableRowIndex:     tableRowIndex,
 	}
 }
 
