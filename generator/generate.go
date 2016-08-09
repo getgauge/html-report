@@ -140,11 +140,12 @@ func (c *comment) kind() kind {
 }
 
 type result struct {
-	Status     status
-	StackTrace string
-	Screenshot string
-	Message    string
-	ExecTime   string
+	Status        status
+	StackTrace    string
+	Screenshot    string
+	Message       string
+	ExecTime      string
+	SkippedReason string
 }
 
 type status int
@@ -153,6 +154,7 @@ const (
 	pass status = iota
 	fail
 	skip
+	notExecuted
 )
 
 func execTemplate(tmplName string, w io.Writer, data interface{}) {
@@ -320,14 +322,18 @@ func generateItem(w io.Writer, item item) {
 			execTemplate(hookFailureDiv, w, item.(*step).PreHookFailure)
 		}
 
-		if item.(*step).Res.Status == fail && item.(*step).Res.Message != "" && item.(*step).Res.StackTrace != "" {
-			execTemplate(stepFailureDiv, w, item.(*step).Res)
+		stepRes := item.(*step).Res
+		if stepRes.Status == fail && stepRes.Message != "" && stepRes.StackTrace != "" {
+			execTemplate(stepFailureDiv, w, stepRes)
 		}
 
 		if item.(*step).PostHookFailure != nil {
 			execTemplate(hookFailureDiv, w, item.(*step).PostHookFailure)
 		}
 		execTemplate(stepEndDiv, w, item.(*step))
+		if stepRes.Status == skip && stepRes.SkippedReason != "" {
+			execTemplate(skippedReasonDiv, w, stepRes)
+		}
 	case commentKind:
 		execTemplate(commentSpan, w, item.(*comment))
 	case conceptKind:

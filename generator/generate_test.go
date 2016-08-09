@@ -258,6 +258,10 @@ var wPassStepBodyDivWithBracketsInFragment = `
 	<span class='parameter'>"gauge"</span>
 </div>`
 
+var wSkippedStepWithSkippedReason = `<div class="message-container">
+  <h4 class="skipReason">Skipped Reason: step impl not found</h4>
+</div>`
+
 var stepWithBracketsInFragment = &step{
 	Fragments: []*fragment{
 		{FragmentKind: textFragmentKind, Text: "Say "},
@@ -269,6 +273,11 @@ var stepWithBracketsInFragment = &step{
 		Status:   pass,
 		ExecTime: "00:03:31",
 	},
+}
+
+var skippedStepRes = &result{
+	Status:        skip,
+	SkippedReason: "step impl not found",
 }
 
 var re = regexp.MustCompile("[ ]*[\n\t][ ]*")
@@ -304,6 +313,7 @@ var reportGenTests = []reportGenTest{
 	{"generate fail step start div", stepStartDiv, newStep(fail), wFailStepStartDiv},
 	{"generate skipped step start div", stepStartDiv, newStep(skip), wSkipStepStartDiv},
 	{"generate skipped step body div", stepBodyDiv, stepWithBracketsInFragment, wPassStepBodyDivWithBracketsInFragment},
+	{"generate skipped step skipped reason div", skippedReasonDiv, skippedStepRes, wSkippedStepWithSkippedReason},
 }
 
 func TestExecute(t *testing.T) {

@@ -287,6 +287,7 @@ var protoStep = &gm.ProtoStep{
 			Failed:        proto.Bool(false),
 			ExecutionTime: proto.Int64(211316),
 		},
+		SkippedReason: proto.String("Step impl not found"),
 	},
 }
 
@@ -408,9 +409,9 @@ func TestToSidebar(t *testing.T) {
 	want := &sidebar{
 		IsBeforeHookFailure: false,
 		Specs: []*specsMeta{
-			newSpecsMeta("specRes1", "00:03:31", false, false, []string{"tag1", "tag2"}, "foobar.html"),
 			newSpecsMeta("specRes2", "00:03:31", true, false, []string{"tag1", "tag2", "tag3"}, "specRes2.html"),
 			newSpecsMeta("specRes3", "00:03:31", false, true, []string{"tag1"}, "specRes3.html"),
+			newSpecsMeta("specRes1", "00:03:31", false, false, []string{"tag1", "tag2"}, "foobar.html"),
 		},
 	}
 
@@ -611,7 +612,7 @@ func TestToStep(t *testing.T) {
 				},
 			},
 		},
-		Res: &result{Status: pass, ExecTime: "00:03:31"},
+		Res: &result{Status: pass, ExecTime: "00:03:31", SkippedReason: "Step impl not found"},
 	}
 
 	got := toStep(protoStep)

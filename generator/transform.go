@@ -20,6 +20,7 @@ package generator
 import (
 	"encoding/base64"
 	"path/filepath"
+	"sort"
 	"strings"
 	"time"
 
@@ -88,10 +89,35 @@ func toSidebar(res *gm.ProtoSuiteResult) *sidebar {
 		specsMetaList = append(specsMetaList, sm)
 	}
 
+	sort.Sort(byStatus(specsMetaList))
+
 	return &sidebar{
 		IsBeforeHookFailure: res.PreHookFailure != nil,
 		Specs:               specsMetaList,
 	}
+}
+
+type byStatus []*specsMeta
+
+func (s byStatus) Len() int {
+	return len(s)
+}
+func (s byStatus) Swap(i, j int) {
+	s[i], s[j] = s[j], s[i]
+}
+
+func (s byStatus) Less(i, j int) bool {
+	return getState(s[i]) < getState(s[j])
+}
+
+func getState(r *specsMeta) int {
+	if r.Failed {
+		return -1
+	}
+	if r.Skipped {
+		return 0
+	}
+	return 1
 }
 
 func toSpecHeader(res *gm.ProtoSpecResult) *specHeader {
@@ -139,7 +165,7 @@ func toScenario(scn *gm.ProtoScenario, tableRowIndex int) *scenario {
 		Heading:           scn.GetScenarioHeading(),
 		ExecTime:          formatTime(scn.GetExecutionTime()),
 		Tags:              scn.GetTags(),
-		ExecStatus:        getStatus(scn.GetFailed(), scn.GetSkipped()),
+		ExecStatus:        getScenarioStatus(scn.GetFailed(), scn.GetSkipped()),
 		Contexts:          getItems(scn.GetContexts()),
 		Items:             getItems(scn.GetScenarioItems()),
 		Teardown:          getItems(scn.GetTearDownSteps()),
@@ -156,11 +182,12 @@ func toComment(protoComment *gm.ProtoComment) *comment {
 func toStep(protoStep *gm.ProtoStep) *step {
 	res := protoStep.GetStepExecutionResult().GetExecutionResult()
 	result := &result{
-		Status:     getStatus(res.GetFailed(), protoStep.GetStepExecutionResult().GetSkipped()),
-		Screenshot: base64.StdEncoding.EncodeToString(res.GetScreenShot()),
-		StackTrace: res.GetStackTrace(),
-		Message:    res.GetErrorMessage(),
-		ExecTime:   formatTime(res.GetExecutionTime()),
+		Status:        getStepStatus(protoStep.GetStepExecutionResult()),
+		Screenshot:    base64.StdEncoding.EncodeToString(res.GetScreenShot()),
+		StackTrace:    res.GetStackTrace(),
+		Message:       res.GetErrorMessage(),
+		ExecTime:      formatTime(res.GetExecutionTime()),
+		SkippedReason: protoStep.GetStepExecutionResult().GetSkippedReason(),
 	}
 	if protoStep.GetStepExecutionResult().GetSkipped() {
 		result.Message = protoStep.GetStepExecutionResult().GetSkippedReason()
@@ -231,10 +258,24 @@ func getItems(protoItems []*gm.ProtoItem) []item {
 	return items
 }
 
-func getStatus(failed, skipped bool) status {
+func getStepStatus(res *gm.ProtoStepExecutionResult) status {
+	if res.GetSkipped() {
+		return skip
+	}
+	if res.GetExecutionResult() == nil {
+		return notExecuted
+	}
+	if res.GetExecutionResult().GetFailed() {
+		return fail
+	}
+	return pass
+}
+
+func getScenarioStatus(failed, skipped bool) status {
 	if failed {
 		return fail
-	} else if skipped {
+	}
+	if skipped {
 		return skip
 	}
 	return pass

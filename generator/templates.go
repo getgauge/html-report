@@ -234,6 +234,7 @@ const stepStartDiv = `<div class='step'>
     {{if eq .Res.Status 0}}<div class='step-info passed'>
     {{else if eq .Res.Status 1}}<div class='step-info failed'>
     {{else if eq .Res.Status 2}}<div class='step-info skipped'>
+    {{else if eq .Res.Status 3}}<div class='step-info not-executed'>
     {{end}}
     <ul>
       <li class='step'>
