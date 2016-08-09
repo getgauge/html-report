@@ -264,11 +264,11 @@ const stepBodyDiv = `
   {{else if eq .FragmentKind 1 2}}
     <span class='parameter'>"{{.Text}}"</span>
   {{else if eq .FragmentKind 3}}
-    <span><hovercard hover-tmpl-url="{{.Text}}">&lt;{{.Name}}&gt;</hovercard></span>
+    <span class="hoverable">&lt;{{.Name}}&gt;</span>
+    <div class="hovercard">{{.Text}}</div>
   {{else if eq .FragmentKind 4}}
-    <span><hovercard hover-tmpl-url="&lt;{{.Name}}&gt;">
-      {{template "Table"}}
-    </hovercard></span>
+    <span class="hoverable">&lt;{{.Name}}&gt;</span>
+    <div class="hovercard">{{template "Table" .}}</div>
   {{else if eq .FragmentKind 5}}
     <div class='inline-table'>
       <div>

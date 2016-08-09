@@ -66,8 +66,17 @@ function attachSpecFilter() {
     });
 }
 
+function registerHovercards() {
+    $('span.hoverable').mouseenter(function() {
+        $(this).siblings('.hovercard').delay(100).fadeIn();
+    }).mouseleave(function() {
+        $(this).siblings('.hovercard').delay(100).fadeOut('fast');
+    });
+}
+
 $(function () {
     initializeFilters();
     attachSpecFilter();
     attachScenarioToggle();
+    registerHovercards();
 });

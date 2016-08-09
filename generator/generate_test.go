@@ -262,12 +262,87 @@ var wSkippedStepWithSkippedReason = `<div class="message-container">
   <h4 class="skipReason">Skipped Reason: step impl not found</h4>
 </div>`
 
+var wStepWithFileParam = `
+    <span>
+      Say
+    </span>
+    <span class="hoverable">&lt;file:hello.txt&gt;</span>
+    <div class="hovercard">good morning</div>
+	<span>
+      to gauge
+    </span>
+</div>`
+
+var wStepWithSpecialTableParam = `
+    <span>
+      Say
+    </span>
+    <span class="hoverable">&lt;table:hello.csv&gt;</span>
+    <div class="hovercard"><table>
+	  <tr>
+		<th>Word</th>
+		<th>Count</th>
+	  </tr>
+	  <tbody>
+		<tr>
+		  <td>Gauge</td>
+		  <td>3</td>
+		</tr>
+		<tr>
+		  <td>Mingle</td>
+		  <td>2</td>
+		</tr>
+	  </tbody>
+	</table></div>
+	<span>
+      to gauge
+    </span>
+</div>`
+
 var stepWithBracketsInFragment = &step{
 	Fragments: []*fragment{
 		{FragmentKind: textFragmentKind, Text: "Say "},
 		{FragmentKind: staticFragmentKind, Text: "good <a> morning"},
 		{FragmentKind: textFragmentKind, Text: " to "},
 		{FragmentKind: dynamicFragmentKind, Text: "gauge"},
+	},
+	Res: &result{
+		Status:   pass,
+		ExecTime: "00:03:31",
+	},
+}
+
+var stepWithFileParam = &step{
+	Fragments: []*fragment{
+		{FragmentKind: textFragmentKind, Text: "Say "},
+		{FragmentKind: specialStringFragmentKind, Text: "good morning", Name: "file:hello.txt"},
+		{FragmentKind: textFragmentKind, Text: " to gauge"},
+	},
+	Res: &result{
+		Status:   pass,
+		ExecTime: "00:03:31",
+	},
+}
+
+var stepWithSpecialTableParam = &step{
+	Fragments: []*fragment{
+		{FragmentKind: textFragmentKind, Text: "Say "},
+		{FragmentKind: specialTableFragmentKind, Name: "table:hello.csv",
+			Table: &table{
+				Headers: []string{"Word", "Count"},
+				Rows: []*row{
+					{
+						Cells: []string{"Gauge", "3"},
+						Res:   pass,
+					},
+					{
+						Cells: []string{"Mingle", "2"},
+						Res:   fail,
+					},
+				},
+			},
+		},
+		{FragmentKind: textFragmentKind, Text: " to gauge"},
 	},
 	Res: &result{
 		Status:   pass,
@@ -314,6 +389,8 @@ var reportGenTests = []reportGenTest{
 	{"generate skipped step start div", stepStartDiv, newStep(skip), wSkipStepStartDiv},
 	{"generate skipped step body div", stepBodyDiv, stepWithBracketsInFragment, wPassStepBodyDivWithBracketsInFragment},
 	{"generate skipped step skipped reason div", skippedReasonDiv, skippedStepRes, wSkippedStepWithSkippedReason},
+	{"generate step body div with file special param", stepBodyDiv, stepWithFileParam, wStepWithFileParam},
+	{"generate step body div with special table param", stepBodyDiv, stepWithSpecialTableParam, wStepWithSpecialTableParam},
 }
 
 func TestExecute(t *testing.T) {
