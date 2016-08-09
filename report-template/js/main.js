@@ -67,10 +67,10 @@ function attachSpecFilter() {
 }
 
 function registerHovercards() {
-    $('span.hoverable').mouseenter(function() {
-        $(this).siblings('.hovercard').delay(100).fadeIn();
+    $('span.hoverable').mouseenter(function(e) {
+        $(this).next('.hovercard').css({top: e.clientY + 10, left: e.clientX +10}).delay(100).fadeIn();
     }).mouseleave(function() {
-        $(this).siblings('.hovercard').delay(100).fadeOut('fast');
+        $(this).next('.hovercard').delay(100).fadeOut('fast');
     });
 }
 
