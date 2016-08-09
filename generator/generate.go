@@ -339,7 +339,7 @@ func generateItem(w io.Writer, item item) {
 	case commentKind:
 		execTemplate(commentSpan, w, item.(*comment))
 	case conceptKind:
-		execTemplate(stepStartDiv, w, item.(*concept).CptStep)
+		execTemplate(conceptStartDiv, w, item.(*concept).CptStep)
 		execTemplate(conceptSpan, w, nil)
 		execTemplate(stepBodyDiv, w, item.(*concept).CptStep)
 		execTemplate(stepEndDiv, w, item.(*concept).CptStep)

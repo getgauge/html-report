@@ -74,9 +74,19 @@ function registerHovercards() {
     });
 }
 
+function registerConceptToggle() {
+    $('.concept').click(function() {
+        var conceptSteps = $(this).next('.concept-steps');
+        var iconClass = $(conceptSteps).is(':visible') ? "plus" : "minus";
+        $(conceptSteps).fadeToggle('fast', 'linear');
+        $(this).find("i.fa").removeClass("fa-minus-square").removeClass("fa-plus-square").addClass("fa-"+iconClass+"-square");
+    });
+}
+
 $(function () {
     initializeFilters();
     attachSpecFilter();
     attachScenarioToggle();
     registerHovercards();
+    registerConceptToggle();
 });

@@ -729,6 +729,7 @@ input[type='text']:focus {
 .concept-steps {
     border-left: 2px dashed #eee;
     padding-left: 20px;
+    display: none
 }
 
 .not-executed li {
@@ -1080,4 +1081,12 @@ footer p {
     box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
     max-height: 300px;
     overflow: hidden;
+}
+
+.concept .step-info {
+    cursor: pointer;
+}
+
+.concept .step-info:hover {
+    background-color: #f0f0f0;
 }

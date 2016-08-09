@@ -74,9 +74,7 @@ const reportOverviewTag = `<div class="report-overview">
   </div>
 </div>`
 
-//TODO: 1. Set first spec as selected by default and load it
-//      2. Javascript action to load spec on click
-//      3. Filtering based on search query
+//TODO: 1. Filtering based on search query
 const sidebarDiv = `{{if not .IsBeforeHookFailure}}<aside class="sidebar">
   <h3 class="title">Specifications</h3>
 
@@ -184,7 +182,6 @@ const specCommentsAndTableTag = `{{range .CommentsBeforeTable}}<span>{{.}}</span
 {{range .CommentsAfterTable}}<span>{{.}}</span>{{end}}`
 
 // Common HTML tags templates
-
 const htmlStartTag = `<!doctype html>
 <html>`
 
@@ -223,9 +220,10 @@ const containerStartDiv = `<div class="container">`
 
 const endDiv = `</div>`
 
-//TODO:
-//  1. Collapse UL if concept
-const stepStartDiv = `<div class='step'>
+const conceptStartDiv = `<div class='step concept'>` + stepMetaDiv
+const stepStartDiv = `<div class='step'>` + stepMetaDiv
+
+const stepMetaDiv = `
   {{if ne .Res.Status 2}}
   <h5 class='execution-time'>
   <span class='time'>Execution Time : {{.Res.ExecTime}}</span>
@@ -241,9 +239,7 @@ const stepStartDiv = `<div class='step'>
         <div class='step-txt'>`
 
 //TODO:
-//  1. Print Gauge Messages
 //  2. Print Pre/Post hook failures, Step failure
-//  3. Add hovercard for special params
 const stepBodyDiv = `
 {{define "Table"}}<table>
   <tr>
@@ -297,14 +293,13 @@ const stepFailureDiv = `<div class="error-container failed">
 
 const stepEndDiv = `</li></ul></div></div>`
 
-const conceptSpan = `<span>+ </span>`
+const conceptSpan = `<i class="fa fa-plus-square" aria-hidden="true"></i>`
 
 const contextOrTeardownStartDiv = `<div class='context-step'>`
 
 //TODO: 1. Show comments in markdown style
 const commentSpan = `<span>{{.Text}}</span>`
 
-//TODO: Make concept collapsible
 const conceptStepsStartDiv = `<div class='concept-steps'>`
 
 const nestedConceptDiv = `<div class="nested concept-steps">`
