@@ -14,6 +14,9 @@ function initializeFilters() {
 
 function showFirstSpecContent() {
     $('li.spec-name:visible:first').click();
+    if($('li.spec-name:visible:first').length===0){
+        $('#specificationContainer').hide();
+    }
 }
 
 function attachScenarioToggle() {
