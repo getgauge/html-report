@@ -143,9 +143,10 @@ type result struct {
 	Status        status
 	StackTrace    string
 	Screenshot    string
-	Message       string
+	ErrorMessage  string
 	ExecTime      string
 	SkippedReason string
+	Messages      []string
 }
 
 type status int
@@ -323,7 +324,7 @@ func generateItem(w io.Writer, item item) {
 		}
 
 		stepRes := item.(*step).Res
-		if stepRes.Status == fail && stepRes.Message != "" && stepRes.StackTrace != "" {
+		if stepRes.Status == fail && stepRes.ErrorMessage != "" && stepRes.StackTrace != "" {
 			execTemplate(stepFailureDiv, w, stepRes)
 		}
 
@@ -334,6 +335,7 @@ func generateItem(w io.Writer, item item) {
 		if stepRes.Status == skip && stepRes.SkippedReason != "" {
 			execTemplate(skippedReasonDiv, w, stepRes)
 		}
+		execTemplate(messageDiv, w, stepRes)
 	case commentKind:
 		execTemplate(commentSpan, w, item.(*comment))
 	case conceptKind:

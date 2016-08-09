@@ -133,9 +133,9 @@ const tagsDiv = `{{if .Tags}}<div class="tags scenario_tags contentSection">
 </div>{{end}}`
 
 //TODO 1. Format message to convert newlines to <br>
-const messageDiv = `<div class="message-container">
+const messageDiv = `{{if .Messages}}<div class="message-container">
   {{range .Messages}}<p class="step-message">{{.}}</p>{{end}}
-</div>`
+</div>{{end}}`
 
 const skippedReasonDiv = `<div class="message-container">
   <h4 class="skipReason">Skipped Reason: {{.SkippedReason}}</h4>
@@ -283,7 +283,7 @@ const stepFailureDiv = `<div class="error-container failed">
   <div class="exception-container">
       <div class="exception">
         <h4 class="error-message">
-          <pre>{{.Message}}</pre>
+          <pre>{{.ErrorMessage}}</pre>
         </h4>
         <pre class="stacktrace">{{.StackTrace}}</pre>
       </div>

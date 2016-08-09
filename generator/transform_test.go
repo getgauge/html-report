@@ -284,10 +284,10 @@ var protoStep = &gm.ProtoStep{
 	},
 	StepExecutionResult: &gm.ProtoStepExecutionResult{
 		ExecutionResult: &gm.ProtoExecutionResult{
-			Failed:        proto.Bool(false),
 			ExecutionTime: proto.Int64(211316),
 		},
 		SkippedReason: proto.String("Step impl not found"),
+		Skipped:       proto.Bool(true),
 	},
 }
 
@@ -400,7 +400,7 @@ func TestToOverview(t *testing.T) {
 
 	got := toOverview(suiteRes1)
 	if !reflect.DeepEqual(got, want) {
-		t.Errorf("want:\n%q\ngot:\n%q\n", want, got)
+		t.Errorf("want:\n%v\ngot:\n%v\n", want, got)
 	}
 }
 
@@ -417,7 +417,7 @@ func TestToSidebar(t *testing.T) {
 
 	got := toSidebar(suiteRes2)
 	if !reflect.DeepEqual(got, want) {
-		t.Errorf("want:\n%q\ngot:\n%q\n", want, got)
+		t.Errorf("want:\n%v\ngot:\n%v\n", want, got)
 	}
 }
 
@@ -612,7 +612,7 @@ func TestToStep(t *testing.T) {
 				},
 			},
 		},
-		Res: &result{Status: pass, ExecTime: "00:03:31", SkippedReason: "Step impl not found"},
+		Res: &result{Status: skip, ExecTime: "00:03:31", SkippedReason: "Step impl not found"},
 	}
 
 	got := toStep(protoStep)

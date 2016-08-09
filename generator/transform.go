@@ -182,15 +182,15 @@ func toComment(protoComment *gm.ProtoComment) *comment {
 func toStep(protoStep *gm.ProtoStep) *step {
 	res := protoStep.GetStepExecutionResult().GetExecutionResult()
 	result := &result{
-		Status:        getStepStatus(protoStep.GetStepExecutionResult()),
-		Screenshot:    base64.StdEncoding.EncodeToString(res.GetScreenShot()),
-		StackTrace:    res.GetStackTrace(),
-		Message:       res.GetErrorMessage(),
-		ExecTime:      formatTime(res.GetExecutionTime()),
-		SkippedReason: protoStep.GetStepExecutionResult().GetSkippedReason(),
+		Status:       getStepStatus(protoStep.GetStepExecutionResult()),
+		Screenshot:   base64.StdEncoding.EncodeToString(res.GetScreenShot()),
+		StackTrace:   res.GetStackTrace(),
+		ErrorMessage: res.GetErrorMessage(),
+		ExecTime:     formatTime(res.GetExecutionTime()),
+		Messages:     res.GetMessage(),
 	}
 	if protoStep.GetStepExecutionResult().GetSkipped() {
-		result.Message = protoStep.GetStepExecutionResult().GetSkippedReason()
+		result.SkippedReason = protoStep.GetStepExecutionResult().GetSkippedReason()
 	}
 	return &step{
 		Fragments:       toFragments(protoStep.GetFragments()),
