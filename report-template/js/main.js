@@ -1,3 +1,22 @@
+// Copyright 2015 ThoughtWorks, Inc.
+
+// This file is part of getgauge/html-report.
+
+// getgauge/html-report is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+
+// getgauge/html-report is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+
+// You should have received a copy of the GNU General Public License
+// along with getgauge/html-report.  If not, see <http://www.gnu.org/licenses/>.
+
+var index;
+
 function initializeFilters() {
     if (sessionStorage.FilterStatus) {
         filterSpecList(sessionStorage.FilterStatus);
@@ -83,10 +102,66 @@ function registerConceptToggle() {
     });
 }
 
+function initSearchIndex() {
+    $.getJSON("search_index.json", function(data) {
+        index = data;
+    });
+} 
+
+function registerSearch() {
+    $('#searchSpecifications').keyup(function() {
+        if(!index) return;
+        searchText = $(this).val();
+        tagMatches = index.tags[searchText];
+        specMatches=[];
+        for(var spec in index.specs) {
+            if(index.specs.hasOwnProperty(spec) && spec.startsWith(searchText)) {
+                index.specs[spec].forEach(function(x) {specMatches.push(x)});
+            }
+        }
+        $(".spec-list a").each(function() {
+            var href=$(this).attr('href');
+            var existsIn = function(arr) {
+                return typeof arr !== 'undefined' && $.inArray(href, arr)>=0;
+            }
+            if(existsIn(tagMatches) || existsIn(specMatches))
+                $(this).show();
+            else
+                $(this).hide();
+        })
+    });
+}
+
 $(function () {
     initializeFilters();
     attachSpecFilter();
     attachScenarioToggle();
     registerHovercards();
     registerConceptToggle();
+    initSearchIndex();
+    registerSearch();
 });
+
+if (!Array.prototype.find) {
+  Array.prototype.find = function(predicate) {
+    'use strict';
+    if (this == null) {
+      throw new TypeError('Array.prototype.find called on null or undefined');
+    }
+    if (typeof predicate !== 'function') {
+      throw new TypeError('predicate must be a function');
+    }
+    var list = Object(this);
+    var length = list.length >>> 0;
+    var thisArg = arguments[1];
+    var value;
+
+    for (var i = 0; i < length; i++) {
+      value = list[i];
+      if (predicate.call(thisArg, value, i, list)) {
+        return value;
+      }
+    }
+    return undefined;
+  };
+}

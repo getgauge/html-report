@@ -17,6 +17,7 @@
 package generator
 
 import (
+	"encoding/json"
 	"io"
 	"log"
 	"os"
@@ -149,6 +150,11 @@ type result struct {
 	Messages      []string
 }
 
+type searchIndex struct {
+	Tags  map[string][]string `json:"tags"`
+	Specs map[string][]string `json:"specs"`
+}
+
 type status int
 
 const (
@@ -196,6 +202,79 @@ func GenerateReports(suiteRes *gm.ProtoSuiteResult, reportDir string) error {
 			generateSpecPage(suiteRes, res, sf)
 		}
 	}
+	err = generateSearchIndex(suiteRes, reportDir)
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
+func newSearchIndex() *searchIndex {
+	var i searchIndex
+	i.Tags = make(map[string][]string)
+	i.Specs = make(map[string][]string)
+	return &i
+}
+
+func (i *searchIndex) hasValueForTag(tag string, spec string) bool {
+	for _, s := range i.Tags[tag] {
+		if s == spec {
+			return true
+		}
+	}
+	return false
+}
+
+func (i *searchIndex) hasSpec(specHeading string, specFileName string) bool {
+	for _, s := range i.Specs[specHeading] {
+		if s == specFileName {
+			return true
+		}
+	}
+	return false
+}
+
+func generateSearchIndex(suiteRes *gm.ProtoSuiteResult, reportDir string) error {
+	f, err := os.Create(filepath.Join(reportDir, "search_index.json"))
+	if err != nil {
+		return err
+	}
+	index := newSearchIndex()
+	for _, r := range suiteRes.GetSpecResults() {
+		spec := r.GetProtoSpec()
+		specFileName := toHTMLFileName(spec.GetFileName(), ProjectRoot)
+		for _, t := range spec.GetTags() {
+			if !index.hasValueForTag(t, specFileName) {
+				index.Tags[t] = append(index.Tags[t], specFileName)
+			}
+		}
+		var addTagsFromScenario = func(s *gm.ProtoScenario) {
+			for _, t := range s.GetTags() {
+				if !index.hasValueForTag(t, specFileName) {
+					index.Tags[t] = append(index.Tags[t], specFileName)
+				}
+			}
+		}
+		for _, i := range spec.GetItems() {
+			if s := i.GetScenario(); s != nil {
+				addTagsFromScenario(s)
+			}
+			if tds := i.GetTableDrivenScenario(); tds != nil {
+				for _, s := range tds.GetScenarios() {
+					addTagsFromScenario(s)
+				}
+			}
+		}
+		specHeading := spec.GetSpecHeading()
+		if !index.hasSpec(specHeading, specFileName) {
+			index.Specs[specHeading] = append(index.Specs[specHeading], specFileName)
+		}
+	}
+	s, err := json.Marshal(index)
+	if err != nil {
+		return err
+	}
+	f.Write(s)
 	return nil
 }
 
