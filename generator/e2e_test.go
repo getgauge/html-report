@@ -53,7 +53,7 @@ func TestEndToEndHTMLGenerationWhenBeforeSuiteFails(t *testing.T) {
 }
 
 func TestEndToEndHTMLGeneration(t *testing.T) {
-	expectedFiles := []string{"index.html", "passing_specification_1.html", "failing_specification_1.html", "skipped_specification.html"}
+	expectedFiles := []string{"index.html", "passing_specification_1.html", "failing_specification_1.html", "skipped_specification.html", "search_index.json"}
 	reportDir := filepath.Join("_testdata", "e2e")
 	ProjectRoot = ""
 
