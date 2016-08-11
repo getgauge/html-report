@@ -150,6 +150,13 @@ var wHookFailureWithoutScreenhotDiv = `<div class="error-container failed">
 
 var wSpecHeaderStartWithTags = `<header class="curr-spec">
   <h3 class="spec-head" title="/tmp/gauge/specs/foobar.spec">Spec heading</h3>
+	<div class="spec-filename">
+		<label for="specFileName">File Path</label>
+		<input id="specFileName" value="/tmp/gauge/specs/foobar.spec" readonly>
+		<button class="clipboard-btn" data-clipboard-target="#specFileName" title="Copy to Clipboard">
+			<i class="fa fa-clipboard" aria-hidden="true" title="Copy to Clipboard"></i>
+		</button>
+	</div>
   <span class="time">00:01:01</span>`
 
 var wTagsDiv = `<div class="tags scenario_tags contentSection">

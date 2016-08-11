@@ -149,6 +149,13 @@ const specsItemsContentsDiv = `<div class="content">`
 
 const specHeaderStartTag = `<header class="curr-spec">
   <h3 class="spec-head" title="{{.FileName}}">{{.SpecName}}</h3>
+  <div class="spec-filename">
+    <label for="specFileName">File Path</label>
+    <input id="specFileName" value="{{.FileName}}" readonly>
+    <button class="clipboard-btn" data-clipboard-target="#specFileName" title="Copy to Clipboard">
+        <i class="fa fa-clipboard" aria-hidden="true" title="Copy to Clipboard"></i>
+    </button>
+  </div>
   <span class="time">{{.ExecTime}}</span>`
 
 const scenarioContainerStartDiv = `{{if eq .ExecStatus 0}}<div class='scenario-container passed{{if gt .TableRowIndex 0}} hidden{{end}}'{{if ne .TableRowIndex -1}} data-tablerow={{.TableRowIndex}}{{end}}>
@@ -190,6 +197,7 @@ const htmlEndTag = `</html>`
 //TODO: Move JS includes at the end of body
 const pageHeaderTag = `<head>
   <meta http-equiv="X-UA-Compatible" content="IE=9; IE=8; IE=7; IE=EDGE" />
+  <meta charset="utf-8"/>
   <title>Gauge Test Results</title>
   <link rel="shortcut icon" type="image/x-icon" href="images/favicon.ico">
   <link rel="stylesheet" type="text/css" href="css/open-sans.css">
@@ -203,6 +211,7 @@ const pageHeaderTag = `<head>
   <script src="js/chart.js" type="text/javascript"></script>
   <script src="js/jquery-3.1.0.min.js" type="text/javascript"></script>
   <script src="js/auto-complete.min.js" type="text/javascript"></script>
+  <script src="js/clipboard.min.js" type="text/javascript"></script>
   <script src="js/search_index.js" type="text/javascript"></script>
   <script src="js/main.js" type="text/javascript"></script>
   <script type="text/javascript">createChart({{.Passed}},{{.Failed}},{{.Skipped}})</script>

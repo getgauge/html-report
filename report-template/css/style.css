@@ -1091,6 +1091,36 @@ footer p {
     background-color: #f0f0f0;
 }
 
+.spec-filename {
+    float: right;
+    font-size: small;
+    color: black;
+}
+
+.spec-filename input {
+    font-family: Courier New;
+}
+
+.spec-filename button {
+    background-color: #d0d0d0;
+    border: 0;
+    padding-top: 1px;
+    box-shadow: none;
+    border-radius: 5px;
+    padding-bottom: 4px;
+    margin-bottom: 0px;
+}
+
+.spec-filename button .fa {
+    vertical-align: middle
+}
+
+.spec-filename label {
+    color: #fff; 
+    vertical-align: middle; 
+    padding-right: 7px;
+}
+
 .autocomplete-suggestions {
     text-align: left; cursor: default; border: 1px solid #ccc; border-top: 0; background: #fff; box-shadow: -1px 1px 3px rgba(0,0,0,.1);
 

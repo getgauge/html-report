@@ -153,6 +153,10 @@ function registerSearchAutocomplete() {
     });
 }
 
+function initializeClipboard() {
+    new Clipboard('.clipboard-btn');
+}
+
 $(function () {
     initializeFilters();
     attachSpecFilter();
@@ -161,4 +165,5 @@ $(function () {
     registerConceptToggle();
     registerSearch();
     registerSearchAutocomplete();
+    initializeClipboard();
 });
