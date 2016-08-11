@@ -202,6 +202,8 @@ const pageHeaderTag = `<head>
   <script src="js/lightbox.js"></script>
   <script src="js/chart.js" type="text/javascript"></script>
   <script src="js/jquery-3.1.0.min.js" type="text/javascript"></script>
+  <script src="js/auto-complete.min.js" type="text/javascript"></script>
+  <script src="js/search_index.js" type="text/javascript"></script>
   <script src="js/main.js" type="text/javascript"></script>
   <script type="text/javascript">createChart({{.Passed}},{{.Failed}},{{.Skipped}})</script>
 </head>`

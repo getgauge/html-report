@@ -18,6 +18,7 @@ package generator
 
 import (
 	"encoding/json"
+	"fmt"
 	"io"
 	"log"
 	"os"
@@ -235,7 +236,7 @@ func (i *searchIndex) hasSpec(specHeading string, specFileName string) bool {
 }
 
 func generateSearchIndex(suiteRes *gm.ProtoSuiteResult, reportDir string) error {
-	f, err := os.Create(filepath.Join(reportDir, "search_index.json"))
+	f, err := os.Create(filepath.Join(reportDir, "js", "search_index.js"))
 	if err != nil {
 		return err
 	}
@@ -274,7 +275,7 @@ func generateSearchIndex(suiteRes *gm.ProtoSuiteResult, reportDir string) error 
 	if err != nil {
 		return err
 	}
-	f.Write(s)
+	f.WriteString(fmt.Sprintf("var index = %s;", s))
 	return nil
 }
 

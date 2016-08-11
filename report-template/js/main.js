@@ -15,8 +15,6 @@
 // You should have received a copy of the GNU General Public License
 // along with getgauge/html-report.  If not, see <http://www.gnu.org/licenses/>.
 
-var index;
-
 function initializeFilters() {
     if (sessionStorage.FilterStatus) {
         filterSpecList(sessionStorage.FilterStatus);
@@ -102,14 +100,8 @@ function registerConceptToggle() {
     });
 }
 
-function initSearchIndex() {
-    $.getJSON("search_index.json", function(data) {
-        index = data;
-    });
-} 
-
 function registerSearch() {
-    $('#searchSpecifications').keyup(function() {
+    $('#searchSpecifications').change(function() {
         if(!index) return;
         searchText = $(this).val();
         tagMatches = index.tags[searchText];
@@ -132,36 +124,41 @@ function registerSearch() {
     });
 }
 
+function registerSearchAutocomplete() {
+    new autoComplete({
+        selector: 'input[id="searchSpecifications"]',
+        minChars: 1,
+        source: function(term, suggest){
+            term = term.toLowerCase();
+            var tagChoices = Object.keys(index.tags);
+            var specChoices = Object.keys(index.specs);
+            var suggestions = [];
+            var suggestionPredicate = function(type) { 
+                return function(x) {
+                    if(x.toLowerCase().startsWith(term))
+                        suggestions.push([x, type]);
+                }
+            };
+            tagChoices.forEach(suggestionPredicate("tag"));
+            specChoices.forEach(suggestionPredicate("spec"));
+            suggest(suggestions);
+        },
+        renderItem: function (item, search){
+            iconClass = item[1] == "tag" ? "tags" : "bars"
+            return '<div class="autocomplete-suggestion" data-value="'+ item[0] +'"><i class="fa fa-' + iconClass + '" aria-hidden="true"></i>&nbsp;' + item[0] + '</div>';
+        },
+        onSelect: function(e, term, item){
+            $('#searchSpecifications').val($(item).data('value'));
+        }
+    });
+}
+
 $(function () {
     initializeFilters();
     attachSpecFilter();
     attachScenarioToggle();
     registerHovercards();
     registerConceptToggle();
-    initSearchIndex();
     registerSearch();
+    registerSearchAutocomplete();
 });
-
-if (!Array.prototype.find) {
-  Array.prototype.find = function(predicate) {
-    'use strict';
-    if (this == null) {
-      throw new TypeError('Array.prototype.find called on null or undefined');
-    }
-    if (typeof predicate !== 'function') {
-      throw new TypeError('predicate must be a function');
-    }
-    var list = Object(this);
-    var length = list.length >>> 0;
-    var thisArg = arguments[1];
-    var value;
-
-    for (var i = 0; i < length; i++) {
-      value = list[i];
-      if (predicate.call(thisArg, value, i, list)) {
-        return value;
-      }
-    }
-    return undefined;
-  };
-}
