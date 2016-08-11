@@ -149,14 +149,14 @@ func getReportsDirectory(nameGen nameGenerator) string {
 	if reportsDir == "" || err != nil {
 		reportsDir = defaultReportsDir
 	}
-	createDirectory(reportsDir)
+	generator.CreateDirectory(reportsDir)
 	var currentReportDir string
 	if nameGen != nil {
 		currentReportDir = filepath.Join(reportsDir, htmlReport, nameGen.randomName())
 	} else {
 		currentReportDir = filepath.Join(reportsDir, htmlReport)
 	}
-	createDirectory(currentReportDir)
+	generator.CreateDirectory(currentReportDir)
 	return currentReportDir
 }
 
@@ -172,14 +172,4 @@ func shouldOverwriteReports() bool {
 		return true
 	}
 	return false
-}
-
-func createDirectory(dir string) {
-	if common.DirExists(dir) {
-		return
-	}
-	if err := os.MkdirAll(dir, common.NewDirectoryPermissions); err != nil {
-		fmt.Printf("Failed to create directory %s: %s\n", dir, err)
-		os.Exit(1)
-	}
 }

@@ -25,6 +25,7 @@ import (
 	"path/filepath"
 	"text/template"
 
+	"github.com/getgauge/common"
 	gm "github.com/getgauge/html-report/gauge_messages"
 )
 
@@ -236,6 +237,7 @@ func (i *searchIndex) hasSpec(specHeading string, specFileName string) bool {
 }
 
 func generateSearchIndex(suiteRes *gm.ProtoSuiteResult, reportDir string) error {
+	CreateDirectory(filepath.Join(reportDir, "js"))
 	f, err := os.Create(filepath.Join(reportDir, "js", "search_index.js"))
 	if err != nil {
 		return err
@@ -426,5 +428,16 @@ func generateItem(w io.Writer, item item) {
 		execTemplate(conceptStepsStartDiv, w, nil)
 		generateItems(w, item.(*concept).Items, generateItem)
 		execTemplate(endDiv, w, nil)
+	}
+}
+
+// CreateDirectory creates given directory if it doesn't exist
+func CreateDirectory(dir string) {
+	if common.DirExists(dir) {
+		return
+	}
+	if err := os.MkdirAll(dir, common.NewDirectoryPermissions); err != nil {
+		fmt.Printf("Failed to create directory %s: %s\n", dir, err)
+		os.Exit(1)
 	}
 }
