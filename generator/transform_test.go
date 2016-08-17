@@ -398,7 +398,7 @@ func TestToOverview(t *testing.T) {
 		Skipped:     5,
 	}
 
-	got := toOverview(suiteRes1)
+	got := toOverview(suiteRes1, nil)
 	if !reflect.DeepEqual(got, want) {
 		t.Errorf("want:\n%v\ngot:\n%v\n", want, got)
 	}
@@ -415,7 +415,7 @@ func TestToSidebar(t *testing.T) {
 		},
 	}
 
-	got := toSidebar(suiteRes2)
+	got := toSidebar(suiteRes2, nil)
 	if !reflect.DeepEqual(got, want) {
 		t.Errorf("want:\n%v\ngot:\n%v\n", want, got)
 	}
@@ -702,12 +702,12 @@ type specNameGenerationTest struct {
 
 var specNameGenerationTests = []*specNameGenerationTest{
 	{filepath.Join("Users", "gauge", "foo", "simple_specification.spec"), filepath.Join("Users", "gauge", "foo"), "simple_specification.html"},
-	{filepath.Join("Users", "gauge", "foo", "simple_specification.spec"), filepath.Join("Users", "gauge"), "foo_simple_specification.html"},
+	{filepath.Join("Users", "gauge", "foo", "simple_specification.spec"), filepath.Join("Users", "gauge"), "foo/simple_specification.html"},
 	{"simple_specification.spec", "", "simple_specification.html"},
 	{filepath.Join("Users", "gauge", "foo", "abcd1234.spec"), filepath.Join("Users", "gauge", "foo"), "abcd1234.html"},
-	{filepath.Join("Users", "gauge", "foo", "bar", "simple_specification.spec"), filepath.Join("Users", "gauge", "foo"), "bar_simple_specification.html"},
-	{filepath.Join("Users", "gauge", "foo", "bar", "simple_specification.spec"), "Users", "gauge_foo_bar_simple_specification.html"},
-	{filepath.Join("Users", "gauge12", "fo_o", "b###$ar", "simple_specification.spec"), "Users", "gauge12_fo_o_b###$ar_simple_specification.html"},
+	{filepath.Join("Users", "gauge", "foo", "bar", "simple_specification.spec"), filepath.Join("Users", "gauge", "foo"), "bar/simple_specification.html"},
+	{filepath.Join("Users", "gauge", "foo", "bar", "simple_specification.spec"), "Users", "gauge/foo/bar/simple_specification.html"},
+	{filepath.Join("Users", "gauge12", "fo_o", "b###$ar", "simple_specification.spec"), "Users", "gauge12/fo_o/b###$ar/simple_specification.html"},
 }
 
 func TestToHTMLFileName(t *testing.T) {
