@@ -19,6 +19,7 @@ package generator
 
 import (
 	"encoding/base64"
+	"os"
 	"path/filepath"
 	"sort"
 	"strings"
@@ -55,6 +56,7 @@ func toOverview(res *gm.ProtoSuiteResult, specRes *gm.ProtoSpecResult) *overview
 		Passed:      passed,
 		Skipped:     int(res.GetSpecsSkippedCount()),
 		BasePath:    base,
+		EnvVars:     os.Environ(),
 	}
 }
 

@@ -153,6 +153,16 @@ function registerSearchAutocomplete() {
     });
 }
 
+function registerEnvPopup() {
+    $('#view-env').click(function() {
+        envDiv=$(this).next('.env-vars')
+        $(envDiv).show();
+        $(envDiv).find(".close-popup").click(function() {
+            $(envDiv).delay(100).fadeOut('fast');
+        });
+    });
+}
+
 function initializeClipboard() {
     new Clipboard('.clipboard-btn');
 }
@@ -166,4 +176,5 @@ $(function () {
     registerSearch();
     registerSearchAutocomplete();
     initializeClipboard();
+    registerEnvPopup();
 });

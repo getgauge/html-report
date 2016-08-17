@@ -52,7 +52,27 @@ const reportOverviewTag = `<div class="report-overview">
     <ul>
       <li>
         <label>Environment </label>
-        <span>{{.Env}}</span>
+        <span>
+          <span>{{.Env}}</span>
+          <a href="#" id="view-env">View Env Vars</a>
+          <div class="env-vars hidden">
+            <div class="popup-header">
+              <a style="float: right;" class="close-popup">
+                <i class="fa fa-times" aria-hidden="true"></i>
+              </a>
+            </div>
+            <table>
+              <thead>
+                <tr>
+                  <th>KEY=Value</th>
+                </tr>
+              </thead>
+              <tbody>
+                {{range .EnvVars}}<tr><td>{{.}}</td></tr>{{end}}
+              </tbody>
+            </table>
+          </div>
+        </span>
       </li>
       {{if .Tags}}
       <li>

@@ -41,6 +41,7 @@ type overview struct {
 	Passed      int
 	Skipped     int
 	BasePath    string
+	EnvVars     []string
 }
 
 type specsMeta struct {
