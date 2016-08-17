@@ -35,8 +35,11 @@
 //
 
 // If you would like to use a custom loading image or close button reference them in the next two lines.
-var loadingImage = 'images/loading.gif';
-var closeButton = 'images/close.gif';
+
+// Set in individual pages, to handle relative path.
+// Ref: http://stackoverflow.com/a/2188506
+// var loadingImage = 'images/loading.gif';
+// var closeButton = 'images/close.gif';
 
 
 

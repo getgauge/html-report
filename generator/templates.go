@@ -20,7 +20,9 @@ package generator
 const bodyHeaderTag = `<header class="top">
   <div class="header">
     <div class="container">
-      <div class="logo"><img src="images/logo.png" alt="Report logo"></div>
+      <div class="logo">
+        <a href="{{.BasePath}}"><img src="{{.BasePath}}images/logo.png" alt="Report logo"></a>
+      </div>
       <h2 class="project">Project: {{.ProjectName}}</h2>
     </div>
   </div>
@@ -199,22 +201,25 @@ const pageHeaderTag = `<head>
   <meta http-equiv="X-UA-Compatible" content="IE=9; IE=8; IE=7; IE=EDGE" />
   <meta charset="utf-8"/>
   <title>Gauge Test Results</title>
-  <link rel="shortcut icon" type="image/x-icon" href="images/favicon.ico">
-  <link rel="stylesheet" type="text/css" href="css/open-sans.css">
-  <link rel="stylesheet" type="text/css" href="css/font-awesome.css">
-  <link rel="stylesheet" type="text/css" href="css/normalize.css" />
-  <link rel="stylesheet" type="text/css" href="css/angular-hovercard.css" />
-  <link rel="stylesheet" type="text/css" href="css/style.css" />
-  <script src="js/d3.min.js" charset="utf-8"></script>
-  <script src="js/nv.d3.min.js" charset="utf-8"></script>
-  <script src="js/lightbox.js"></script>
-  <script src="js/chart.js" type="text/javascript"></script>
-  <script src="js/jquery-3.1.0.min.js" type="text/javascript"></script>
-  <script src="js/auto-complete.min.js" type="text/javascript"></script>
-  <script src="js/clipboard.min.js" type="text/javascript"></script>
-  <script src="js/search_index.js" type="text/javascript"></script>
-  <script src="js/main.js" type="text/javascript"></script>
-  <script type="text/javascript">createChart({{.Passed}},{{.Failed}},{{.Skipped}})</script>
+  <link rel="shortcut icon" type="image/x-icon" href="{{.BasePath}}images/favicon.ico">
+  <link rel="stylesheet" type="text/css" href="{{.BasePath}}css/open-sans.css">
+  <link rel="stylesheet" type="text/css" href="{{.BasePath}}css/font-awesome.css">
+  <link rel="stylesheet" type="text/css" href="{{.BasePath}}css/normalize.css" />
+  <link rel="stylesheet" type="text/css" href="{{.BasePath}}css/style.css" />
+  <script src="{{.BasePath}}js/d3.min.js" charset="utf-8"></script>
+  <script src="{{.BasePath}}js/nv.d3.min.js" charset="utf-8"></script>
+  <script src="{{.BasePath}}js/lightbox.js"></script>
+  <script src="{{.BasePath}}js/chart.js" type="text/javascript"></script>
+  <script src="{{.BasePath}}js/jquery-3.1.0.min.js" type="text/javascript"></script>
+  <script src="{{.BasePath}}js/auto-complete.min.js" type="text/javascript"></script>
+  <script src="{{.BasePath}}js/clipboard.min.js" type="text/javascript"></script>
+  <script src="{{.BasePath}}js/search_index.js" type="text/javascript"></script>
+  <script src="{{.BasePath}}js/main.js" type="text/javascript"></script>
+  <script type="text/javascript">
+    createChart({{.Passed}},{{.Failed}},{{.Skipped}});
+    var loadingImage = '{{.BasePath}}images/loading.gif';
+    var closeButton = '{{.BasePath}}images/close.gif';
+  </script>
 </head>`
 
 const headerEndTag = `</header>`

@@ -40,6 +40,7 @@ type overview struct {
 	Failed      int
 	Passed      int
 	Skipped     int
+	BasePath    string
 }
 
 type specsMeta struct {
@@ -187,7 +188,7 @@ func GenerateReports(suiteRes *gm.ProtoSuiteResult, reportDir string) error {
 		return err
 	}
 	if suiteRes.GetPreHookFailure() != nil {
-		generateOverview(suiteRes, f)
+		generateOverview(suiteRes, nil, f)
 		execTemplate(hookFailureDiv, f, toHookFailure(suiteRes.GetPreHookFailure(), "Before Suite"))
 		if suiteRes.GetPostHookFailure() != nil {
 			execTemplate(hookFailureDiv, f, toHookFailure(suiteRes.GetPostHookFailure(), "After Suite"))
@@ -197,6 +198,8 @@ func GenerateReports(suiteRes *gm.ProtoSuiteResult, reportDir string) error {
 		generateIndexPage(suiteRes, f)
 		specRes := suiteRes.GetSpecResults()
 		for _, res := range specRes {
+			relPath, _ := filepath.Rel(ProjectRoot, res.GetProtoSpec().GetFileName())
+			CreateDirectory(filepath.Join(reportDir, filepath.Dir(relPath)))
 			sf, err := os.Create(filepath.Join(reportDir, toHTMLFileName(res.GetProtoSpec().GetFileName(), ProjectRoot)))
 			if err != nil {
 				return err
@@ -282,9 +285,9 @@ func generateSearchIndex(suiteRes *gm.ProtoSuiteResult, reportDir string) error 
 }
 
 func generateIndexPage(suiteRes *gm.ProtoSuiteResult, w io.Writer) {
-	generateOverview(suiteRes, w)
+	generateOverview(suiteRes, nil, w)
 	execTemplate(specsStartDiv, w, nil)
-	execTemplate(sidebarDiv, w, toSidebar(suiteRes))
+	execTemplate(sidebarDiv, w, toSidebar(suiteRes, nil))
 	if !suiteRes.GetFailed() {
 		execTemplate(congratsDiv, w, nil)
 	}
@@ -293,7 +296,7 @@ func generateIndexPage(suiteRes *gm.ProtoSuiteResult, w io.Writer) {
 }
 
 func generateSpecPage(suiteRes *gm.ProtoSuiteResult, specRes *gm.ProtoSpecResult, w io.Writer) {
-	generateOverview(suiteRes, w)
+	generateOverview(suiteRes, specRes, w)
 
 	if suiteRes.GetPreHookFailure() != nil {
 		execTemplate(hookFailureDiv, w, toHookFailure(suiteRes.GetPreHookFailure(), "Before Suite"))
@@ -305,7 +308,7 @@ func generateSpecPage(suiteRes *gm.ProtoSuiteResult, specRes *gm.ProtoSpecResult
 
 	if suiteRes.GetPreHookFailure() == nil {
 		execTemplate(specsStartDiv, w, nil)
-		execTemplate(sidebarDiv, w, toSidebar(suiteRes))
+		execTemplate(sidebarDiv, w, toSidebar(suiteRes, specRes))
 		generateSpecDiv(w, specRes)
 		execTemplate(endDiv, w, nil)
 	}
@@ -313,8 +316,8 @@ func generateSpecPage(suiteRes *gm.ProtoSuiteResult, specRes *gm.ProtoSpecResult
 	generatePageFooter(w)
 }
 
-func generateOverview(suiteRes *gm.ProtoSuiteResult, w io.Writer) {
-	overview := toOverview(suiteRes)
+func generateOverview(suiteRes *gm.ProtoSuiteResult, specRes *gm.ProtoSpecResult, w io.Writer) {
+	overview := toOverview(suiteRes, specRes)
 
 	execTemplate(htmlStartTag, w, nil)
 	execTemplate(pageHeaderTag, w, overview)

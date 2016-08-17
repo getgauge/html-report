@@ -32,12 +32,17 @@ const (
 	dothtml        = ".html"
 )
 
-func toOverview(res *gm.ProtoSuiteResult) *overview {
+func toOverview(res *gm.ProtoSuiteResult, specRes *gm.ProtoSpecResult) *overview {
 	totalSpecs := 0
 	if res.GetSpecResults() != nil {
 		totalSpecs = len(res.GetSpecResults())
 	}
 	passed := totalSpecs - int(res.GetSpecsFailedCount()) - int(res.GetSpecsSkippedCount())
+	base := ""
+	if specRes != nil {
+		base, _ = filepath.Rel(filepath.Dir(specRes.ProtoSpec.GetFileName()), ProjectRoot)
+		base = base + "/"
+	}
 	return &overview{
 		ProjectName: res.GetProjectName(),
 		Env:         res.GetEnvironment(),
@@ -49,6 +54,7 @@ func toOverview(res *gm.ProtoSuiteResult) *overview {
 		Failed:      int(res.GetSpecsFailedCount()),
 		Passed:      passed,
 		Skipped:     int(res.GetSpecsSkippedCount()),
+		BasePath:    base,
 	}
 }
 
@@ -70,12 +76,18 @@ func toHTMLFileName(specName, projectRoot string) string {
 	if err != nil {
 		specPath = filepath.Join(projectRoot, filepath.Base(specName))
 	}
-	specPath = strings.Replace(specPath, string(filepath.Separator), "_", -1)
+	// specPath = strings.Replace(specPath, string(filepath.Separator), "_", -1)
 	ext := filepath.Ext(specPath)
 	return strings.TrimSuffix(specPath, ext) + dothtml
 }
 
-func toSidebar(res *gm.ProtoSuiteResult) *sidebar {
+func toSidebar(res *gm.ProtoSuiteResult, currSpec *gm.ProtoSpecResult) *sidebar {
+	var basePath string
+	if currSpec != nil {
+		basePath = filepath.Dir(currSpec.ProtoSpec.GetFileName())
+	} else {
+		basePath = ProjectRoot
+	}
 	specsMetaList := make([]*specsMeta, 0)
 	for _, specRes := range res.SpecResults {
 		sm := &specsMeta{
@@ -84,7 +96,7 @@ func toSidebar(res *gm.ProtoSuiteResult) *sidebar {
 			Failed:     specRes.GetFailed(),
 			Skipped:    specRes.GetSkipped(),
 			Tags:       specRes.ProtoSpec.GetTags(),
-			ReportFile: toHTMLFileName(specRes.ProtoSpec.GetFileName(), ProjectRoot),
+			ReportFile: toHTMLFileName(specRes.ProtoSpec.GetFileName(), basePath),
 		}
 		specsMetaList = append(specsMetaList, sm)
 	}
