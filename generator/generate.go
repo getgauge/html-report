@@ -193,12 +193,13 @@ func GenerateReports(suiteRes *gm.ProtoSuiteResult, reportDir string) error {
 		return err
 	}
 	if suiteRes.GetPreHookFailure() != nil {
-		generateOverview(suiteRes, nil, f)
+		overview := toOverview(suiteRes, nil)
+		generateOverview(overview, f)
 		execTemplate(hookFailureDiv, f, toHookFailure(suiteRes.GetPreHookFailure(), "Before Suite"))
 		if suiteRes.GetPostHookFailure() != nil {
 			execTemplate(hookFailureDiv, f, toHookFailure(suiteRes.GetPostHookFailure(), "After Suite"))
 		}
-		generatePageFooter(f)
+		generatePageFooter(overview, f)
 	} else {
 		generateIndexPage(suiteRes, f)
 		specRes := suiteRes.GetSpecResults()
@@ -290,18 +291,21 @@ func generateSearchIndex(suiteRes *gm.ProtoSuiteResult, reportDir string) error 
 }
 
 func generateIndexPage(suiteRes *gm.ProtoSuiteResult, w io.Writer) {
-	generateOverview(suiteRes, nil, w)
+	overview := toOverview(suiteRes, nil)
+	generateOverview(overview, w)
 	execTemplate(specsStartDiv, w, nil)
 	execTemplate(sidebarDiv, w, toSidebar(suiteRes, nil))
 	if !suiteRes.GetFailed() {
 		execTemplate(congratsDiv, w, nil)
 	}
 	execTemplate(endDiv, w, nil)
-	generatePageFooter(w)
+	generatePageFooter(overview, w)
 }
 
 func generateSpecPage(suiteRes *gm.ProtoSuiteResult, specRes *gm.ProtoSpecResult, w io.Writer) {
-	generateOverview(suiteRes, specRes, w)
+	overview := toOverview(suiteRes, specRes)
+
+	generateOverview(overview, w)
 
 	if suiteRes.GetPreHookFailure() != nil {
 		execTemplate(hookFailureDiv, w, toHookFailure(suiteRes.GetPreHookFailure(), "Before Suite"))
@@ -318,12 +322,10 @@ func generateSpecPage(suiteRes *gm.ProtoSuiteResult, specRes *gm.ProtoSpecResult
 		execTemplate(endDiv, w, nil)
 	}
 
-	generatePageFooter(w)
+	generatePageFooter(overview, w)
 }
 
-func generateOverview(suiteRes *gm.ProtoSuiteResult, specRes *gm.ProtoSpecResult, w io.Writer) {
-	overview := toOverview(suiteRes, specRes)
-
+func generateOverview(overview *overview, w io.Writer) {
 	execTemplate(htmlStartTag, w, nil)
 	execTemplate(pageHeaderTag, w, overview)
 	execTemplate(bodyStartTag, w, nil)
@@ -333,10 +335,11 @@ func generateOverview(suiteRes *gm.ProtoSuiteResult, specRes *gm.ProtoSpecResult
 	execTemplate(reportOverviewTag, w, overview)
 }
 
-func generatePageFooter(w io.Writer) {
+func generatePageFooter(overview *overview, w io.Writer) {
 	execTemplate(endDiv, w, nil)
 	execTemplate(mainEndTag, w, nil)
 	execTemplate(bodyFooterTag, w, nil)
+	execTemplate(javascriptIncludes, w, overview)
 	execTemplate(bodyEndTag, w, nil)
 	execTemplate(htmlEndTag, w, nil)
 }

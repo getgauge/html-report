@@ -200,7 +200,6 @@ const htmlStartTag = `<!doctype html>
 
 const htmlEndTag = `</html>`
 
-//TODO: Move JS includes at the end of body
 const pageHeaderTag = `<head>
   <meta http-equiv="X-UA-Compatible" content="IE=9; IE=8; IE=7; IE=EDGE" />
   <meta charset="utf-8"/>
@@ -210,16 +209,6 @@ const pageHeaderTag = `<head>
   <link rel="stylesheet" type="text/css" href="{{.BasePath}}css/font-awesome.css">
   <link rel="stylesheet" type="text/css" href="{{.BasePath}}css/normalize.css" />
   <link rel="stylesheet" type="text/css" href="{{.BasePath}}css/style.css" />
-  <script src="{{.BasePath}}js/lightbox.js"></script>
-  <script src="{{.BasePath}}js/jquery-3.1.0.min.js" type="text/javascript"></script>
-  <script src="{{.BasePath}}js/auto-complete.min.js" type="text/javascript"></script>
-  <script src="{{.BasePath}}js/clipboard.min.js" type="text/javascript"></script>
-  <script src="{{.BasePath}}js/search_index.js" type="text/javascript"></script>
-  <script src="{{.BasePath}}js/main.js" type="text/javascript"></script>
-  <script type="text/javascript">
-    var loadingImage = '{{.BasePath}}images/loading.gif';
-    var closeButton = '{{.BasePath}}images/close.gif';
-  </script>
 </head>`
 
 const headerEndTag = `</header>`
@@ -318,3 +307,16 @@ const commentSpan = `<span>{{.Text | parseMarkdown}}</span>`
 const conceptStepsStartDiv = `<div class='concept-steps'>`
 
 const nestedConceptDiv = `<div class="nested concept-steps">`
+
+const javascriptIncludes = `
+  <script type="text/javascript">
+    var loadingImage = '{{.BasePath}}images/loading.gif';
+    var closeButton = '{{.BasePath}}images/close.gif';
+  </script>
+  <script src="{{.BasePath}}js/lightbox.js"></script>
+  <script src="{{.BasePath}}js/jquery-3.1.0.min.js" type="text/javascript"></script>
+  <script src="{{.BasePath}}js/auto-complete.min.js" type="text/javascript"></script>
+  <script src="{{.BasePath}}js/clipboard.min.js" type="text/javascript"></script>
+  <script src="{{.BasePath}}js/search_index.js" type="text/javascript"></script>
+  <script src="{{.BasePath}}js/main.js" type="text/javascript"></script>
+`
