@@ -27,6 +27,7 @@ import (
 
 	"github.com/getgauge/common"
 	gm "github.com/getgauge/html-report/gauge_messages"
+	"github.com/russross/blackfriday"
 )
 
 type overview struct {
@@ -168,7 +169,11 @@ const (
 )
 
 func execTemplate(tmplName string, w io.Writer, data interface{}) {
-	tmpl, err := template.New("Reports").Parse(tmplName)
+	var parseMarkdown = func(args ...interface{}) string {
+		s := blackfriday.MarkdownCommon([]byte(fmt.Sprintf("%s", args...)))
+		return string(s)
+	}
+	tmpl, err := template.New("Reports").Funcs(template.FuncMap{"parseMarkdown": parseMarkdown}).Parse(tmplName)
 	if err != nil {
 		log.Fatalf(err.Error())
 	}

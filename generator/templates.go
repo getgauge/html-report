@@ -83,7 +83,6 @@ const reportOverviewTag = `<div class="report-overview">
   </div>
 </div>`
 
-//TODO: 1. Filtering based on search query
 const sidebarDiv = `{{if not .IsBeforeHookFailure}}<aside class="sidebar">
   <h3 class="title">Specifications</h3>
 
@@ -177,9 +176,7 @@ const scenarioHeaderStartDiv = `<div class="scenario-head">
 
 // TODO 1. Implement onclick of row
 //      2. Set class as 'selected' on click
-//      3. Convert comments to markdown. Check that this adds <p> tag
-//         for every new line which is not happening right now.
-const specCommentsAndTableTag = `{{range .CommentsBeforeTable}}<span>{{.}}</span>{{end}}
+const specCommentsAndTableTag = `{{range .CommentsBeforeTable}}<span>{{. | parseMarkdown}}</span>{{end}}
 {{if .Table}}<table class="data-table">
   <tr>
     {{range .Table.Headers}}<th>{{.}}</th>{{end}}
@@ -195,7 +192,7 @@ const specCommentsAndTableTag = `{{range .CommentsBeforeTable}}<span>{{.}}</span
     {{end}}
   </tbody>
 </table>{{end}}
-{{range .CommentsAfterTable}}<span>{{.}}</span>{{end}}`
+{{range .CommentsAfterTable}}<span>{{. | parseMarkdown}}</span>{{end}}`
 
 // Common HTML tags templates
 const htmlStartTag = `<!doctype html>
@@ -316,8 +313,7 @@ const conceptSpan = `<i class="fa fa-plus-square" aria-hidden="true"></i>`
 
 const contextOrTeardownStartDiv = `<div class='context-step'>`
 
-//TODO: 1. Show comments in markdown style
-const commentSpan = `<span>{{.Text}}</span>`
+const commentSpan = `<span>{{.Text | parseMarkdown}}</span>`
 
 const conceptStepsStartDiv = `<div class='concept-steps'>`
 
