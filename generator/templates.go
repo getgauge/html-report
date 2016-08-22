@@ -39,11 +39,11 @@ const reportOverviewTag = `<div class="report-overview">
     <div class="chart">
       <svg id="pie-chart" data-results="{{.Failed}},{{.Passed}},{{.Skipped}}" data-total="{{.TotalSpecs}}">
         <path class="status failed"/>
-        <path class="shadow failed"><title>Failed: {{.Failed}}/{{.TotalSpecs}}</title></path>
+        <path class="shadow failed" data-status="failed"><title>Failed: {{.Failed}}/{{.TotalSpecs}}</title></path>
         <path class="status passed"/>
-        <path class="shadow passed"><title>Passed: {{.Passed}}/{{.TotalSpecs}}</title></path>
+        <path class="shadow passed" data-status="passed"><title>Passed: {{.Passed}}/{{.TotalSpecs}}</title></path>
         <path class="status skipped"/>
-        <path class="shadow skipped"><title>Skipped: {{.Skipped}}/{{.TotalSpecs}}</title></path>
+        <path class="shadow skipped" data-status="skipped"><title>Skipped: {{.Skipped}}/{{.TotalSpecs}}</title></path>
       </svg>
     </div>
     <div class="total-specs"><span class="value">{{.TotalSpecs}}</span><span class="txt">Total specs</span></div>

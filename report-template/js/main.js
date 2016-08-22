@@ -64,7 +64,7 @@ function attachSpecFilter() {
             $(this).removeClass('active');}
         );
     };
-    $('.spec-filter').click(function(){
+    $('.spec-filter, #pie-chart path.shadow').click(function(){
         resetState();
         var status = $(this).data('status');
         sessionStorage.FilterStatus = status;
