@@ -1069,7 +1069,7 @@ footer p {
     font-weight: bold;
 }
 
-.hovercard {
+.hovercard, .env-vars {
     display: none;
     clear: both;
     float: none;
@@ -1129,3 +1129,53 @@ footer p {
 }
 .autocomplete-suggestion { position: relative; padding: 0 .6em; line-height: 23px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; font-size: 1.02em; color: #333; }
 .autocomplete-suggestion.selected { background: #f0f0f0; }
+
+a#view-env{
+    float:right
+}
+
+.env-vars .popup-header {
+    display: inline-block; 
+    width: 100%;
+}
+
+.env-vars .popup-header .close-popup {
+    cursor: pointer;
+    float: right;
+}
+
+svg#pie-chart {
+	width  : 400px;
+	height : 150px;
+}
+
+#pie-chart path.passed{
+    fill: #27caa9;
+}
+
+#pie-chart path.failed{
+    fill: #e73e48;
+}
+
+#pie-chart path.skipped{
+    fill: #999999;
+}
+
+#pie-chart path:hover{
+    cursor: pointer;
+}
+
+#pie-chart path {
+    stroke: #ccc;
+    stroke-width: 3;
+}
+
+#pie-chart path.shadow {
+    opacity: 0.1;
+}
+
+#pie-chart path.shadow:hover {
+    opacity: 1;
+    stroke-width: 1;
+    transition: opacity 0.50s;
+}

@@ -37,7 +37,14 @@ const bodyFooterTag = `<footer class="footer">
 const reportOverviewTag = `<div class="report-overview">
   <div class="report_chart">
     <div class="chart">
-      <svg></svg>
+      <svg id="pie-chart" data-results="{{.Failed}},{{.Passed}},{{.Skipped}}" data-total="{{.TotalSpecs}}">
+        <path class="status failed"/>
+        <path class="shadow failed"><title>Failed: {{.Failed}}/{{.TotalSpecs}}</title></path>
+        <path class="status passed"/>
+        <path class="shadow passed"><title>Passed: {{.Passed}}/{{.TotalSpecs}}</title></path>
+        <path class="status skipped"/>
+        <path class="shadow skipped"><title>Skipped: {{.Skipped}}/{{.TotalSpecs}}</title></path>
+      </svg>
     </div>
     <div class="total-specs"><span class="value">{{.TotalSpecs}}</span><span class="txt">Total specs</span></div>
   </div>
@@ -206,17 +213,13 @@ const pageHeaderTag = `<head>
   <link rel="stylesheet" type="text/css" href="{{.BasePath}}css/font-awesome.css">
   <link rel="stylesheet" type="text/css" href="{{.BasePath}}css/normalize.css" />
   <link rel="stylesheet" type="text/css" href="{{.BasePath}}css/style.css" />
-  <script src="{{.BasePath}}js/d3.min.js" charset="utf-8"></script>
-  <script src="{{.BasePath}}js/nv.d3.min.js" charset="utf-8"></script>
   <script src="{{.BasePath}}js/lightbox.js"></script>
-  <script src="{{.BasePath}}js/chart.js" type="text/javascript"></script>
   <script src="{{.BasePath}}js/jquery-3.1.0.min.js" type="text/javascript"></script>
   <script src="{{.BasePath}}js/auto-complete.min.js" type="text/javascript"></script>
   <script src="{{.BasePath}}js/clipboard.min.js" type="text/javascript"></script>
   <script src="{{.BasePath}}js/search_index.js" type="text/javascript"></script>
   <script src="{{.BasePath}}js/main.js" type="text/javascript"></script>
   <script type="text/javascript">
-    createChart({{.Passed}},{{.Failed}},{{.Skipped}});
     var loadingImage = '{{.BasePath}}images/loading.gif';
     var closeButton = '{{.BasePath}}images/close.gif';
   </script>

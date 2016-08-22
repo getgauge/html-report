@@ -84,7 +84,7 @@ function attachSpecFilter() {
 }
 
 function registerHovercards() {
-    $('span.hoverable').mouseenter(function(e) {
+    $('.hoverable').mouseenter(function(e) {
         $(this).next('.hovercard').css({top: e.clientY + 10, left: e.clientX +10}).delay(100).fadeIn();
     }).mouseleave(function() {
         $(this).next('.hovercard').delay(100).fadeOut('fast');
@@ -153,8 +153,59 @@ function registerSearchAutocomplete() {
     });
 }
 
+function registerEnvPopup() {
+    $('#view-env').click(function() {
+        envDiv=$(this).next('.env-vars')
+        $(envDiv).show();
+        $(envDiv).find(".close-popup").click(function() {
+            $(envDiv).delay(100).fadeOut('fast');
+        });
+    });
+}
+
 function initializeClipboard() {
     new Clipboard('.clipboard-btn');
+}
+
+function polarToCartesian(centerX, centerY, radius, angleInDegrees) {
+	var angleInRadians = ((angleInDegrees - 90) * Math.PI) / 180.0;
+
+	return {
+		x: centerX + (radius * Math.cos(angleInRadians)),
+		y: centerY + (radius * Math.sin(angleInRadians))
+	};
+}
+
+function describeArc(x, y, radius, startAngle, endAngle) {
+	var start = polarToCartesian(x, y, radius, endAngle);
+	var end = polarToCartesian(x, y, radius, startAngle);
+
+	var arcSweep = endAngle - startAngle <= 180 ? "0" : "1";
+
+	return [
+		"M", start.x, start.y,
+		"A", radius, radius, 0, arcSweep, 0, end.x, end.y,
+		"L", x, y,
+		"L", start.x, start.y, "Z"
+	].join(" ");
+}
+
+function drawPieChart() {
+    var results = $("#pie-chart").data("results").split(",").map(Number);
+    var total = Number($("#pie-chart").data("total"));
+    var paths = $("#pie-chart path.status")
+    var startAngle = 0;
+    for(i=0;i<results.length;i++)
+    {
+        coveredAngle=startAngle + results[i]*360/total;
+        if(total===results[i]) 
+        coveredAngle-=0.05;
+        $(paths[i]).attr('d',describeArc(200, 75, 72, startAngle, coveredAngle));
+        $(paths[i]).next('path.shadow').attr('d',describeArc(200, 75, 75, startAngle, coveredAngle));
+        if(results[i]===0 || total===results[i]) 
+            $(paths[i]).attr('stroke-width',0);
+        startAngle=coveredAngle;
+    }
 }
 
 $(function () {
@@ -166,4 +217,6 @@ $(function () {
     registerSearch();
     registerSearchAutocomplete();
     initializeClipboard();
+    registerEnvPopup();
+    drawPieChart();
 });
