@@ -19,12 +19,14 @@ package generator
 
 import (
 	"bytes"
+	"fmt"
 	"io/ioutil"
 	"path/filepath"
 	"testing"
 
 	gm "github.com/getgauge/html-report/gauge_messages"
 	"github.com/golang/protobuf/proto"
+	"github.com/mb0/diff"
 )
 
 var scenario1 = &gm.ProtoScenario{
@@ -673,13 +675,10 @@ func TestHTMLGeneration(t *testing.T) {
 		buf := new(bytes.Buffer)
 		generateSpecPage(test.res, test.res.GetSpecResults()[0], buf)
 
-		want := removeNewline(string(content))
-		got := removeNewline(buf.String())
-
-		if got != want {
-			t.Errorf("%s:\nwant:\n%q\ngot:\n%q\n", test.name, want, got)
+		diff := compare(content, buf)
+		if diff != "" {
+			t.Errorf("%s content differ:\n%s\n", test.name, diff)
 		}
-
 	}
 }
 
@@ -692,10 +691,24 @@ func TestIndexPageGeneration(t *testing.T) {
 	buf := new(bytes.Buffer)
 	generateIndexPage(suiteResWithAllPass, buf)
 
-	want := removeNewline(string(content))
-	got := removeNewline(buf.String())
-
-	if got != want {
-		t.Errorf("want:\n%q\ngot:\n%q\n", want, got)
+	diff := compare(content, buf)
+	if diff != "" {
+		t.Errorf("Index page content differ:\n%s\n", diff)
 	}
+}
+
+func compare(want []byte, got *bytes.Buffer) string {
+	w := removeNewline(string(want))
+	g := removeNewline(got.String())
+	if g != w {
+		changes := diff.ByteStrings(w, g)
+		var diff string
+		for l := len(changes) - 1; l >= 0; l-- {
+			change := changes[l]
+			diff += fmt.Sprintf("- %s\n", w[change.B:change.B+change.Del])
+			diff += fmt.Sprintf("+ %s\n", g[change.B:change.B+change.Ins])
+		}
+		return diff
+	}
+	return ""
 }
