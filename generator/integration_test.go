@@ -20,13 +20,14 @@ package generator
 import (
 	"bytes"
 	"fmt"
+	"html"
 	"io/ioutil"
 	"path/filepath"
 	"testing"
 
+	"github.com/documize/html-diff"
 	gm "github.com/getgauge/html-report/gauge_messages"
 	"github.com/golang/protobuf/proto"
-	"github.com/mb0/diff"
 )
 
 var scenario1 = &gm.ProtoScenario{
@@ -675,10 +676,10 @@ func TestHTMLGeneration(t *testing.T) {
 		buf := new(bytes.Buffer)
 		generateSpecPage(test.res, test.res.GetSpecResults()[0], buf)
 
-		diff := compare(content, buf)
-		if diff != "" {
-			t.Errorf("%s content differ:\n%s\n", test.name, diff)
-		}
+		want := removeNewline(string(content))
+		got := removeNewline(buf.String())
+
+		assertEqual(want, got, test.name, t)
 	}
 }
 
@@ -691,24 +692,33 @@ func TestIndexPageGeneration(t *testing.T) {
 	buf := new(bytes.Buffer)
 	generateIndexPage(suiteResWithAllPass, buf)
 
-	diff := compare(content, buf)
-	if diff != "" {
-		t.Errorf("Index page content differ:\n%s\n", diff)
-	}
+	want := removeNewline(string(content))
+	got := removeNewline(buf.String())
+
+	assertEqual(want, got, "index", t)
 }
 
-func compare(want []byte, got *bytes.Buffer) string {
-	w := removeNewline(string(want))
-	g := removeNewline(got.String())
-	if g != w {
-		changes := diff.ByteStrings(w, g)
-		var diff string
-		for l := len(changes) - 1; l >= 0; l-- {
-			change := changes[l]
-			diff += fmt.Sprintf("- %s\n", w[change.B:change.B+change.Del])
-			diff += fmt.Sprintf("+ %s\n", g[change.B:change.B+change.Ins])
+func assertEqual(expected, actual, testName string, t *testing.T) {
+	if expected != actual {
+		diffHTML := compare(expected, actual)
+		tmpFile, err := ioutil.TempFile("", "")
+		if err != nil {
+			t.Errorf("Unable to dump to tmp file. Raw content:\n%s\n", diffHTML)
 		}
-		return diff
+		fileName := fmt.Sprintf("%s.html", tmpFile.Name())
+		ioutil.WriteFile(fileName, []byte(diffHTML), 0644)
+		tmpFile.Close()
+		t.Errorf("%s -  View Diff Output : %s\n", testName, fileName)
 	}
-	return ""
+}
+func compare(a, b string) string {
+	var cfg = &htmldiff.Config{
+		InsertedSpan: []htmldiff.Attribute{{Key: "style", Val: "background-color: palegreen;"}},
+		DeletedSpan:  []htmldiff.Attribute{{Key: "style", Val: "background-color: lightpink;"}},
+		ReplacedSpan: []htmldiff.Attribute{{Key: "style", Val: "background-color: lightskyblue;"}},
+		CleanTags:    []string{""},
+	}
+
+	res, _ := cfg.HTMLdiff([]string{html.EscapeString(a), html.EscapeString(b)})
+	return res[0]
 }

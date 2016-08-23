@@ -47,9 +47,7 @@ func TestEndToEndHTMLGenerationWhenBeforeSuiteFails(t *testing.T) {
 	got := removeNewline(string(gotContent))
 	want := removeNewline(string(wantContent))
 	os.Remove(filepath.Join(reportDir, "index.html"))
-	if got != want {
-		t.Errorf("want:\n%q\ngot:\n%q\n", want, got)
-	}
+	assertEqual(want, got, "index.html", t)
 }
 
 func TestEndToEndHTMLGeneration(t *testing.T) {
@@ -74,8 +72,6 @@ func TestEndToEndHTMLGeneration(t *testing.T) {
 		got := removeNewline(string(gotContent))
 		want := removeNewline(string(wantContent))
 		os.Remove(filepath.Join(reportDir, expectedFile))
-		if got != want {
-			t.Errorf("%s:\nwant:\n%q\ngot:\n%q\n", expectedFile, want, got)
-		}
+		assertEqual(want, got, expectedFile, t)
 	}
 }

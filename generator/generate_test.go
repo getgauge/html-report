@@ -127,11 +127,11 @@ var wSidebarAside = `<aside class="sidebar">
 </aside>`
 
 var wHookFailureWithScreenhotDiv = `<div class="error-container failed">
-<div collapsable class="error-heading">BeforeSuite Failed:<span class="error-message"> SomeError</span></div>
-  <div class="toggleShow" data-toggle="collapse" data-target="#hookFailureDetails">
-    <span>[Show details]</span>
+<div class="error-heading">BeforeSuite Failed:<span class="error-message"> SomeError</span></div>
+  <div class="toggle-show">
+    [Show details]
   </div>
-  <div class="exception-container" id="hookFailureDetails">
+  <div class="exception-container hidden">
       <div class="exception">
         <pre class="stacktrace">Stack trace</pre>
       </div>
@@ -144,11 +144,11 @@ var wHookFailureWithScreenhotDiv = `<div class="error-container failed">
 </div>`
 
 var wHookFailureWithoutScreenhotDiv = `<div class="error-container failed">
-  <div collapsable class="error-heading">BeforeSuite Failed:<span class="error-message"> SomeError</span></div>
-  <div class="toggleShow" data-toggle="collapse" data-target="#hookFailureDetails">
-    <span>[Show details]</span>
+  <div class="error-heading">BeforeSuite Failed:<span class="error-message"> SomeError</span></div>
+  <div class="toggle-show">
+    [Show details]
   </div>
-  <div class="exception-container" id="hookFailureDetails">
+  <div class="exception-container hidden">
       <div class="exception">
         <pre class="stacktrace">Stack trace</pre>
       </div>

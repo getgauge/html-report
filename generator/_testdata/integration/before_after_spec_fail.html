@@ -109,13 +109,13 @@
 
           <div id="specItemsContainer">
             <div class="error-container failed">
-              <div collapsable class="error-heading">Before Spec Failed:
+              <div class="error-heading">Before Spec Failed:
                 <span class="error-message"> java.lang.RuntimeException</span>
               </div>
-              <div class="toggleShow" data-toggle="collapse" data-target="#hookFailureDetails">
-                <span>[Show details]</span>
-              </div>
-              <div class="exception-container" id="hookFailureDetails">
+                <div class="toggle-show">
+                  [Show details]
+                </div>
+                <div class="exception-container hidden">
                 <div class="exception">
                   <pre class="stacktrace">
 StepImplementation.foo(StepImplementation.java:16)
@@ -142,13 +142,13 @@ com.thoughtworks.gauge.GaugeRuntime.main(GaugeRuntime.java:37)
               </div>
             </div>
             <div class="error-container failed">
-              <div collapsable class="error-heading">After Spec Failed:
+              <div class="error-heading">After Spec Failed:
                 <span class="error-message"> java.lang.RuntimeException</span>
               </div>
-              <div class="toggleShow" data-toggle="collapse" data-target="#hookFailureDetails">
-                <span>[Show details]</span>
+              <div class="toggle-show">
+                [Show details]
               </div>
-              <div class="exception-container" id="hookFailureDetails">
+              <div class="exception-container hidden">
                 <div class="exception">
                   <pre class="stacktrace">
 StepImplementation.foo(StepImplementation.java:16)

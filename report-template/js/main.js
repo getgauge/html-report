@@ -39,6 +39,17 @@ function describeArc(x, y, radius, startAngle, endAngle) {
 	].join(" ");
 }
 
+function filterSpecList (status) {
+    $('#listOfSpecifications li.spec-name').each(function() {
+        if($(this).hasClass(status)) {
+            $(this).show();
+        }
+        else {
+            $(this).hide();
+        }
+    });
+}
+
 var initializers = {
     "initializeFilters" : function () {
         if (sessionStorage.FilterStatus) {
@@ -61,16 +72,6 @@ var initializers = {
             $(".scenario-container").each(function(){
                 if($(this).data('tablerow')===tr) { $(this).show();} else {$(this).hide();}
             });
-        });
-    },
-    "filterSpecList" : function (status) {
-        $('#listOfSpecifications li.spec-name').each(function() {
-            if($(this).hasClass(status)) {
-                $(this).show();
-            }
-            else {
-                $(this).hide();
-            }
         });
     },
     "attachSpecFilter" : function () {
@@ -116,6 +117,13 @@ var initializers = {
             var iconClass = $(conceptSteps).is(':visible') ? "plus" : "minus";
             $(conceptSteps).fadeToggle('fast', 'linear');
             $(this).find("i.fa").removeClass("fa-minus-square").removeClass("fa-plus-square").addClass("fa-"+iconClass+"-square");
+        });
+    },
+    "registerErrorContainerToggle" : function() {
+        $(".error-container .toggle-show").click(function(){
+            var self = $(this);
+            self.next('.exception-container').stop().toggleClass('hidden');
+            self.text(self.text().indexOf("Show") >0  ? "[Hide details]" : "[Show details]");
         });
     },
     "registerSearch" : function () {

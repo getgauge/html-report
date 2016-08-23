@@ -108,20 +108,17 @@ const sidebarDiv = `{{if not .IsBeforeHookFailure}}<aside class="sidebar">
   </div>
 </aside>{{end}}`
 
-//TODO: Hide if pre/post hook failed
 const congratsDiv = `
   <div class="congratulations details">
     <p>Congratulations! You've gone all <span class="green">green</span> and saved the environment!</p>
   </div>`
 
-//TODO 1. Change text on toggle collapse
-//     2. Check for collapsible
 const hookFailureDiv = `<div class="error-container failed">
-  <div collapsable class="error-heading">{{.HookName}} Failed:<span class="error-message"> {{.ErrMsg}}</span></div>
-  <div class="toggleShow" data-toggle="collapse" data-target="#hookFailureDetails">
-    <span>[Show details]</span>
+  <div class="error-heading">{{.HookName}} Failed:<span class="error-message"> {{.ErrMsg}}</span></div>
+  <div class="toggle-show">
+    [Show details]
   </div>
-  <div class="exception-container" id="hookFailureDetails">
+  <div class="exception-container hidden">
       <div class="exception">
         <pre class="stacktrace">{{.StackTrace}}</pre>
       </div>
@@ -149,7 +146,6 @@ const skippedReasonDiv = `<div class="message-container">
 
 const specsStartDiv = `<div class="specifications">`
 
-//TODO: Hide this if there is a pre hook failure
 const specContainerStartDiv = `<div id="specificationContainer" class="details">`
 
 const specsItemsContainerDiv = `<div id="specItemsContainer">`
@@ -174,8 +170,6 @@ const scenarioHeaderStartDiv = `<div class="scenario-head">
   <h3 class="head borderBottom">{{.Heading}}</h3>
   <span class="time">{{.ExecTime}}</span>`
 
-// TODO 1. Implement onclick of row
-//      2. Set class as 'selected' on click
 const specCommentsAndTableTag = `{{range .CommentsBeforeTable}}<span>{{. | parseMarkdown}}</span>{{end}}
 {{if .Table}}<table class="data-table">
   <tr>
