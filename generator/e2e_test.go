@@ -75,7 +75,7 @@ func TestEndToEndHTMLGeneration(t *testing.T) {
 		want := removeNewline(string(wantContent))
 		os.Remove(filepath.Join(reportDir, expectedFile))
 		if got != want {
-			t.Errorf("want:\n%q\ngot:\n%q\n", want, got)
+			t.Errorf("%s:\nwant:\n%q\ngot:\n%q\n", expectedFile, want, got)
 		}
 	}
 }

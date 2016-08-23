@@ -40,12 +40,19 @@ var wBodyHeader = `<header class="top">
 </header>`
 
 var wChartDiv = `<div class="report-overview">
-  <div class="report_chart">
-    <div class="chart">
-      <svg></svg>
-    </div>
-    <div class="total-specs"><span class="value">41</span><span class="txt">Total specs</span></div>
-  </div>`
+<div class="report_chart">
+<div class="chart">
+<svg id="pie-chart" data-results="2,39,0" data-total="41">
+  <path class="status failed"/>
+	<path class="shadow failed" data-status="failed"><title>Failed: 2/41</title></path>
+	<path class="status passed"/>
+	<path class="shadow passed" data-status="passed"><title>Passed: 39/41</title></path>
+	<path class="status skipped"/>
+	<path class="shadow skipped" data-status="skipped"><title>Skipped: 0/41</title></path>
+</svg>
+</div>
+<div class="total-specs"><span class="value">41</span><span class="txt">Total specs</span></div>
+</div>`
 
 var wResCntDiv = `
   <div class="report_test-results">
@@ -166,10 +173,9 @@ var wTagsDiv = `<div class="tags scenario_tags contentSection">
 </div>`
 
 var wSpecCommentsWithTableTag = `<span></span>
-<span>This is an executable specification file. This file follows markdown syntax.</span>
+<span><p>This is an executable specification file. This file follows markdown syntax.</p></span>
 <span></span>
-<span>To execute this specification, run</span>
-<span>gauge specs</span>
+<span><p>To execute this specification, run</p></span><span><pre><code>gauge specs</code></pre></span>
 <span></span>
 <table class="data-table">
   <tr>
@@ -191,15 +197,14 @@ var wSpecCommentsWithTableTag = `<span></span>
     </tr>
   </tbody>
 </table>
-<span>Comment 1</span>
-<span>Comment 2</span>
-<span>Comment 3</span>`
+<span><p>Comment 1</p></span>
+<span><p>Comment 2</p></span>
+<span><p>Comment 3</p></span>`
 
 var wSpecCommentsWithoutTableTag = `<span></span>
-<span>This is an executable specification file. This file follows markdown syntax.</span>
-<span></span>
-<span>To execute this specification, run</span>
-<span>gauge specs</span>
+<span><p>This is an executable specification file. This file follows markdown syntax.</p></span><span></span>
+<span><p>To execute this specification, run</p></span>
+<span><pre><code>gauge specs</code></pre></span>
 <span></span>`
 
 var wScenarioContainerStartPassDiv = `<div class='scenario-container passed'>`
