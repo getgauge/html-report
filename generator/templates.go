@@ -139,7 +139,7 @@ const tagsDiv = `{{if .Tags}}<div class="tags scenario_tags contentSection">
 const messageDiv = `{{if .Messages}}<div class="message-container">
   <i class="fa fa-minus-square" aria-hidden="true"></i>
   <div class="messages">
-    {{range .Messages}}<div class="step-message">{{. | escapeHTML}}</div>{{end}}
+    {{range .Messages}}<div class="step-message">{{. | escapeHTML | encodeNewLine}}</div>{{end}}
   </div>
 </div>{{end}}`
 

@@ -19,11 +19,11 @@ package generator
 import (
 	"encoding/json"
 	"fmt"
-	"html"
 	"io"
 	"log"
 	"os"
 	"path/filepath"
+	"strings"
 	"text/template"
 
 	"github.com/getgauge/common"
@@ -175,7 +175,12 @@ func execTemplate(tmplName string, w io.Writer, data interface{}) {
 		return string(s)
 	}
 
-	tmpl, err := template.New("Reports").Funcs(template.FuncMap{"parseMarkdown": parseMarkdown, "escapeHTML": html.EscapeString}).Parse(tmplName)
+	var encodeNewLine = func(s string) string {
+		return strings.Replace(s, "\n", "<br/>", -1)
+	}
+
+	var funcs = template.FuncMap{"parseMarkdown": parseMarkdown, "escapeHTML": template.HTMLEscapeString, "encodeNewLine": encodeNewLine}
+	tmpl, err := template.New("Reports").Funcs(funcs).Parse(tmplName)
 	if err != nil {
 		log.Fatalf(err.Error())
 	}
