@@ -119,6 +119,14 @@ var initializers = {
             $(this).find("i.fa").removeClass("fa-minus-square").removeClass("fa-plus-square").addClass("fa-"+iconClass+"-square");
         });
     },
+    "registerMessageToggle" : function () {
+        $('.message-container i.fa').click(function() {
+            var messages = $(this).next('.messages');
+            var iconClass = messages.is(':visible') ? "plus" : "minus";
+            messages.fadeToggle('fast', 'linear');
+            $(this).removeClass("fa-minus-square").removeClass("fa-plus-square").addClass("fa-"+iconClass+"-square");
+        });
+    },
     "registerErrorContainerToggle" : function() {
         $(".error-container .toggle-show").click(function(){
             var self = $(this);

@@ -860,15 +860,13 @@ footer p {
 
 * html #overlay{
 	background-color: #333;
-	back\ground-color: transparent;
+	background-color: transparent;
 	background-image: url(../images/blank.gif);
 	filter: progid:DXImageTransform.Microsoft.AlphaImageLoader(src="../images/overlay.png", sizingMethod="scale");
 }
 
 
 /* End Lightbox styles */
-
-/*# sourceMappingURL=styles.css.map */
 
 .collapse-messages-header {
     cursor: pointer;
@@ -890,23 +888,37 @@ footer p {
 
 .message-container {
     display: flex;
-    flex-direction: row;
-    align-items: baseline;
 }
 
-.message-container .collapse-messages {
-    padding-top: 0;
+.message-container i {
+    cursor: pointer;
+} 
+
+.message-container .messages{
+    display: block;
+    background-color: #ccc;
+    margin-left: 5px;
+    font-family:  Courier New;
+    box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
+}
+
+.message-container .messages .step-message{
+    padding: 0px 0px 0px 10px;
+}
+
+.message-container .messages .step-message:before{
+    content: "$";
+    padding-right: 5px;
+    font-weight: bold;
+}
+
+.step .message-container {
+    margin-top: 5px;
 }
 
 .step-info {
     margin-bottom: 1.5rem;
 }
-
-/**@media screen and (min-width: 760px) {
-
-
-
-} **/
 
 @media screen and (min-width: 1024px) {
 
@@ -947,7 +959,6 @@ footer p {
         border-right: 5px solid #cccccc;
         border-bottom: none;
         padding-right: 2rem;
-        /*background-color: transparent;*/
     }
 
     .report_test-results .active, .report_chart .active {
@@ -969,7 +980,6 @@ footer p {
 
     .report_test-results ul li {
         padding: 10px;
-        /*background-color: transparent;*/
     }
 
     .report_test-results .value {

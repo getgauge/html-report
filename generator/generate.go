@@ -19,6 +19,7 @@ package generator
 import (
 	"encoding/json"
 	"fmt"
+	"html"
 	"io"
 	"log"
 	"os"
@@ -173,7 +174,8 @@ func execTemplate(tmplName string, w io.Writer, data interface{}) {
 		s := blackfriday.MarkdownCommon([]byte(fmt.Sprintf("%s", args...)))
 		return string(s)
 	}
-	tmpl, err := template.New("Reports").Funcs(template.FuncMap{"parseMarkdown": parseMarkdown}).Parse(tmplName)
+
+	tmpl, err := template.New("Reports").Funcs(template.FuncMap{"parseMarkdown": parseMarkdown, "escapeHTML": html.EscapeString}).Parse(tmplName)
 	if err != nil {
 		log.Fatalf(err.Error())
 	}
@@ -424,11 +426,11 @@ func generateItem(w io.Writer, item item) {
 		if item.(*step).PostHookFailure != nil {
 			execTemplate(hookFailureDiv, w, item.(*step).PostHookFailure)
 		}
+		execTemplate(messageDiv, w, stepRes)
 		execTemplate(stepEndDiv, w, item.(*step))
 		if stepRes.Status == skip && stepRes.SkippedReason != "" {
 			execTemplate(skippedReasonDiv, w, stepRes)
 		}
-		execTemplate(messageDiv, w, stepRes)
 	case commentKind:
 		execTemplate(commentSpan, w, item.(*comment))
 	case conceptKind:

@@ -137,7 +137,10 @@ const tagsDiv = `{{if .Tags}}<div class="tags scenario_tags contentSection">
 
 //TODO 1. Format message to convert newlines to <br>
 const messageDiv = `{{if .Messages}}<div class="message-container">
-  {{range .Messages}}<p class="step-message">{{.}}</p>{{end}}
+  <i class="fa fa-minus-square" aria-hidden="true"></i>
+  <div class="messages">
+    {{range .Messages}}<div class="step-message">{{. | escapeHTML}}</div>{{end}}
+  </div>
 </div>{{end}}`
 
 const skippedReasonDiv = `<div class="message-container">
@@ -188,7 +191,6 @@ const specCommentsAndTableTag = `{{range .CommentsBeforeTable}}<span>{{. | parse
 </table>{{end}}
 {{range .CommentsAfterTable}}<span>{{. | parseMarkdown}}</span>{{end}}`
 
-// Common HTML tags templates
 const htmlStartTag = `<!doctype html>
 <html>`
 
