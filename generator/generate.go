@@ -31,6 +31,13 @@ import (
 	"github.com/russross/blackfriday"
 )
 
+type summary struct {
+	Total   int
+	Failed  int
+	Passed  int
+	Skipped int
+}
+
 type overview struct {
 	ProjectName string
 	Env         string
@@ -38,10 +45,7 @@ type overview struct {
 	SuccRate    float32
 	ExecTime    string
 	Timestamp   string
-	TotalSpecs  int
-	Failed      int
-	Passed      int
-	Skipped     int
+	Summary     *summary
 	BasePath    string
 }
 

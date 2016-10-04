@@ -37,22 +37,22 @@ const bodyFooterTag = `<footer class="footer">
 const reportOverviewTag = `<div class="report-overview">
   <div class="report_chart">
     <div class="chart">
-      <svg id="pie-chart" data-results="{{.Failed}},{{.Passed}},{{.Skipped}}" data-total="{{.TotalSpecs}}">
+      <svg id="pie-chart" data-results="{{.Summary.Failed}},{{.Summary.Passed}},{{.Summary.Skipped}}" data-total="{{.Summary.Total}}">
         <path class="status failed"/>
-        <path class="shadow failed" data-status="failed"><title>Failed: {{.Failed}}/{{.TotalSpecs}}</title></path>
+        <path class="shadow failed" data-status="failed"><title>Failed: {{.Summary.Failed}}/{{.Summary.Total}}</title></path>
         <path class="status passed"/>
-        <path class="shadow passed" data-status="passed"><title>Passed: {{.Passed}}/{{.TotalSpecs}}</title></path>
+        <path class="shadow passed" data-status="passed"><title>Passed: {{.Summary.Passed}}/{{.Summary.Total}}</title></path>
         <path class="status skipped"/>
-        <path class="shadow skipped" data-status="skipped"><title>Skipped: {{.Skipped}}/{{.TotalSpecs}}</title></path>
+        <path class="shadow skipped" data-status="skipped"><title>Skipped: {{.Summary.Skipped}}/{{.Summary.Total}}</title></path>
       </svg>
     </div>
-    <div class="total-specs"><span class="value">{{.TotalSpecs}}</span><span class="txt">Total specs</span></div>
+    <div class="total-specs"><span class="value">{{.Summary.Total}}</span><span class="txt">Total specs</span></div>
   </div>
   <div class="report_test-results">
     <ul>
-      <li class="fail spec-filter" data-status="failed"><span class="value">{{.Failed}}</span><span class="txt">Failed</span></li>
-      <li class="pass spec-filter" data-status="passed"><span class="value">{{.Passed}}</span><span class="txt">Passed</span></li>
-      <li class="skip spec-filter" data-status="skipped"><span class="value">{{.Skipped}}</span><span class="txt">Skipped</span></li>
+      <li class="fail spec-filter" data-status="failed"><span class="value">{{.Summary.Failed}}</span><span class="txt">Failed</span></li>
+      <li class="pass spec-filter" data-status="passed"><span class="value">{{.Summary.Passed}}</span><span class="txt">Passed</span></li>
+      <li class="skip spec-filter" data-status="skipped"><span class="value">{{.Summary.Skipped}}</span><span class="txt">Skipped</span></li>
     </ul>
   </div>
   <div class="report_details">

@@ -50,10 +50,7 @@ func toOverview(res *gm.ProtoSuiteResult, specRes *gm.ProtoSpecResult) *overview
 		SuccRate:    res.GetSuccessRate(),
 		ExecTime:    formatTime(res.GetExecutionTime()),
 		Timestamp:   res.GetTimestamp(),
-		TotalSpecs:  totalSpecs,
-		Failed:      int(res.GetSpecsFailedCount()),
-		Passed:      passed,
-		Skipped:     int(res.GetSpecsSkippedCount()),
+		Summary:     &summary{Failed: int(res.GetSpecsFailedCount()), Total: totalSpecs, Passed: passed, Skipped: int(res.GetSpecsSkippedCount())},
 		BasePath:    base,
 	}
 }

@@ -392,10 +392,7 @@ func TestToOverview(t *testing.T) {
 		SuccRate:    80.00,
 		ExecTime:    "00:01:53",
 		Timestamp:   "Jun 3, 2016 at 12:29pm",
-		TotalSpecs:  15,
-		Failed:      2,
-		Passed:      8,
-		Skipped:     5,
+		Summary:     &summary{Total: 15, Failed: 2, Passed: 8, Skipped: 5},
 	}
 
 	got := toOverview(suiteRes1, nil)
