@@ -441,6 +441,7 @@ func TestToSpec(t *testing.T) {
 		},
 		CommentsAfterTable: []string{"Comment 1", "Comment 2", "Comment 3"},
 		Scenarios:          make([]*scenario, 0),
+		Summary:            &summary{},
 	}
 
 	got := toSpec(specRes1)
@@ -457,11 +458,103 @@ func TestToSpecWithHookFailure(t *testing.T) {
 		Scenarios:           make([]*scenario, 0),
 		BeforeHookFailure:   newHookFailure("Before Spec", "err", encodedScreenShot, "Stacktrace"),
 		AfterHookFailure:    newHookFailure("After Spec", "err", encodedScreenShot, "Stacktrace"),
+		Summary:             &summary{},
 	}
 
 	got := toSpec(specResWithSpecHookFailure)
 	if !reflect.DeepEqual(got, want) {
 		t.Errorf("want:\n%q\ngot:\n%q\n", want, got)
+	}
+}
+
+type summaryTest struct {
+	name     string
+	result   *gm.ProtoSpecResult
+	expected summary
+}
+
+var summaryTests = []*summaryTest{
+	{"All Passed",
+		&gm.ProtoSpecResult{
+			Failed:        proto.Bool(false),
+			Skipped:       proto.Bool(false),
+			ExecutionTime: proto.Int64(211316),
+			ProtoSpec: &gm.ProtoSpec{
+				SpecHeading:   proto.String("specRes1"),
+				Tags:          []string{"tag1", "tag2"},
+				FileName:      proto.String("/tmp/gauge/specs/foobar.spec"),
+				IsTableDriven: proto.Bool(false),
+				Items: []*gm.ProtoItem{
+					newScenarioItem(&gm.ProtoScenario{Failed: proto.Bool(false)}),
+					newScenarioItem(&gm.ProtoScenario{Failed: proto.Bool(false)}),
+				},
+			},
+		},
+		summary{Failed: 0, Passed: 2, Skipped: 0, Total: 2},
+	},
+	{"With Skipped",
+		&gm.ProtoSpecResult{
+			Failed:        proto.Bool(false),
+			Skipped:       proto.Bool(false),
+			ExecutionTime: proto.Int64(211316),
+			ProtoSpec: &gm.ProtoSpec{
+				SpecHeading:   proto.String("specRes1"),
+				Tags:          []string{"tag1", "tag2"},
+				FileName:      proto.String("/tmp/gauge/specs/foobar.spec"),
+				IsTableDriven: proto.Bool(false),
+				Items: []*gm.ProtoItem{
+					newScenarioItem(&gm.ProtoScenario{Failed: proto.Bool(false)}),
+					newScenarioItem(&gm.ProtoScenario{Skipped: proto.Bool(true)}),
+				},
+			},
+		},
+		summary{Failed: 0, Passed: 1, Skipped: 1, Total: 2},
+	},
+	{"With failed",
+		&gm.ProtoSpecResult{
+			Failed:        proto.Bool(false),
+			Skipped:       proto.Bool(false),
+			ExecutionTime: proto.Int64(211316),
+			ProtoSpec: &gm.ProtoSpec{
+				SpecHeading:   proto.String("specRes1"),
+				Tags:          []string{"tag1", "tag2"},
+				FileName:      proto.String("/tmp/gauge/specs/foobar.spec"),
+				IsTableDriven: proto.Bool(false),
+				Items: []*gm.ProtoItem{
+					newScenarioItem(&gm.ProtoScenario{Failed: proto.Bool(true)}),
+					newScenarioItem(&gm.ProtoScenario{Failed: proto.Bool(false)}),
+				},
+			},
+		},
+		summary{Failed: 1, Passed: 1, Skipped: 0, Total: 2},
+	},
+	{"With failed and skipped",
+		&gm.ProtoSpecResult{
+			Failed:        proto.Bool(false),
+			Skipped:       proto.Bool(false),
+			ExecutionTime: proto.Int64(211316),
+			ProtoSpec: &gm.ProtoSpec{
+				SpecHeading:   proto.String("specRes1"),
+				Tags:          []string{"tag1", "tag2"},
+				FileName:      proto.String("/tmp/gauge/specs/foobar.spec"),
+				IsTableDriven: proto.Bool(false),
+				Items: []*gm.ProtoItem{
+					newScenarioItem(&gm.ProtoScenario{Failed: proto.Bool(true)}),
+					newScenarioItem(&gm.ProtoScenario{Skipped: proto.Bool(true)}),
+				},
+			},
+		},
+		summary{Failed: 1, Passed: 0, Skipped: 1, Total: 2},
+	},
+}
+
+func TestToSpecSummary(t *testing.T) {
+	for _, test := range summaryTests {
+		want := test.expected
+		got := *toSpec(test.result).Summary
+		if !reflect.DeepEqual(want, got) {
+			t.Errorf("Test:%s\nwant:\n%q\ngot:\n%q\n", test.name, want, got)
+		}
 	}
 }
 

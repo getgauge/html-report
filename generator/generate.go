@@ -94,6 +94,7 @@ type spec struct {
 	Scenarios           []*scenario
 	BeforeHookFailure   *hookFailure
 	AfterHookFailure    *hookFailure
+	Summary             *summary
 }
 
 type scenario struct {

@@ -147,6 +147,7 @@ func toSpec(res *gm.ProtoSpecResult) *spec {
 		AfterHookFailure:    toHookFailure(res.GetProtoSpec().GetPostHookFailure(), "After Spec"),
 	}
 	isTableScanned := false
+	var sum summary
 	for _, item := range res.GetProtoSpec().GetItems() {
 		switch item.GetItemType() {
 		case gm.ProtoItem_Comment:
@@ -160,13 +161,26 @@ func toSpec(res *gm.ProtoSpecResult) *spec {
 			isTableScanned = true
 		case gm.ProtoItem_Scenario:
 			spec.Scenarios = append(spec.Scenarios, toScenario(item.GetScenario(), -1))
+			updateSummary(&sum, item.GetScenario())
 		case gm.ProtoItem_TableDrivenScenario:
 			for i, sce := range item.GetTableDrivenScenario().GetScenarios() {
 				spec.Scenarios = append(spec.Scenarios, toScenario(sce, i))
 			}
 		}
 	}
+	sum.Total = sum.Passed + sum.Failed + sum.Skipped
+	spec.Summary = &sum
 	return spec
+}
+
+func updateSummary(sum *summary, scn *gm.ProtoScenario) {
+	if scn.GetFailed() {
+		sum.Failed++
+	} else if scn.GetSkipped() {
+		sum.Skipped++
+	} else {
+		sum.Passed++
+	}
 }
 
 func toScenario(scn *gm.ProtoScenario, tableRowIndex int) *scenario {
