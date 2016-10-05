@@ -75,6 +75,7 @@ type specHeader struct {
 	ExecTime string
 	FileName string
 	Tags     []string
+	Summary  *summary
 }
 
 type row struct {
@@ -94,7 +95,6 @@ type spec struct {
 	Scenarios           []*scenario
 	BeforeHookFailure   *hookFailure
 	AfterHookFailure    *hookFailure
-	Summary             *summary
 }
 
 type scenario struct {
