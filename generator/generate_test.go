@@ -43,11 +43,11 @@ var wChartDiv = `<div class="report-overview">
 <div class="report_chart">
 <div class="chart">
 <svg id="pie-chart" data-results="2,39,0" data-total="41">
-  <path class="status failed"/>
+  	<path class="status failed" />
 	<path class="shadow failed" data-status="failed"><title>Failed: 2/41</title></path>
-	<path class="status passed"/>
+	<path class="status passed" />
 	<path class="shadow passed" data-status="passed"><title>Passed: 39/41</title></path>
-	<path class="status skipped"/>
+	<path class="status skipped" />
 	<path class="shadow skipped" data-status="skipped"><title>Skipped: 0/41</title></path>
 </svg>
 </div>
@@ -156,15 +156,26 @@ var wHookFailureWithoutScreenhotDiv = `<div class="error-container failed">
 </div>`
 
 var wSpecHeaderStartWithTags = `<header class="curr-spec">
-  <h3 class="spec-head" title="/tmp/gauge/specs/foobar.spec">Spec heading</h3>
-	<div class="spec-filename">
-		<label for="specFileName">File Path</label>
-		<input id="specFileName" value="/tmp/gauge/specs/foobar.spec" readonly>
-		<button class="clipboard-btn" data-clipboard-target="#specFileName" title="Copy to Clipboard">
-			<i class="fa fa-clipboard" aria-hidden="true" title="Copy to Clipboard"></i>
-		</button>
+	<div class="spec-head-wrapper">
+		<h3 class="spec-head" title="/tmp/gauge/specs/foobar.spec">Spec heading</h3>
+    <div class="report_test-results" alt="Scenarios" title="Scenarios">
+      <ul>
+        <li class="fail"><span class="value">0</span><span class="txt">Failed</span></li>
+        <li class="pass"><span class="value">0</span><span class="txt">Passed</span></li>
+        <li class="skip"><span class="value">0</span><span class="txt">Skipped</span></li>
+      </ul>
+    </div>
 	</div>
-  <span class="time">00:01:01</span>`
+  <div class="spec-meta">
+		<div class="spec-filename">
+			<label for="specFileName">File Path</label>
+			<input id="specFileName" value="/tmp/gauge/specs/foobar.spec" readonly/>
+			<button class="clipboard-btn" data-clipboard-target="#specFileName" title="Copy to Clipboard">
+				<i class="fa fa-clipboard" aria-hidden="true" title="Copy to Clipboard"></i>
+			</button>
+		</div>
+		<span class="time">00:01:01</span>
+	</div>`
 
 var wTagsDiv = `<div class="tags scenario_tags contentSection">
   <strong>Tags:</strong>

@@ -167,7 +167,7 @@ header.top .project {
     padding: 0;
 }
 
-.report_test-results ul li,
+.report-overview .report_test-results ul li,
 .report_chart .total-specs {
     display: inline-block;
     padding: 0.75rem;
@@ -177,8 +177,8 @@ header.top .project {
     transition: background-color 0.75s;
 }
 
-.report_test-results ul li:focus,
-.report_test-results ul li:hover,
+.report-overview .report_test-results ul li:focus,
+.report-overview    .report_test-results ul li:hover,
 .report_chart .total-specs:focus,
 .report_chart .total-specs:hover {
     background-color: #f0f0f0;
@@ -507,6 +507,7 @@ header.top .project {
     font-size: 1rem;
     margin-top: 20px;
     color: #cccccc;
+    float: left;
 }
 
 .curr-spec .tags {
@@ -1189,4 +1190,66 @@ svg#pie-chart {
 .hidden, #congratulationsHidden {
     display: none;
 }
+.spec-head-wrapper {
+    overflow: hidden;
+}
 
+#specificationContainer .report_test-results {
+    float: right;
+    padding: 0;
+    
+}
+
+#specificationContainer .report_test-results ul li {
+    padding: 0px;
+    margin: 0 5px;
+}
+#specificationContainer .report_test-results  .value {
+    font-size: 1.5rem;
+}
+#specificationContainer .report_test-results .txt {
+    font-size: .75rem;
+}
+
+#specificationContainer .spec-head {
+    font-size: 1.2rem;
+}
+ #specificationContainer .spec-filename {
+     display: none;
+ }
+
+.spec-meta {
+    overflow: hidden;
+    margin-top: 10px;
+}
+.spec-meta .time {
+    margin-top: 0;
+}
+
+@media screen and (min-width: 768px) {
+    #specificationContainer .spec-head {
+        font-size: 1.2rem;
+        width: calc(100% - 300px);
+        float:left;
+    }
+
+    #specificationContainer .report_test-results {
+        width: 280px;
+    }
+
+    #specificationContainer .report_test-results ul {
+        float: right;
+    }
+
+    #specificationContainer .report_test-results ul li{
+        display: inline-block;
+    }
+
+    #specificationContainer .report_test-results ul li .txt {
+        font-size: .65rem;
+    }
+
+    #specificationContainer .spec-filename {
+        display: block;
+    }
+}

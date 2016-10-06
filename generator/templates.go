@@ -38,11 +38,11 @@ const reportOverviewTag = `<div class="report-overview">
   <div class="report_chart">
     <div class="chart">
       <svg id="pie-chart" data-results="{{.Summary.Failed}},{{.Summary.Passed}},{{.Summary.Skipped}}" data-total="{{.Summary.Total}}">
-        <path class="status failed"/>
+        <path class="status failed" />
         <path class="shadow failed" data-status="failed"><title>Failed: {{.Summary.Failed}}/{{.Summary.Total}}</title></path>
-        <path class="status passed"/>
+        <path class="status passed" />
         <path class="shadow passed" data-status="passed"><title>Passed: {{.Summary.Passed}}/{{.Summary.Total}}</title></path>
-        <path class="status skipped"/>
+        <path class="status skipped" />
         <path class="shadow skipped" data-status="skipped"><title>Skipped: {{.Summary.Skipped}}/{{.Summary.Total}}</title></path>
       </svg>
     </div>
@@ -155,15 +155,26 @@ const specsItemsContainerDiv = `<div id="specItemsContainer">`
 const specsItemsContentsDiv = `<div class="content">`
 
 const specHeaderStartTag = `<header class="curr-spec">
-  <h3 class="spec-head" title="{{.FileName}}">{{.SpecName}}</h3>
-  <div class="spec-filename">
-    <label for="specFileName">File Path</label>
-    <input id="specFileName" value="{{.FileName}}" readonly>
-    <button class="clipboard-btn" data-clipboard-target="#specFileName" title="Copy to Clipboard">
-        <i class="fa fa-clipboard" aria-hidden="true" title="Copy to Clipboard"></i>
-    </button>
+  <div class="spec-head-wrapper">
+    <h3 class="spec-head" title="{{.FileName}}">{{.SpecName}}</h3>
+    <div class="report_test-results" alt="Scenarios" title="Scenarios">
+      <ul>
+        <li class="fail"><span class="value">{{.Summary.Failed}}</span><span class="txt">Failed</span></li>
+        <li class="pass"><span class="value">{{.Summary.Passed}}</span><span class="txt">Passed</span></li>
+        <li class="skip"><span class="value">{{.Summary.Skipped}}</span><span class="txt">Skipped</span></li>
+      </ul>
+    </div>
   </div>
-  <span class="time">{{.ExecTime}}</span>`
+  <div class="spec-meta">
+    <div class="spec-filename">
+      <label for="specFileName">File Path</label>
+      <input id="specFileName" value="{{.FileName}}" readonly/>
+      <button class="clipboard-btn" data-clipboard-target="#specFileName" title="Copy to Clipboard">
+          <i class="fa fa-clipboard" aria-hidden="true" title="Copy to Clipboard"></i>
+      </button>
+    </div>
+    <span class="time">{{.ExecTime}}</span>
+  </div>`
 
 const scenarioContainerStartDiv = `{{if eq .ExecStatus 0}}<div class='scenario-container passed{{if gt .TableRowIndex 0}} hidden{{end}}'{{if ne .TableRowIndex -1}} data-tablerow={{.TableRowIndex}}{{end}}>
 {{else if eq .ExecStatus 1}}<div class='scenario-container failed{{if gt .TableRowIndex 0}} hidden{{end}}'{{if ne .TableRowIndex -1}}  data-tablerow={{.TableRowIndex}}{{end}}>
@@ -198,7 +209,7 @@ const htmlEndTag = `</html>`
 
 const pageHeaderTag = `<head>
   <meta http-equiv="X-UA-Compatible" content="IE=9; IE=8; IE=7; IE=EDGE" />
-  <meta charset="utf-8"/>
+  <meta charset="utf-8" />
   <title>Gauge Test Results</title>
   <link rel="shortcut icon" type="image/x-icon" href="{{.BasePath}}images/favicon.ico">
   <link rel="stylesheet" type="text/css" href="{{.BasePath}}css/open-sans.css">
