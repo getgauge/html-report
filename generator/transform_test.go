@@ -789,3 +789,66 @@ func TestToHTMLFileName(t *testing.T) {
 	}
 
 }
+
+type tableDrivenStatusComputeTest struct {
+	name   string
+	spec   *spec
+	status status
+}
+
+var tableDrivenStatusComputeTests = []*tableDrivenStatusComputeTest{
+	{"all passed",
+		&spec{Table: &table{Headers: []string{"foo"}, Rows: []*row{{Cells: []string{"foo1"}}}},
+			Scenarios: []*scenario{
+				{ExecStatus: pass, TableRowIndex: 0},
+				{ExecStatus: pass, TableRowIndex: 0},
+			}},
+		pass},
+	{"pass and fail",
+		&spec{Table: &table{Headers: []string{"foo"}, Rows: []*row{{Cells: []string{"foo1"}}}},
+			Scenarios: []*scenario{
+				{ExecStatus: pass, TableRowIndex: 0},
+				{ExecStatus: fail, TableRowIndex: 0},
+			}},
+		fail},
+	{"pass and skip",
+		&spec{Table: &table{Headers: []string{"foo"}, Rows: []*row{{Cells: []string{"foo1"}}}},
+			Scenarios: []*scenario{
+				{ExecStatus: pass, TableRowIndex: 0},
+				{ExecStatus: skip, TableRowIndex: 0},
+			}},
+		pass},
+	{"skip and fail",
+		&spec{Table: &table{Headers: []string{"foo"}, Rows: []*row{{Cells: []string{"foo1"}}}},
+			Scenarios: []*scenario{
+				{ExecStatus: skip, TableRowIndex: 0},
+				{ExecStatus: fail, TableRowIndex: 0},
+			}},
+		fail},
+	{"all fail",
+		&spec{Table: &table{Headers: []string{"foo"}, Rows: []*row{{Cells: []string{"foo1"}}}},
+			Scenarios: []*scenario{
+				{ExecStatus: fail, TableRowIndex: 0},
+				{ExecStatus: fail, TableRowIndex: 0},
+			}},
+		fail},
+	{"all skip",
+		&spec{Table: &table{Headers: []string{"foo"}, Rows: []*row{{Cells: []string{"foo1"}}}},
+			Scenarios: []*scenario{
+				{ExecStatus: skip, TableRowIndex: 0},
+				{ExecStatus: skip, TableRowIndex: 0},
+			}},
+		skip},
+}
+
+func TestTableDrivenStatusCompute(t *testing.T) {
+	for _, test := range tableDrivenStatusComputeTests {
+		want := test.status
+		computeTableDrivenStatuses(test.spec)
+		got := test.spec.Table.Rows[0].Res
+		if want != got {
+			t.Errorf("test: %s want:\n%q\ngot:\n%q\n", test.name, want, got)
+		}
+	}
+
+}

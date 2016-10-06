@@ -167,7 +167,25 @@ func toSpec(res *gm.ProtoSpecResult) *spec {
 			}
 		}
 	}
+
+	if res.GetProtoSpec().GetIsTableDriven() {
+		computeTableDrivenStatuses(spec)
+	}
 	return spec
+}
+
+func computeTableDrivenStatuses(spec *spec) {
+	for _, r := range spec.Table.Rows {
+		r.Res = skip
+	}
+	for _, s := range spec.Scenarios {
+		var row = spec.Table.Rows[s.TableRowIndex]
+		if s.ExecStatus == fail {
+			row.Res = fail
+		} else if row.Res != fail && s.ExecStatus == pass {
+			row.Res = pass
+		}
+	}
 }
 
 func toScenarioSummary(s *gm.ProtoSpec) *summary {
@@ -193,7 +211,7 @@ func toScenario(scn *gm.ProtoScenario, tableRowIndex int) *scenario {
 		Heading:           scn.GetScenarioHeading(),
 		ExecTime:          formatTime(scn.GetExecutionTime()),
 		Tags:              scn.GetTags(),
-		ExecStatus:        getScenarioStatus(scn.GetFailed(), scn.GetSkipped()),
+		ExecStatus:        getScenarioStatus(scn),
 		Contexts:          getItems(scn.GetContexts()),
 		Items:             getItems(scn.GetScenarioItems()),
 		Teardown:          getItems(scn.GetTearDownSteps()),
@@ -299,11 +317,11 @@ func getStepStatus(res *gm.ProtoStepExecutionResult) status {
 	return pass
 }
 
-func getScenarioStatus(failed, skipped bool) status {
-	if failed {
+func getScenarioStatus(scn *gm.ProtoScenario) status {
+	if scn.GetFailed() {
 		return fail
 	}
-	if skipped {
+	if scn.GetSkipped() {
 		return skip
 	}
 	return pass
