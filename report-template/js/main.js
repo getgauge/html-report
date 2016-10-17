@@ -50,6 +50,13 @@ function filterSpecList (status) {
     });
 }
 
+function showFirstSpecContent () {
+    $('li.spec-name:visible:first').click();
+    if($('li.spec-name:visible:first').length===0){
+        $('#specificationContainer').hide();
+    }
+}
+
 var initializers = {
     "initializeFilters" : function () {
         if (sessionStorage.FilterStatus) {
@@ -80,12 +87,6 @@ var initializers = {
                 $(this).removeClass('active');}
             );
         };
-        var showFirstSpecContent = function () {
-            $('li.spec-name:visible:first').click();
-            if($('li.spec-name:visible:first').length===0){
-                $('#specificationContainer').hide();
-            }
-        }
         $('.spec-filter, #pie-chart path.shadow').click(function(){
             resetState();
             var status = $(this).data('status');
@@ -150,11 +151,12 @@ var initializers = {
                 var existsIn = function(arr) {
                     return typeof arr !== 'undefined' && $.inArray(href, arr)>=0;
                 }
-                if(existsIn(tagMatches) || existsIn(specMatches))
+                if(existsIn(tagMatches) || existsIn(specMatches) || searchText === '')
                     $(this).show();
                 else
                     $(this).hide();
             })
+            showFirstSpecContent();
         });
     },
     "registerSearchAutocomplete" : function () {
