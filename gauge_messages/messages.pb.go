@@ -2,44 +2,6 @@
 // source: messages.proto
 // DO NOT EDIT!
 
-/*
-Package gauge_messages is a generated protocol buffer package.
-
-It is generated from these files:
-	messages.proto
-
-It has these top-level messages:
-	KillProcessRequest
-	ExecutionStatusResponse
-	ExecutionStartingRequest
-	ExecutionEndingRequest
-	SpecExecutionStartingRequest
-	SpecExecutionEndingRequest
-	ScenarioExecutionStartingRequest
-	ScenarioExecutionEndingRequest
-	StepExecutionStartingRequest
-	StepExecutionEndingRequest
-	ExecutionInfo
-	SpecInfo
-	ScenarioInfo
-	StepInfo
-	ExecuteStepRequest
-	StepValidateRequest
-	StepValidateResponse
-	SuiteExecutionResult
-	StepNamesRequest
-	StepNamesResponse
-	ScenarioDataStoreInitRequest
-	SpecDataStoreInitRequest
-	SuiteDataStoreInitRequest
-	ParameterPosition
-	RefactorRequest
-	RefactorResponse
-	StepNameRequest
-	StepNameResponse
-	UnsupportedMessageResponse
-	Message
-*/
 package gauge_messages
 
 import proto "github.com/golang/protobuf/proto"
@@ -55,13 +17,16 @@ type StepValidateResponse_ErrorType int32
 
 const (
 	StepValidateResponse_STEP_IMPLEMENTATION_NOT_FOUND StepValidateResponse_ErrorType = 0
+	StepValidateResponse_DUPLICATE_STEP_IMPLEMENTATION StepValidateResponse_ErrorType = 1
 )
 
 var StepValidateResponse_ErrorType_name = map[int32]string{
 	0: "STEP_IMPLEMENTATION_NOT_FOUND",
+	1: "DUPLICATE_STEP_IMPLEMENTATION",
 }
 var StepValidateResponse_ErrorType_value = map[string]int32{
 	"STEP_IMPLEMENTATION_NOT_FOUND": 0,
+	"DUPLICATE_STEP_IMPLEMENTATION": 1,
 }
 
 func (x StepValidateResponse_ErrorType) Enum() *StepValidateResponse_ErrorType {
@@ -79,6 +44,9 @@ func (x *StepValidateResponse_ErrorType) UnmarshalJSON(data []byte) error {
 	}
 	*x = StepValidateResponse_ErrorType(value)
 	return nil
+}
+func (StepValidateResponse_ErrorType) EnumDescriptor() ([]byte, []int) {
+	return fileDescriptor1, []int{16, 0}
 }
 
 type Message_MessageType int32
@@ -179,15 +147,17 @@ func (x *Message_MessageType) UnmarshalJSON(data []byte) error {
 	*x = Message_MessageType(value)
 	return nil
 }
+func (Message_MessageType) EnumDescriptor() ([]byte, []int) { return fileDescriptor1, []int{29, 0} }
 
 // / Default request. Tells the runner to shutdown.
 type KillProcessRequest struct {
 	XXX_unrecognized []byte `json:"-"`
 }
 
-func (m *KillProcessRequest) Reset()         { *m = KillProcessRequest{} }
-func (m *KillProcessRequest) String() string { return proto.CompactTextString(m) }
-func (*KillProcessRequest) ProtoMessage()    {}
+func (m *KillProcessRequest) Reset()                    { *m = KillProcessRequest{} }
+func (m *KillProcessRequest) String() string            { return proto.CompactTextString(m) }
+func (*KillProcessRequest) ProtoMessage()               {}
+func (*KillProcessRequest) Descriptor() ([]byte, []int) { return fileDescriptor1, []int{0} }
 
 // / Sends to any request which needs a execution status as response
 // / usually step execution, hooks etc will return this
@@ -196,9 +166,10 @@ type ExecutionStatusResponse struct {
 	XXX_unrecognized []byte                `json:"-"`
 }
 
-func (m *ExecutionStatusResponse) Reset()         { *m = ExecutionStatusResponse{} }
-func (m *ExecutionStatusResponse) String() string { return proto.CompactTextString(m) }
-func (*ExecutionStatusResponse) ProtoMessage()    {}
+func (m *ExecutionStatusResponse) Reset()                    { *m = ExecutionStatusResponse{} }
+func (m *ExecutionStatusResponse) String() string            { return proto.CompactTextString(m) }
+func (*ExecutionStatusResponse) ProtoMessage()               {}
+func (*ExecutionStatusResponse) Descriptor() ([]byte, []int) { return fileDescriptor1, []int{1} }
 
 func (m *ExecutionStatusResponse) GetExecutionResult() *ProtoExecutionResult {
 	if m != nil {
@@ -213,9 +184,10 @@ type ExecutionStartingRequest struct {
 	XXX_unrecognized     []byte         `json:"-"`
 }
 
-func (m *ExecutionStartingRequest) Reset()         { *m = ExecutionStartingRequest{} }
-func (m *ExecutionStartingRequest) String() string { return proto.CompactTextString(m) }
-func (*ExecutionStartingRequest) ProtoMessage()    {}
+func (m *ExecutionStartingRequest) Reset()                    { *m = ExecutionStartingRequest{} }
+func (m *ExecutionStartingRequest) String() string            { return proto.CompactTextString(m) }
+func (*ExecutionStartingRequest) ProtoMessage()               {}
+func (*ExecutionStartingRequest) Descriptor() ([]byte, []int) { return fileDescriptor1, []int{2} }
 
 func (m *ExecutionStartingRequest) GetCurrentExecutionInfo() *ExecutionInfo {
 	if m != nil {
@@ -230,9 +202,10 @@ type ExecutionEndingRequest struct {
 	XXX_unrecognized     []byte         `json:"-"`
 }
 
-func (m *ExecutionEndingRequest) Reset()         { *m = ExecutionEndingRequest{} }
-func (m *ExecutionEndingRequest) String() string { return proto.CompactTextString(m) }
-func (*ExecutionEndingRequest) ProtoMessage()    {}
+func (m *ExecutionEndingRequest) Reset()                    { *m = ExecutionEndingRequest{} }
+func (m *ExecutionEndingRequest) String() string            { return proto.CompactTextString(m) }
+func (*ExecutionEndingRequest) ProtoMessage()               {}
+func (*ExecutionEndingRequest) Descriptor() ([]byte, []int) { return fileDescriptor1, []int{3} }
 
 func (m *ExecutionEndingRequest) GetCurrentExecutionInfo() *ExecutionInfo {
 	if m != nil {
@@ -247,9 +220,10 @@ type SpecExecutionStartingRequest struct {
 	XXX_unrecognized     []byte         `json:"-"`
 }
 
-func (m *SpecExecutionStartingRequest) Reset()         { *m = SpecExecutionStartingRequest{} }
-func (m *SpecExecutionStartingRequest) String() string { return proto.CompactTextString(m) }
-func (*SpecExecutionStartingRequest) ProtoMessage()    {}
+func (m *SpecExecutionStartingRequest) Reset()                    { *m = SpecExecutionStartingRequest{} }
+func (m *SpecExecutionStartingRequest) String() string            { return proto.CompactTextString(m) }
+func (*SpecExecutionStartingRequest) ProtoMessage()               {}
+func (*SpecExecutionStartingRequest) Descriptor() ([]byte, []int) { return fileDescriptor1, []int{4} }
 
 func (m *SpecExecutionStartingRequest) GetCurrentExecutionInfo() *ExecutionInfo {
 	if m != nil {
@@ -264,9 +238,10 @@ type SpecExecutionEndingRequest struct {
 	XXX_unrecognized     []byte         `json:"-"`
 }
 
-func (m *SpecExecutionEndingRequest) Reset()         { *m = SpecExecutionEndingRequest{} }
-func (m *SpecExecutionEndingRequest) String() string { return proto.CompactTextString(m) }
-func (*SpecExecutionEndingRequest) ProtoMessage()    {}
+func (m *SpecExecutionEndingRequest) Reset()                    { *m = SpecExecutionEndingRequest{} }
+func (m *SpecExecutionEndingRequest) String() string            { return proto.CompactTextString(m) }
+func (*SpecExecutionEndingRequest) ProtoMessage()               {}
+func (*SpecExecutionEndingRequest) Descriptor() ([]byte, []int) { return fileDescriptor1, []int{5} }
 
 func (m *SpecExecutionEndingRequest) GetCurrentExecutionInfo() *ExecutionInfo {
 	if m != nil {
@@ -284,6 +259,9 @@ type ScenarioExecutionStartingRequest struct {
 func (m *ScenarioExecutionStartingRequest) Reset()         { *m = ScenarioExecutionStartingRequest{} }
 func (m *ScenarioExecutionStartingRequest) String() string { return proto.CompactTextString(m) }
 func (*ScenarioExecutionStartingRequest) ProtoMessage()    {}
+func (*ScenarioExecutionStartingRequest) Descriptor() ([]byte, []int) {
+	return fileDescriptor1, []int{6}
+}
 
 func (m *ScenarioExecutionStartingRequest) GetCurrentExecutionInfo() *ExecutionInfo {
 	if m != nil {
@@ -298,9 +276,10 @@ type ScenarioExecutionEndingRequest struct {
 	XXX_unrecognized     []byte         `json:"-"`
 }
 
-func (m *ScenarioExecutionEndingRequest) Reset()         { *m = ScenarioExecutionEndingRequest{} }
-func (m *ScenarioExecutionEndingRequest) String() string { return proto.CompactTextString(m) }
-func (*ScenarioExecutionEndingRequest) ProtoMessage()    {}
+func (m *ScenarioExecutionEndingRequest) Reset()                    { *m = ScenarioExecutionEndingRequest{} }
+func (m *ScenarioExecutionEndingRequest) String() string            { return proto.CompactTextString(m) }
+func (*ScenarioExecutionEndingRequest) ProtoMessage()               {}
+func (*ScenarioExecutionEndingRequest) Descriptor() ([]byte, []int) { return fileDescriptor1, []int{7} }
 
 func (m *ScenarioExecutionEndingRequest) GetCurrentExecutionInfo() *ExecutionInfo {
 	if m != nil {
@@ -315,9 +294,10 @@ type StepExecutionStartingRequest struct {
 	XXX_unrecognized     []byte         `json:"-"`
 }
 
-func (m *StepExecutionStartingRequest) Reset()         { *m = StepExecutionStartingRequest{} }
-func (m *StepExecutionStartingRequest) String() string { return proto.CompactTextString(m) }
-func (*StepExecutionStartingRequest) ProtoMessage()    {}
+func (m *StepExecutionStartingRequest) Reset()                    { *m = StepExecutionStartingRequest{} }
+func (m *StepExecutionStartingRequest) String() string            { return proto.CompactTextString(m) }
+func (*StepExecutionStartingRequest) ProtoMessage()               {}
+func (*StepExecutionStartingRequest) Descriptor() ([]byte, []int) { return fileDescriptor1, []int{8} }
 
 func (m *StepExecutionStartingRequest) GetCurrentExecutionInfo() *ExecutionInfo {
 	if m != nil {
@@ -332,9 +312,10 @@ type StepExecutionEndingRequest struct {
 	XXX_unrecognized     []byte         `json:"-"`
 }
 
-func (m *StepExecutionEndingRequest) Reset()         { *m = StepExecutionEndingRequest{} }
-func (m *StepExecutionEndingRequest) String() string { return proto.CompactTextString(m) }
-func (*StepExecutionEndingRequest) ProtoMessage()    {}
+func (m *StepExecutionEndingRequest) Reset()                    { *m = StepExecutionEndingRequest{} }
+func (m *StepExecutionEndingRequest) String() string            { return proto.CompactTextString(m) }
+func (*StepExecutionEndingRequest) ProtoMessage()               {}
+func (*StepExecutionEndingRequest) Descriptor() ([]byte, []int) { return fileDescriptor1, []int{9} }
 
 func (m *StepExecutionEndingRequest) GetCurrentExecutionInfo() *ExecutionInfo {
 	if m != nil {
@@ -357,9 +338,10 @@ type ExecutionInfo struct {
 	XXX_unrecognized []byte  `json:"-"`
 }
 
-func (m *ExecutionInfo) Reset()         { *m = ExecutionInfo{} }
-func (m *ExecutionInfo) String() string { return proto.CompactTextString(m) }
-func (*ExecutionInfo) ProtoMessage()    {}
+func (m *ExecutionInfo) Reset()                    { *m = ExecutionInfo{} }
+func (m *ExecutionInfo) String() string            { return proto.CompactTextString(m) }
+func (*ExecutionInfo) ProtoMessage()               {}
+func (*ExecutionInfo) Descriptor() ([]byte, []int) { return fileDescriptor1, []int{10} }
 
 func (m *ExecutionInfo) GetCurrentSpec() *SpecInfo {
 	if m != nil {
@@ -402,9 +384,10 @@ type SpecInfo struct {
 	XXX_unrecognized []byte   `json:"-"`
 }
 
-func (m *SpecInfo) Reset()         { *m = SpecInfo{} }
-func (m *SpecInfo) String() string { return proto.CompactTextString(m) }
-func (*SpecInfo) ProtoMessage()    {}
+func (m *SpecInfo) Reset()                    { *m = SpecInfo{} }
+func (m *SpecInfo) String() string            { return proto.CompactTextString(m) }
+func (*SpecInfo) ProtoMessage()               {}
+func (*SpecInfo) Descriptor() ([]byte, []int) { return fileDescriptor1, []int{11} }
 
 func (m *SpecInfo) GetName() string {
 	if m != nil && m.Name != nil {
@@ -445,9 +428,10 @@ type ScenarioInfo struct {
 	XXX_unrecognized []byte   `json:"-"`
 }
 
-func (m *ScenarioInfo) Reset()         { *m = ScenarioInfo{} }
-func (m *ScenarioInfo) String() string { return proto.CompactTextString(m) }
-func (*ScenarioInfo) ProtoMessage()    {}
+func (m *ScenarioInfo) Reset()                    { *m = ScenarioInfo{} }
+func (m *ScenarioInfo) String() string            { return proto.CompactTextString(m) }
+func (*ScenarioInfo) ProtoMessage()               {}
+func (*ScenarioInfo) Descriptor() ([]byte, []int) { return fileDescriptor1, []int{12} }
 
 func (m *ScenarioInfo) GetName() string {
 	if m != nil && m.Name != nil {
@@ -479,9 +463,10 @@ type StepInfo struct {
 	XXX_unrecognized []byte `json:"-"`
 }
 
-func (m *StepInfo) Reset()         { *m = StepInfo{} }
-func (m *StepInfo) String() string { return proto.CompactTextString(m) }
-func (*StepInfo) ProtoMessage()    {}
+func (m *StepInfo) Reset()                    { *m = StepInfo{} }
+func (m *StepInfo) String() string            { return proto.CompactTextString(m) }
+func (*StepInfo) ProtoMessage()               {}
+func (*StepInfo) Descriptor() ([]byte, []int) { return fileDescriptor1, []int{13} }
 
 func (m *StepInfo) GetStep() *ExecuteStepRequest {
 	if m != nil {
@@ -512,9 +497,10 @@ type ExecuteStepRequest struct {
 	XXX_unrecognized []byte       `json:"-"`
 }
 
-func (m *ExecuteStepRequest) Reset()         { *m = ExecuteStepRequest{} }
-func (m *ExecuteStepRequest) String() string { return proto.CompactTextString(m) }
-func (*ExecuteStepRequest) ProtoMessage()    {}
+func (m *ExecuteStepRequest) Reset()                    { *m = ExecuteStepRequest{} }
+func (m *ExecuteStepRequest) String() string            { return proto.CompactTextString(m) }
+func (*ExecuteStepRequest) ProtoMessage()               {}
+func (*ExecuteStepRequest) Descriptor() ([]byte, []int) { return fileDescriptor1, []int{14} }
 
 func (m *ExecuteStepRequest) GetActualStepText() string {
 	if m != nil && m.ActualStepText != nil {
@@ -554,9 +540,10 @@ type StepValidateRequest struct {
 	XXX_unrecognized   []byte `json:"-"`
 }
 
-func (m *StepValidateRequest) Reset()         { *m = StepValidateRequest{} }
-func (m *StepValidateRequest) String() string { return proto.CompactTextString(m) }
-func (*StepValidateRequest) ProtoMessage()    {}
+func (m *StepValidateRequest) Reset()                    { *m = StepValidateRequest{} }
+func (m *StepValidateRequest) String() string            { return proto.CompactTextString(m) }
+func (*StepValidateRequest) ProtoMessage()               {}
+func (*StepValidateRequest) Descriptor() ([]byte, []int) { return fileDescriptor1, []int{15} }
 
 func (m *StepValidateRequest) GetStepText() string {
 	if m != nil && m.StepText != nil {
@@ -583,9 +570,10 @@ type StepValidateResponse struct {
 	XXX_unrecognized []byte                          `json:"-"`
 }
 
-func (m *StepValidateResponse) Reset()         { *m = StepValidateResponse{} }
-func (m *StepValidateResponse) String() string { return proto.CompactTextString(m) }
-func (*StepValidateResponse) ProtoMessage()    {}
+func (m *StepValidateResponse) Reset()                    { *m = StepValidateResponse{} }
+func (m *StepValidateResponse) String() string            { return proto.CompactTextString(m) }
+func (*StepValidateResponse) ProtoMessage()               {}
+func (*StepValidateResponse) Descriptor() ([]byte, []int) { return fileDescriptor1, []int{16} }
 
 func (m *StepValidateResponse) GetIsValid() bool {
 	if m != nil && m.IsValid != nil {
@@ -614,9 +602,10 @@ type SuiteExecutionResult struct {
 	XXX_unrecognized []byte            `json:"-"`
 }
 
-func (m *SuiteExecutionResult) Reset()         { *m = SuiteExecutionResult{} }
-func (m *SuiteExecutionResult) String() string { return proto.CompactTextString(m) }
-func (*SuiteExecutionResult) ProtoMessage()    {}
+func (m *SuiteExecutionResult) Reset()                    { *m = SuiteExecutionResult{} }
+func (m *SuiteExecutionResult) String() string            { return proto.CompactTextString(m) }
+func (*SuiteExecutionResult) ProtoMessage()               {}
+func (*SuiteExecutionResult) Descriptor() ([]byte, []int) { return fileDescriptor1, []int{17} }
 
 func (m *SuiteExecutionResult) GetSuiteResult() *ProtoSuiteResult {
 	if m != nil {
@@ -630,9 +619,10 @@ type StepNamesRequest struct {
 	XXX_unrecognized []byte `json:"-"`
 }
 
-func (m *StepNamesRequest) Reset()         { *m = StepNamesRequest{} }
-func (m *StepNamesRequest) String() string { return proto.CompactTextString(m) }
-func (*StepNamesRequest) ProtoMessage()    {}
+func (m *StepNamesRequest) Reset()                    { *m = StepNamesRequest{} }
+func (m *StepNamesRequest) String() string            { return proto.CompactTextString(m) }
+func (*StepNamesRequest) ProtoMessage()               {}
+func (*StepNamesRequest) Descriptor() ([]byte, []int) { return fileDescriptor1, []int{18} }
 
 // / Response to StepNamesRequest
 type StepNamesResponse struct {
@@ -641,9 +631,10 @@ type StepNamesResponse struct {
 	XXX_unrecognized []byte   `json:"-"`
 }
 
-func (m *StepNamesResponse) Reset()         { *m = StepNamesResponse{} }
-func (m *StepNamesResponse) String() string { return proto.CompactTextString(m) }
-func (*StepNamesResponse) ProtoMessage()    {}
+func (m *StepNamesResponse) Reset()                    { *m = StepNamesResponse{} }
+func (m *StepNamesResponse) String() string            { return proto.CompactTextString(m) }
+func (*StepNamesResponse) ProtoMessage()               {}
+func (*StepNamesResponse) Descriptor() ([]byte, []int) { return fileDescriptor1, []int{19} }
 
 func (m *StepNamesResponse) GetSteps() []string {
 	if m != nil {
@@ -658,9 +649,10 @@ type ScenarioDataStoreInitRequest struct {
 	XXX_unrecognized []byte `json:"-"`
 }
 
-func (m *ScenarioDataStoreInitRequest) Reset()         { *m = ScenarioDataStoreInitRequest{} }
-func (m *ScenarioDataStoreInitRequest) String() string { return proto.CompactTextString(m) }
-func (*ScenarioDataStoreInitRequest) ProtoMessage()    {}
+func (m *ScenarioDataStoreInitRequest) Reset()                    { *m = ScenarioDataStoreInitRequest{} }
+func (m *ScenarioDataStoreInitRequest) String() string            { return proto.CompactTextString(m) }
+func (*ScenarioDataStoreInitRequest) ProtoMessage()               {}
+func (*ScenarioDataStoreInitRequest) Descriptor() ([]byte, []int) { return fileDescriptor1, []int{20} }
 
 // / Request runner to initialize Spec DataStore
 // / Spec Datastore is reset after every Spec execution.
@@ -668,9 +660,10 @@ type SpecDataStoreInitRequest struct {
 	XXX_unrecognized []byte `json:"-"`
 }
 
-func (m *SpecDataStoreInitRequest) Reset()         { *m = SpecDataStoreInitRequest{} }
-func (m *SpecDataStoreInitRequest) String() string { return proto.CompactTextString(m) }
-func (*SpecDataStoreInitRequest) ProtoMessage()    {}
+func (m *SpecDataStoreInitRequest) Reset()                    { *m = SpecDataStoreInitRequest{} }
+func (m *SpecDataStoreInitRequest) String() string            { return proto.CompactTextString(m) }
+func (*SpecDataStoreInitRequest) ProtoMessage()               {}
+func (*SpecDataStoreInitRequest) Descriptor() ([]byte, []int) { return fileDescriptor1, []int{21} }
 
 // / Request runner to initialize Suite DataStore
 // / Suite Datastore is reset after every Suite execution.
@@ -678,9 +671,10 @@ type SuiteDataStoreInitRequest struct {
 	XXX_unrecognized []byte `json:"-"`
 }
 
-func (m *SuiteDataStoreInitRequest) Reset()         { *m = SuiteDataStoreInitRequest{} }
-func (m *SuiteDataStoreInitRequest) String() string { return proto.CompactTextString(m) }
-func (*SuiteDataStoreInitRequest) ProtoMessage()    {}
+func (m *SuiteDataStoreInitRequest) Reset()                    { *m = SuiteDataStoreInitRequest{} }
+func (m *SuiteDataStoreInitRequest) String() string            { return proto.CompactTextString(m) }
+func (*SuiteDataStoreInitRequest) ProtoMessage()               {}
+func (*SuiteDataStoreInitRequest) Descriptor() ([]byte, []int) { return fileDescriptor1, []int{22} }
 
 // / Holds the new and old positions of a parameter.
 // / Used when refactoring a Step.
@@ -690,9 +684,10 @@ type ParameterPosition struct {
 	XXX_unrecognized []byte `json:"-"`
 }
 
-func (m *ParameterPosition) Reset()         { *m = ParameterPosition{} }
-func (m *ParameterPosition) String() string { return proto.CompactTextString(m) }
-func (*ParameterPosition) ProtoMessage()    {}
+func (m *ParameterPosition) Reset()                    { *m = ParameterPosition{} }
+func (m *ParameterPosition) String() string            { return proto.CompactTextString(m) }
+func (*ParameterPosition) ProtoMessage()               {}
+func (*ParameterPosition) Descriptor() ([]byte, []int) { return fileDescriptor1, []int{23} }
 
 func (m *ParameterPosition) GetOldPosition() int32 {
 	if m != nil && m.OldPosition != nil {
@@ -719,9 +714,10 @@ type RefactorRequest struct {
 	XXX_unrecognized []byte               `json:"-"`
 }
 
-func (m *RefactorRequest) Reset()         { *m = RefactorRequest{} }
-func (m *RefactorRequest) String() string { return proto.CompactTextString(m) }
-func (*RefactorRequest) ProtoMessage()    {}
+func (m *RefactorRequest) Reset()                    { *m = RefactorRequest{} }
+func (m *RefactorRequest) String() string            { return proto.CompactTextString(m) }
+func (*RefactorRequest) ProtoMessage()               {}
+func (*RefactorRequest) Descriptor() ([]byte, []int) { return fileDescriptor1, []int{24} }
 
 func (m *RefactorRequest) GetOldStepValue() *ProtoStepValue {
 	if m != nil {
@@ -755,9 +751,10 @@ type RefactorResponse struct {
 	XXX_unrecognized []byte   `json:"-"`
 }
 
-func (m *RefactorResponse) Reset()         { *m = RefactorResponse{} }
-func (m *RefactorResponse) String() string { return proto.CompactTextString(m) }
-func (*RefactorResponse) ProtoMessage()    {}
+func (m *RefactorResponse) Reset()                    { *m = RefactorResponse{} }
+func (m *RefactorResponse) String() string            { return proto.CompactTextString(m) }
+func (*RefactorResponse) ProtoMessage()               {}
+func (*RefactorResponse) Descriptor() ([]byte, []int) { return fileDescriptor1, []int{25} }
 
 func (m *RefactorResponse) GetSuccess() bool {
 	if m != nil && m.Success != nil {
@@ -788,9 +785,10 @@ type StepNameRequest struct {
 	XXX_unrecognized []byte  `json:"-"`
 }
 
-func (m *StepNameRequest) Reset()         { *m = StepNameRequest{} }
-func (m *StepNameRequest) String() string { return proto.CompactTextString(m) }
-func (*StepNameRequest) ProtoMessage()    {}
+func (m *StepNameRequest) Reset()                    { *m = StepNameRequest{} }
+func (m *StepNameRequest) String() string            { return proto.CompactTextString(m) }
+func (*StepNameRequest) ProtoMessage()               {}
+func (*StepNameRequest) Descriptor() ([]byte, []int) { return fileDescriptor1, []int{26} }
 
 func (m *StepNameRequest) GetStepValue() string {
 	if m != nil && m.StepValue != nil {
@@ -810,9 +808,10 @@ type StepNameResponse struct {
 	XXX_unrecognized []byte `json:"-"`
 }
 
-func (m *StepNameResponse) Reset()         { *m = StepNameResponse{} }
-func (m *StepNameResponse) String() string { return proto.CompactTextString(m) }
-func (*StepNameResponse) ProtoMessage()    {}
+func (m *StepNameResponse) Reset()                    { *m = StepNameResponse{} }
+func (m *StepNameResponse) String() string            { return proto.CompactTextString(m) }
+func (*StepNameResponse) ProtoMessage()               {}
+func (*StepNameResponse) Descriptor() ([]byte, []int) { return fileDescriptor1, []int{27} }
 
 func (m *StepNameResponse) GetIsStepPresent() bool {
 	if m != nil && m.IsStepPresent != nil {
@@ -841,9 +840,10 @@ type UnsupportedMessageResponse struct {
 	XXX_unrecognized []byte  `json:"-"`
 }
 
-func (m *UnsupportedMessageResponse) Reset()         { *m = UnsupportedMessageResponse{} }
-func (m *UnsupportedMessageResponse) String() string { return proto.CompactTextString(m) }
-func (*UnsupportedMessageResponse) ProtoMessage()    {}
+func (m *UnsupportedMessageResponse) Reset()                    { *m = UnsupportedMessageResponse{} }
+func (m *UnsupportedMessageResponse) String() string            { return proto.CompactTextString(m) }
+func (*UnsupportedMessageResponse) ProtoMessage()               {}
+func (*UnsupportedMessageResponse) Descriptor() ([]byte, []int) { return fileDescriptor1, []int{28} }
 
 func (m *UnsupportedMessageResponse) GetMessage() string {
 	if m != nil && m.Message != nil {
@@ -911,9 +911,10 @@ type Message struct {
 	XXX_unrecognized           []byte                      `json:"-"`
 }
 
-func (m *Message) Reset()         { *m = Message{} }
-func (m *Message) String() string { return proto.CompactTextString(m) }
-func (*Message) ProtoMessage()    {}
+func (m *Message) Reset()                    { *m = Message{} }
+func (m *Message) String() string            { return proto.CompactTextString(m) }
+func (*Message) ProtoMessage()               {}
+func (*Message) Descriptor() ([]byte, []int) { return fileDescriptor1, []int{29} }
 
 func (m *Message) GetMessageType() Message_MessageType {
 	if m != nil && m.MessageType != nil {
@@ -1098,6 +1099,139 @@ func (m *Message) GetUnsupportedMessageResponse() *UnsupportedMessageResponse {
 }
 
 func init() {
+	proto.RegisterType((*KillProcessRequest)(nil), "gauge.messages.KillProcessRequest")
+	proto.RegisterType((*ExecutionStatusResponse)(nil), "gauge.messages.ExecutionStatusResponse")
+	proto.RegisterType((*ExecutionStartingRequest)(nil), "gauge.messages.ExecutionStartingRequest")
+	proto.RegisterType((*ExecutionEndingRequest)(nil), "gauge.messages.ExecutionEndingRequest")
+	proto.RegisterType((*SpecExecutionStartingRequest)(nil), "gauge.messages.SpecExecutionStartingRequest")
+	proto.RegisterType((*SpecExecutionEndingRequest)(nil), "gauge.messages.SpecExecutionEndingRequest")
+	proto.RegisterType((*ScenarioExecutionStartingRequest)(nil), "gauge.messages.ScenarioExecutionStartingRequest")
+	proto.RegisterType((*ScenarioExecutionEndingRequest)(nil), "gauge.messages.ScenarioExecutionEndingRequest")
+	proto.RegisterType((*StepExecutionStartingRequest)(nil), "gauge.messages.StepExecutionStartingRequest")
+	proto.RegisterType((*StepExecutionEndingRequest)(nil), "gauge.messages.StepExecutionEndingRequest")
+	proto.RegisterType((*ExecutionInfo)(nil), "gauge.messages.ExecutionInfo")
+	proto.RegisterType((*SpecInfo)(nil), "gauge.messages.SpecInfo")
+	proto.RegisterType((*ScenarioInfo)(nil), "gauge.messages.ScenarioInfo")
+	proto.RegisterType((*StepInfo)(nil), "gauge.messages.StepInfo")
+	proto.RegisterType((*ExecuteStepRequest)(nil), "gauge.messages.ExecuteStepRequest")
+	proto.RegisterType((*StepValidateRequest)(nil), "gauge.messages.StepValidateRequest")
+	proto.RegisterType((*StepValidateResponse)(nil), "gauge.messages.StepValidateResponse")
+	proto.RegisterType((*SuiteExecutionResult)(nil), "gauge.messages.SuiteExecutionResult")
+	proto.RegisterType((*StepNamesRequest)(nil), "gauge.messages.StepNamesRequest")
+	proto.RegisterType((*StepNamesResponse)(nil), "gauge.messages.StepNamesResponse")
+	proto.RegisterType((*ScenarioDataStoreInitRequest)(nil), "gauge.messages.ScenarioDataStoreInitRequest")
+	proto.RegisterType((*SpecDataStoreInitRequest)(nil), "gauge.messages.SpecDataStoreInitRequest")
+	proto.RegisterType((*SuiteDataStoreInitRequest)(nil), "gauge.messages.SuiteDataStoreInitRequest")
+	proto.RegisterType((*ParameterPosition)(nil), "gauge.messages.ParameterPosition")
+	proto.RegisterType((*RefactorRequest)(nil), "gauge.messages.RefactorRequest")
+	proto.RegisterType((*RefactorResponse)(nil), "gauge.messages.RefactorResponse")
+	proto.RegisterType((*StepNameRequest)(nil), "gauge.messages.StepNameRequest")
+	proto.RegisterType((*StepNameResponse)(nil), "gauge.messages.StepNameResponse")
+	proto.RegisterType((*UnsupportedMessageResponse)(nil), "gauge.messages.UnsupportedMessageResponse")
+	proto.RegisterType((*Message)(nil), "gauge.messages.Message")
 	proto.RegisterEnum("gauge.messages.StepValidateResponse_ErrorType", StepValidateResponse_ErrorType_name, StepValidateResponse_ErrorType_value)
 	proto.RegisterEnum("gauge.messages.Message_MessageType", Message_MessageType_name, Message_MessageType_value)
+}
+
+func init() { proto.RegisterFile("messages.proto", fileDescriptor1) }
+
+var fileDescriptor1 = []byte{
+	// 1551 bytes of a gzipped FileDescriptorProto
+	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x09, 0x6e, 0x88, 0x02, 0xff, 0xbc, 0x58, 0x4f, 0x6f, 0x1b, 0xb7,
+	0x12, 0x8f, 0x64, 0x3b, 0x96, 0x46, 0xb6, 0x44, 0xd3, 0xb2, 0x4d, 0x2b, 0x8e, 0x9f, 0xb2, 0x09,
+	0xf2, 0x9c, 0x87, 0x07, 0xb5, 0xf0, 0x21, 0x40, 0x7b, 0xcb, 0x1f, 0xa5, 0x10, 0xea, 0xd8, 0x0a,
+	0x25, 0xb7, 0x45, 0x0f, 0x31, 0xb6, 0x12, 0xad, 0x6c, 0x22, 0xef, 0x6e, 0x96, 0xbb, 0x4d, 0x0a,
+	0xf4, 0x13, 0xf5, 0x9b, 0xf4, 0x2b, 0x14, 0xe8, 0xad, 0xf7, 0x9e, 0x7a, 0x2f, 0x48, 0x2d, 0x57,
+	0xfb, 0x87, 0x5c, 0xe7, 0x12, 0x9f, 0x6c, 0x0e, 0x67, 0x7e, 0x33, 0x1c, 0x0e, 0x67, 0x7e, 0x5a,
+	0x68, 0x5e, 0x31, 0xce, 0xed, 0x19, 0xe3, 0x3d, 0x3f, 0xf0, 0x42, 0x0f, 0x37, 0x67, 0x76, 0x34,
+	0x63, 0x3d, 0x25, 0xed, 0x00, 0xf7, 0xd9, 0x64, 0xb1, 0x67, 0xb5, 0x01, 0x7f, 0xeb, 0xcc, 0xe7,
+	0xc3, 0xc0, 0x9b, 0x30, 0xce, 0x29, 0x7b, 0x1f, 0x31, 0x1e, 0x5a, 0x0e, 0xec, 0xf5, 0x3f, 0xb2,
+	0x49, 0x14, 0x3a, 0x9e, 0x3b, 0x0a, 0xed, 0x30, 0xe2, 0x94, 0x71, 0xdf, 0x73, 0x39, 0xc3, 0xa7,
+	0xd0, 0x62, 0x6a, 0x8b, 0x32, 0x1e, 0xcd, 0x43, 0x52, 0xe9, 0x56, 0x8f, 0x1a, 0xc7, 0x0f, 0x7a,
+	0x59, 0x37, 0xbd, 0xa1, 0x70, 0xd0, 0xcf, 0xea, 0xd2, 0xbc, 0xb1, 0x75, 0x05, 0x24, 0xed, 0x2a,
+	0x08, 0x1d, 0x77, 0x16, 0x87, 0x81, 0x5f, 0x41, 0x7b, 0x12, 0x05, 0x01, 0x73, 0xc3, 0x44, 0x65,
+	0xe0, 0x5e, 0x7a, 0xa4, 0xd2, 0xad, 0x1c, 0x35, 0x8e, 0xef, 0xe6, 0x1d, 0x66, 0x94, 0xa8, 0xd6,
+	0xd4, 0x7a, 0x07, 0xbb, 0x89, 0xa0, 0xef, 0x4e, 0x3f, 0xaf, 0xb3, 0xf7, 0x70, 0x30, 0xf2, 0xd9,
+	0xe4, 0x26, 0xcf, 0xe7, 0x41, 0x27, 0xe3, 0xf2, 0xb3, 0x9f, 0x31, 0x82, 0xee, 0x68, 0xc2, 0x5c,
+	0x3b, 0x70, 0xbc, 0x9b, 0x3c, 0x27, 0x87, 0xc3, 0x82, 0xdb, 0x1b, 0xb9, 0xcf, 0x90, 0xf9, 0x37,
+	0x7d, 0x9f, 0x69, 0x97, 0x9f, 0xfd, 0x8c, 0x7f, 0x57, 0x60, 0x33, 0x23, 0xc1, 0x5f, 0x43, 0x23,
+	0xd6, 0x14, 0x95, 0x15, 0x63, 0x93, 0x3c, 0xb6, 0xd8, 0x93, 0xb0, 0x69, 0x65, 0xfc, 0x02, 0x5a,
+	0x6a, 0x19, 0xdf, 0x16, 0xa9, 0x4a, 0xfb, 0x83, 0x82, 0x7d, 0xbc, 0x2f, 0x31, 0xf2, 0x46, 0xe9,
+	0x18, 0x42, 0xe6, 0x93, 0x15, 0x43, 0x0c, 0x21, 0xf3, 0xb3, 0x31, 0x84, 0xcc, 0xc7, 0x87, 0x00,
+	0x3c, 0xb4, 0x27, 0xef, 0xc2, 0xc0, 0x9e, 0x30, 0xb2, 0xda, 0xad, 0x1c, 0xd5, 0x69, 0x4a, 0x62,
+	0xbd, 0x85, 0x9a, 0x0a, 0x1e, 0x63, 0x58, 0x75, 0xed, 0x2b, 0x26, 0x5b, 0x5a, 0x9d, 0xca, 0xff,
+	0x71, 0x07, 0x6a, 0x97, 0xce, 0x9c, 0x9d, 0x0a, 0x79, 0x55, 0xca, 0x93, 0xb5, 0xd8, 0x73, 0xf8,
+	0x0b, 0xdb, 0x99, 0xb3, 0x29, 0x59, 0xe9, 0x56, 0x8f, 0x6a, 0x34, 0x59, 0x0b, 0xac, 0xd0, 0x9e,
+	0x71, 0xb2, 0xda, 0x5d, 0x11, 0x58, 0xe2, 0x7f, 0x8b, 0xc2, 0x46, 0xfa, 0xa0, 0x26, 0x7f, 0x09,
+	0x66, 0xd5, 0x80, 0xb9, 0x92, 0xc2, 0x7c, 0x0d, 0x35, 0x75, 0x70, 0xfc, 0x18, 0x56, 0xb9, 0x48,
+	0xd0, 0xa2, 0x25, 0x5b, 0xfa, 0x02, 0x60, 0x42, 0x3d, 0x2e, 0x21, 0x2a, 0xf5, 0xcb, 0x7c, 0x5a,
+	0xbf, 0x57, 0x00, 0x17, 0x0d, 0xf1, 0x43, 0x68, 0xda, 0x93, 0x30, 0xb2, 0xe7, 0x42, 0x38, 0x66,
+	0x1f, 0xc3, 0xf8, 0x10, 0x39, 0xa9, 0xd0, 0xf3, 0xed, 0x80, 0xb3, 0x69, 0xa2, 0xb7, 0x48, 0x62,
+	0x4e, 0x8a, 0x8f, 0xa0, 0xc5, 0xe3, 0xd4, 0x08, 0xc7, 0x8e, 0x3b, 0x93, 0xd7, 0x5c, 0xa3, 0x79,
+	0x31, 0xfe, 0x0a, 0xc0, 0xb7, 0x03, 0xfb, 0x8a, 0x85, 0x2c, 0x58, 0xa4, 0xb7, 0x71, 0xbc, 0x5f,
+	0x98, 0x3e, 0x4a, 0x83, 0xa6, 0x94, 0x2d, 0x1b, 0xb6, 0x85, 0xc3, 0xef, 0xec, 0xb9, 0x33, 0xb5,
+	0x43, 0xa6, 0xce, 0xd2, 0x81, 0x1a, 0xcf, 0x9e, 0x22, 0x59, 0xe3, 0x1e, 0x60, 0x37, 0xba, 0xfa,
+	0x89, 0x05, 0x67, 0x97, 0xc3, 0xa5, 0x57, 0x71, 0x86, 0x35, 0xaa, 0xd9, 0xb1, 0xfe, 0xa9, 0x40,
+	0x3b, 0xeb, 0x23, 0x9e, 0x9c, 0x04, 0xd6, 0x1d, 0x2e, 0xa5, 0xd2, 0x47, 0x8d, 0xaa, 0x25, 0xb6,
+	0x60, 0x83, 0x05, 0x81, 0x17, 0xbc, 0x5c, 0x04, 0x2f, 0x9f, 0x48, 0x9d, 0x66, 0x64, 0xf8, 0x04,
+	0xea, 0x72, 0x3d, 0xfe, 0xc5, 0x67, 0x32, 0x31, 0xcd, 0xe3, 0x9e, 0xae, 0xfe, 0xf3, 0x6e, 0x7b,
+	0x7d, 0x65, 0x45, 0x97, 0x00, 0xd6, 0x2b, 0xa8, 0x27, 0x72, 0x7c, 0x0f, 0xee, 0x8e, 0xc6, 0xfd,
+	0xe1, 0xc5, 0xe0, 0xe5, 0xf0, 0xa4, 0xff, 0xb2, 0x7f, 0x3a, 0x7e, 0x32, 0x1e, 0x9c, 0x9d, 0x5e,
+	0x9c, 0x9e, 0x8d, 0x2f, 0x5e, 0x9c, 0x9d, 0x9f, 0x3e, 0x47, 0xb7, 0x84, 0xca, 0xf3, 0xf3, 0xe1,
+	0xc9, 0xe0, 0xd9, 0x93, 0x71, 0xff, 0x42, 0xa3, 0x8c, 0x2a, 0xd6, 0x8f, 0xd0, 0x1e, 0x45, 0x4e,
+	0xc8, 0x72, 0x13, 0x1f, 0x3f, 0x85, 0x06, 0x17, 0xf2, 0x0c, 0x59, 0xe8, 0x6a, 0xc9, 0xc2, 0x68,
+	0xa9, 0x47, 0xd3, 0x46, 0x16, 0x06, 0x24, 0xce, 0x26, 0x9e, 0x5c, 0xc2, 0x51, 0x1e, 0xc1, 0x56,
+	0x4a, 0x16, 0xe7, 0xb8, 0x0d, 0x6b, 0xe2, 0xe2, 0x38, 0xa9, 0xc8, 0x07, 0xb2, 0x58, 0x58, 0x87,
+	0x70, 0xa0, 0x5e, 0xdd, 0x73, 0x3b, 0xb4, 0x47, 0xa1, 0x17, 0xb0, 0x81, 0xeb, 0x84, 0x0a, 0xaa,
+	0x03, 0x44, 0x74, 0x00, 0xed, 0xde, 0x1d, 0xd8, 0x97, 0x61, 0x69, 0x37, 0xbf, 0x87, 0xad, 0xe4,
+	0xe6, 0x87, 0x1e, 0x77, 0xc4, 0xb1, 0x71, 0x17, 0x1a, 0xde, 0x7c, 0xaa, 0x96, 0xf2, 0xc0, 0x6b,
+	0x34, 0x2d, 0x12, 0x1a, 0x2e, 0xfb, 0x90, 0x68, 0x2c, 0x6a, 0x29, 0x2d, 0xb2, 0xfe, 0xaa, 0x40,
+	0x8b, 0xb2, 0x4b, 0x7b, 0x12, 0x7a, 0x81, 0x2a, 0xd2, 0xa7, 0xb0, 0xe1, 0xcd, 0xa7, 0xf1, 0x1d,
+	0x47, 0x2c, 0xce, 0xe4, 0xa1, 0x3e, 0x93, 0x4a, 0x8b, 0x66, 0x6c, 0x04, 0x86, 0xcb, 0x3e, 0x2c,
+	0x31, 0xaa, 0x9f, 0x86, 0x91, 0xb6, 0xc1, 0x03, 0xf9, 0xa0, 0xed, 0x2b, 0x15, 0xec, 0xa2, 0x1b,
+	0x35, 0x8e, 0xef, 0x19, 0x9f, 0xa0, 0xd2, 0xa4, 0x39, 0x43, 0xeb, 0x12, 0xd0, 0xf2, 0x94, 0xcb,
+	0x67, 0xc2, 0xa3, 0x89, 0x60, 0xa3, 0xea, 0x99, 0xc4, 0x4b, 0x71, 0xb9, 0xb2, 0x82, 0xe3, 0xf7,
+	0xb1, 0x58, 0x88, 0xc7, 0x23, 0xda, 0x31, 0x7f, 0xf6, 0xc6, 0x76, 0x67, 0xb2, 0x0d, 0x8b, 0x9b,
+	0xcf, 0xc8, 0xac, 0x2f, 0xa0, 0xa5, 0x6a, 0x45, 0x65, 0xf3, 0x00, 0xea, 0x3c, 0x93, 0xca, 0x3a,
+	0x5d, 0x0a, 0x2c, 0x7f, 0x59, 0x70, 0x49, 0x60, 0x0f, 0x60, 0xd3, 0xe1, 0x42, 0x3a, 0x0c, 0x18,
+	0x67, 0x6e, 0x18, 0x87, 0x97, 0x15, 0xaa, 0x56, 0x12, 0x4f, 0x8b, 0x15, 0xd5, 0x4a, 0xd4, 0xb4,
+	0x78, 0x63, 0xf3, 0x27, 0x73, 0xc7, 0xe6, 0x6a, 0x5a, 0xa8, 0xb5, 0xf5, 0x18, 0x3a, 0xe7, 0x2e,
+	0x8f, 0x7c, 0xdf, 0x0b, 0x42, 0x36, 0x8d, 0x5f, 0x7d, 0x3a, 0x29, 0x71, 0x5a, 0xe5, 0xfc, 0xad,
+	0x53, 0xb5, 0xb4, 0xfe, 0xd8, 0x83, 0x75, 0xd5, 0x23, 0xfa, 0xd0, 0x88, 0xc5, 0xb2, 0x4b, 0x88,
+	0xf8, 0x9a, 0xc7, 0xf7, 0xf3, 0xd7, 0x12, 0x6b, 0xab, 0xbf, 0xb2, 0x35, 0xa4, 0xed, 0x44, 0x6a,
+	0xe2, 0xe5, 0x60, 0x31, 0x0d, 0x56, 0xe8, 0x52, 0x80, 0xa7, 0x40, 0x98, 0x81, 0x00, 0xc5, 0x73,
+	0xf9, 0xc8, 0xc8, 0x3b, 0x72, 0xfa, 0xd4, 0x88, 0x84, 0x7d, 0x38, 0xe0, 0x25, 0xd4, 0x59, 0x8e,
+	0xf1, 0xc6, 0xf1, 0xff, 0x75, 0x2c, 0xc4, 0xe8, 0xad, 0x14, 0x11, 0xbf, 0x85, 0x0e, 0x37, 0x32,
+	0x67, 0xb2, 0x26, 0xfd, 0xfd, 0xaf, 0xd4, 0x5f, 0xc6, 0x82, 0x96, 0xa0, 0xe1, 0x5f, 0xa1, 0xcb,
+	0xaf, 0x21, 0xcd, 0xe4, 0xb6, 0xf4, 0xf8, 0xa5, 0x89, 0x27, 0x19, 0x4f, 0x79, 0x2d, 0x32, 0xfe,
+	0x19, 0x0e, 0x79, 0x29, 0x77, 0x26, 0xeb, 0xd2, 0x77, 0xef, 0x5a, 0xdf, 0xd9, 0x13, 0x5f, 0x83,
+	0x2a, 0xef, 0xb4, 0x84, 0x3e, 0x93, 0x9a, 0xe1, 0x4e, 0x4b, 0x6c, 0x68, 0x29, 0xa2, 0xbc, 0x53,
+	0x23, 0x7b, 0x26, 0x75, 0xc3, 0x9d, 0x1a, 0x2d, 0x68, 0x09, 0x1a, 0xa6, 0x80, 0x59, 0x81, 0x25,
+	0x11, 0x90, 0x3e, 0x3e, 0x85, 0x88, 0x69, 0xac, 0xf1, 0x6b, 0xd8, 0x65, 0xfa, 0xd8, 0x1b, 0x12,
+	0xf7, 0xa1, 0xf1, 0xa5, 0x65, 0xe3, 0x36, 0xa0, 0xe0, 0x73, 0xd8, 0xe6, 0x45, 0x3a, 0x44, 0x36,
+	0x24, 0xf8, 0xfd, 0x72, 0x7a, 0xb1, 0x40, 0xd6, 0xd9, 0xe3, 0x1f, 0xa0, 0xcd, 0x35, 0x54, 0x84,
+	0x6c, 0x4a, 0xdc, 0x07, 0x9f, 0x42, 0x5b, 0xa8, 0x16, 0x01, 0xdb, 0xb0, 0xc7, 0xf4, 0x1f, 0x26,
+	0x48, 0x53, 0x82, 0xff, 0xb7, 0xac, 0xf7, 0xa4, 0xd4, 0xa9, 0x09, 0x07, 0x9f, 0x00, 0xe2, 0x39,
+	0xae, 0x41, 0x5a, 0x12, 0xbb, 0xab, 0x0b, 0x3c, 0xad, 0x47, 0x0b, 0x96, 0xf8, 0x0c, 0xb6, 0x78,
+	0x9e, 0xa5, 0x10, 0x24, 0xe1, 0xee, 0x95, 0xc0, 0xc5, 0x41, 0x16, 0x6d, 0x65, 0x6e, 0x35, 0x34,
+	0x8b, 0x6c, 0x19, 0x72, 0xab, 0xd1, 0xa5, 0x5a, 0x04, 0x51, 0xc0, 0xef, 0x0a, 0x9f, 0x82, 0x08,
+	0xd6, 0x17, 0x70, 0xf1, 0xa3, 0x11, 0xd5, 0x58, 0xcb, 0x27, 0x5f, 0xc2, 0xbc, 0xc8, 0xb6, 0xe1,
+	0xc9, 0x97, 0xd8, 0xd0, 0x52, 0x44, 0x31, 0x9e, 0xb8, 0x81, 0xcb, 0x91, 0xb6, 0x7e, 0x3c, 0x99,
+	0xb8, 0x1f, 0x35, 0x22, 0xe1, 0x19, 0xec, 0x73, 0x13, 0x2b, 0x24, 0x3b, 0xd2, 0xcd, 0x23, 0xed,
+	0x55, 0x68, 0xfd, 0x98, 0xb1, 0xf0, 0x00, 0x5a, 0x3c, 0xcb, 0x5c, 0xc8, 0xae, 0x84, 0xff, 0x8f,
+	0xa9, 0x7a, 0x14, 0x68, 0xde, 0x2e, 0x5d, 0xd8, 0x49, 0x25, 0xee, 0x95, 0x17, 0x76, 0x52, 0x88,
+	0x05, 0x4b, 0x11, 0x58, 0x90, 0x25, 0xa8, 0x84, 0xe8, 0x03, 0xcb, 0xf1, 0x58, 0x9a, 0xb7, 0x13,
+	0x81, 0x05, 0x39, 0x16, 0x48, 0xf6, 0xf5, 0x81, 0xe5, 0xd9, 0x22, 0x2d, 0x58, 0x8a, 0x9e, 0x1f,
+	0x19, 0x89, 0x14, 0xe9, 0xe8, 0x7b, 0xbe, 0x99, 0x7a, 0xd1, 0x12, 0x34, 0xeb, 0xcf, 0x55, 0x68,
+	0xa4, 0x68, 0x14, 0xde, 0x81, 0xad, 0xc2, 0x2c, 0x42, 0xb7, 0xf0, 0x3e, 0xec, 0x68, 0x89, 0x09,
+	0xaa, 0xe0, 0x3d, 0xd8, 0xd6, 0x70, 0x08, 0x54, 0xc5, 0x77, 0x61, 0xdf, 0x38, 0xea, 0xd1, 0x0a,
+	0xbe, 0x03, 0x7b, 0x86, 0x69, 0x8c, 0x56, 0xa5, 0x3f, 0xdd, 0x58, 0x44, 0x6b, 0xd2, 0x5f, 0x71,
+	0x86, 0xa1, 0xdb, 0xb8, 0x05, 0x8d, 0xd4, 0x50, 0x42, 0xeb, 0x78, 0x1b, 0x5a, 0x79, 0xad, 0x9a,
+	0x32, 0xcf, 0x35, 0x7c, 0x54, 0xc7, 0x44, 0xff, 0xa3, 0x17, 0x81, 0x88, 0xd4, 0xd0, 0x83, 0x51,
+	0x03, 0xb7, 0x8b, 0x3f, 0xec, 0xd0, 0x86, 0x48, 0x63, 0xa1, 0x17, 0xa2, 0x4d, 0xbc, 0xab, 0xfb,
+	0x56, 0x8d, 0x9a, 0xd2, 0xb7, 0xa6, 0xa1, 0xa1, 0x96, 0x4c, 0x84, 0xae, 0x59, 0x20, 0x24, 0x7d,
+	0xe4, 0x5f, 0x37, 0xda, 0x12, 0x3e, 0x8a, 0xef, 0x14, 0x61, 0x91, 0x8d, 0xdc, 0x03, 0x43, 0xdb,
+	0xe9, 0xe8, 0x93, 0x30, 0xdb, 0x42, 0x35, 0x57, 0xf2, 0x68, 0x47, 0xa8, 0xe6, 0x6b, 0x17, 0xed,
+	0xe2, 0xc3, 0x32, 0xd2, 0x8f, 0xf6, 0x9e, 0x6e, 0xfd, 0x56, 0x6d, 0x7e, 0x23, 0x2b, 0x35, 0xde,
+	0xe3, 0xff, 0x06, 0x00, 0x00, 0xff, 0xff, 0x09, 0xd8, 0xd8, 0x06, 0xdd, 0x17, 0x00, 0x00,
 }
