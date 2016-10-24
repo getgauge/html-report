@@ -225,8 +225,7 @@ var suiteRes1 = &gm.ProtoSuiteResult{
 
 var scn = &gm.ProtoScenario{
 	ScenarioHeading: proto.String("Vowel counts in single word"),
-	Failed:          proto.Bool(false),
-	Skipped:         proto.Bool(false),
+	ExecutionStatus: gm.ExecutionStatus_PASSED.Enum(),
 	Tags:            []string{"foo", "bar"},
 	ExecutionTime:   proto.Int64(113163),
 	Contexts: []*gm.ProtoItem{
@@ -249,8 +248,7 @@ var scn = &gm.ProtoScenario{
 
 var scnWithHookFailure = &gm.ProtoScenario{
 	ScenarioHeading: proto.String("Vowel counts in single word"),
-	Failed:          proto.Bool(true),
-	Skipped:         proto.Bool(false),
+	ExecutionStatus: gm.ExecutionStatus_FAILED.Enum(),
 	ExecutionTime:   proto.Int64(113163),
 	ScenarioItems: []*gm.ProtoItem{
 		newStepItem(true, false, []*gm.Fragment{newTextFragment("Step1")}),
@@ -480,8 +478,8 @@ var summaryTests = []*summaryTest{
 			FileName:      proto.String("/tmp/gauge/specs/foobar.spec"),
 			IsTableDriven: proto.Bool(false),
 			Items: []*gm.ProtoItem{
-				newScenarioItem(&gm.ProtoScenario{}),
-				newScenarioItem(&gm.ProtoScenario{}),
+				newScenarioItem(&gm.ProtoScenario{ExecutionStatus: gm.ExecutionStatus_PASSED.Enum()}),
+				newScenarioItem(&gm.ProtoScenario{ExecutionStatus: gm.ExecutionStatus_PASSED.Enum()}),
 			},
 		},
 		summary{Failed: 0, Passed: 2, Skipped: 0, Total: 2},
@@ -493,8 +491,8 @@ var summaryTests = []*summaryTest{
 			FileName:      proto.String("/tmp/gauge/specs/foobar.spec"),
 			IsTableDriven: proto.Bool(false),
 			Items: []*gm.ProtoItem{
-				newScenarioItem(&gm.ProtoScenario{}),
-				newScenarioItem(&gm.ProtoScenario{Skipped: proto.Bool(true)}),
+				newScenarioItem(&gm.ProtoScenario{ExecutionStatus: gm.ExecutionStatus_PASSED.Enum()}),
+				newScenarioItem(&gm.ProtoScenario{ExecutionStatus: gm.ExecutionStatus_SKIPPED.Enum()}),
 			},
 		},
 		summary{Failed: 0, Passed: 1, Skipped: 1, Total: 2},
@@ -506,8 +504,8 @@ var summaryTests = []*summaryTest{
 			FileName:      proto.String("/tmp/gauge/specs/foobar.spec"),
 			IsTableDriven: proto.Bool(false),
 			Items: []*gm.ProtoItem{
-				newScenarioItem(&gm.ProtoScenario{Failed: proto.Bool(true)}),
-				newScenarioItem(&gm.ProtoScenario{}),
+				newScenarioItem(&gm.ProtoScenario{ExecutionStatus: gm.ExecutionStatus_FAILED.Enum()}),
+				newScenarioItem(&gm.ProtoScenario{ExecutionStatus: gm.ExecutionStatus_PASSED.Enum()}),
 			},
 		},
 		summary{Failed: 1, Passed: 1, Skipped: 0, Total: 2},
@@ -519,8 +517,8 @@ var summaryTests = []*summaryTest{
 			FileName:      proto.String("/tmp/gauge/specs/foobar.spec"),
 			IsTableDriven: proto.Bool(false),
 			Items: []*gm.ProtoItem{
-				newScenarioItem(&gm.ProtoScenario{Failed: proto.Bool(true)}),
-				newScenarioItem(&gm.ProtoScenario{Skipped: proto.Bool(true)}),
+				newScenarioItem(&gm.ProtoScenario{ExecutionStatus: gm.ExecutionStatus_FAILED.Enum()}),
+				newScenarioItem(&gm.ProtoScenario{ExecutionStatus: gm.ExecutionStatus_SKIPPED.Enum()}),
 			},
 		},
 		summary{Failed: 1, Passed: 0, Skipped: 1, Total: 2},

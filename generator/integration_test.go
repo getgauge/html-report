@@ -32,8 +32,7 @@ import (
 
 var scenario1 = &gm.ProtoScenario{
 	ScenarioHeading: proto.String("Vowel counts in single word"),
-	Failed:          proto.Bool(false),
-	Skipped:         proto.Bool(false),
+	ExecutionStatus: gm.ExecutionStatus_PASSED.Enum(),
 	Tags:            []string{"foo", "bar"},
 	ExecutionTime:   proto.Int64(113163),
 	Contexts: []*gm.ProtoItem{
@@ -77,8 +76,7 @@ var scenario1 = &gm.ProtoScenario{
 
 var scenarioWithConceptFailure = &gm.ProtoScenario{
 	ScenarioHeading: proto.String("Vowel counts in single word"),
-	Failed:          proto.Bool(true),
-	Skipped:         proto.Bool(false),
+	ExecutionStatus: gm.ExecutionStatus_FAILED.Enum(),
 	Tags:            []string{"foo", "bar"},
 	ExecutionTime:   proto.Int64(113163),
 	ScenarioItems: []*gm.ProtoItem{
@@ -97,8 +95,7 @@ var scenarioWithConceptFailure = &gm.ProtoScenario{
 
 var scenario2 = &gm.ProtoScenario{
 	ScenarioHeading: proto.String("Vowel counts in multiple words"),
-	Failed:          proto.Bool(false),
-	Skipped:         proto.Bool(false),
+	ExecutionStatus: gm.ExecutionStatus_PASSED.Enum(),
 	ExecutionTime:   proto.Int64(113163),
 	Contexts: []*gm.ProtoItem{
 		newStepItem(false, false, []*gm.Fragment{newTextFragment("Context Step1")}),
@@ -121,8 +118,7 @@ var scenario2 = &gm.ProtoScenario{
 
 var skippedScenario = &gm.ProtoScenario{
 	ScenarioHeading: proto.String("skipped scenario"),
-	Failed:          proto.Bool(false),
-	Skipped:         proto.Bool(true),
+	ExecutionStatus: gm.ExecutionStatus_SKIPPED.Enum(),
 	ExecutionTime:   proto.Int64(0),
 	Contexts: []*gm.ProtoItem{
 		newStepItem(false, true, []*gm.Fragment{newTextFragment("Context Step")}),
@@ -136,8 +132,7 @@ var skippedScenario = &gm.ProtoScenario{
 
 var scenarioWithAfterHookFail = &gm.ProtoScenario{
 	ScenarioHeading: proto.String("Scenario Heading"),
-	Failed:          proto.Bool(true),
-	Skipped:         proto.Bool(false),
+	ExecutionStatus: gm.ExecutionStatus_FAILED.Enum(),
 	ExecutionTime:   proto.Int64(113163),
 	ScenarioItems: []*gm.ProtoItem{
 		newStepItem(false, false, []*gm.Fragment{newTextFragment("Some step")}),
@@ -151,8 +146,7 @@ var scenarioWithAfterHookFail = &gm.ProtoScenario{
 
 var scenarioWithBeforeHookFail = &gm.ProtoScenario{
 	ScenarioHeading: proto.String("Scenario Heading"),
-	Failed:          proto.Bool(true),
-	Skipped:         proto.Bool(false),
+	ExecutionStatus: gm.ExecutionStatus_FAILED.Enum(),
 	ExecutionTime:   proto.Int64(113163),
 	ScenarioItems: []*gm.ProtoItem{
 		newStepItem(false, true, []*gm.Fragment{newTextFragment("Some step")}),
@@ -166,8 +160,7 @@ var scenarioWithBeforeHookFail = &gm.ProtoScenario{
 
 var scenarioWithBeforeAndAfterHookFail = &gm.ProtoScenario{
 	ScenarioHeading: proto.String("Scenario Heading"),
-	Failed:          proto.Bool(true),
-	Skipped:         proto.Bool(false),
+	ExecutionStatus: gm.ExecutionStatus_FAILED.Enum(),
 	ExecutionTime:   proto.Int64(113163),
 	ScenarioItems: []*gm.ProtoItem{
 		newStepItem(false, true, []*gm.Fragment{newTextFragment("Some step")}),
@@ -274,32 +267,28 @@ var stepNotExecuted = &gm.ProtoItem{
 
 var scenarioWithBeforeStepFail = &gm.ProtoScenario{
 	ScenarioHeading: proto.String("Scenario Heading"),
-	Failed:          proto.Bool(true),
-	Skipped:         proto.Bool(false),
+	ExecutionStatus: gm.ExecutionStatus_FAILED.Enum(),
 	ExecutionTime:   proto.Int64(113163),
 	ScenarioItems:   []*gm.ProtoItem{stepWithBeforeHookFail, stepNotExecuted},
 }
 
 var scenarioWithAfterStepFail = &gm.ProtoScenario{
 	ScenarioHeading: proto.String("Scenario Heading"),
-	Failed:          proto.Bool(true),
-	Skipped:         proto.Bool(false),
+	ExecutionStatus: gm.ExecutionStatus_FAILED.Enum(),
 	ExecutionTime:   proto.Int64(113163),
 	ScenarioItems:   []*gm.ProtoItem{stepWithAfterHookFail, stepNotExecuted},
 }
 
 var scenarioWithBeforeAndAfterStepFail = &gm.ProtoScenario{
 	ScenarioHeading: proto.String("Scenario Heading"),
-	Failed:          proto.Bool(true),
-	Skipped:         proto.Bool(false),
+	ExecutionStatus: gm.ExecutionStatus_FAILED.Enum(),
 	ExecutionTime:   proto.Int64(113163),
 	ScenarioItems:   []*gm.ProtoItem{stepWithBeforeAndAfterHookFail, stepNotExecuted},
 }
 
 var scenarioWithStepFail = &gm.ProtoScenario{
 	ScenarioHeading: proto.String("Scenario Heading"),
-	Failed:          proto.Bool(true),
-	Skipped:         proto.Bool(false),
+	ExecutionStatus: gm.ExecutionStatus_FAILED.Enum(),
 	ExecutionTime:   proto.Int64(113163),
 	ScenarioItems:   []*gm.ProtoItem{newStepItem(false, false, []*gm.Fragment{newTextFragment("passing step")}), failedStep, stepNotExecuted},
 }

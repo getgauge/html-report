@@ -192,13 +192,13 @@ func toScenarioSummary(s *gm.ProtoSpec) *summary {
 	var sum summary
 	for _, item := range s.GetItems() {
 		if item.GetItemType() == gm.ProtoItem_Scenario {
-			scn := item.GetScenario()
-			if scn.GetFailed() {
+			switch item.GetScenario().GetExecutionStatus() {
+			case gm.ExecutionStatus_FAILED:
 				sum.Failed++
-			} else if scn.GetSkipped() {
-				sum.Skipped++
-			} else {
+			case gm.ExecutionStatus_PASSED:
 				sum.Passed++
+			case gm.ExecutionStatus_SKIPPED:
+				sum.Skipped++
 			}
 		}
 	}
@@ -318,13 +318,16 @@ func getStepStatus(res *gm.ProtoStepExecutionResult) status {
 }
 
 func getScenarioStatus(scn *gm.ProtoScenario) status {
-	if scn.GetFailed() {
+	switch scn.GetExecutionStatus() {
+	case gm.ExecutionStatus_FAILED:
 		return fail
-	}
-	if scn.GetSkipped() {
+	case gm.ExecutionStatus_PASSED:
+		return pass
+	case gm.ExecutionStatus_SKIPPED:
 		return skip
+	default:
+		return notExecuted
 	}
-	return pass
 }
 
 func formatTime(ms int64) string {
