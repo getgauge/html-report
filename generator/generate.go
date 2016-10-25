@@ -284,9 +284,7 @@ func generateSearchIndex(suiteRes *gm.ProtoSuiteResult, reportDir string) error 
 				addTagsFromScenario(s)
 			}
 			if tds := i.GetTableDrivenScenario(); tds != nil {
-				for _, s := range tds.GetScenarios() {
-					addTagsFromScenario(s)
-				}
+				addTagsFromScenario(tds.GetScenario())
 			}
 		}
 		specHeading := spec.GetSpecHeading()

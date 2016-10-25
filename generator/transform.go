@@ -162,9 +162,7 @@ func toSpec(res *gm.ProtoSpecResult) *spec {
 		case gm.ProtoItem_Scenario:
 			spec.Scenarios = append(spec.Scenarios, toScenario(item.GetScenario(), -1))
 		case gm.ProtoItem_TableDrivenScenario:
-			for i, sce := range item.GetTableDrivenScenario().GetScenarios() {
-				spec.Scenarios = append(spec.Scenarios, toScenario(sce, i))
-			}
+			spec.Scenarios = append(spec.Scenarios, toScenario(item.GetTableDrivenScenario().GetScenario(), 0))
 		}
 	}
 
