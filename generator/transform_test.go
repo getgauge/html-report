@@ -169,6 +169,46 @@ var specRes1 = &gm.ProtoSpecResult{
 	},
 }
 
+var datatableDrivenSpec = &gm.ProtoSpecResult{
+	Failed:        proto.Bool(false),
+	Skipped:       proto.Bool(false),
+	ExecutionTime: proto.Int64(211316),
+	ProtoSpec: &gm.ProtoSpec{
+		SpecHeading:   proto.String("specRes1"),
+		FileName:      proto.String("/tmp/gauge/specs/foobar.spec"),
+		IsTableDriven: proto.Bool(true),
+		Items: []*gm.ProtoItem{
+			newTableItem(
+				[]string{"Word", "Count"}, [][]string{
+					[]string{"Gauge", "3"},
+					[]string{"Mingle", "2"},
+				}),
+			&gm.ProtoItem{
+				ItemType: gm.ProtoItem_TableDrivenScenario.Enum(),
+				TableDrivenScenario: &gm.ProtoTableDrivenScenario{
+					Scenario: &gm.ProtoScenario{
+						ScenarioHeading: proto.String("Scenario 1"),
+						ExecutionStatus: gm.ExecutionStatus_FAILED.Enum(),
+						ScenarioItems:   []*gm.ProtoItem{newStepItem(true, false, []*gm.Fragment{newTextFragment("Step1")})},
+					},
+					TableRowIndex: proto.Int32(int32(0)),
+				},
+			},
+			&gm.ProtoItem{
+				ItemType: gm.ProtoItem_TableDrivenScenario.Enum(),
+				TableDrivenScenario: &gm.ProtoTableDrivenScenario{
+					Scenario: &gm.ProtoScenario{
+						ScenarioHeading: proto.String("Scenario 1"),
+						ExecutionStatus: gm.ExecutionStatus_PASSED.Enum(),
+						ScenarioItems:   []*gm.ProtoItem{newStepItem(false, false, []*gm.Fragment{newTextFragment("Step1")})},
+					},
+					TableRowIndex: proto.Int32(int32(1)),
+				},
+			},
+		},
+	},
+}
+
 var specRes2 = &gm.ProtoSpecResult{
 	Failed:        proto.Bool(true),
 	Skipped:       proto.Bool(false),
@@ -445,6 +485,59 @@ func TestToSpec(t *testing.T) {
 	got := toSpec(specRes1)
 	if !reflect.DeepEqual(got, want) {
 		t.Errorf("want:\n%q\ngot:\n%q\n", want, got)
+	}
+}
+
+func TestToSpecForTableDrivenSpec(t *testing.T) {
+	want := &spec{
+		CommentsBeforeTable: make([]string, 0),
+		CommentsAfterTable:  make([]string, 0),
+		Table: &table{
+			Headers: []string{"Word", "Count"},
+			Rows:    []*row{{Cells: []string{"Gauge", "3"}, Res: fail}, {Cells: []string{"Mingle", "2"}, Res: pass}},
+		},
+		Scenarios: []*scenario{
+			&scenario{
+				Heading:  "Scenario 1",
+				ExecTime: "00:00:00",
+				Items: []item{
+					&step{
+						Fragments: []*fragment{{FragmentKind: textFragmentKind, Text: "Step1"}},
+						Res:       &result{Status: fail, ExecTime: "00:03:31"},
+					},
+				},
+				Contexts:          make([]item, 0),
+				Teardown:          make([]item, 0),
+				ExecStatus:        fail,
+				TableRowIndex:     0,
+				BeforeHookFailure: nil,
+				AfterHookFailure:  nil,
+			},
+			&scenario{
+				Heading:  "Scenario 1",
+				ExecTime: "00:00:00",
+				Items: []item{
+					&step{
+						Fragments: []*fragment{{FragmentKind: textFragmentKind, Text: "Step1"}},
+						Res:       &result{Status: pass, ExecTime: "00:03:31"},
+					},
+				},
+				Contexts:          make([]item, 0),
+				Teardown:          make([]item, 0),
+				ExecStatus:        pass,
+				TableRowIndex:     1,
+				BeforeHookFailure: nil,
+				AfterHookFailure:  nil,
+			},
+		},
+		BeforeHookFailure: nil,
+		AfterHookFailure:  nil,
+	}
+
+	got := toSpec(datatableDrivenSpec)
+
+	if !reflect.DeepEqual(got, want) {
+		t.Errorf("want:\n%q\ngot:\n%q\n", want.Scenarios[0], got.Scenarios[0])
 	}
 }
 
