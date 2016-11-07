@@ -303,6 +303,9 @@ func generateSearchIndex(suiteRes *gm.ProtoSuiteResult, reportDir string) error 
 func generateIndexPage(suiteRes *gm.ProtoSuiteResult, w io.Writer) {
 	overview := toOverview(suiteRes, nil)
 	generateOverview(overview, w)
+	if suiteRes.GetPostHookFailure() != nil {
+		execTemplate(hookFailureDiv, w, toHookFailure(suiteRes.GetPostHookFailure(), "After Suite"))
+	}
 	execTemplate(specsStartDiv, w, nil)
 	execTemplate(sidebarDiv, w, toSidebar(suiteRes, nil))
 	if !suiteRes.GetFailed() {
