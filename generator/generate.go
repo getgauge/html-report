@@ -370,9 +370,6 @@ func generateSpecDiv(w io.Writer, res *gm.ProtoSpecResult) {
 	if spec.BeforeHookFailure != nil {
 		execTemplate(hookFailureDiv, w, spec.BeforeHookFailure)
 	}
-	if spec.AfterHookFailure != nil {
-		execTemplate(hookFailureDiv, w, spec.AfterHookFailure)
-	}
 
 	execTemplate(specsItemsContentsDiv, w, nil)
 	execTemplate(specCommentsAndTableTag, w, spec)
@@ -385,6 +382,11 @@ func generateSpecDiv(w io.Writer, res *gm.ProtoSpecResult) {
 
 	execTemplate(endDiv, w, nil)
 	execTemplate(endDiv, w, nil)
+
+	if spec.AfterHookFailure != nil {
+		execTemplate(hookFailureDiv, w, spec.AfterHookFailure)
+	}
+
 	execTemplate(endDiv, w, nil)
 }
 
