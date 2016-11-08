@@ -147,14 +147,23 @@ var initializers = {
                 }
             }
             $(".spec-list a").each(function() {
-                var href=$(this).attr('href');
-                var existsIn = function(arr) {
-                    return typeof arr !== 'undefined' && $.inArray(href, arr)>=0;
-                }
-                if(existsIn(tagMatches) || existsIn(specMatches) || searchText === '')
-                    $(this).show();
-                else
+								var relPath = $(this).attr('href').split("/");
+								var fileName = relPath[relPath.length - 1];
+								var existsIn = function(arr) {
+										if (arr === undefined) {
+												return false;
+										}
+										arr = $.grep(arr, function(a, i) {
+												return a.indexOf(fileName) > -1;
+										});
+										return arr.length > 0;
+								}
+                if(existsIn(tagMatches) || existsIn(specMatches) || searchText === '') {
+										$(this).show();
+								}
+                else{
                     $(this).hide();
+								}
             })
             showFirstSpecContent();
         });
