@@ -183,7 +183,7 @@ var initializers = {
                 return '<div class="autocomplete-suggestion" data-value="'+ item[0] +'"><i class="fa fa-' + iconClass + '" aria-hidden="true"></i>&nbsp;' + item[0] + '</div>';
             },
             onSelect: function(e, term, item){
-                $('#searchSpecifications').val($(item).data('value'));
+                $('#searchSpecifications').val($(item).data('value')).change();
             }
         });
     },
