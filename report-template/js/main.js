@@ -94,6 +94,9 @@ var initializers = {
                     $(this).addClass('active');
                 }
             });
+            if ($('li.spec-name:visible:first').length === 0) {
+                $('#specificationContainer').hide();
+            }
         } else {
             $('.total-specs').addClass('active');
         }
