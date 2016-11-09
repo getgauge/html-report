@@ -56,6 +56,35 @@ function showFirstSpecContent() {
     }
 }
 
+function filterSidebar(searchText) {
+    if (!index) return;
+    tagMatches = index.tags[searchText];
+    $(".spec-list a").each(function() {
+        var relPath = $(this).attr('href').split("/");
+        var fileName = relPath[relPath.length - 1];
+        var existsIn = function(arr) {
+            if (arr === undefined) {
+                return false;
+            }
+            arr = $.grep(arr, function(a, i) {
+                return a.indexOf(fileName) > -1;
+            });
+            return arr.length > 0;
+        }
+        if (existsIn(tagMatches) || $(this).text().trim().indexOf(searchText) > -1 || searchText === '') {
+            $(this).show();
+        } else {
+            $(this).hide();
+        }
+    })
+}
+
+function resetSidebar() {
+    $('#listOfSpecifications li.spec-name').each(function() {
+        $(this).show();
+    });
+}
+
 var initializers = {
     "initializeFilters": function() {
         if (sessionStorage.FilterStatus) {
@@ -67,6 +96,10 @@ var initializers = {
             });
         } else {
             $('.total-specs').addClass('active');
+        }
+        if (sessionStorage.SearchText) {
+            $('#searchSpecifications').val(sessionStorage.SearchText);
+            filterSidebar(sessionStorage.SearchText);
         }
     },
     "attachScenarioToggle": function() {
@@ -95,9 +128,7 @@ var initializers = {
         });
         $('.total-specs').click(function() {
             resetState();
-            $('#listOfSpecifications li.spec-name').each(function() {
-                $(this).show();
-            });
+            resetSidebar();
             sessionStorage.removeItem('FilterStatus');
             showFirstSpecContent();
             $(this).addClass('active');
@@ -135,33 +166,14 @@ var initializers = {
     },
     "registerSearch": function() {
         $('#searchSpecifications').change(function() {
-            if (!index) return;
-            searchText = $(this).val();
-            tagMatches = index.tags[searchText];
-            specMatches = [];
-            for (var spec in index.specs) {
-                if (index.specs.hasOwnProperty(spec) && spec.startsWith(searchText)) {
-                    index.specs[spec].forEach(function(x) { specMatches.push(x) });
-                }
+            searchText = $(this).val().trim();
+            if (searchText.length == 0) {
+                sessionStorage.removeItem('SearchText');
+                resetSidebar();
+            } else {
+                sessionStorage.SearchText = searchText;
+                filterSidebar(searchText);
             }
-            $(".spec-list a").each(function() {
-                var relPath = $(this).attr('href').split("/");
-                var fileName = relPath[relPath.length - 1];
-                var existsIn = function(arr) {
-                    if (arr === undefined) {
-                        return false;
-                    }
-                    arr = $.grep(arr, function(a, i) {
-                        return a.indexOf(fileName) > -1;
-                    });
-                    return arr.length > 0;
-                }
-                if (existsIn(tagMatches) || existsIn(specMatches) || searchText === '') {
-                    $(this).show();
-                } else {
-                    $(this).hide();
-                }
-            })
             showFirstSpecContent();
         });
     },
