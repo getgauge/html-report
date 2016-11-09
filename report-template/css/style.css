@@ -1064,6 +1064,9 @@ footer p {
 
     .error-message {
         max-width: 45rem;
+        display: block;
+        overflow: scroll;
+        overflow-wrap: break-word;
     }
 
     .stacktrace {
