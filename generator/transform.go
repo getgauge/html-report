@@ -129,6 +129,29 @@ func getState(r *specsMeta) int {
 	return 1
 }
 
+type bySceStatus []*scenario
+
+func (s bySceStatus) Len() int {
+	return len(s)
+}
+func (s bySceStatus) Swap(i, j int) {
+	s[i], s[j] = s[j], s[i]
+}
+
+func (s bySceStatus) Less(i, j int) bool {
+	return getSceState(s[i]) < getSceState(s[j])
+}
+
+func getSceState(s *scenario) int {
+	if s.ExecStatus == fail {
+		return -1
+	}
+	if s.ExecStatus == skip {
+		return 0
+	}
+	return 1
+}
+
 func toSpecHeader(res *gm.ProtoSpecResult) *specHeader {
 	return &specHeader{
 		SpecName: res.ProtoSpec.GetSpecHeading(),
@@ -169,6 +192,7 @@ func toSpec(res *gm.ProtoSpecResult) *spec {
 	if res.GetProtoSpec().GetIsTableDriven() {
 		computeTableDrivenStatuses(spec)
 	}
+	sort.Sort(bySceStatus(spec.Scenarios))
 	return spec
 }
 

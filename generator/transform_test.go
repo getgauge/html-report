@@ -305,6 +305,15 @@ var scnWithHookFailure = &gm.ProtoScenario{
 	},
 }
 
+var skippedProtoSce = &gm.ProtoScenario{
+	ScenarioHeading: proto.String("Vowel counts in single word"),
+	ExecutionStatus: gm.ExecutionStatus_SKIPPED.Enum(),
+	ExecutionTime:   proto.Int64(0),
+	ScenarioItems: []*gm.ProtoItem{
+		newStepItem(true, false, []*gm.Fragment{newTextFragment("Step1")}),
+	},
+}
+
 var suiteRes2 = &gm.ProtoSuiteResult{
 	SpecResults: []*gm.ProtoSpecResult{specRes1, specRes2, specRes3},
 }
@@ -485,6 +494,45 @@ func TestToSpec(t *testing.T) {
 	got := toSpec(specRes1)
 	if !reflect.DeepEqual(got, want) {
 		t.Errorf("want:\n%q\ngot:\n%q\n", want, got)
+	}
+}
+
+func TestToSpecWithScenariosInOrder(t *testing.T) {
+	specRes := &gm.ProtoSpecResult{
+		Failed:        proto.Bool(true),
+		Skipped:       proto.Bool(false),
+		ExecutionTime: proto.Int64(211316),
+		ProtoSpec: &gm.ProtoSpec{
+			SpecHeading: proto.String("specRes1"),
+			FileName:    proto.String("/tmp/gauge/specs/foobar.spec"),
+			Items: []*gm.ProtoItem{
+				newScenarioItem(scn),
+				newScenarioItem(scnWithHookFailure),
+				newScenarioItem(scnWithHookFailure),
+				newScenarioItem(skippedProtoSce),
+				newScenarioItem(scn),
+			},
+		},
+	}
+
+	got := toSpec(specRes)
+	if len(got.Scenarios) != 5 {
+		t.Errorf("want:%q\ngot:%q\n", 5, len(got.Scenarios))
+	}
+	if got.Scenarios[0].ExecStatus != fail {
+		t.Errorf("want:%q\ngot:%q\n", fail, got.Scenarios[0].ExecStatus)
+	}
+	if got.Scenarios[1].ExecStatus != fail {
+		t.Errorf("want:%q\ngot:%q\n", fail, got.Scenarios[1].ExecStatus)
+	}
+	if got.Scenarios[2].ExecStatus != skip {
+		t.Errorf("want:%q\ngot:%q\n", skip, got.Scenarios[2].ExecStatus)
+	}
+	if got.Scenarios[3].ExecStatus != pass {
+		t.Errorf("want:%q\ngot:%q\n", pass, got.Scenarios[3].ExecStatus)
+	}
+	if got.Scenarios[4].ExecStatus != pass {
+		t.Errorf("want:%q\ngot:%q\n", pass, got.Scenarios[4].ExecStatus)
 	}
 }
 
