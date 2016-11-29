@@ -73,9 +73,9 @@ function filterSidebar(searchText) {
         }
         specHeadingText = $(this).text().trim().toLowerCase();
         if (existsIn(tagMatches) || specHeadingText.indexOf(searchText.toLowerCase()) > -1 || searchText === '') {
-            $(this).show();
+            $($(this).find('li')[0]).show();
         } else {
-            $(this).hide();
+            $($(this).find('li')[0]).hide();
         }
     })
 }
