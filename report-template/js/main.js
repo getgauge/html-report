@@ -47,6 +47,8 @@ function filterSpecList(status) {
             $(this).hide();
         }
     });
+    var specs = $(".spec-list a").filter(function(){return $(this).children().first().is(':visible');})
+    filterSidebar(specs, $('#searchSpecifications').val().trim());
 }
 
 function showFirstSpecContent() {
@@ -56,10 +58,10 @@ function showFirstSpecContent() {
     }
 }
 
-function filterSidebar(searchText) {
+function filterSidebar(specsCollection,searchText) {
     if (!index) return;
     tagMatches = index.tags[searchText];
-    $(".spec-list a").each(function() {
+    specsCollection.each(function() {
         var relPath = $(this).attr('href').split("/");
         var fileName = relPath[relPath.length - 1];
         var existsIn = function(arr) {
@@ -103,7 +105,8 @@ var initializers = {
         }
         if (sessionStorage.SearchText) {
             $('#searchSpecifications').val(sessionStorage.SearchText);
-            filterSidebar(sessionStorage.SearchText);
+            var specs = $(".spec-list a");
+            filterSidebar(specs,sessionStorage.SearchText);
         }
     },
     "attachScenarioToggle": function() {
@@ -134,6 +137,8 @@ var initializers = {
             resetState();
             resetSidebar();
             sessionStorage.removeItem('FilterStatus');
+            var specs = $(".spec-list a").filter(function(){return $(this).children().first().is(':visible');})
+            filterSidebar(specs, $('#searchSpecifications').val().trim());
             showFirstSpecContent();
             $(this).addClass('active');
         });
@@ -176,7 +181,8 @@ var initializers = {
                 resetSidebar();
             } else {
                 sessionStorage.SearchText = searchText;
-                filterSidebar(searchText);
+                var specs = $(".spec-list a");
+                filterSidebar(specs, searchText);
             }
             showFirstSpecContent();
         });
