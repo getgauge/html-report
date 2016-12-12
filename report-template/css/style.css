@@ -893,7 +893,7 @@ footer p {
 
 .message-container i {
     cursor: pointer;
-} 
+}
 
 .message-container .messages{
     display: block;
@@ -1126,8 +1126,8 @@ footer p {
 }
 
 .spec-filename label {
-    color: #fff; 
-    vertical-align: middle; 
+    color: #fff;
+    vertical-align: middle;
     padding-right: 7px;
 }
 
@@ -1145,7 +1145,7 @@ a#view-env{
 }
 
 .env-vars .popup-header {
-    display: inline-block; 
+    display: inline-block;
     width: 100%;
 }
 
@@ -1155,7 +1155,7 @@ a#view-env{
 }
 
 svg#pie-chart {
-	width  : 400px;
+	width  : 200px;
 	height : 150px;
 }
 
@@ -1200,7 +1200,7 @@ svg#pie-chart {
 #specificationContainer .report_test-results {
     float: right;
     padding: 0;
-    
+
 }
 
 #specificationContainer .report_test-results ul li {

@@ -227,8 +227,8 @@ var initializers = {
             coveredAngle = startAngle + results[i] * 360 / total;
             if (total === results[i])
                 coveredAngle -= 0.05;
-            $(paths[i]).attr('d', describeArc(200, 75, 72, startAngle, coveredAngle));
-            $(paths[i]).next('path.shadow').attr('d', describeArc(200, 75, 75, startAngle, coveredAngle));
+            $(paths[i]).attr('d', describeArc(100, 75, 72, startAngle, coveredAngle));
+            $(paths[i]).next('path.shadow').attr('d', describeArc(100, 75, 75, startAngle, coveredAngle));
             if (results[i] === 0 || total === results[i])
                 $(paths[i]).attr('stroke-width', 0);
             startAngle = coveredAngle;
