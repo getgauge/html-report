@@ -322,6 +322,17 @@ var wStepWithSpecialTableParam = `
     </span>
 </div>`
 
+var wStepFailDiv = `<div class="error-container failed">
+  <div class="exception-container">
+      <div class="exception">
+        <h4 class="error-message">
+          <pre>expected:&lt;foo [foo] foo&gt; but was:&lt;foo [bar] foo&gt;</pre>
+        </h4>
+        <pre class="stacktrace">stacktrace</pre>
+      </div>
+  </div>
+</div>`
+
 var stepWithBracketsInFragment = &step{
 	Fragments: []*fragment{
 		{FragmentKind: textFragmentKind, Text: "Say "},
@@ -414,6 +425,7 @@ var reportGenTests = []reportGenTest{
 	{"generate skipped step skipped reason div", skippedReasonDiv, skippedStepRes, wSkippedStepWithSkippedReason},
 	{"generate step body div with file special param", stepBodyDiv, stepWithFileParam, wStepWithFileParam},
 	{"generate step body div with special table param", stepBodyDiv, stepWithSpecialTableParam, wStepWithSpecialTableParam},
+	{"generate step failure div", stepFailureDiv, &result{ErrorMessage: "expected:<foo [foo] foo> but was:<foo [bar] foo>", StackTrace: "stacktrace"}, wStepFailDiv},
 }
 
 func TestExecute(t *testing.T) {

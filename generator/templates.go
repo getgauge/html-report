@@ -120,7 +120,7 @@ const hookFailureDiv = `<div class="error-container failed">
   </div>
   <div class="exception-container hidden">
       <div class="exception">
-        <pre class="stacktrace">{{.StackTrace}}</pre>
+        <pre class="stacktrace">{{.StackTrace | escapeHTML | encodeNewLine}}</pre>
       </div>
       {{if .Screenshot}}<div class="screenshot-container">
         <a href="data:image/png;base64,{{.Screenshot}}" rel="lightbox">
@@ -291,9 +291,9 @@ const stepFailureDiv = `<div class="error-container failed">
   <div class="exception-container">
       <div class="exception">
         <h4 class="error-message">
-          <pre>{{.ErrorMessage}}</pre>
+          <pre>{{.ErrorMessage | escapeHTML | encodeNewLine}}</pre>
         </h4>
-        <pre class="stacktrace">{{.StackTrace}}</pre>
+        <pre class="stacktrace">{{.StackTrace | escapeHTML | encodeNewLine}}</pre>
       </div>
       {{if .Screenshot}}<div class="screenshot-container">
         <a href="data:image/png;base64,{{.Screenshot}}" rel="lightbox">
