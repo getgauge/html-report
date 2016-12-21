@@ -184,9 +184,9 @@ var wTagsDiv = `<div class="tags scenario_tags contentSection">
 </div>`
 
 var wSpecCommentsWithTableTag = `<span></span>
-<span><p>This is an executable specification file. This file follows markdown syntax.</p></span>
+<span>&lt;p&gt;This is an executable specification file. This file follows markdown syntax.&lt;/p&gt;</span>
 <span></span>
-<span><p>To execute this specification, run</p></span><span><pre><code>gauge specs</code></pre></span>
+<span>&lt;p&gt;To execute this specification, run&lt;/p&gt;</span><span>&lt;pre&gt;&lt;code&gt;gauge specs&lt;/code&gt;&lt;/pre&gt;</span>
 <span></span>
 <table class="data-table">
   <tr>
@@ -194,28 +194,28 @@ var wSpecCommentsWithTableTag = `<span></span>
     <th>Count</th>
   </tr>
   <tbody data-rowCount=3>
-    <tr class='row-selector passed selected' data-rowIndex=0>
+    <tr class='row-selector passed selected' data-rowIndex='0'>
       <td>Gauge</td>
       <td>3</td>
     </tr>
-    <tr class='row-selector failed' data-rowIndex=1>
+    <tr class='row-selector failed' data-rowIndex='1'>
       <td>Mingle</td>
       <td>2</td>
     </tr>
-    <tr class='row-selector skipped' data-rowIndex=2>
+    <tr class='row-selector skipped' data-rowIndex='2'>
       <td>foobar</td>
       <td>1</td>
     </tr>
   </tbody>
 </table>
-<span><p>Comment 1</p></span>
-<span><p>Comment 2</p></span>
-<span><p>Comment 3</p></span>`
+<span>&lt;p&gt;Comment 1&lt;/p&gt;</span>
+<span>&lt;p&gt;Comment 2&lt;/p&gt;</span>
+<span>&lt;p&gt;Comment 3&lt;/p&gt;</span>`
 
 var wSpecCommentsWithoutTableTag = `<span></span>
-<span><p>This is an executable specification file. This file follows markdown syntax.</p></span><span></span>
-<span><p>To execute this specification, run</p></span>
-<span><pre><code>gauge specs</code></pre></span>
+<span>&lt;p&gt;This is an executable specification file. This file follows markdown syntax.&lt;/p&gt;</span><span></span>
+<span>&lt;p&gt;To execute this specification, run&lt;/p&gt;</span>
+<span>&lt;pre&gt;&lt;code&gt;gauge specs&lt;/code&gt;&lt;/pre&gt;</span>
 <span></span>`
 
 var wScenarioContainerStartPassDiv = `<div class='scenario-container passed'>`
@@ -276,7 +276,7 @@ var wStepEndDiv = `<span>Say</span><span class='parameter'>"hi"</span><span>to</
 
 var wPassStepBodyDivWithBracketsInFragment = `
 	<span>Say</span>
-	<span class='parameter'>"good <a> morning"</span>
+	<span class='parameter'>"good &lt;a&gt; morning"</span>
 	<span>to</span>
 	<span class='parameter'>"gauge"</span>
 </div>`

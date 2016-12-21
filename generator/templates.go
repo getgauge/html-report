@@ -120,7 +120,7 @@ const hookFailureDiv = `<div class="error-container failed">
   </div>
   <div class="exception-container hidden">
       <div class="exception">
-        <pre class="stacktrace">{{.StackTrace | escapeHTML | encodeNewLine}}</pre>
+        <pre class="stacktrace">{{.StackTrace}}</pre>
       </div>
       {{if .Screenshot}}<div class="screenshot-container">
         <a href="data:image/png;base64,{{.Screenshot}}" rel="lightbox">
@@ -139,7 +139,7 @@ const tagsDiv = `{{if .Tags}}<div class="tags scenario_tags contentSection">
 const messageDiv = `{{if .Messages}}<div class="message-container">
   <i class="fa fa-minus-square" aria-hidden="true"></i>
   <div class="messages">
-    {{range .Messages}}<div class="step-message">{{. | escapeHTML | encodeNewLine}}</div>{{end}}
+    {{range .Messages}}<div class="step-message">{{.}} </div>{{end}}
   </div>
 </div>{{end}}`
 
@@ -176,9 +176,9 @@ const specHeaderStartTag = `<header class="curr-spec">
     <span class="time">{{.ExecTime}}</span>
   </div>`
 
-const scenarioContainerStartDiv = `{{if eq .ExecStatus 0}}<div class='scenario-container passed{{if gt .TableRowIndex 0}} hidden{{end}}'{{if ne .TableRowIndex -1}} data-tablerow={{.TableRowIndex}}{{end}}>
-{{else if eq .ExecStatus 1}}<div class='scenario-container failed{{if gt .TableRowIndex 0}} hidden{{end}}'{{if ne .TableRowIndex -1}}  data-tablerow={{.TableRowIndex}}{{end}}>
-{{else}}<div class='scenario-container skipped{{if gt .TableRowIndex 0}} hidden{{end}}'{{if ne .TableRowIndex -1}}  data-tablerow={{.TableRowIndex}}{{end}}>{{end}}`
+const scenarioContainerStartDiv = `<div class='scenario-container {{if eq .ExecStatus 0}}passed{{if gt .TableRowIndex 0}} hidden{{end}}'{{if ne .TableRowIndex -1}} data-tablerow='{{.TableRowIndex}}'{{end}}>
+{{else if eq .ExecStatus 1}}failed{{if gt .TableRowIndex 0}} hidden{{end}}'{{if ne .TableRowIndex -1}}  data-tablerow='{{.TableRowIndex}}'{{end}}>
+{{else}}skipped{{if gt .TableRowIndex 0}} hidden{{end}}'{{if ne .TableRowIndex -1}}  data-tablerow='{{.TableRowIndex}}'{{end}}>{{end}}`
 
 const scenarioHeaderStartDiv = `<div class="scenario-head">
   <h3 class="head borderBottom">{{.Heading}}</h3>
@@ -191,9 +191,9 @@ const specCommentsAndTableTag = `{{range .CommentsBeforeTable}}<span>{{. | parse
   </tr>
   <tbody data-rowCount={{len .Table.Rows}}>
     {{range $index, $row := .Table.Rows}}
-      {{if eq $row.Res 0}}<tr class='row-selector passed{{if eq $index 0}} selected{{end}}' data-rowIndex={{$index}}>
-      {{else if eq $row.Res 1}}<tr class='row-selector failed{{if eq $index 0}} selected{{end}}' data-rowIndex={{$index}}>
-      {{else}}<tr class='row-selector skipped{{if eq $index 0}} selected{{end}}' data-rowIndex={{$index}}>
+      {{if eq $row.Res 0}}<tr class='row-selector passed{{if eq $index 0}} selected{{end}}' data-rowIndex='{{$index}}'>
+      {{else if eq $row.Res 1}}<tr class='row-selector failed{{if eq $index 0}} selected{{end}}' data-rowIndex='{{$index}}'>
+      {{else}}<tr class='row-selector skipped{{if eq $index 0}} selected{{end}}' data-rowIndex='{{$index}}'>
       {{end}}
         {{range $row.Cells}}<td>{{.}}</td>{{end}}
     </tr>
@@ -291,9 +291,9 @@ const stepFailureDiv = `<div class="error-container failed">
   <div class="exception-container">
       <div class="exception">
         <h4 class="error-message">
-          <pre>{{.ErrorMessage | escapeHTML | encodeNewLine}}</pre>
+          <pre>{{.ErrorMessage}}</pre>
         </h4>
-        <pre class="stacktrace">{{.StackTrace | escapeHTML | encodeNewLine}}</pre>
+        <pre class="stacktrace">{{.StackTrace}}</pre>
       </div>
       {{if .Screenshot}}<div class="screenshot-container">
         <a href="data:image/png;base64,{{.Screenshot}}" rel="lightbox">
@@ -317,8 +317,8 @@ const nestedConceptDiv = `<div class="nested concept-steps">`
 
 const javascriptIncludes = `
   <script type="text/javascript">
-    var loadingImage = '{{.BasePath}}images/loading.gif';
-    var closeButton = '{{.BasePath}}images/close.gif';
+    var loadingImage = "{{.BasePath}}images/loading.gif";
+    var closeButton = "{{.BasePath}}images/close.gif";
   </script>
   <script src="{{.BasePath}}js/lightbox.js"></script>
   <script src="{{.BasePath}}js/jquery-3.1.0.min.js" type="text/javascript"></script>
