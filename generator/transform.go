@@ -19,6 +19,7 @@ package generator
 
 import (
 	"encoding/base64"
+	"html/template"
 	"path/filepath"
 	"sort"
 	"strings"
@@ -164,20 +165,18 @@ func toSpecHeader(res *gm.ProtoSpecResult) *specHeader {
 
 func toSpec(res *gm.ProtoSpecResult) *spec {
 	spec := &spec{
-		CommentsBeforeTable: make([]string, 0),
-		CommentsAfterTable:  make([]string, 0),
-		Scenarios:           make([]*scenario, 0),
-		BeforeHookFailure:   toHookFailure(res.GetProtoSpec().GetPreHookFailure(), "Before Spec"),
-		AfterHookFailure:    toHookFailure(res.GetProtoSpec().GetPostHookFailure(), "After Spec"),
+		Scenarios:         make([]*scenario, 0),
+		BeforeHookFailure: toHookFailure(res.GetProtoSpec().GetPreHookFailure(), "Before Spec"),
+		AfterHookFailure:  toHookFailure(res.GetProtoSpec().GetPostHookFailure(), "After Spec"),
 	}
 	isTableScanned := false
 	for _, item := range res.GetProtoSpec().GetItems() {
 		switch item.GetItemType() {
 		case gm.ProtoItem_Comment:
 			if isTableScanned {
-				spec.CommentsAfterTable = append(spec.CommentsAfterTable, item.GetComment().GetText())
+				spec.CommentsAfterTable = append(spec.CommentsAfterTable, template.HTML(parseMarkdown(escapeHTML(item.GetComment().GetText()))))
 			} else {
-				spec.CommentsBeforeTable = append(spec.CommentsBeforeTable, item.GetComment().GetText())
+				spec.CommentsBeforeTable = append(spec.CommentsBeforeTable, template.HTML(parseMarkdown(escapeHTML(item.GetComment().GetText()))))
 			}
 		case gm.ProtoItem_Table:
 			spec.Table = toTable(item.GetTable())
@@ -244,7 +243,7 @@ func toScenario(scn *gm.ProtoScenario, tableRowIndex int) *scenario {
 }
 
 func toComment(protoComment *gm.ProtoComment) *comment {
-	return &comment{Text: protoComment.GetText()}
+	return &comment{Text: template.HTML(parseMarkdown(escapeHTML(protoComment.GetText())))}
 }
 
 func toStep(protoStep *gm.ProtoStep) *step {
@@ -255,7 +254,9 @@ func toStep(protoStep *gm.ProtoStep) *step {
 		StackTrace:   res.GetStackTrace(),
 		ErrorMessage: res.GetErrorMessage(),
 		ExecTime:     formatTime(res.GetExecutionTime()),
-		Messages:     res.GetMessage(),
+	}
+	for _, m := range res.GetMessage() {
+		result.Messages = append(result.Messages, template.HTML(parseMarkdown(encodeNewLine(escapeHTML(m)))))
 	}
 	if protoStep.GetStepExecutionResult().GetSkipped() {
 		result.SkippedReason = protoStep.GetStepExecutionResult().GetSkippedReason()

@@ -19,6 +19,7 @@ package generator
 
 import (
 	"encoding/base64"
+	"html/template"
 	"path/filepath"
 	"reflect"
 	"testing"
@@ -482,12 +483,12 @@ func TestToSpecHeader(t *testing.T) {
 
 func TestToSpec(t *testing.T) {
 	want := &spec{
-		CommentsBeforeTable: []string{"\n", "This is an executable specification file. This file follows markdown syntax.", "\n", "To execute this specification, run", "\tgauge specs", "\n"},
+		CommentsBeforeTable: []template.HTML{template.HTML(""), template.HTML("<p>This is an executable specification file. This file follows markdown syntax.</p>\n"), template.HTML(""), template.HTML("<p>To execute this specification, run</p>\n"), template.HTML("<pre><code>gauge specs\n</code></pre>\n"), template.HTML("")},
 		Table: &table{
 			Headers: []string{"Word", "Count"},
 			Rows:    []*row{{Cells: []string{"Gauge", "3"}, Res: pass}, {Cells: []string{"Mingle", "2"}, Res: pass}},
 		},
-		CommentsAfterTable: []string{"Comment 1", "Comment 2", "Comment 3"},
+		CommentsAfterTable: []template.HTML{template.HTML("<p>Comment 1</p>\n"), template.HTML("<p>Comment 2</p>\n"), template.HTML("<p>Comment 3</p>\n")},
 		Scenarios:          make([]*scenario, 0),
 	}
 
@@ -538,8 +539,6 @@ func TestToSpecWithScenariosInOrder(t *testing.T) {
 
 func TestToSpecForTableDrivenSpec(t *testing.T) {
 	want := &spec{
-		CommentsBeforeTable: make([]string, 0),
-		CommentsAfterTable:  make([]string, 0),
 		Table: &table{
 			Headers: []string{"Word", "Count"},
 			Rows:    []*row{{Cells: []string{"Gauge", "3"}, Res: fail}, {Cells: []string{"Mingle", "2"}, Res: pass}},
@@ -592,11 +591,9 @@ func TestToSpecForTableDrivenSpec(t *testing.T) {
 func TestToSpecWithHookFailure(t *testing.T) {
 	encodedScreenShot := base64.StdEncoding.EncodeToString([]byte("Screenshot"))
 	want := &spec{
-		CommentsBeforeTable: []string{},
-		CommentsAfterTable:  []string{},
-		Scenarios:           make([]*scenario, 0),
-		BeforeHookFailure:   newHookFailure("Before Spec", "err", encodedScreenShot, "Stacktrace"),
-		AfterHookFailure:    newHookFailure("After Spec", "err", encodedScreenShot, "Stacktrace"),
+		Scenarios:         make([]*scenario, 0),
+		BeforeHookFailure: newHookFailure("Before Spec", "err", encodedScreenShot, "Stacktrace"),
+		AfterHookFailure:  newHookFailure("After Spec", "err", encodedScreenShot, "Stacktrace"),
 	}
 
 	got := toSpec(specResWithSpecHookFailure)
@@ -693,18 +690,18 @@ func TestToScenario(t *testing.T) {
 			},
 		},
 		Items: []item{
-			&comment{Text: "Comment0"},
+			&comment{Text: "<p>Comment0</p>\n"},
 			&step{
 				Fragments: []*fragment{{FragmentKind: textFragmentKind, Text: "Step1"}},
 				Res:       &result{Status: fail, ExecTime: "00:03:31"},
 			},
-			&comment{Text: "Comment1"},
-			&comment{Text: "Comment2"},
+			&comment{Text: "<p>Comment1</p>\n"},
+			&comment{Text: "<p>Comment2</p>\n"},
 			&step{
 				Fragments: []*fragment{{FragmentKind: textFragmentKind, Text: "Step2"}},
 				Res:       &result{Status: pass, ExecTime: "00:03:31"},
 			},
-			&comment{Text: "Comment3"},
+			&comment{Text: "<p>Comment3</p>\n"},
 		},
 		Teardown: []item{
 			&step{
@@ -875,7 +872,7 @@ func TestToStepWithAfterHookFailure(t *testing.T) {
 }
 
 func TestToComment(t *testing.T) {
-	want := &comment{Text: "Whatever"}
+	want := &comment{Text: "<p>Whatever</p>\n"}
 
 	got := toComment(newCommentItem("Whatever").GetComment())
 	if !reflect.DeepEqual(got, want) {

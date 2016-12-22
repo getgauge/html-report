@@ -19,6 +19,7 @@ package generator
 
 import (
 	"bytes"
+	"html/template"
 	"regexp"
 	"testing"
 )
@@ -184,9 +185,9 @@ var wTagsDiv = `<div class="tags scenario_tags contentSection">
 </div>`
 
 var wSpecCommentsWithTableTag = `<span></span>
-<span>&lt;p&gt;This is an executable specification file. This file follows markdown syntax.&lt;/p&gt;</span>
+<span>This is an executable specification file. This file follows markdown syntax.</span>
 <span></span>
-<span>&lt;p&gt;To execute this specification, run&lt;/p&gt;</span><span>&lt;pre&gt;&lt;code&gt;gauge specs&lt;/code&gt;&lt;/pre&gt;</span>
+<span>To execute this specification, run</span><span>gauge specs</span>
 <span></span>
 <table class="data-table">
   <tr>
@@ -208,14 +209,14 @@ var wSpecCommentsWithTableTag = `<span></span>
     </tr>
   </tbody>
 </table>
-<span>&lt;p&gt;Comment 1&lt;/p&gt;</span>
-<span>&lt;p&gt;Comment 2&lt;/p&gt;</span>
-<span>&lt;p&gt;Comment 3&lt;/p&gt;</span>`
+<span>Comment 1</span>
+<span>Comment 2</span>
+<span>Comment 3</span>`
 
 var wSpecCommentsWithoutTableTag = `<span></span>
-<span>&lt;p&gt;This is an executable specification file. This file follows markdown syntax.&lt;/p&gt;</span><span></span>
-<span>&lt;p&gt;To execute this specification, run&lt;/p&gt;</span>
-<span>&lt;pre&gt;&lt;code&gt;gauge specs&lt;/code&gt;&lt;/pre&gt;</span>
+<span>This is an executable specification file. This file follows markdown syntax.</span><span></span>
+<span>To execute this specification, run</span>
+<span>gauge specs</span>
 <span></span>`
 
 var wScenarioContainerStartPassDiv = `<div class='scenario-container passed'>`
@@ -500,8 +501,8 @@ func newSpec(withTable bool) *spec {
 		},
 	}
 
-	c1 := []string{"\n", "This is an executable specification file. This file follows markdown syntax.", "\n", "To execute this specification, run", "\tgauge specs", "\n"}
-	c2 := []string{"Comment 1", "Comment 2", "Comment 3"}
+	c1 := []template.HTML{template.HTML("\n"), template.HTML("This is an executable specification file. This file follows markdown syntax."), template.HTML("\n"), template.HTML("To execute this specification, run"), template.HTML("\tgauge specs"), template.HTML("\n")}
+	c2 := []template.HTML{template.HTML("Comment 1"), template.HTML("Comment 2"), template.HTML("Comment 3")}
 
 	if withTable {
 		return &spec{

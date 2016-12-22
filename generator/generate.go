@@ -24,6 +24,7 @@ import (
 	"log"
 	"os"
 	"path/filepath"
+	"strings"
 
 	"github.com/getgauge/common"
 	gm "github.com/getgauge/html-report/gauge_messages"
@@ -88,9 +89,9 @@ type table struct {
 }
 
 type spec struct {
-	CommentsBeforeTable []string
+	CommentsBeforeTable []template.HTML
 	Table               *table
-	CommentsAfterTable  []string
+	CommentsAfterTable  []template.HTML
 	Scenarios           []*scenario
 	BeforeHookFailure   *hookFailure
 	AfterHookFailure    *hookFailure
@@ -142,7 +143,7 @@ func (c *concept) kind() kind {
 }
 
 type comment struct {
-	Text string
+	Text template.HTML
 }
 
 func (c *comment) kind() kind {
@@ -156,7 +157,7 @@ type result struct {
 	ErrorMessage  string
 	ExecTime      string
 	SkippedReason string
-	Messages      []string
+	Messages      []template.HTML
 }
 
 type searchIndex struct {
@@ -173,14 +174,19 @@ const (
 	notExecuted
 )
 
-func execTemplate(tmplName string, w io.Writer, data interface{}) {
-	var parseMarkdown = func(args ...interface{}) string {
-		s := blackfriday.MarkdownCommon([]byte(fmt.Sprintf("%s", args...)))
-		return string(s)
-	}
+var parseMarkdown = func(args ...interface{}) string {
+	s := blackfriday.MarkdownCommon([]byte(fmt.Sprintf("%s", args...)))
+	return string(s)
+}
 
-	var funcs = template.FuncMap{"parseMarkdown": parseMarkdown}
-	tmpl, err := template.New("Reports").Funcs(funcs).Parse(tmplName)
+var escapeHTML = template.HTMLEscapeString
+
+var encodeNewLine = func(s string) string {
+	return strings.Replace(s, "\n", "<br/>", -1)
+}
+
+func execTemplate(tmplName string, w io.Writer, data interface{}) {
+	tmpl, err := template.New("Reports").Parse(tmplName)
 	if err != nil {
 		log.Fatalf(err.Error())
 	}

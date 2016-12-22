@@ -907,7 +907,7 @@ footer p {
     padding: 0px 0px 0px 10px;
 }
 
-.message-container .messages .step-message:before{
+.message-container .messages .step-message p:before{
     content: "$";
     padding-right: 5px;
     font-weight: bold;

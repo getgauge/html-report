@@ -184,7 +184,7 @@ const scenarioHeaderStartDiv = `<div class="scenario-head">
   <h3 class="head borderBottom">{{.Heading}}</h3>
   <span class="time">{{.ExecTime}}</span>`
 
-const specCommentsAndTableTag = `{{range .CommentsBeforeTable}}<span>{{. | parseMarkdown}}</span>{{end}}
+const specCommentsAndTableTag = `{{range .CommentsBeforeTable}}<span>{{.}}</span>{{end}}
 {{if .Table}}<table class="data-table">
   <tr>
     {{range .Table.Headers}}<th>{{.}}</th>{{end}}
@@ -200,7 +200,7 @@ const specCommentsAndTableTag = `{{range .CommentsBeforeTable}}<span>{{. | parse
     {{end}}
   </tbody>
 </table>{{end}}
-{{range .CommentsAfterTable}}<span>{{. | parseMarkdown}}</span>{{end}}`
+{{range .CommentsAfterTable}}<span>{{.}}</span>{{end}}`
 
 const htmlStartTag = `<!doctype html>
 <html>`
@@ -309,7 +309,7 @@ const conceptSpan = `<i class="fa fa-plus-square" aria-hidden="true"></i>`
 
 const contextOrTeardownStartDiv = `<div class='context-step'>`
 
-const commentSpan = `<span>{{.Text | parseMarkdown}}</span>`
+const commentSpan = `<span>{{.Text}}</span>`
 
 const conceptStepsStartDiv = `<div class='concept-steps'>`
 
