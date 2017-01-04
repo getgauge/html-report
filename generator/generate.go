@@ -174,6 +174,30 @@ const (
 	notExecuted
 )
 
+var parsedTemplates = make(map[string]*template.Template, 0)
+var templates = []string{bodyHeaderTag, bodyFooterTag, reportOverviewTag, sidebarDiv, congratsDiv, hookFailureDiv, tagsDiv, messageDiv, skippedReasonDiv,
+	specsStartDiv, specsItemsContainerDiv, specsItemsContentsDiv, specHeaderStartTag, scenarioContainerStartDiv, scenarioHeaderStartDiv, specCommentsAndTableTag, htmlStartTag, htmlEndTag, pageHeaderTag, headerEndTag, bodyStartTag, bodyEndTag, mainStartTag, mainEndTag, containerStartDiv, endDiv, conceptStartDiv, stepStartDiv,
+	stepMetaDiv, stepBodyDiv, stepFailureDiv, stepEndDiv, conceptSpan, contextOrTeardownStartDiv, commentSpan, conceptStepsStartDiv, nestedConceptDiv, javascriptIncludes,
+}
+
+func init() {
+	for _, tmpl := range templates {
+		t, err := template.New("Reports").Parse(tmpl)
+		if err != nil {
+			log.Fatalf(err.Error())
+		}
+		parsedTemplates[tmpl] = t
+	}
+}
+
+func execTemplate(tmplName string, w io.Writer, data interface{}) {
+	tmpl := parsedTemplates[tmplName]
+	err := tmpl.Execute(w, data)
+	if err != nil {
+		log.Fatalf(err.Error())
+	}
+}
+
 var parseMarkdown = func(args ...interface{}) string {
 	s := blackfriday.MarkdownCommon([]byte(fmt.Sprintf("%s", args...)))
 	return string(s)
@@ -183,17 +207,6 @@ var escapeHTML = template.HTMLEscapeString
 
 var encodeNewLine = func(s string) string {
 	return strings.Replace(s, "\n", "<br/>", -1)
-}
-
-func execTemplate(tmplName string, w io.Writer, data interface{}) {
-	tmpl, err := template.New("Reports").Parse(tmplName)
-	if err != nil {
-		log.Fatalf(err.Error())
-	}
-	err = tmpl.Execute(w, data)
-	if err != nil {
-		log.Fatalf(err.Error())
-	}
 }
 
 // ProjectRoot is root dir of current project
@@ -368,7 +381,6 @@ func generateSpecDiv(w io.Writer, res *gm.ProtoSpecResult) {
 	specHeader := toSpecHeader(res)
 	spec := toSpec(res)
 
-	execTemplate(specContainerStartDiv, w, nil)
 	execTemplate(specHeaderStartTag, w, specHeader)
 	execTemplate(tagsDiv, w, specHeader)
 	execTemplate(headerEndTag, w, nil)

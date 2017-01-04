@@ -156,7 +156,8 @@ var wHookFailureWithoutScreenhotDiv = `<div class="error-container failed">
   </div>
 </div>`
 
-var wSpecHeaderStartWithTags = `<header class="curr-spec">
+var wSpecHeaderStartWithTags = `<div id="specificationContainer" class="details">
+<header class="curr-spec">
 	<div class="spec-head-wrapper">
 		<h3 class="spec-head" title="/tmp/gauge/specs/foobar.spec">Spec heading</h3>
     <div class="hidden report_test-results" alt="Scenarios" title="Scenarios">

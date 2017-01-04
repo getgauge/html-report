@@ -149,12 +149,11 @@ const skippedReasonDiv = `<div class="message-container">
 
 const specsStartDiv = `<div class="specifications">`
 
-const specContainerStartDiv = `<div id="specificationContainer" class="details">`
-
 const specsItemsContainerDiv = `<div id="specItemsContainer">`
 const specsItemsContentsDiv = `<div class="content">`
 
-const specHeaderStartTag = `<header class="curr-spec">
+const specHeaderStartTag = `<div id="specificationContainer" class="details">
+<header class="curr-spec">
   <div class="spec-head-wrapper">
     <h3 class="spec-head" title="{{.FileName}}">{{.SpecName}}</h3>
     <div class="hidden report_test-results" alt="Scenarios" title="Scenarios">
