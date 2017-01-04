@@ -123,7 +123,7 @@ func createReport(suiteResult *gauge_messages.SuiteExecutionResult) {
 	generator.ProjectRoot = projectRoot
 	err = generator.GenerateReports(suiteResult.GetSuiteResult(), reportsDir)
 	if err != nil {
-		fmt.Printf("Failed to generate reports: %s", err.Error())
+		fmt.Printf("Failed to generate reports: %s\n", err.Error())
 		os.Exit(1)
 	}
 	err = copyReportTemplateFiles(reportsDir)

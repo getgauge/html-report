@@ -216,6 +216,7 @@ func GenerateReports(suiteRes *gm.ProtoSuiteResult, reportDir string) error {
 	} else {
 		generateIndexPage(suiteRes, f)
 		specRes := suiteRes.GetSpecResults()
+		done := make(chan bool, len(specRes))
 		for _, res := range specRes {
 			relPath, _ := filepath.Rel(ProjectRoot, res.GetProtoSpec().GetFileName())
 			CreateDirectory(filepath.Join(reportDir, filepath.Dir(relPath)))
@@ -223,8 +224,12 @@ func GenerateReports(suiteRes *gm.ProtoSuiteResult, reportDir string) error {
 			if err != nil {
 				return err
 			}
-			generateSpecPage(suiteRes, res, sf)
+			go generateSpecPage(suiteRes, res, sf, done)
 		}
+		for _ = range specRes {
+			<-done
+		}
+		close(done)
 	}
 	err = generateSearchIndex(suiteRes, reportDir)
 	if err != nil {
@@ -316,7 +321,7 @@ func generateIndexPage(suiteRes *gm.ProtoSuiteResult, w io.Writer) {
 	generatePageFooter(overview, w)
 }
 
-func generateSpecPage(suiteRes *gm.ProtoSuiteResult, specRes *gm.ProtoSpecResult, w io.Writer) {
+func generateSpecPage(suiteRes *gm.ProtoSuiteResult, specRes *gm.ProtoSpecResult, w io.Writer, done chan bool) {
 	overview := toOverview(suiteRes, specRes)
 
 	generateOverview(overview, w)
@@ -337,6 +342,7 @@ func generateSpecPage(suiteRes *gm.ProtoSuiteResult, specRes *gm.ProtoSpecResult
 	}
 
 	generatePageFooter(overview, w)
+	done <- true
 }
 
 func generateOverview(overview *overview, w io.Writer) {
