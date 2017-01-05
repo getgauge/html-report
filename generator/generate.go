@@ -25,7 +25,6 @@ import (
 	"path/filepath"
 	"strings"
 	"text/template"
-	"time"
 
 	"github.com/getgauge/common"
 	gm "github.com/getgauge/html-report/gauge_messages"
@@ -180,8 +179,8 @@ var parsedTemplates = make(map[string]*template.Template, 0)
 // Any new templates that are added in file `templates.go` should be registered here
 var templates = []string{bodyFooterTag, reportOverviewTag, sidebarDiv, congratsDiv, hookFailureDiv, tagsDiv, messageDiv, skippedReasonDiv,
 	specsStartDiv, specsItemsContainerDiv, specsItemsContentsDiv, specHeaderStartTag, scenarioContainerStartDiv, scenarioHeaderStartDiv, specCommentsAndTableTag,
-	htmlPageStartTag, headerEndTag, mainEndTag, endDiv, conceptStartDiv, stepStartDiv,
-	stepMetaDiv, stepBodyDiv, stepFailureDiv, stepEndDiv, conceptSpan, contextOrTeardownStartDiv, commentSpan, conceptStepsStartDiv, nestedConceptDiv, htmlPageEndWithJS,
+	htmlPageStartTag, headerEndTag, mainEndTag, endDiv, conceptStartDiv, stepStartDiv, stepMetaDiv, stepBodyDiv, stepFailureDiv, stepEndDiv, conceptSpan,
+	contextOrTeardownStartDiv, commentSpan, conceptStepsStartDiv, nestedConceptDiv, htmlPageEndWithJS,
 }
 
 func init() {
@@ -192,7 +191,6 @@ func init() {
 		s := blackfriday.MarkdownCommon([]byte(fmt.Sprintf("%s", args...)))
 		return string(s)
 	}
-
 	var funcs = template.FuncMap{"parseMarkdown": parseMarkdown, "escapeHTML": template.HTMLEscapeString, "encodeNewLine": encodeNewLine}
 	for _, tmpl := range templates {
 		t, err := template.New("Reports").Funcs(funcs).Parse(tmpl)
@@ -219,7 +217,6 @@ var ProjectRoot string
 
 // GenerateReports generates HTML report in the given report dir location
 func GenerateReports(suiteRes *gm.ProtoSuiteResult, reportDir string) error {
-	t := time.Now()
 	f, err := os.Create(filepath.Join(reportDir, "index.html"))
 	if err != nil {
 		return err
@@ -254,7 +251,6 @@ func GenerateReports(suiteRes *gm.ProtoSuiteResult, reportDir string) error {
 	if err != nil {
 		return err
 	}
-	fmt.Println("To generate reports: ", time.Since(t))
 	return nil
 }
 
