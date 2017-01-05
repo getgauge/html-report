@@ -230,7 +230,7 @@ func GenerateReports(suiteRes *gm.ProtoSuiteResult, reportDir string) error {
 		}
 		generatePageFooter(overview, f)
 	} else {
-		generateIndexPage(suiteRes, f)
+		go generateIndexPage(suiteRes, f)
 		specRes := suiteRes.GetSpecResults()
 		done := make(chan bool, len(specRes))
 		for _, res := range specRes {
