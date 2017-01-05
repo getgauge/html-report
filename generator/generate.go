@@ -19,12 +19,13 @@ package generator
 import (
 	"encoding/json"
 	"fmt"
-	"html/template"
 	"io"
 	"log"
 	"os"
 	"path/filepath"
 	"strings"
+	"text/template"
+	"time"
 
 	"github.com/getgauge/common"
 	gm "github.com/getgauge/html-report/gauge_messages"
@@ -89,9 +90,9 @@ type table struct {
 }
 
 type spec struct {
-	CommentsBeforeTable []template.HTML
+	CommentsBeforeTable []string
 	Table               *table
-	CommentsAfterTable  []template.HTML
+	CommentsAfterTable  []string
 	Scenarios           []*scenario
 	BeforeHookFailure   *hookFailure
 	AfterHookFailure    *hookFailure
@@ -143,7 +144,7 @@ func (c *concept) kind() kind {
 }
 
 type comment struct {
-	Text template.HTML
+	Text string
 }
 
 func (c *comment) kind() kind {
@@ -157,7 +158,7 @@ type result struct {
 	ErrorMessage  string
 	ExecTime      string
 	SkippedReason string
-	Messages      []template.HTML
+	Messages      []string
 }
 
 type searchIndex struct {
@@ -184,8 +185,17 @@ var templates = []string{bodyFooterTag, reportOverviewTag, sidebarDiv, congratsD
 }
 
 func init() {
+	var encodeNewLine = func(s string) string {
+		return strings.Replace(s, "\n", "<br/>", -1)
+	}
+	var parseMarkdown = func(args ...interface{}) string {
+		s := blackfriday.MarkdownCommon([]byte(fmt.Sprintf("%s", args...)))
+		return string(s)
+	}
+
+	var funcs = template.FuncMap{"parseMarkdown": parseMarkdown, "escapeHTML": template.HTMLEscapeString, "encodeNewLine": encodeNewLine}
 	for _, tmpl := range templates {
-		t, err := template.New("Reports").Parse(tmpl)
+		t, err := template.New("Reports").Funcs(funcs).Parse(tmpl)
 		if err != nil {
 			log.Fatalf(err.Error())
 		}
@@ -195,21 +205,13 @@ func init() {
 
 func execTemplate(tmplName string, w io.Writer, data interface{}) {
 	tmpl := parsedTemplates[tmplName]
+	if tmpl == nil {
+		log.Fatal(tmplName)
+	}
 	err := tmpl.Execute(w, data)
 	if err != nil {
 		log.Fatalf(err.Error())
 	}
-}
-
-var parseMarkdown = func(args ...interface{}) string {
-	s := blackfriday.MarkdownCommon([]byte(fmt.Sprintf("%s", args...)))
-	return string(s)
-}
-
-var escapeHTML = template.HTMLEscapeString
-
-var encodeNewLine = func(s string) string {
-	return strings.Replace(s, "\n", "<br/>", -1)
 }
 
 // ProjectRoot is root dir of current project
@@ -217,6 +219,7 @@ var ProjectRoot string
 
 // GenerateReports generates HTML report in the given report dir location
 func GenerateReports(suiteRes *gm.ProtoSuiteResult, reportDir string) error {
+	t := time.Now()
 	f, err := os.Create(filepath.Join(reportDir, "index.html"))
 	if err != nil {
 		return err
@@ -251,6 +254,7 @@ func GenerateReports(suiteRes *gm.ProtoSuiteResult, reportDir string) error {
 	if err != nil {
 		return err
 	}
+	fmt.Println("To generate reports: ", time.Since(t))
 	return nil
 }
 

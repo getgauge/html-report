@@ -88,7 +88,7 @@ const sidebarDiv = `{{if not .IsBeforeHookFailure}}<aside class="sidebar">
         {{else if $specMeta.Skipped}} <li class='skipped spec-name'>
         {{else}} <li class='passed spec-name'>
         {{end}}
-          <span id="scenarioName" class="scenarioname">{{$specMeta.SpecName}}</span>
+          <span id="scenarioName" class="scenarioname">{{$specMeta.SpecName | escapeHTML }}</span>
           <span id="time" class="time">{{$specMeta.ExecTime}}</span>
         </li>
       </a>
@@ -103,13 +103,13 @@ const congratsDiv = `
   </div>`
 
 const hookFailureDiv = `<div class="error-container failed">
-  <div class="error-heading">{{.HookName}} Failed:<span class="error-message"> {{.ErrMsg}}</span></div>
+  <div class="error-heading">{{.HookName}} Failed:<span class="error-message"> {{.ErrMsg | escapeHTML | encodeNewLine}}</span></div>
   <div class="toggle-show">
     [Show details]
   </div>
   <div class="exception-container hidden">
       <div class="exception">
-        <pre class="stacktrace">{{.StackTrace}}</pre>
+        <pre class="stacktrace">{{.StackTrace | escapeHTML | encodeNewLine}}</pre>
       </div>
       {{if .Screenshot}}<div class="screenshot-container">
         <a href="data:image/png;base64,{{.Screenshot}}" rel="lightbox">
@@ -121,19 +121,19 @@ const hookFailureDiv = `<div class="error-container failed">
 
 const tagsDiv = `{{if .Tags}}<div class="tags scenario_tags contentSection">
   <strong>Tags:</strong>
-  {{range .Tags}}<span> {{.}}</span>{{end}}
+  {{range .Tags}}<span> {{. | escapeHTML }}</span>{{end}}
 </div>{{end}}`
 
 //TODO 1. Format message to convert newlines to <br>
 const messageDiv = `{{if .Messages}}<div class="message-container">
   <i class="fa fa-minus-square" aria-hidden="true"></i>
   <div class="messages">
-    {{range .Messages}}<div class="step-message">{{.}} </div>{{end}}
+    {{range .Messages}}<div class="step-message">{{. | escapeHTML | encodeNewLine | parseMarkdown }} </div>{{end}}
   </div>
 </div>{{end}}`
 
 const skippedReasonDiv = `<div class="message-container">
-  <h4 class="skipReason">Skipped Reason: {{.SkippedReason}}</h4>
+  <h4 class="skipReason">Skipped Reason: {{.SkippedReason | escapeHTML }}</h4>
 </div>`
 
 const specsStartDiv = `<div class="specifications">`
@@ -144,7 +144,7 @@ const specsItemsContentsDiv = `<div class="content">`
 const specHeaderStartTag = `<div id="specificationContainer" class="details">
 <header class="curr-spec">
   <div class="spec-head-wrapper">
-    <h3 class="spec-head" title="{{.FileName}}">{{.SpecName}}</h3>
+    <h3 class="spec-head" title="{{.FileName}}">{{.SpecName | escapeHTML }}</h3>
     <div class="hidden report_test-results" alt="Scenarios" title="Scenarios">
       <ul>
         <li class="fail"><span class="value">{{.Summary.Failed}}</span><span class="txt">Failed</span></li>
@@ -169,13 +169,13 @@ const scenarioContainerStartDiv = `<div class='scenario-container {{if eq .ExecS
 {{else}}skipped{{if gt .TableRowIndex 0}} hidden{{end}}'{{if ne .TableRowIndex -1}}  data-tablerow='{{.TableRowIndex}}'{{end}}>{{end}}`
 
 const scenarioHeaderStartDiv = `<div class="scenario-head">
-  <h3 class="head borderBottom">{{.Heading}}</h3>
+  <h3 class="head borderBottom">{{.Heading | escapeHTML }}</h3>
   <span class="time">{{.ExecTime}}</span>`
 
-const specCommentsAndTableTag = `{{range .CommentsBeforeTable}}<span>{{.}}</span>{{end}}
+const specCommentsAndTableTag = `{{range .CommentsBeforeTable}}<span>{{. | escapeHTML| parseMarkdown}}</span>{{end}}
 {{if .Table}}<table class="data-table">
   <tr>
-    {{range .Table.Headers}}<th>{{.}}</th>{{end}}
+    {{range .Table.Headers}}<th>{{. | escapeHTML }}</th>{{end}}
   </tr>
   <tbody data-rowCount={{len .Table.Rows}}>
     {{range $index, $row := .Table.Rows}}
@@ -183,12 +183,12 @@ const specCommentsAndTableTag = `{{range .CommentsBeforeTable}}<span>{{.}}</span
       {{else if eq $row.Res 1}}<tr class='row-selector failed{{if eq $index 0}} selected{{end}}' data-rowIndex='{{$index}}'>
       {{else}}<tr class='row-selector skipped{{if eq $index 0}} selected{{end}}' data-rowIndex='{{$index}}'>
       {{end}}
-        {{range $row.Cells}}<td>{{.}}</td>{{end}}
+        {{range $row.Cells}}<td>{{. | escapeHTML }}</td>{{end}}
     </tr>
     {{end}}
   </tbody>
 </table>{{end}}
-{{range .CommentsAfterTable}}<span>{{.}}</span>{{end}}`
+{{range .CommentsAfterTable}}<span>{{. | escapeHTML | parseMarkdown }}</span>{{end}}`
 
 const htmlPageStartTag = `<!doctype html>
 <html><head>
@@ -244,11 +244,11 @@ const stepMetaDiv = `
 const stepBodyDiv = `
 {{define "Table"}}<table>
   <tr>
-    {{range .Table.Headers}}<th>{{.}}</th>{{end}}
+    {{range .Table.Headers}}<th>{{. | escapeHTML }}</th>{{end}}
   </tr>
   <tbody>
     {{range .Table.Rows}}
-    <tr>{{range .Cells}}<td>{{.}}</td>{{end}}</tr>
+    <tr>{{range .Cells}}<td>{{. | escapeHTML }}</td>{{end}}</tr>
     {{end}}
   </tbody>
 </table>
@@ -256,15 +256,15 @@ const stepBodyDiv = `
 {{range .Fragments}}
   {{if eq .FragmentKind 0}}
     <span>
-      {{.Text}}
+      {{.Text | escapeHTML }}
     </span>
   {{else if eq .FragmentKind 1 2}}
-    <span class='parameter'>"{{.Text}}"</span>
+    <span class='parameter'>"{{.Text | escapeHTML }}"</span>
   {{else if eq .FragmentKind 3}}
-    <span class="hoverable">&lt;{{.Name}}&gt;</span>
+    <span class="hoverable">&lt;{{.Name | escapeHTML }}&gt;</span>
     <div class="hovercard">{{.Text}}</div>
   {{else if eq .FragmentKind 4}}
-    <span class="hoverable">&lt;{{.Name}}&gt;</span>
+    <span class="hoverable">&lt;{{.Name | escapeHTML }}&gt;</span>
     <div class="hovercard">{{template "Table" .}}</div>
   {{else if eq .FragmentKind 5}}
     <div class='inline-table'>
@@ -280,9 +280,9 @@ const stepFailureDiv = `<div class="error-container failed">
   <div class="exception-container">
       <div class="exception">
         <h4 class="error-message">
-          <pre>{{.ErrorMessage}}</pre>
+          <pre>{{.ErrorMessage | escapeHTML | encodeNewLine}}</pre>
         </h4>
-        <pre class="stacktrace">{{.StackTrace}}</pre>
+        <pre class="stacktrace">{{.StackTrace | escapeHTML | encodeNewLine}}</pre>
       </div>
       {{if .Screenshot}}<div class="screenshot-container">
         <a href="data:image/png;base64,{{.Screenshot}}" rel="lightbox">
@@ -298,7 +298,7 @@ const conceptSpan = `<i class="fa fa-plus-square" aria-hidden="true"></i>`
 
 const contextOrTeardownStartDiv = `<div class='context-step'>`
 
-const commentSpan = `<span>{{.Text}}</span>`
+const commentSpan = `<span>{{.Text | escapeHTML | parseMarkdown}}</span>`
 
 const conceptStepsStartDiv = `<div class='concept-steps'>`
 
