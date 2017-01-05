@@ -31,14 +31,30 @@ type reportGenTest struct {
 	output string
 }
 
-var wBodyHeader = `<header class="top">
-	<div class="header">
-  	<div class="container">
-    	<div class="logo"><a href=""><img src="images/logo.png" alt="Report logo"></a></div>
-			<h2 class="project">Project: projname</h2>
-		</div>
-	</div>
-</header>`
+var whtmlPageStartTag = `<!doctype html>
+<html><head>
+  <meta http-equiv="X-UA-Compatible" content="IE=9; IE=8; IE=7; IE=EDGE" />
+  <meta charset="utf-8" />
+  <title>Gauge Test Results</title>
+  <link rel="shortcut icon" type="image/x-icon" href="images/favicon.ico">
+  <link rel="stylesheet" type="text/css" href="css/open-sans.css">
+  <link rel="stylesheet" type="text/css" href="css/font-awesome.css">
+  <link rel="stylesheet" type="text/css" href="css/normalize.css" />
+  <link rel="stylesheet" type="text/css" href="css/style.css" />
+</head>
+<body>
+<header class="top">
+  <div class="header">
+    <div class="container">
+      <div class="logo">
+        <a href=""><img src="images/logo.png" alt="Report logo"></a>
+      </div>
+      <h2 class="project">Project: projname</h2>
+    </div>
+  </div>
+</header>
+<main class="main-container">
+<div class="container">`
 
 var wChartDiv = `<div class="report-overview">
 <div class="report_chart">
@@ -394,7 +410,7 @@ var skippedStepRes = &result{
 var re = regexp.MustCompile("[ ]*[\n\t][ ]*")
 
 var reportGenTests = []reportGenTest{
-	{"generate body header with project name", bodyHeaderTag, &overview{ProjectName: "projname"}, wBodyHeader},
+	{"generate html page start with project name", htmlPageStartTag, &overview{ProjectName: "projname"}, whtmlPageStartTag},
 	{"generate report overview with tags", reportOverviewTag, &overview{"projname", "default", "foo", 34, "00:01:53", "Jun 3, 2016 at 12:29pm", &summary{41, 2, 39, 0}, "/"},
 		wChartDiv + wResCntDiv + wEnvLi + wTagsLi + wSuccRateLi + wExecTimeLi + wTimestampLi},
 	{"generate report overview without tags", reportOverviewTag, &overview{"projname", "default", "", 34, "00:01:53", "Jun 3, 2016 at 12:29pm", &summary{41, 2, 39, 0}, "/"},

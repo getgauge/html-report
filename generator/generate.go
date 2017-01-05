@@ -175,9 +175,12 @@ const (
 )
 
 var parsedTemplates = make(map[string]*template.Template, 0)
-var templates = []string{bodyHeaderTag, bodyFooterTag, reportOverviewTag, sidebarDiv, congratsDiv, hookFailureDiv, tagsDiv, messageDiv, skippedReasonDiv,
-	specsStartDiv, specsItemsContainerDiv, specsItemsContentsDiv, specHeaderStartTag, scenarioContainerStartDiv, scenarioHeaderStartDiv, specCommentsAndTableTag, htmlStartTag, htmlEndTag, pageHeaderTag, headerEndTag, bodyStartTag, bodyEndTag, mainStartTag, mainEndTag, containerStartDiv, endDiv, conceptStartDiv, stepStartDiv,
-	stepMetaDiv, stepBodyDiv, stepFailureDiv, stepEndDiv, conceptSpan, contextOrTeardownStartDiv, commentSpan, conceptStepsStartDiv, nestedConceptDiv, javascriptIncludes,
+
+// Any new templates that are added in file `templates.go` should be registered here
+var templates = []string{bodyFooterTag, reportOverviewTag, sidebarDiv, congratsDiv, hookFailureDiv, tagsDiv, messageDiv, skippedReasonDiv,
+	specsStartDiv, specsItemsContainerDiv, specsItemsContentsDiv, specHeaderStartTag, scenarioContainerStartDiv, scenarioHeaderStartDiv, specCommentsAndTableTag,
+	htmlPageStartTag, headerEndTag, mainEndTag, endDiv, conceptStartDiv, stepStartDiv,
+	stepMetaDiv, stepBodyDiv, stepFailureDiv, stepEndDiv, conceptSpan, contextOrTeardownStartDiv, commentSpan, conceptStepsStartDiv, nestedConceptDiv, htmlPageEndWithJS,
 }
 
 func init() {
@@ -359,12 +362,7 @@ func generateSpecPage(suiteRes *gm.ProtoSuiteResult, specRes *gm.ProtoSpecResult
 }
 
 func generateOverview(overview *overview, w io.Writer) {
-	execTemplate(htmlStartTag, w, nil)
-	execTemplate(pageHeaderTag, w, overview)
-	execTemplate(bodyStartTag, w, nil)
-	execTemplate(bodyHeaderTag, w, overview)
-	execTemplate(mainStartTag, w, nil)
-	execTemplate(containerStartDiv, w, nil)
+	execTemplate(htmlPageStartTag, w, overview)
 	execTemplate(reportOverviewTag, w, overview)
 }
 
@@ -372,9 +370,7 @@ func generatePageFooter(overview *overview, w io.Writer) {
 	execTemplate(endDiv, w, nil)
 	execTemplate(mainEndTag, w, nil)
 	execTemplate(bodyFooterTag, w, nil)
-	execTemplate(javascriptIncludes, w, overview)
-	execTemplate(bodyEndTag, w, nil)
-	execTemplate(htmlEndTag, w, nil)
+	execTemplate(htmlPageEndWithJS, w, overview)
 }
 
 func generateSpecDiv(w io.Writer, res *gm.ProtoSpecResult) {
