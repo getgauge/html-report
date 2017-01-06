@@ -274,6 +274,10 @@ func toConcept(protoConcept *gm.ProtoConcept) *concept {
 	}
 }
 
+func toFileName(name string) string {
+	return strings.Split(name,":")[1]
+}
+
 func toFragments(protoFragments []*gm.Fragment) []*fragment {
 	fragments := make([]*fragment, 0)
 	for _, f := range protoFragments {
@@ -289,9 +293,9 @@ func toFragments(protoFragments []*gm.Fragment) []*fragment {
 			case gm.Parameter_Table:
 				fragments = append(fragments, &fragment{FragmentKind: tableFragmentKind, Table: toTable(f.GetParameter().GetTable())})
 			case gm.Parameter_Special_Table:
-				fragments = append(fragments, &fragment{FragmentKind: specialTableFragmentKind, Name: f.GetParameter().GetName(), Table: toTable(f.GetParameter().GetTable())})
+				fragments = append(fragments, &fragment{FragmentKind: specialTableFragmentKind, Name: f.GetParameter().GetName(), Text: toCsv(f.GetParameter().GetTable()), FileName: toFileName(f.GetParameter().GetName())})
 			case gm.Parameter_Special_String:
-				fragments = append(fragments, &fragment{FragmentKind: specialStringFragmentKind, Name: f.GetParameter().GetName(), Text: f.GetParameter().GetValue()})
+				fragments = append(fragments, &fragment{FragmentKind: specialStringFragmentKind, Name: f.GetParameter().GetName(), Text: f.GetParameter().GetValue(), FileName: toFileName(f.GetParameter().GetName())})
 			}
 		}
 	}
@@ -307,6 +311,14 @@ func toTable(protoTable *gm.ProtoTable) *table {
 		}
 	}
 	return &table{Headers: protoTable.GetHeaders().GetCells(), Rows: rows}
+}
+
+func toCsv(protoTable *gm.ProtoTable) string {
+	csv := []string{strings.Join(protoTable.GetHeaders().GetCells(), ",")}
+	for _, row := range protoTable.GetRows() {
+		csv = append(csv, strings.Join(row.GetCells(), ","))
+	}
+	return strings.Join(csv, "\n")
 }
 
 func getItems(protoItems []*gm.ProtoItem) []item {

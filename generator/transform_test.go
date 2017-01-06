@@ -384,7 +384,7 @@ var protoStepWithSpecialParams = &gm.ProtoStep{
 		{
 			FragmentType: gm.Fragment_Parameter.Enum(),
 			Parameter: &gm.Parameter{
-				Name:          proto.String("foo.txt"),
+				Name:          proto.String("file:foo.txt"),
 				ParameterType: gm.Parameter_Special_String.Enum(),
 				Value:         proto.String("hi"),
 			},
@@ -394,7 +394,7 @@ var protoStepWithSpecialParams = &gm.ProtoStep{
 			FragmentType: gm.Fragment_Parameter.Enum(),
 			Parameter: &gm.Parameter{
 				ParameterType: gm.Parameter_Special_Table.Enum(),
-				Name:          proto.String("myTable.csv"),
+				Name:          proto.String("table:myTable.csv"),
 				Table: newTableItem([]string{"Word", "Count"}, [][]string{
 					[]string{"Gauge", "3"},
 					[]string{"Mingle", "2"},
@@ -825,18 +825,35 @@ func TestToStep(t *testing.T) {
 	}
 }
 
+func TestToCSV(t *testing.T) {
+	table := newTableItem([]string{"Word", "Count"}, [][]string{
+		[]string{"Gauge", "3"},
+		[]string{"Mingle", "2"},
+	}).GetTable()
+
+	want := "Word,Count\n" +
+		"Gauge,3\n" +
+		"Mingle,2"
+
+	got := toCsv(table)
+
+	if !reflect.DeepEqual(got, want) {
+		t.Errorf("want:\n%q\ngot:\n%q\n", want, got)
+	}
+}
+
 func TestToStepWithSpecialParams(t *testing.T) {
 	want := &step{
 		Fragments: []*fragment{
 			{FragmentKind: textFragmentKind, Text: "Say "},
-			{FragmentKind: specialStringFragmentKind, Name: "foo.txt", Text: "hi"},
+			{FragmentKind: specialStringFragmentKind, Name: "file:foo.txt", Text: "hi", FileName: "foo.txt"},
 			{FragmentKind: textFragmentKind, Text: " to "},
 			{FragmentKind: specialTableFragmentKind,
-				Name: "myTable.csv",
-				Table: &table{
-					Headers: []string{"Word", "Count"},
-					Rows:    []*row{{Cells: []string{"Gauge", "3"}}, {Cells: []string{"Mingle", "2"}}},
-				},
+				Name: "table:myTable.csv",
+				Text: `Word,Count
+Gauge,3
+Mingle,2`,
+				FileName: "myTable.csv",
 			},
 		},
 		Res: &result{

@@ -303,41 +303,30 @@ var wSkippedStepWithSkippedReason = `<div class="message-container">
 </div>`
 
 var wStepWithFileParam = `
-    <span>
-      Say
-    </span>
-    <span class="hoverable">&lt;file:hello.txt&gt;</span>
-    <div class="hovercard">good morning</div>
-	<span>
-      to gauge
-    </span>
-</div>`
+    <span>Say</span>
+		<span class="modal-link">&lt;file:hello.txt&gt;</span>
+		<div class="modal">
+			<h2 class="modal-title"></h2>
+			<span class="close">&times;</span>
+			<div class="modal-content">
+					<pre>good morning</pre>
+			</div>
+			</div>
+			<span>to gauge</span>
+		</div>`
 
 var wStepWithSpecialTableParam = `
-    <span>
-      Say
-    </span>
-    <span class="hoverable">&lt;table:hello.csv&gt;</span>
-    <div class="hovercard"><table>
-	  <tr>
-		<th>Word</th>
-		<th>Count</th>
-	  </tr>
-	  <tbody>
-		<tr>
-		  <td>Gauge</td>
-		  <td>3</td>
-		</tr>
-		<tr>
-		  <td>Mingle</td>
-		  <td>2</td>
-		</tr>
-	  </tbody>
-	</table></div>
-	<span>
-      to gauge
-    </span>
-</div>`
+    <span>Say</span>
+		<span class="modal-link">&lt;table:hello.csv&gt;</span>
+		<div class="modal">
+			<h2 class="modal-title"></h2>
+			<span class="close">&times;</span>
+			<div class="modal-content">
+				<pre></pre>
+			</div>
+		</div>
+		<span>to gauge</span>
+		</div>`
 
 var wStepFailDiv = `<div class="error-container failed">
   <div class="exception-container">

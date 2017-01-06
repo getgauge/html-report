@@ -253,6 +253,16 @@ const stepBodyDiv = `
   </tbody>
 </table>
 {{end}}
+{{define "Modal"}}
+  <span class="modal-link">&lt;{{.Name | escapeHTML }}&gt;</span>
+    <div class="modal">
+      <h2 class="modal-title">{{ .FileName }}</h2>
+      <span class="close">&times;</span>
+      <div class="modal-content">
+        <pre>{{.Text}}</pre>
+      </div>
+    </div>
+{{end}}
 {{range .Fragments}}
   {{if eq .FragmentKind 0}}
     <span>
@@ -261,11 +271,9 @@ const stepBodyDiv = `
   {{else if eq .FragmentKind 1 2}}
     <span class='parameter'>"{{.Text | escapeHTML }}"</span>
   {{else if eq .FragmentKind 3}}
-    <span class="hoverable">&lt;{{.Name | escapeHTML }}&gt;</span>
-    <div class="hovercard">{{.Text}}</div>
+    {{template "Modal" .}}
   {{else if eq .FragmentKind 4}}
-    <span class="hoverable">&lt;{{.Name | escapeHTML }}&gt;</span>
-    <div class="hovercard">{{template "Table" .}}</div>
+    {{template "Modal" .}}
   {{else if eq .FragmentKind 5}}
     <div class='inline-table'>
       <div>

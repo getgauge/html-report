@@ -33,4 +33,5 @@ type fragment struct {
 	Text         string
 	Name         string
 	Table        *table
+	FileName	 string
 }

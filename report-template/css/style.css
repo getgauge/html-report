@@ -1074,12 +1074,7 @@ footer p {
     }
 }
 
-.hoverable{
-    color: navy;
-    font-weight: bold;
-}
-
-.hovercard, .env-vars {
+.env-vars {
     display: none;
     clear: both;
     float: none;
@@ -1092,6 +1087,56 @@ footer p {
     max-height: 300px;
     overflow: hidden;
 }
+
+.modal-link {
+    color: navy;
+    font-weight: bold;
+    cursor: pointer;
+}
+
+.modal {
+    display: none;
+    position: fixed;
+    z-index: 1;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    cursor: auto;
+    background-color: #ffffff;
+}
+
+.modal-title {
+    background: #f6f6f6;
+    margin: 0 0 20px 0;
+    padding: 15px 20px;
+    font-size: 16px;
+}
+
+.close {
+    color: #aaa;
+    font-weight: bold;
+    position: absolute;
+    right: 10px;
+    font-size: 40px;
+    line-height: 30px;
+    top: 10px;
+}
+
+.close:hover,
+.close:focus {
+    color: black;
+    text-decoration: none;
+    cursor: pointer;
+}
+.modal-content {
+    background-color: #fefefe;
+    padding: 0 30px 20px 30px;
+    overflow: scroll;
+    width: 100%;
+    height: 100%;
+}
+
 
 .concept .step-info {
     cursor: pointer;
@@ -1255,4 +1300,8 @@ svg#pie-chart {
     #specificationContainer .spec-filename {
         display: block;
     }
+}
+
+.is-modal-open {
+    overflow: hidden;
 }
