@@ -178,7 +178,7 @@ func toSpec(res *gm.ProtoSpecResult) *spec {
 				spec.CommentsBeforeTable = append(spec.CommentsBeforeTable, item.GetComment().GetText())
 			}
 		case gm.ProtoItem_Table:
-			spec.Table = toTable(item.GetTable())
+			spec.Table = toTable(item.GetTable(),res.GetSkipped())
 			isTableScanned = true
 		case gm.ProtoItem_Scenario:
 			spec.Scenarios = append(spec.Scenarios, toScenario(item.GetScenario(), -1))
@@ -291,7 +291,7 @@ func toFragments(protoFragments []*gm.Fragment) []*fragment {
 			case gm.Parameter_Dynamic:
 				fragments = append(fragments, &fragment{FragmentKind: dynamicFragmentKind, Text: f.GetParameter().GetValue()})
 			case gm.Parameter_Table:
-				fragments = append(fragments, &fragment{FragmentKind: tableFragmentKind, Table: toTable(f.GetParameter().GetTable())})
+				fragments = append(fragments, &fragment{FragmentKind: tableFragmentKind, Table: toTable(f.GetParameter().GetTable(), false)})
 			case gm.Parameter_Special_Table:
 				fragments = append(fragments, &fragment{FragmentKind: specialTableFragmentKind, Name: f.GetParameter().GetName(), Text: toCsv(f.GetParameter().GetTable()), FileName: toFileName(f.GetParameter().GetName())})
 			case gm.Parameter_Special_String:
@@ -302,12 +302,15 @@ func toFragments(protoFragments []*gm.Fragment) []*fragment {
 	return fragments
 }
 
-func toTable(protoTable *gm.ProtoTable) *table {
+func toTable(protoTable *gm.ProtoTable, isSpecSkipped bool) *table {
 	rows := make([]*row, len(protoTable.GetRows()))
 	for i, r := range protoTable.GetRows() {
 		rows[i] = &row{
 			Cells: r.GetCells(),
 			Res:   pass,
+		}
+		if isSpecSkipped {
+			rows[i].Res = skip
 		}
 	}
 	return &table{Headers: protoTable.GetHeaders().GetCells(), Rows: rows}
