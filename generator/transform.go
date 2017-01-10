@@ -275,7 +275,10 @@ func toConcept(protoConcept *gm.ProtoConcept) *concept {
 }
 
 func toFileName(name string) string {
-	return strings.Split(name,":")[1]
+	if strings.Contains(name, ":") {
+		return strings.Split(name, ":")[1]
+	}
+	return name
 }
 
 func toFragments(protoFragments []*gm.Fragment) []*fragment {
