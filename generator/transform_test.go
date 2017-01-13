@@ -24,7 +24,6 @@ import (
 	"testing"
 
 	gm "github.com/getgauge/html-report/gauge_messages"
-	"github.com/golang/protobuf/proto"
 )
 
 type transformTest struct {
@@ -35,16 +34,16 @@ type transformTest struct {
 
 func newCommentItem(str string) *gm.ProtoItem {
 	return &gm.ProtoItem{
-		ItemType: gm.ProtoItem_Comment.Enum(),
+		ItemType: gm.ProtoItem_Comment,
 		Comment: &gm.ProtoComment{
-			Text: proto.String(str),
+			Text: str,
 		},
 	}
 }
 
 func newScenarioItem(scn *gm.ProtoScenario) *gm.ProtoItem {
 	return &gm.ProtoItem{
-		ItemType: gm.ProtoItem_Scenario.Enum(),
+		ItemType: gm.ProtoItem_Scenario,
 		Scenario: scn,
 	}
 }
@@ -55,21 +54,21 @@ func newTableItem(headers []string, rows [][]string) *gm.ProtoItem {
 		r[i] = &gm.ProtoTableRow{Cells: row}
 	}
 	return &gm.ProtoItem{
-		ItemType: gm.ProtoItem_Table.Enum(),
+		ItemType: gm.ProtoItem_Table,
 		Table:    &gm.ProtoTable{Headers: &gm.ProtoTableRow{Cells: headers}, Rows: r},
 	}
 }
 
 func newStepItem(failed, skipped bool, frags []*gm.Fragment) *gm.ProtoItem {
 	return &gm.ProtoItem{
-		ItemType: gm.ProtoItem_Step.Enum(),
+		ItemType: gm.ProtoItem_Step,
 		Step: &gm.ProtoStep{
 			StepExecutionResult: &gm.ProtoStepExecutionResult{
 				ExecutionResult: &gm.ProtoExecutionResult{
-					Failed:        proto.Bool(failed),
-					ExecutionTime: proto.Int64(211316),
+					Failed:        failed,
+					ExecutionTime: 211316,
 				},
-				Skipped: proto.Bool(skipped),
+				Skipped: skipped,
 			},
 			Fragments: frags,
 		},
@@ -78,42 +77,42 @@ func newStepItem(failed, skipped bool, frags []*gm.Fragment) *gm.ProtoItem {
 
 func newDynamicParam(val string) *gm.Parameter {
 	return &gm.Parameter{
-		ParameterType: gm.Parameter_Dynamic.Enum(),
-		Value:         proto.String(val),
+		ParameterType: gm.Parameter_Dynamic,
+		Value:         val,
 	}
 }
 
 func newStaticParam(val string) *gm.Parameter {
 	return &gm.Parameter{
-		ParameterType: gm.Parameter_Static.Enum(),
-		Value:         proto.String(val),
+		ParameterType: gm.Parameter_Static,
+		Value:         val,
 	}
 }
 
 func newTableParam(headers []string, rows [][]string) *gm.Parameter {
 	return &gm.Parameter{
-		ParameterType: gm.Parameter_Table.Enum(),
+		ParameterType: gm.Parameter_Table,
 		Table:         newTableItem(headers, rows).GetTable(),
 	}
 }
 
 func newTextFragment(val string) *gm.Fragment {
 	return &gm.Fragment{
-		FragmentType: gm.Fragment_Text.Enum(),
-		Text:         proto.String(val),
+		FragmentType: gm.Fragment_Text,
+		Text:         val,
 	}
 }
 
 func newParamFragment(p *gm.Parameter) *gm.Fragment {
 	return &gm.Fragment{
-		FragmentType: gm.Fragment_Parameter.Enum(),
+		FragmentType: gm.Fragment_Parameter,
 		Parameter:    p,
 	}
 }
 
 func newConceptItem(heading string, steps []*gm.ProtoItem, cptRes *gm.ProtoStepExecutionResult) *gm.ProtoItem {
 	return &gm.ProtoItem{
-		ItemType: gm.ProtoItem_Concept.Enum(),
+		ItemType: gm.ProtoItem_Concept,
 		Concept: &gm.ProtoConcept{
 			ConceptStep: newStepItem(false, false, []*gm.Fragment{newTextFragment(heading)}).GetStep(),
 			Steps:       steps,
@@ -143,14 +142,14 @@ com.thoughtworks.gauge.GaugeRuntime.main(GaugeRuntime.java:37)`
 }
 
 var specRes1 = &gm.ProtoSpecResult{
-	Failed:        proto.Bool(false),
-	Skipped:       proto.Bool(false),
-	ExecutionTime: proto.Int64(211316),
+	Failed:        false,
+	Skipped:       false,
+	ExecutionTime: 211316,
 	ProtoSpec: &gm.ProtoSpec{
-		SpecHeading:   proto.String("specRes1"),
+		SpecHeading:   "specRes1",
 		Tags:          []string{"tag1", "tag2"},
-		FileName:      proto.String("/tmp/gauge/specs/foobar.spec"),
-		IsTableDriven: proto.Bool(false),
+		FileName:      "/tmp/gauge/specs/foobar.spec",
+		IsTableDriven: false,
 		Items: []*gm.ProtoItem{
 			newCommentItem("\n"),
 			newCommentItem("This is an executable specification file. This file follows markdown syntax."),
@@ -170,13 +169,13 @@ var specRes1 = &gm.ProtoSpecResult{
 }
 
 var datatableDrivenSpec = &gm.ProtoSpecResult{
-	Failed:        proto.Bool(false),
-	Skipped:       proto.Bool(false),
-	ExecutionTime: proto.Int64(211316),
+	Failed:        false,
+	Skipped:       false,
+	ExecutionTime: 211316,
 	ProtoSpec: &gm.ProtoSpec{
-		SpecHeading:   proto.String("specRes1"),
-		FileName:      proto.String("/tmp/gauge/specs/foobar.spec"),
-		IsTableDriven: proto.Bool(true),
+		SpecHeading:   "specRes1",
+		FileName:      "/tmp/gauge/specs/foobar.spec",
+		IsTableDriven: true,
 		Items: []*gm.ProtoItem{
 			newTableItem(
 				[]string{"Word", "Count"}, [][]string{
@@ -184,25 +183,25 @@ var datatableDrivenSpec = &gm.ProtoSpecResult{
 					[]string{"Mingle", "2"},
 				}),
 			&gm.ProtoItem{
-				ItemType: gm.ProtoItem_TableDrivenScenario.Enum(),
+				ItemType: gm.ProtoItem_TableDrivenScenario,
 				TableDrivenScenario: &gm.ProtoTableDrivenScenario{
 					Scenario: &gm.ProtoScenario{
-						ScenarioHeading: proto.String("Scenario 1"),
-						ExecutionStatus: gm.ExecutionStatus_FAILED.Enum(),
+						ScenarioHeading: "Scenario 1",
+						ExecutionStatus: gm.ExecutionStatus_FAILED,
 						ScenarioItems:   []*gm.ProtoItem{newStepItem(true, false, []*gm.Fragment{newTextFragment("Step1")})},
 					},
-					TableRowIndex: proto.Int32(int32(0)),
+					TableRowIndex: int32(0),
 				},
 			},
 			&gm.ProtoItem{
-				ItemType: gm.ProtoItem_TableDrivenScenario.Enum(),
+				ItemType: gm.ProtoItem_TableDrivenScenario,
 				TableDrivenScenario: &gm.ProtoTableDrivenScenario{
 					Scenario: &gm.ProtoScenario{
-						ScenarioHeading: proto.String("Scenario 1"),
-						ExecutionStatus: gm.ExecutionStatus_PASSED.Enum(),
+						ScenarioHeading: "Scenario 1",
+						ExecutionStatus: gm.ExecutionStatus_PASSED,
 						ScenarioItems:   []*gm.ProtoItem{newStepItem(false, false, []*gm.Fragment{newTextFragment("Step1")})},
 					},
-					TableRowIndex: proto.Int32(int32(1)),
+					TableRowIndex: int32(1),
 				},
 			},
 		},
@@ -210,64 +209,64 @@ var datatableDrivenSpec = &gm.ProtoSpecResult{
 }
 
 var specRes2 = &gm.ProtoSpecResult{
-	Failed:        proto.Bool(true),
-	Skipped:       proto.Bool(false),
-	ExecutionTime: proto.Int64(211316),
+	Failed:        true,
+	Skipped:       false,
+	ExecutionTime: 211316,
 	ProtoSpec: &gm.ProtoSpec{
-		FileName:    proto.String("specRes2.spec"),
-		SpecHeading: proto.String("specRes2"),
+		FileName:    "specRes2.spec",
+		SpecHeading: "specRes2",
 		Tags:        []string{"tag1", "tag2", "tag3"},
 	},
 }
 
 var specRes3 = &gm.ProtoSpecResult{
-	Failed:        proto.Bool(false),
-	Skipped:       proto.Bool(true),
-	ExecutionTime: proto.Int64(211316),
+	Failed:        false,
+	Skipped:       true,
+	ExecutionTime: 211316,
 	ProtoSpec: &gm.ProtoSpec{
-		FileName:    proto.String("specRes3.spec"),
-		SpecHeading: proto.String("specRes3"),
+		FileName:    "specRes3.spec",
+		SpecHeading: "specRes3",
 		Tags:        []string{"tag1"},
 	},
 }
 
 var specResWithSpecHookFailure = &gm.ProtoSpecResult{
-	Failed:        proto.Bool(false),
-	Skipped:       proto.Bool(true),
-	ExecutionTime: proto.Int64(211316),
+	Failed:        false,
+	Skipped:       true,
+	ExecutionTime: 211316,
 	ProtoSpec: &gm.ProtoSpec{
-		SpecHeading: proto.String("specRes3"),
+		SpecHeading: "specRes3",
 		Tags:        []string{"tag1"},
 		PreHookFailure: &gm.ProtoHookFailure{
-			ErrorMessage: proto.String("err"),
-			StackTrace:   proto.String("Stacktrace"),
+			ErrorMessage: "err",
+			StackTrace:   "Stacktrace",
 			ScreenShot:   []byte("Screenshot"),
 		},
 		PostHookFailure: &gm.ProtoHookFailure{
-			ErrorMessage: proto.String("err"),
-			StackTrace:   proto.String("Stacktrace"),
+			ErrorMessage: "err",
+			StackTrace:   "Stacktrace",
 			ScreenShot:   []byte("Screenshot"),
 		},
 	},
 }
 
 var suiteRes1 = &gm.ProtoSuiteResult{
-	ProjectName:       proto.String("projName"),
-	Environment:       proto.String("ci-java"),
-	Tags:              proto.String("!unimplemented"),
-	SuccessRate:       proto.Float32(80.00),
-	ExecutionTime:     proto.Int64(113163),
-	Timestamp:         proto.String("Jun 3, 2016 at 12:29pm"),
+	ProjectName:       "projName",
+	Environment:       "ci-java",
+	Tags:              "!unimplemented",
+	SuccessRate:       80.00,
+	ExecutionTime:     113163,
+	Timestamp:         "Jun 3, 2016 at 12:29pm",
 	SpecResults:       make([]*gm.ProtoSpecResult, 15),
-	SpecsFailedCount:  proto.Int32(2),
-	SpecsSkippedCount: proto.Int32(5),
+	SpecsFailedCount:  2,
+	SpecsSkippedCount: 5,
 }
 
 var scn = &gm.ProtoScenario{
-	ScenarioHeading: proto.String("Vowel counts in single word"),
-	ExecutionStatus: gm.ExecutionStatus_PASSED.Enum(),
+	ScenarioHeading: "Vowel counts in single word",
+	ExecutionStatus: gm.ExecutionStatus_PASSED,
 	Tags:            []string{"foo", "bar"},
-	ExecutionTime:   proto.Int64(113163),
+	ExecutionTime:   113163,
 	Contexts: []*gm.ProtoItem{
 		newStepItem(false, false, []*gm.Fragment{newTextFragment("Context Step1")}),
 		newStepItem(true, false, []*gm.Fragment{newTextFragment("Context Step2")}),
@@ -287,28 +286,28 @@ var scn = &gm.ProtoScenario{
 }
 
 var scnWithHookFailure = &gm.ProtoScenario{
-	ScenarioHeading: proto.String("Vowel counts in single word"),
-	ExecutionStatus: gm.ExecutionStatus_FAILED.Enum(),
-	ExecutionTime:   proto.Int64(113163),
+	ScenarioHeading: "Vowel counts in single word",
+	ExecutionStatus: gm.ExecutionStatus_FAILED,
+	ExecutionTime:   113163,
 	ScenarioItems: []*gm.ProtoItem{
 		newStepItem(true, false, []*gm.Fragment{newTextFragment("Step1")}),
 	},
 	PreHookFailure: &gm.ProtoHookFailure{
-		ErrorMessage: proto.String("err"),
-		StackTrace:   proto.String("Stacktrace"),
+		ErrorMessage: "err",
+		StackTrace:   "Stacktrace",
 		ScreenShot:   []byte("Screenshot"),
 	},
 	PostHookFailure: &gm.ProtoHookFailure{
-		ErrorMessage: proto.String("err"),
-		StackTrace:   proto.String("Stacktrace"),
+		ErrorMessage: "err",
+		StackTrace:   "Stacktrace",
 		ScreenShot:   []byte("Screenshot"),
 	},
 }
 
 var skippedProtoSce = &gm.ProtoScenario{
-	ScenarioHeading: proto.String("Vowel counts in single word"),
-	ExecutionStatus: gm.ExecutionStatus_SKIPPED.Enum(),
-	ExecutionTime:   proto.Int64(0),
+	ScenarioHeading: "Vowel counts in single word",
+	ExecutionStatus: gm.ExecutionStatus_SKIPPED,
+	ExecutionTime:   0,
 	ScenarioItems: []*gm.ProtoItem{
 		newStepItem(true, false, []*gm.Fragment{newTextFragment("Step1")}),
 	},
@@ -331,10 +330,10 @@ var protoStep = &gm.ProtoStep{
 	},
 	StepExecutionResult: &gm.ProtoStepExecutionResult{
 		ExecutionResult: &gm.ProtoExecutionResult{
-			ExecutionTime: proto.Int64(211316),
+			ExecutionTime: 211316,
 		},
-		SkippedReason: proto.String("Step impl not found"),
-		Skipped:       proto.Bool(true),
+		SkippedReason: "Step impl not found",
+		Skipped:       true,
 	},
 }
 
@@ -350,7 +349,7 @@ var protoConcept = &gm.ProtoConcept{
 	}).GetStep(),
 	Steps: []*gm.ProtoItem{
 		{
-			ItemType: gm.ProtoItem_Concept.Enum(),
+			ItemType: gm.ProtoItem_Concept,
 			Concept: &gm.ProtoConcept{
 				ConceptStep: newStepItem(false, false, []*gm.Fragment{
 					newTextFragment("Tell "),
@@ -358,7 +357,7 @@ var protoConcept = &gm.ProtoConcept{
 				}).GetStep(),
 				Steps: []*gm.ProtoItem{newStepItem(false, false, []*gm.Fragment{newTextFragment("Say Hi")})},
 				ConceptExecutionResult: &gm.ProtoStepExecutionResult{
-					ExecutionResult: &gm.ProtoExecutionResult{Failed: proto.Bool(false), ExecutionTime: proto.Int64(211316)},
+					ExecutionResult: &gm.ProtoExecutionResult{Failed: false, ExecutionTime: 211316},
 				},
 			},
 		},
@@ -374,7 +373,7 @@ var protoConcept = &gm.ProtoConcept{
 		}),
 	},
 	ConceptExecutionResult: &gm.ProtoStepExecutionResult{
-		ExecutionResult: &gm.ProtoExecutionResult{Failed: proto.Bool(false), ExecutionTime: proto.Int64(211316)},
+		ExecutionResult: &gm.ProtoExecutionResult{Failed: false, ExecutionTime: 211316},
 	},
 }
 
@@ -382,19 +381,19 @@ var protoStepWithSpecialParams = &gm.ProtoStep{
 	Fragments: []*gm.Fragment{
 		newTextFragment("Say "),
 		{
-			FragmentType: gm.Fragment_Parameter.Enum(),
+			FragmentType: gm.Fragment_Parameter,
 			Parameter: &gm.Parameter{
-				Name:          proto.String("file:foo.txt"),
-				ParameterType: gm.Parameter_Special_String.Enum(),
-				Value:         proto.String("hi"),
+				Name:          "file:foo.txt",
+				ParameterType: gm.Parameter_Special_String,
+				Value:         "hi",
 			},
 		},
 		newTextFragment(" to "),
 		{
-			FragmentType: gm.Fragment_Parameter.Enum(),
+			FragmentType: gm.Fragment_Parameter,
 			Parameter: &gm.Parameter{
-				ParameterType: gm.Parameter_Special_Table.Enum(),
-				Name:          proto.String("table:myTable.csv"),
+				ParameterType: gm.Parameter_Special_Table,
+				Name:          "table:myTable.csv",
 				Table: newTableItem([]string{"Word", "Count"}, [][]string{
 					[]string{"Gauge", "3"},
 					[]string{"Mingle", "2"},
@@ -404,8 +403,8 @@ var protoStepWithSpecialParams = &gm.ProtoStep{
 	},
 	StepExecutionResult: &gm.ProtoStepExecutionResult{
 		ExecutionResult: &gm.ProtoExecutionResult{
-			Failed:        proto.Bool(false),
-			ExecutionTime: proto.Int64(211316),
+			Failed:        false,
+			ExecutionTime: 211316,
 		},
 	},
 }
@@ -414,20 +413,20 @@ var protoStepWithAfterHookFailure = &gm.ProtoStep{
 	Fragments: []*gm.Fragment{newTextFragment("Some Step")},
 	StepExecutionResult: &gm.ProtoStepExecutionResult{
 		ExecutionResult: &gm.ProtoExecutionResult{
-			Failed:        proto.Bool(true),
-			ExecutionTime: proto.Int64(211316),
+			Failed:        true,
+			ExecutionTime: 211316,
 		},
 		PostHookFailure: &gm.ProtoHookFailure{
-			ErrorMessage: proto.String("err"),
-			StackTrace:   proto.String("Stacktrace"),
+			ErrorMessage: "err",
+			StackTrace:   "Stacktrace",
 			ScreenShot:   []byte("Screenshot"),
 		},
 	},
 }
 
 var failedHookFailure = &gm.ProtoHookFailure{
-	ErrorMessage: proto.String("java.lang.RuntimeException"),
-	StackTrace:   proto.String(newStackTrace()),
+	ErrorMessage: "java.lang.RuntimeException",
+	StackTrace:   newStackTrace(),
 	ScreenShot:   []byte(newScreenshot()),
 }
 
@@ -499,12 +498,12 @@ func TestToSpec(t *testing.T) {
 
 func TestToSpecWithScenariosInOrder(t *testing.T) {
 	specRes := &gm.ProtoSpecResult{
-		Failed:        proto.Bool(true),
-		Skipped:       proto.Bool(false),
-		ExecutionTime: proto.Int64(211316),
+		Failed:        true,
+		Skipped:       false,
+		ExecutionTime: 211316,
 		ProtoSpec: &gm.ProtoSpec{
-			SpecHeading: proto.String("specRes1"),
-			FileName:    proto.String("/tmp/gauge/specs/foobar.spec"),
+			SpecHeading: "specRes1",
+			FileName:    "/tmp/gauge/specs/foobar.spec",
 			Items: []*gm.ProtoItem{
 				newScenarioItem(scn),
 				newScenarioItem(scnWithHookFailure),
@@ -610,52 +609,52 @@ type summaryTest struct {
 var summaryTests = []*summaryTest{
 	{"All Passed",
 		&gm.ProtoSpec{
-			SpecHeading:   proto.String("specRes1"),
+			SpecHeading:   "specRes1",
 			Tags:          []string{"tag1", "tag2"},
-			FileName:      proto.String("/tmp/gauge/specs/foobar.spec"),
-			IsTableDriven: proto.Bool(false),
+			FileName:      "/tmp/gauge/specs/foobar.spec",
+			IsTableDriven: false,
 			Items: []*gm.ProtoItem{
-				newScenarioItem(&gm.ProtoScenario{ExecutionStatus: gm.ExecutionStatus_PASSED.Enum()}),
-				newScenarioItem(&gm.ProtoScenario{ExecutionStatus: gm.ExecutionStatus_PASSED.Enum()}),
+				newScenarioItem(&gm.ProtoScenario{ExecutionStatus: gm.ExecutionStatus_PASSED}),
+				newScenarioItem(&gm.ProtoScenario{ExecutionStatus: gm.ExecutionStatus_PASSED}),
 			},
 		},
 		summary{Failed: 0, Passed: 2, Skipped: 0, Total: 2},
 	},
 	{"With Skipped",
 		&gm.ProtoSpec{
-			SpecHeading:   proto.String("specRes1"),
+			SpecHeading:   "specRes1",
 			Tags:          []string{"tag1", "tag2"},
-			FileName:      proto.String("/tmp/gauge/specs/foobar.spec"),
-			IsTableDriven: proto.Bool(false),
+			FileName:      "/tmp/gauge/specs/foobar.spec",
+			IsTableDriven: false,
 			Items: []*gm.ProtoItem{
-				newScenarioItem(&gm.ProtoScenario{ExecutionStatus: gm.ExecutionStatus_PASSED.Enum()}),
-				newScenarioItem(&gm.ProtoScenario{ExecutionStatus: gm.ExecutionStatus_SKIPPED.Enum()}),
+				newScenarioItem(&gm.ProtoScenario{ExecutionStatus: gm.ExecutionStatus_PASSED}),
+				newScenarioItem(&gm.ProtoScenario{ExecutionStatus: gm.ExecutionStatus_SKIPPED}),
 			},
 		},
 		summary{Failed: 0, Passed: 1, Skipped: 1, Total: 2},
 	},
 	{"With failed",
 		&gm.ProtoSpec{
-			SpecHeading:   proto.String("specRes1"),
+			SpecHeading:   "specRes1",
 			Tags:          []string{"tag1", "tag2"},
-			FileName:      proto.String("/tmp/gauge/specs/foobar.spec"),
-			IsTableDriven: proto.Bool(false),
+			FileName:      "/tmp/gauge/specs/foobar.spec",
+			IsTableDriven: false,
 			Items: []*gm.ProtoItem{
-				newScenarioItem(&gm.ProtoScenario{ExecutionStatus: gm.ExecutionStatus_FAILED.Enum()}),
-				newScenarioItem(&gm.ProtoScenario{ExecutionStatus: gm.ExecutionStatus_PASSED.Enum()}),
+				newScenarioItem(&gm.ProtoScenario{ExecutionStatus: gm.ExecutionStatus_FAILED}),
+				newScenarioItem(&gm.ProtoScenario{ExecutionStatus: gm.ExecutionStatus_PASSED}),
 			},
 		},
 		summary{Failed: 1, Passed: 1, Skipped: 0, Total: 2},
 	},
 	{"With failed and skipped",
 		&gm.ProtoSpec{
-			SpecHeading:   proto.String("specRes1"),
+			SpecHeading:   "specRes1",
 			Tags:          []string{"tag1", "tag2"},
-			FileName:      proto.String("/tmp/gauge/specs/foobar.spec"),
-			IsTableDriven: proto.Bool(false),
+			FileName:      "/tmp/gauge/specs/foobar.spec",
+			IsTableDriven: false,
 			Items: []*gm.ProtoItem{
-				newScenarioItem(&gm.ProtoScenario{ExecutionStatus: gm.ExecutionStatus_FAILED.Enum()}),
-				newScenarioItem(&gm.ProtoScenario{ExecutionStatus: gm.ExecutionStatus_SKIPPED.Enum()}),
+				newScenarioItem(&gm.ProtoScenario{ExecutionStatus: gm.ExecutionStatus_FAILED}),
+				newScenarioItem(&gm.ProtoScenario{ExecutionStatus: gm.ExecutionStatus_SKIPPED}),
 			},
 		},
 		summary{Failed: 1, Passed: 0, Skipped: 1, Total: 2},

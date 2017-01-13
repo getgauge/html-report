@@ -27,14 +27,13 @@ import (
 
 	"github.com/documize/html-diff"
 	gm "github.com/getgauge/html-report/gauge_messages"
-	"github.com/golang/protobuf/proto"
 )
 
 var scenario1 = &gm.ProtoScenario{
-	ScenarioHeading: proto.String("Vowel counts in single word"),
-	ExecutionStatus: gm.ExecutionStatus_PASSED.Enum(),
+	ScenarioHeading: "Vowel counts in single word",
+	ExecutionStatus: gm.ExecutionStatus_PASSED,
 	Tags:            []string{"foo", "bar"},
-	ExecutionTime:   proto.Int64(113163),
+	ExecutionTime:   113163,
 	Contexts: []*gm.ProtoItem{
 		newStepItem(false, false, []*gm.Fragment{newTextFragment("Context Step1")}),
 		newStepItem(false, false, []*gm.Fragment{newTextFragment("Context Step2")}),
@@ -53,7 +52,7 @@ var scenario1 = &gm.ProtoScenario{
 			newStepItem(false, false, []*gm.Fragment{newTextFragment("Concept Step1")}),
 			newStepItem(false, false, []*gm.Fragment{newTextFragment("Concept Step2")}),
 		}, &gm.ProtoStepExecutionResult{
-			ExecutionResult: &gm.ProtoExecutionResult{Failed: proto.Bool(false), ExecutionTime: proto.Int64(211316)},
+			ExecutionResult: &gm.ProtoExecutionResult{Failed: false, ExecutionTime: 211316},
 		}),
 		newConceptItem("Outer Concept", []*gm.ProtoItem{
 			newStepItem(false, false, []*gm.Fragment{newTextFragment("Outer Concept Step 1")}),
@@ -61,11 +60,11 @@ var scenario1 = &gm.ProtoScenario{
 				newStepItem(false, false, []*gm.Fragment{newTextFragment("Inner Concept Step 1")}),
 				newStepItem(false, false, []*gm.Fragment{newTextFragment("Inner Concept Step 2")}),
 			}, &gm.ProtoStepExecutionResult{
-				ExecutionResult: &gm.ProtoExecutionResult{Failed: proto.Bool(false), ExecutionTime: proto.Int64(211316)},
+				ExecutionResult: &gm.ProtoExecutionResult{Failed: false, ExecutionTime: 211316},
 			}),
 			newStepItem(false, false, []*gm.Fragment{newTextFragment("Outer Concept Step 2")}),
 		}, &gm.ProtoStepExecutionResult{
-			ExecutionResult: &gm.ProtoExecutionResult{Failed: proto.Bool(false), ExecutionTime: proto.Int64(211316)},
+			ExecutionResult: &gm.ProtoExecutionResult{Failed: false, ExecutionTime: 211316},
 		}),
 	},
 	TearDownSteps: []*gm.ProtoItem{
@@ -75,10 +74,10 @@ var scenario1 = &gm.ProtoScenario{
 }
 
 var scenarioWithConceptFailure = &gm.ProtoScenario{
-	ScenarioHeading: proto.String("Vowel counts in single word"),
-	ExecutionStatus: gm.ExecutionStatus_FAILED.Enum(),
+	ScenarioHeading: "Vowel counts in single word",
+	ExecutionStatus: gm.ExecutionStatus_FAILED,
 	Tags:            []string{"foo", "bar"},
-	ExecutionTime:   proto.Int64(113163),
+	ExecutionTime:   113163,
 	ScenarioItems: []*gm.ProtoItem{
 		newStepItem(false, false, []*gm.Fragment{newTextFragment("Step1")}),
 		newConceptItem("Outer Concept", []*gm.ProtoItem{
@@ -87,16 +86,16 @@ var scenarioWithConceptFailure = &gm.ProtoScenario{
 				newStepItem(false, false, []*gm.Fragment{newTextFragment("Inner Concept Step 1")}),
 				failedStep,
 				newStepItem(false, true, []*gm.Fragment{newTextFragment("Inner Concept Step 3")}),
-			}, &gm.ProtoStepExecutionResult{ExecutionResult: &gm.ProtoExecutionResult{Failed: proto.Bool(true), ExecutionTime: proto.Int64(113163)}}),
+			}, &gm.ProtoStepExecutionResult{ExecutionResult: &gm.ProtoExecutionResult{Failed: true, ExecutionTime: 113163}}),
 			newStepItem(false, true, []*gm.Fragment{newTextFragment("Outer Concept Step 2")}),
-		}, &gm.ProtoStepExecutionResult{ExecutionResult: &gm.ProtoExecutionResult{Failed: proto.Bool(true), ExecutionTime: proto.Int64(113163)}}),
+		}, &gm.ProtoStepExecutionResult{ExecutionResult: &gm.ProtoExecutionResult{Failed: true, ExecutionTime: 113163}}),
 	},
 }
 
 var scenario2 = &gm.ProtoScenario{
-	ScenarioHeading: proto.String("Vowel counts in multiple words"),
-	ExecutionStatus: gm.ExecutionStatus_PASSED.Enum(),
-	ExecutionTime:   proto.Int64(113163),
+	ScenarioHeading: "Vowel counts in multiple words",
+	ExecutionStatus: gm.ExecutionStatus_PASSED,
+	ExecutionTime:   113163,
 	Contexts: []*gm.ProtoItem{
 		newStepItem(false, false, []*gm.Fragment{newTextFragment("Context Step1")}),
 		newStepItem(false, false, []*gm.Fragment{newTextFragment("Context Step2")}),
@@ -117,9 +116,9 @@ var scenario2 = &gm.ProtoScenario{
 }
 
 var skippedScenario = &gm.ProtoScenario{
-	ScenarioHeading: proto.String("skipped scenario"),
-	ExecutionStatus: gm.ExecutionStatus_SKIPPED.Enum(),
-	ExecutionTime:   proto.Int64(0),
+	ScenarioHeading: "skipped scenario",
+	ExecutionStatus: gm.ExecutionStatus_SKIPPED,
+	ExecutionTime:   0,
 	Contexts: []*gm.ProtoItem{
 		newStepItem(false, true, []*gm.Fragment{newTextFragment("Context Step")}),
 	},
@@ -131,63 +130,63 @@ var skippedScenario = &gm.ProtoScenario{
 }
 
 var scenarioWithAfterHookFail = &gm.ProtoScenario{
-	ScenarioHeading: proto.String("Scenario Heading"),
-	ExecutionStatus: gm.ExecutionStatus_FAILED.Enum(),
-	ExecutionTime:   proto.Int64(113163),
+	ScenarioHeading: "Scenario Heading",
+	ExecutionStatus: gm.ExecutionStatus_FAILED,
+	ExecutionTime:   113163,
 	ScenarioItems: []*gm.ProtoItem{
 		newStepItem(false, false, []*gm.Fragment{newTextFragment("Some step")}),
 	},
 	PostHookFailure: &gm.ProtoHookFailure{
-		ErrorMessage: proto.String("java.lang.RuntimeException"),
-		StackTrace:   proto.String(newStackTrace()),
+		ErrorMessage: "java.lang.RuntimeException",
+		StackTrace:   newStackTrace(),
 		ScreenShot:   []byte(newScreenshot()),
 	},
 }
 
 var scenarioWithBeforeHookFail = &gm.ProtoScenario{
-	ScenarioHeading: proto.String("Scenario Heading"),
-	ExecutionStatus: gm.ExecutionStatus_FAILED.Enum(),
-	ExecutionTime:   proto.Int64(113163),
+	ScenarioHeading: "Scenario Heading",
+	ExecutionStatus: gm.ExecutionStatus_FAILED,
+	ExecutionTime:   113163,
 	ScenarioItems: []*gm.ProtoItem{
 		newStepItem(false, true, []*gm.Fragment{newTextFragment("Some step")}),
 	},
 	PreHookFailure: &gm.ProtoHookFailure{
-		ErrorMessage: proto.String("java.lang.RuntimeException"),
-		StackTrace:   proto.String(newStackTrace()),
+		ErrorMessage: "java.lang.RuntimeException",
+		StackTrace:   newStackTrace(),
 		ScreenShot:   []byte(newScreenshot()),
 	},
 }
 
 var scenarioWithBeforeAndAfterHookFail = &gm.ProtoScenario{
-	ScenarioHeading: proto.String("Scenario Heading"),
-	ExecutionStatus: gm.ExecutionStatus_FAILED.Enum(),
-	ExecutionTime:   proto.Int64(113163),
+	ScenarioHeading: "Scenario Heading",
+	ExecutionStatus: gm.ExecutionStatus_FAILED,
+	ExecutionTime:   113163,
 	ScenarioItems: []*gm.ProtoItem{
 		newStepItem(false, true, []*gm.Fragment{newTextFragment("Some step")}),
 	},
 	PreHookFailure: &gm.ProtoHookFailure{
-		ErrorMessage: proto.String("java.lang.RuntimeException"),
-		StackTrace:   proto.String(newStackTrace()),
+		ErrorMessage: "java.lang.RuntimeException",
+		StackTrace:   newStackTrace(),
 		ScreenShot:   []byte(newScreenshot()),
 	},
 	PostHookFailure: &gm.ProtoHookFailure{
-		ErrorMessage: proto.String("java.lang.RuntimeException"),
-		StackTrace:   proto.String(newStackTrace()),
+		ErrorMessage: "java.lang.RuntimeException",
+		StackTrace:   newStackTrace(),
 		ScreenShot:   []byte(newScreenshot()),
 	},
 }
 
 var stepWithBeforeHookFail = &gm.ProtoItem{
-	ItemType: gm.ProtoItem_Step.Enum(),
+	ItemType: gm.ProtoItem_Step,
 	Step: &gm.ProtoStep{
 		StepExecutionResult: &gm.ProtoStepExecutionResult{
 			ExecutionResult: &gm.ProtoExecutionResult{
-				Failed:        proto.Bool(true),
-				ExecutionTime: proto.Int64(211316),
+				Failed:        true,
+				ExecutionTime: 211316,
 			},
 			PreHookFailure: &gm.ProtoHookFailure{
-				ErrorMessage: proto.String("java.lang.RuntimeException"),
-				StackTrace:   proto.String(newStackTrace()),
+				ErrorMessage: "java.lang.RuntimeException",
+				StackTrace:   newStackTrace(),
 				ScreenShot:   []byte(newScreenshot()),
 			},
 		},
@@ -196,16 +195,16 @@ var stepWithBeforeHookFail = &gm.ProtoItem{
 }
 
 var stepWithAfterHookFail = &gm.ProtoItem{
-	ItemType: gm.ProtoItem_Step.Enum(),
+	ItemType: gm.ProtoItem_Step,
 	Step: &gm.ProtoStep{
 		StepExecutionResult: &gm.ProtoStepExecutionResult{
 			ExecutionResult: &gm.ProtoExecutionResult{
-				Failed:        proto.Bool(true),
-				ExecutionTime: proto.Int64(211316),
+				Failed:        true,
+				ExecutionTime: 211316,
 			},
 			PostHookFailure: &gm.ProtoHookFailure{
-				ErrorMessage: proto.String("java.lang.RuntimeException"),
-				StackTrace:   proto.String(newStackTrace()),
+				ErrorMessage: "java.lang.RuntimeException",
+				StackTrace:   newStackTrace(),
 				ScreenShot:   []byte(newScreenshot()),
 			},
 		},
@@ -214,21 +213,21 @@ var stepWithAfterHookFail = &gm.ProtoItem{
 }
 
 var stepWithBeforeAndAfterHookFail = &gm.ProtoItem{
-	ItemType: gm.ProtoItem_Step.Enum(),
+	ItemType: gm.ProtoItem_Step,
 	Step: &gm.ProtoStep{
 		StepExecutionResult: &gm.ProtoStepExecutionResult{
 			ExecutionResult: &gm.ProtoExecutionResult{
-				Failed:        proto.Bool(true),
-				ExecutionTime: proto.Int64(211316),
+				Failed:        true,
+				ExecutionTime: 211316,
 			},
 			PreHookFailure: &gm.ProtoHookFailure{
-				ErrorMessage: proto.String("java.lang.RuntimeException"),
-				StackTrace:   proto.String(newStackTrace()),
+				ErrorMessage: "java.lang.RuntimeException",
+				StackTrace:   newStackTrace(),
 				ScreenShot:   []byte(newScreenshot()),
 			},
 			PostHookFailure: &gm.ProtoHookFailure{
-				ErrorMessage: proto.String("java.lang.RuntimeException"),
-				StackTrace:   proto.String(newStackTrace()),
+				ErrorMessage: "java.lang.RuntimeException",
+				StackTrace:   newStackTrace(),
 				ScreenShot:   []byte(newScreenshot()),
 			},
 		},
@@ -237,14 +236,14 @@ var stepWithBeforeAndAfterHookFail = &gm.ProtoItem{
 }
 
 var failedStep = &gm.ProtoItem{
-	ItemType: gm.ProtoItem_Step.Enum(),
+	ItemType: gm.ProtoItem_Step,
 	Step: &gm.ProtoStep{
 		StepExecutionResult: &gm.ProtoStepExecutionResult{
 			ExecutionResult: &gm.ProtoExecutionResult{
-				Failed:        proto.Bool(true),
-				ExecutionTime: proto.Int64(211316),
-				ErrorMessage:  proto.String("java.lang.RuntimeException"),
-				StackTrace:    proto.String(newStackTrace()),
+				Failed:        true,
+				ExecutionTime: 211316,
+				ErrorMessage:  "java.lang.RuntimeException",
+				StackTrace:    newStackTrace(),
 				ScreenShot:    []byte(newScreenshot()),
 			},
 		},
@@ -253,12 +252,12 @@ var failedStep = &gm.ProtoItem{
 }
 
 var stepNotExecuted = &gm.ProtoItem{
-	ItemType: gm.ProtoItem_Step.Enum(),
+	ItemType: gm.ProtoItem_Step,
 	Step: &gm.ProtoStep{
 		StepExecutionResult: &gm.ProtoStepExecutionResult{
-			Skipped: proto.Bool(true),
+			Skipped: true,
 			ExecutionResult: &gm.ProtoExecutionResult{
-				ExecutionTime: proto.Int64(0),
+				ExecutionTime: 0,
 			},
 		},
 		Fragments: []*gm.Fragment{newTextFragment("This step is skipped because previous one failed")},
@@ -266,41 +265,41 @@ var stepNotExecuted = &gm.ProtoItem{
 }
 
 var scenarioWithBeforeStepFail = &gm.ProtoScenario{
-	ScenarioHeading: proto.String("Scenario Heading"),
-	ExecutionStatus: gm.ExecutionStatus_FAILED.Enum(),
-	ExecutionTime:   proto.Int64(113163),
+	ScenarioHeading: "Scenario Heading",
+	ExecutionStatus: gm.ExecutionStatus_FAILED,
+	ExecutionTime:   113163,
 	ScenarioItems:   []*gm.ProtoItem{stepWithBeforeHookFail, stepNotExecuted},
 }
 
 var scenarioWithAfterStepFail = &gm.ProtoScenario{
-	ScenarioHeading: proto.String("Scenario Heading"),
-	ExecutionStatus: gm.ExecutionStatus_FAILED.Enum(),
-	ExecutionTime:   proto.Int64(113163),
+	ScenarioHeading: "Scenario Heading",
+	ExecutionStatus: gm.ExecutionStatus_FAILED,
+	ExecutionTime:   113163,
 	ScenarioItems:   []*gm.ProtoItem{stepWithAfterHookFail, stepNotExecuted},
 }
 
 var scenarioWithBeforeAndAfterStepFail = &gm.ProtoScenario{
-	ScenarioHeading: proto.String("Scenario Heading"),
-	ExecutionStatus: gm.ExecutionStatus_FAILED.Enum(),
-	ExecutionTime:   proto.Int64(113163),
+	ScenarioHeading: "Scenario Heading",
+	ExecutionStatus: gm.ExecutionStatus_FAILED,
+	ExecutionTime:   113163,
 	ScenarioItems:   []*gm.ProtoItem{stepWithBeforeAndAfterHookFail, stepNotExecuted},
 }
 
 var scenarioWithStepFail = &gm.ProtoScenario{
-	ScenarioHeading: proto.String("Scenario Heading"),
-	ExecutionStatus: gm.ExecutionStatus_FAILED.Enum(),
-	ExecutionTime:   proto.Int64(113163),
+	ScenarioHeading: "Scenario Heading",
+	ExecutionStatus: gm.ExecutionStatus_FAILED,
+	ExecutionTime:   113163,
 	ScenarioItems:   []*gm.ProtoItem{newStepItem(false, false, []*gm.Fragment{newTextFragment("passing step")}), failedStep, stepNotExecuted},
 }
 
 var passSpecRes1 = &gm.ProtoSpecResult{
-	Failed:        proto.Bool(false),
-	Skipped:       proto.Bool(false),
-	ExecutionTime: proto.Int64(211316),
+	Failed:        false,
+	Skipped:       false,
+	ExecutionTime: 211316,
 	ProtoSpec: &gm.ProtoSpec{
-		SpecHeading: proto.String("Passing Specification 1"),
+		SpecHeading: "Passing Specification 1",
 		Tags:        []string{"tag1", "tag2"},
-		FileName:    proto.String("passing_specification_1.spec"),
+		FileName:    "passing_specification_1.spec",
 		Items: []*gm.ProtoItem{
 			newCommentItem("\n"),
 			newCommentItem("This is an executable specification file. This file follows markdown syntax."),
@@ -322,35 +321,35 @@ var passSpecRes1 = &gm.ProtoSpecResult{
 }
 
 var passSpecRes2 = &gm.ProtoSpecResult{
-	Failed:        proto.Bool(false),
-	Skipped:       proto.Bool(false),
-	ExecutionTime: proto.Int64(211316),
+	Failed:        false,
+	Skipped:       false,
+	ExecutionTime: 211316,
 	ProtoSpec: &gm.ProtoSpec{
-		FileName:    proto.String("passing_specification_2.spec"),
-		SpecHeading: proto.String("Passing Specification 2"),
+		FileName:    "passing_specification_2.spec",
+		SpecHeading: "Passing Specification 2",
 		Tags:        []string{},
 	},
 }
 
 var passSpecRes3 = &gm.ProtoSpecResult{
-	Failed:        proto.Bool(false),
-	Skipped:       proto.Bool(false),
-	ExecutionTime: proto.Int64(211316),
+	Failed:        false,
+	Skipped:       false,
+	ExecutionTime: 211316,
 	ProtoSpec: &gm.ProtoSpec{
-		FileName:    proto.String("passing_specification_3.spec"),
-		SpecHeading: proto.String("Passing Specification 3"),
+		FileName:    "passing_specification_3.spec",
+		SpecHeading: "Passing Specification 3",
 		Tags:        []string{"foo"},
 	},
 }
 
 var failSpecResWithAfterScenarioFailure = &gm.ProtoSpecResult{
-	Failed:        proto.Bool(true),
-	Skipped:       proto.Bool(false),
-	ExecutionTime: proto.Int64(211316),
+	Failed:        true,
+	Skipped:       false,
+	ExecutionTime: 211316,
 	ProtoSpec: &gm.ProtoSpec{
-		SpecHeading: proto.String("Failing Specification 1"),
+		SpecHeading: "Failing Specification 1",
 		Tags:        []string{},
-		FileName:    proto.String("failing_specification_1.spec"),
+		FileName:    "failing_specification_1.spec",
 		Items: []*gm.ProtoItem{
 			newScenarioItem(scenarioWithAfterHookFail),
 		},
@@ -358,13 +357,13 @@ var failSpecResWithAfterScenarioFailure = &gm.ProtoSpecResult{
 }
 
 var failSpecResWithBeforeScenarioFailure = &gm.ProtoSpecResult{
-	Failed:        proto.Bool(true),
-	Skipped:       proto.Bool(false),
-	ExecutionTime: proto.Int64(211316),
+	Failed:        true,
+	Skipped:       false,
+	ExecutionTime: 211316,
 	ProtoSpec: &gm.ProtoSpec{
-		SpecHeading: proto.String("Failing Specification 1"),
+		SpecHeading: "Failing Specification 1",
 		Tags:        []string{},
-		FileName:    proto.String("failing_specification_1.spec"),
+		FileName:    "failing_specification_1.spec",
 		Items: []*gm.ProtoItem{
 			newScenarioItem(scenarioWithBeforeHookFail),
 		},
@@ -372,13 +371,13 @@ var failSpecResWithBeforeScenarioFailure = &gm.ProtoSpecResult{
 }
 
 var failSpecResWithBeforeAndAfterScenarioFailure = &gm.ProtoSpecResult{
-	Failed:        proto.Bool(true),
-	Skipped:       proto.Bool(false),
-	ExecutionTime: proto.Int64(211316),
+	Failed:        true,
+	Skipped:       false,
+	ExecutionTime: 211316,
 	ProtoSpec: &gm.ProtoSpec{
-		SpecHeading: proto.String("Failing Specification 1"),
+		SpecHeading: "Failing Specification 1",
 		Tags:        []string{},
-		FileName:    proto.String("failing_specification_1.spec"),
+		FileName:    "failing_specification_1.spec",
 		Items: []*gm.ProtoItem{
 			newScenarioItem(scenarioWithBeforeAndAfterHookFail),
 		},
@@ -386,13 +385,13 @@ var failSpecResWithBeforeAndAfterScenarioFailure = &gm.ProtoSpecResult{
 }
 
 var specResWithMultipleScenarios = &gm.ProtoSpecResult{
-	Failed:        proto.Bool(true),
-	Skipped:       proto.Bool(false),
-	ExecutionTime: proto.Int64(211316),
+	Failed:        true,
+	Skipped:       false,
+	ExecutionTime: 211316,
 	ProtoSpec: &gm.ProtoSpec{
-		SpecHeading: proto.String("Failing Specification 1"),
+		SpecHeading: "Failing Specification 1",
 		Tags:        []string{},
-		FileName:    proto.String("failing_specification_1.spec"),
+		FileName:    "failing_specification_1.spec",
 		Items: []*gm.ProtoItem{
 			newScenarioItem(scenarioWithStepFail),
 			newScenarioItem(scenario2),
@@ -401,13 +400,13 @@ var specResWithMultipleScenarios = &gm.ProtoSpecResult{
 }
 
 var failSpecResWithBeforeStepFailure = &gm.ProtoSpecResult{
-	Failed:        proto.Bool(true),
-	Skipped:       proto.Bool(false),
-	ExecutionTime: proto.Int64(211316),
+	Failed:        true,
+	Skipped:       false,
+	ExecutionTime: 211316,
 	ProtoSpec: &gm.ProtoSpec{
-		SpecHeading: proto.String("Failing Specification 1"),
+		SpecHeading: "Failing Specification 1",
 		Tags:        []string{},
-		FileName:    proto.String("failing_specification_1.spec"),
+		FileName:    "failing_specification_1.spec",
 		Items: []*gm.ProtoItem{
 			newScenarioItem(scenarioWithBeforeStepFail),
 		},
@@ -415,13 +414,13 @@ var failSpecResWithBeforeStepFailure = &gm.ProtoSpecResult{
 }
 
 var failSpecResWithAfterStepFailure = &gm.ProtoSpecResult{
-	Failed:        proto.Bool(true),
-	Skipped:       proto.Bool(false),
-	ExecutionTime: proto.Int64(211316),
+	Failed:        true,
+	Skipped:       false,
+	ExecutionTime: 211316,
 	ProtoSpec: &gm.ProtoSpec{
-		SpecHeading: proto.String("Failing Specification 1"),
+		SpecHeading: "Failing Specification 1",
 		Tags:        []string{},
-		FileName:    proto.String("failing_specification_1.spec"),
+		FileName:    "failing_specification_1.spec",
 		Items: []*gm.ProtoItem{
 			newScenarioItem(scenarioWithAfterStepFail),
 		},
@@ -429,13 +428,13 @@ var failSpecResWithAfterStepFailure = &gm.ProtoSpecResult{
 }
 
 var failSpecResWithBeforeAndAfterStepFailure = &gm.ProtoSpecResult{
-	Failed:        proto.Bool(true),
-	Skipped:       proto.Bool(false),
-	ExecutionTime: proto.Int64(211316),
+	Failed:        true,
+	Skipped:       false,
+	ExecutionTime: 211316,
 	ProtoSpec: &gm.ProtoSpec{
-		SpecHeading: proto.String("Failing Specification 1"),
+		SpecHeading: "Failing Specification 1",
 		Tags:        []string{},
-		FileName:    proto.String("failing_specification_1.spec"),
+		FileName:    "failing_specification_1.spec",
 		Items: []*gm.ProtoItem{
 			newScenarioItem(scenarioWithBeforeAndAfterStepFail),
 		},
@@ -443,13 +442,13 @@ var failSpecResWithBeforeAndAfterStepFailure = &gm.ProtoSpecResult{
 }
 
 var failSpecResWithStepFailure = &gm.ProtoSpecResult{
-	Failed:        proto.Bool(true),
-	Skipped:       proto.Bool(false),
-	ExecutionTime: proto.Int64(211316),
+	Failed:        true,
+	Skipped:       false,
+	ExecutionTime: 211316,
 	ProtoSpec: &gm.ProtoSpec{
-		SpecHeading: proto.String("Failing Specification 1"),
+		SpecHeading: "Failing Specification 1",
 		Tags:        []string{},
-		FileName:    proto.String("failing_specification_1.spec"),
+		FileName:    "failing_specification_1.spec",
 		Items: []*gm.ProtoItem{
 			newScenarioItem(scenarioWithStepFail),
 		},
@@ -457,13 +456,13 @@ var failSpecResWithStepFailure = &gm.ProtoSpecResult{
 }
 
 var failSpecResWithConceptFailure = &gm.ProtoSpecResult{
-	Failed:        proto.Bool(true),
-	Skipped:       proto.Bool(false),
-	ExecutionTime: proto.Int64(211316),
+	Failed:        true,
+	Skipped:       false,
+	ExecutionTime: 211316,
 	ProtoSpec: &gm.ProtoSpec{
-		SpecHeading: proto.String("Failing Specification"),
+		SpecHeading: "Failing Specification",
 		Tags:        []string{},
-		FileName:    proto.String("failing_specification.spec"),
+		FileName:    "failing_specification.spec",
 		Items: []*gm.ProtoItem{
 			newScenarioItem(scenarioWithConceptFailure),
 		},
@@ -471,13 +470,13 @@ var failSpecResWithConceptFailure = &gm.ProtoSpecResult{
 }
 
 var skippedSpecRes = &gm.ProtoSpecResult{
-	Failed:        proto.Bool(false),
-	Skipped:       proto.Bool(true),
-	ExecutionTime: proto.Int64(0),
+	Failed:        false,
+	Skipped:       true,
+	ExecutionTime: 0,
 	ProtoSpec: &gm.ProtoSpec{
-		SpecHeading: proto.String("Skipped Specification"),
+		SpecHeading: "Skipped Specification",
 		Tags:        []string{},
-		FileName:    proto.String("skipped_specification.spec"),
+		FileName:    "skipped_specification.spec",
 		Items: []*gm.ProtoItem{
 			newScenarioItem(skippedScenario),
 		},
@@ -485,13 +484,13 @@ var skippedSpecRes = &gm.ProtoSpecResult{
 }
 
 var failSpecResWithAfterSpecFailure = &gm.ProtoSpecResult{
-	Failed:        proto.Bool(true),
-	Skipped:       proto.Bool(false),
-	ExecutionTime: proto.Int64(211316),
+	Failed:        true,
+	Skipped:       false,
+	ExecutionTime: 211316,
 	ProtoSpec: &gm.ProtoSpec{
-		SpecHeading: proto.String("Failing Specification 1"),
+		SpecHeading: "Failing Specification 1",
 		Tags:        []string{},
-		FileName:    proto.String("failing_specification_1.spec"),
+		FileName:    "failing_specification_1.spec",
 		Items: []*gm.ProtoItem{
 			newCommentItem("\n"),
 			newCommentItem("This is an executable specification file. This file follows markdown syntax."),
@@ -509,21 +508,21 @@ var failSpecResWithAfterSpecFailure = &gm.ProtoSpecResult{
 			newScenarioItem(scenario2),
 		},
 		PostHookFailure: &gm.ProtoHookFailure{
-			ErrorMessage: proto.String("java.lang.RuntimeException"),
-			StackTrace:   proto.String(newStackTrace()),
+			ErrorMessage: "java.lang.RuntimeException",
+			StackTrace:   newStackTrace(),
 			ScreenShot:   []byte(newScreenshot()),
 		},
 	},
 }
 
 var failSpecResWithBeforeSpecFailure = &gm.ProtoSpecResult{
-	Failed:        proto.Bool(true),
-	Skipped:       proto.Bool(false),
-	ExecutionTime: proto.Int64(211316),
+	Failed:        true,
+	Skipped:       false,
+	ExecutionTime: 211316,
 	ProtoSpec: &gm.ProtoSpec{
-		SpecHeading: proto.String("Failing Specification 1"),
+		SpecHeading: "Failing Specification 1",
 		Tags:        []string{},
-		FileName:    proto.String("failing_specification_1.spec"),
+		FileName:    "failing_specification_1.spec",
 		Items: []*gm.ProtoItem{
 			newCommentItem("\n"),
 			newCommentItem("This is an executable specification file. This file follows markdown syntax."),
@@ -537,21 +536,21 @@ var failSpecResWithBeforeSpecFailure = &gm.ProtoSpecResult{
 			newScenarioItem(scenario2),
 		},
 		PreHookFailure: &gm.ProtoHookFailure{
-			ErrorMessage: proto.String("java.lang.RuntimeException"),
-			StackTrace:   proto.String(newStackTrace()),
+			ErrorMessage: "java.lang.RuntimeException",
+			StackTrace:   newStackTrace(),
 			ScreenShot:   []byte(newScreenshot()),
 		},
 	},
 }
 
 var failSpecResWithBeforeAfterSpecFailure = &gm.ProtoSpecResult{
-	Failed:        proto.Bool(true),
-	Skipped:       proto.Bool(false),
-	ExecutionTime: proto.Int64(211316),
+	Failed:        true,
+	Skipped:       false,
+	ExecutionTime: 211316,
 	ProtoSpec: &gm.ProtoSpec{
-		SpecHeading: proto.String("Failing Specification 1"),
+		SpecHeading: "Failing Specification 1",
 		Tags:        []string{},
-		FileName:    proto.String("failing_specification_1.spec"),
+		FileName:    "failing_specification_1.spec",
 		Items: []*gm.ProtoItem{
 			newCommentItem("\n"),
 			newCommentItem("This is an executable specification file. This file follows markdown syntax."),
@@ -565,25 +564,25 @@ var failSpecResWithBeforeAfterSpecFailure = &gm.ProtoSpecResult{
 			newScenarioItem(scenario2),
 		},
 		PreHookFailure: &gm.ProtoHookFailure{
-			ErrorMessage: proto.String("java.lang.RuntimeException"),
-			StackTrace:   proto.String(newStackTrace()),
+			ErrorMessage: "java.lang.RuntimeException",
+			StackTrace:   newStackTrace(),
 			ScreenShot:   []byte(newScreenshot()),
 		},
 		PostHookFailure: &gm.ProtoHookFailure{
-			ErrorMessage: proto.String("java.lang.RuntimeException"),
-			StackTrace:   proto.String(newStackTrace()),
+			ErrorMessage: "java.lang.RuntimeException",
+			StackTrace:   newStackTrace(),
 			ScreenShot:   []byte(newScreenshot()),
 		},
 	},
 }
 
 var skipSpecRes1 = &gm.ProtoSpecResult{
-	Failed:        proto.Bool(false),
-	Skipped:       proto.Bool(true),
-	ExecutionTime: proto.Int64(0),
+	Failed:        false,
+	Skipped:       true,
+	ExecutionTime: 0,
 	ProtoSpec: &gm.ProtoSpec{
-		SpecHeading: proto.String("Skipped Specification 1"),
-		FileName:    proto.String("skipped_specification_1.spec"),
+		SpecHeading: "Skipped Specification 1",
+		FileName:    "skipped_specification_1.spec",
 		Tags:        []string{"bar"},
 	},
 }
@@ -608,8 +607,8 @@ var suiteResWithAllPass = newProtoSuiteRes(false, 0, 0, 100, nil, nil, passSpecR
 
 func newProtoHookFailure() *gm.ProtoHookFailure {
 	return &gm.ProtoHookFailure{
-		ErrorMessage: proto.String("java.lang.RuntimeException"),
-		StackTrace:   proto.String(newStackTrace()),
+		ErrorMessage: "java.lang.RuntimeException",
+		StackTrace:   newStackTrace(),
 		ScreenShot:   []byte(newScreenshot()),
 	}
 }
@@ -617,15 +616,15 @@ func newProtoHookFailure() *gm.ProtoHookFailure {
 func newProtoSuiteRes(failed bool, failCount, skipCount int32, succRate float32, preHook, postHook *gm.ProtoHookFailure, specRes ...*gm.ProtoSpecResult) *gm.ProtoSuiteResult {
 	return &gm.ProtoSuiteResult{
 		SpecResults:       specRes,
-		Failed:            proto.Bool(failed),
-		SpecsFailedCount:  proto.Int32(failCount),
-		ExecutionTime:     proto.Int64(122609),
-		SuccessRate:       proto.Float32(succRate),
-		Environment:       proto.String("default"),
-		Tags:              proto.String(""),
-		ProjectName:       proto.String("Gauge Project"),
-		Timestamp:         proto.String("Jul 13, 2016 at 11:49am"),
-		SpecsSkippedCount: proto.Int32(skipCount),
+		Failed:            failed,
+		SpecsFailedCount:  failCount,
+		ExecutionTime:     122609,
+		SuccessRate:       succRate,
+		Environment:       "default",
+		Tags:              "",
+		ProjectName:       "Gauge Project",
+		Timestamp:         "Jul 13, 2016 at 11:49am",
+		SpecsSkippedCount: skipCount,
 		PostHookFailure:   postHook,
 		PreHookFailure:    preHook,
 	}
