@@ -395,7 +395,7 @@ var skippedStepRes = &result{
 	SkippedReason: "step impl not found",
 }
 
-var re = regexp.MustCompile("[ ]*[\n\t][ ]*")
+var re = regexp.MustCompile("[\\s]*[\n\t][\\s]*")
 
 var reportGenTests = []reportGenTest{
 	{"generate html page start with project name", htmlPageStartTag, &overview{ProjectName: "projname"}, whtmlPageStartTag},
