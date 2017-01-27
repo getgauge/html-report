@@ -23,6 +23,7 @@ import (
 	"html"
 	"io/ioutil"
 	"path/filepath"
+	"sync"
 	"testing"
 
 	"github.com/documize/html-diff"
@@ -662,9 +663,11 @@ func TestHTMLGeneration(t *testing.T) {
 		}
 
 		buf := new(bytes.Buffer)
-		done := make(chan bool, 1)
-		generateSpecPage(test.res, test.res.GetSpecResults()[0], buf, done)
-		close(done)
+		var wg sync.WaitGroup
+		wg.Add(1)
+
+		generateSpecPage(test.res, test.res.GetSpecResults()[0], buf, &wg)
+		wg.Wait()
 
 		want := removeNewline(string(content))
 		got := removeNewline(buf.String())
@@ -680,7 +683,11 @@ func TestIndexPageGeneration(t *testing.T) {
 	}
 
 	buf := new(bytes.Buffer)
-	generateIndexPage(suiteResWithAllPass, buf)
+	var wg sync.WaitGroup
+	wg.Add(1)
+
+	generateIndexPage(suiteResWithAllPass, buf, &wg)
+	wg.Wait()
 
 	want := removeNewline(string(content))
 	got := removeNewline(buf.String())

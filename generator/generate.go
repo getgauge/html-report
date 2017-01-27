@@ -24,6 +24,7 @@ import (
 	"os"
 	"path/filepath"
 	"strings"
+	"sync"
 	"text/template"
 
 	"github.com/getgauge/common"
@@ -230,9 +231,10 @@ func GenerateReports(suiteRes *gm.ProtoSuiteResult, reportDir string) error {
 		}
 		generatePageFooter(overview, f)
 	} else {
-		go generateIndexPage(suiteRes, f)
+		var wg sync.WaitGroup
+		wg.Add(1)
+		go generateIndexPage(suiteRes, f, &wg)
 		specRes := suiteRes.GetSpecResults()
-		done := make(chan bool, len(specRes))
 		for _, res := range specRes {
 			relPath, _ := filepath.Rel(ProjectRoot, res.GetProtoSpec().GetFileName())
 			CreateDirectory(filepath.Join(reportDir, filepath.Dir(relPath)))
@@ -240,12 +242,10 @@ func GenerateReports(suiteRes *gm.ProtoSuiteResult, reportDir string) error {
 			if err != nil {
 				return err
 			}
-			go generateSpecPage(suiteRes, res, sf, done)
+			wg.Add(1)
+			go generateSpecPage(suiteRes, res, sf, &wg)
 		}
-		for _ = range specRes {
-			<-done
-		}
-		close(done)
+		wg.Wait()
 	}
 	err = generateSearchIndex(suiteRes, reportDir)
 	if err != nil {
@@ -322,7 +322,8 @@ func generateSearchIndex(suiteRes *gm.ProtoSuiteResult, reportDir string) error 
 	return nil
 }
 
-func generateIndexPage(suiteRes *gm.ProtoSuiteResult, w io.Writer) {
+func generateIndexPage(suiteRes *gm.ProtoSuiteResult, w io.Writer, wg *sync.WaitGroup) {
+	defer wg.Done()
 	overview := toOverview(suiteRes, nil)
 	generateOverview(overview, w)
 	if suiteRes.GetPostHookFailure() != nil {
@@ -337,7 +338,8 @@ func generateIndexPage(suiteRes *gm.ProtoSuiteResult, w io.Writer) {
 	generatePageFooter(overview, w)
 }
 
-func generateSpecPage(suiteRes *gm.ProtoSuiteResult, specRes *gm.ProtoSpecResult, w io.Writer, done chan bool) {
+func generateSpecPage(suiteRes *gm.ProtoSuiteResult, specRes *gm.ProtoSpecResult, w io.Writer, wg *sync.WaitGroup) {
+	defer wg.Done()
 	overview := toOverview(suiteRes, specRes)
 
 	generateOverview(overview, w)
@@ -356,9 +358,7 @@ func generateSpecPage(suiteRes *gm.ProtoSuiteResult, specRes *gm.ProtoSpecResult
 		generateSpecDiv(w, specRes)
 		execTemplate(endDiv, w, nil)
 	}
-
 	generatePageFooter(overview, w)
-	done <- true
 }
 
 func generateOverview(overview *overview, w io.Writer) {
