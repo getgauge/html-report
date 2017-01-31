@@ -88,7 +88,7 @@ func toSidebar(res *gm.ProtoSuiteResult, currSpec *gm.ProtoSpecResult) *sidebar 
 	specsMetaList := make([]*specsMeta, 0)
 	for _, specRes := range res.SpecResults {
 		sm := &specsMeta{
-			SpecName:   specRes.ProtoSpec.GetSpecHeading(),
+			SpecName:   getSpecName(specRes.ProtoSpec),
 			ExecTime:   formatTime(specRes.GetExecutionTime()),
 			Failed:     specRes.GetFailed(),
 			Skipped:    specRes.GetSkipped(),
@@ -152,9 +152,17 @@ func getSceState(s *scenario) int {
 	return 1
 }
 
+func getSpecName(s *gm.ProtoSpec) string {
+	specName := s.GetSpecHeading()
+	if strings.TrimSpace(specName) == "" {
+		specName = filepath.Base(s.GetFileName())
+	}
+	return specName
+}
+
 func toSpecHeader(res *gm.ProtoSpecResult) *specHeader {
 	return &specHeader{
-		SpecName: res.ProtoSpec.GetSpecHeading(),
+		SpecName: getSpecName(res.ProtoSpec),
 		ExecTime: formatTime(res.GetExecutionTime()),
 		FileName: res.ProtoSpec.GetFileName(),
 		Tags:     res.ProtoSpec.GetTags(),

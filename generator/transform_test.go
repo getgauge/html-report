@@ -974,7 +974,26 @@ func TestToHTMLFileName(t *testing.T) {
 			t.Errorf("want:\n%q\ngot:\n%q\n", want, got)
 		}
 	}
+}
 
+func TestGetSpecNameWhenHeadingIsPresent(t *testing.T) {
+	want := "heading"
+
+	got := getSpecName(&gm.ProtoSpec{SpecHeading: "heading"})
+
+	if got != want {
+		t.Errorf("want:\n%q\ngot:\n%q\n", want, got)
+	}
+}
+
+func TestGetSpecNameWhenHeadingIsNotPresent(t *testing.T) {
+	want := "example.spec"
+
+	got := getSpecName(&gm.ProtoSpec{FileName: filepath.Join("specs", "specs1", "example.spec")})
+
+	if got != want {
+		t.Errorf("want:\n%q\ngot:\n%q\n", want, got)
+	}
 }
 
 type tableDrivenStatusComputeTest struct {

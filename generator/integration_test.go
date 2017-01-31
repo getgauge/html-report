@@ -592,9 +592,8 @@ var errorSpecResults = &gm.ProtoSpecResult{
 	Failed:        true,
 	ExecutionTime: 0,
 	ProtoSpec: &gm.ProtoSpec{
-		SpecHeading: "Error Specification",
-		FileName:    "error_specification.spec",
-		Tags:        []string{"bar"},
+		FileName: "error_specification.spec",
+		Tags:     []string{"bar"},
 	},
 	Errors: []*gm.Error{
 		{Type: gm.Error_PARSE_ERROR, Message: "message"},
