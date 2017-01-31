@@ -774,6 +774,10 @@ footer p {
     max-width: 100%;
 }
 
+.error {
+    width: 100%;
+}
+
 .exception-container .screenshot-container {
     position: relative;
 }
@@ -1071,6 +1075,10 @@ footer p {
 
     .stacktrace {
         max-width: 45rem;
+    }
+
+    .error {
+        width: 60rem;
     }
 }
 

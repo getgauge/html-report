@@ -488,6 +488,7 @@ func TestToSpec(t *testing.T) {
 		},
 		CommentsAfterTable: []string{"Comment 1", "Comment 2", "Comment 3"},
 		Scenarios:          make([]*scenario, 0),
+		Errors:             make([]error, 0),
 	}
 
 	got := toSpec(specRes1)
@@ -535,6 +536,39 @@ func TestToSpecWithScenariosInOrder(t *testing.T) {
 	}
 }
 
+func TestToSpecWithErrors(t *testing.T) {
+	specRes := &gm.ProtoSpecResult{
+		Errors: []*gm.Error{
+			{
+				Filename:   "fileName",
+				LineNumber: 2,
+				Message:    "message",
+				Type:       gm.Error_PARSE_ERROR,
+			},
+			{
+				Filename:   "fileName1",
+				LineNumber: 4,
+				Message:    "message1",
+				Type:       gm.Error_VALIDATION_ERROR,
+			},
+		},
+	}
+
+	want := &spec{
+		Errors: []error{
+			buildError{FileName: "fileName", LineNumber: 2, Message: "message", ErrorType: parseError},
+			buildError{FileName: "fileName1", LineNumber: 4, Message: "message1", ErrorType: validationError},
+		},
+		Scenarios: make([]*scenario, 0),
+	}
+
+	got := toSpec(specRes)
+
+	if !reflect.DeepEqual(got, want) {
+		t.Errorf("want:\n%q\ngot:\n%q\n", want, got)
+	}
+}
+
 func TestToSpecForTableDrivenSpec(t *testing.T) {
 	want := &spec{
 		Table: &table{
@@ -577,6 +611,7 @@ func TestToSpecForTableDrivenSpec(t *testing.T) {
 		},
 		BeforeHookFailure: nil,
 		AfterHookFailure:  nil,
+		Errors:            make([]error, 0),
 	}
 
 	got := toSpec(datatableDrivenSpec)
@@ -592,6 +627,7 @@ func TestToSpecWithHookFailure(t *testing.T) {
 		Scenarios:         make([]*scenario, 0),
 		BeforeHookFailure: newHookFailure("Before Spec", "err", encodedScreenShot, "Stacktrace"),
 		AfterHookFailure:  newHookFailure("After Spec", "err", encodedScreenShot, "Stacktrace"),
+		Errors:            make([]error, 0),
 	}
 
 	got := toSpec(specResWithSpecHookFailure)

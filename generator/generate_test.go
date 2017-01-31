@@ -339,6 +339,15 @@ var wStepFailDiv = `<div class="error-container failed">
   </div>
 </div>`
 
+var wSpecErrorDiv = `<div class="error-container failed">
+  <div class="error-heading">Errors:</div>
+  <div class="exception-container">
+      <div class="exception">
+        <pre class="error">[Parse Error] message</pre>
+      </div>
+   </div>
+</div>`
+
 var stepWithBracketsInFragment = &step{
 	Fragments: []*fragment{
 		{FragmentKind: textFragmentKind, Text: "Say "},
@@ -432,6 +441,7 @@ var reportGenTests = []reportGenTest{
 	{"generate step body div with file special param", stepBodyDiv, stepWithFileParam, wStepWithFileParam},
 	{"generate step body div with special table param", stepBodyDiv, stepWithSpecialTableParam, wStepWithSpecialTableParam},
 	{"generate step failure div", stepFailureDiv, &result{ErrorMessage: "expected:<foo [foo] foo> but was:<foo [bar] foo>", StackTrace: "stacktrace"}, wStepFailDiv},
+	{"generate spec error div", specErrorDiv, &spec{Errors: []error{buildError{ErrorType: parseError, Message: "message"}}}, wSpecErrorDiv},
 }
 
 func TestExecute(t *testing.T) {

@@ -588,6 +588,19 @@ var skipSpecRes1 = &gm.ProtoSpecResult{
 	},
 }
 
+var errorSpecResults = &gm.ProtoSpecResult{
+	Failed:        true,
+	ExecutionTime: 0,
+	ProtoSpec: &gm.ProtoSpec{
+		SpecHeading: "Error Specification",
+		FileName:    "error_specification.spec",
+		Tags:        []string{"bar"},
+	},
+	Errors: []*gm.Error{
+		{Type: gm.Error_PARSE_ERROR, Message: "message"},
+	},
+}
+
 var suiteRes = newProtoSuiteRes(false, 1, 1, 60, nil, nil, passSpecRes1, passSpecRes2, passSpecRes3, failSpecResWithAfterScenarioFailure, skipSpecRes1)
 var suiteResWithAfterSuiteFailure = newProtoSuiteRes(true, 1, 1, 60, nil, newProtoHookFailure(), passSpecRes1, passSpecRes2,
 	passSpecRes3, failSpecResWithAfterScenarioFailure, skipSpecRes1)
@@ -605,6 +618,7 @@ var suiteResWithBeforeAfterSpecFailure = newProtoSuiteRes(true, 1, 0, 0, nil, ni
 var suiteResWithConceptFailure = newProtoSuiteRes(true, 1, 0, 60, nil, nil, failSpecResWithConceptFailure)
 var suiteResWithSkippedSpec = newProtoSuiteRes(false, 0, 1, 0, nil, nil, skippedSpecRes)
 var suiteResWithAllPass = newProtoSuiteRes(false, 0, 0, 100, nil, nil, passSpecRes2)
+var suiteResWithSpecError = newProtoSuiteRes(true, 1, 0, 0.0, nil, nil, errorSpecResults)
 
 func newProtoHookFailure() *gm.ProtoHookFailure {
 	return &gm.ProtoHookFailure{
@@ -653,6 +667,7 @@ var HTMLGenerationTests = []*HTMLGenerationTest{
 	{"both before after step failure", suiteResWithBeforeAndAfterStepFailure, "before_after_step_fail.html"},
 	{"step failure", suiteResWithStepFailure, "step_fail.html"},
 	{"concept failure", suiteResWithConceptFailure, "concept_fail.html"},
+	{"spec error", suiteResWithSpecError, "spec_err.html"},
 }
 
 func TestHTMLGeneration(t *testing.T) {
@@ -671,7 +686,6 @@ func TestHTMLGeneration(t *testing.T) {
 
 		want := removeNewline(string(content))
 		got := removeNewline(buf.String())
-
 		assertEqual(want, got, test.name, t)
 	}
 }

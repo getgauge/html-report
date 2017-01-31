@@ -167,6 +167,11 @@ func toSpec(res *gm.ProtoSpecResult) *spec {
 		Scenarios:         make([]*scenario, 0),
 		BeforeHookFailure: toHookFailure(res.GetProtoSpec().GetPreHookFailure(), "Before Spec"),
 		AfterHookFailure:  toHookFailure(res.GetProtoSpec().GetPostHookFailure(), "After Spec"),
+		Errors:            make([]error, 0),
+	}
+	if hasParseErrors(res.Errors) {
+		spec.Errors = toErrors(res.Errors)
+		return spec
 	}
 	isTableScanned := false
 	for _, item := range res.GetProtoSpec().GetItems() {
@@ -192,6 +197,29 @@ func toSpec(res *gm.ProtoSpecResult) *spec {
 	}
 	sort.Sort(bySceStatus(spec.Scenarios))
 	return spec
+}
+
+func toErrors(errors []*gm.Error) []error {
+	var buildErrors []error
+	for _, e := range errors {
+		err := buildError{FileName: e.Filename, LineNumber: int(e.LineNumber), Message: e.Message}
+		if e.Type == gm.Error_PARSE_ERROR {
+			err.ErrorType = parseError
+		} else if e.Type == gm.Error_VALIDATION_ERROR {
+			err.ErrorType = validationError
+		}
+		buildErrors = append(buildErrors, err)
+	}
+	return buildErrors
+}
+
+func hasParseErrors(errors []*gm.Error) bool {
+	for _, e := range errors {
+		if e.Type == gm.Error_PARSE_ERROR {
+			return true
+		}
+	}
+	return false
 }
 
 func computeTableDrivenStatuses(spec *spec) {

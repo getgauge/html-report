@@ -96,7 +96,33 @@ type spec struct {
 	Scenarios           []*scenario
 	BeforeHookFailure   *hookFailure
 	AfterHookFailure    *hookFailure
+	Errors              []error
 }
+
+type errorType int
+
+type buildError struct {
+	ErrorType  errorType
+	FileName   string
+	LineNumber int
+	Message    string
+}
+
+func (e buildError) Error() string {
+	if e.isParseError() {
+		return "[Parse Error] " + e.Message
+	}
+	return "[Validation Error] " + e.Message
+}
+
+func (e buildError) isParseError() bool {
+	return e.ErrorType == parseError
+}
+
+const (
+	parseError errorType = iota
+	validationError
+)
 
 type scenario struct {
 	Heading           string
@@ -181,7 +207,7 @@ var parsedTemplates = make(map[string]*template.Template, 0)
 var templates = []string{bodyFooterTag, reportOverviewTag, sidebarDiv, congratsDiv, hookFailureDiv, tagsDiv, messageDiv, skippedReasonDiv,
 	specsStartDiv, specsItemsContainerDiv, specsItemsContentsDiv, specHeaderStartTag, scenarioContainerStartDiv, scenarioHeaderStartDiv, specCommentsAndTableTag,
 	htmlPageStartTag, headerEndTag, mainEndTag, endDiv, conceptStartDiv, stepStartDiv, stepMetaDiv, stepBodyDiv, stepFailureDiv, stepEndDiv, conceptSpan,
-	contextOrTeardownStartDiv, commentSpan, conceptStepsStartDiv, nestedConceptDiv, htmlPageEndWithJS,
+	contextOrTeardownStartDiv, commentSpan, conceptStepsStartDiv, nestedConceptDiv, htmlPageEndWithJS, specErrorDiv,
 }
 
 func init() {
@@ -273,6 +299,15 @@ func (i *searchIndex) hasValueForTag(tag string, spec string) bool {
 func (i *searchIndex) hasSpec(specHeading string, specFileName string) bool {
 	for _, s := range i.Specs[specHeading] {
 		if s == specFileName {
+			return true
+		}
+	}
+	return false
+}
+
+func containsParseErrors(errors []error) bool {
+	for _, e := range errors {
+		if e.(buildError).isParseError() {
 			return true
 		}
 	}
@@ -381,6 +416,11 @@ func generateSpecDiv(w io.Writer, res *gm.ProtoSpecResult) {
 	execTemplate(tagsDiv, w, specHeader)
 	execTemplate(headerEndTag, w, nil)
 	execTemplate(specsItemsContainerDiv, w, nil)
+	if containsParseErrors(spec.Errors) {
+		execTemplate(specErrorDiv, w, spec)
+		execTemplate(endDiv, w, nil)
+		return
+	}
 
 	if spec.BeforeHookFailure != nil {
 		execTemplate(hookFailureDiv, w, spec.BeforeHookFailure)

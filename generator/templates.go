@@ -119,6 +119,19 @@ const hookFailureDiv = `<div class="error-container failed">
   </div>
 </div>`
 
+const specErrorDiv = `<div class="error-container failed">
+  <div class="error-heading">Errors:</div>
+  <div class="exception-container">
+      <div class="exception">
+          <pre class="error">
+          {{range .Errors}}
+{{.Error}}
+          {{end}}
+          </pre>
+      </div>
+  </div>
+</div>`
+
 const tagsDiv = `{{if .Tags}}<div class="tags scenario_tags contentSection">
   <strong>Tags:</strong>
   {{range .Tags}}<span> {{. | escapeHTML }}</span>{{end}}
