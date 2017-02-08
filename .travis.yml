@@ -1,6 +1,6 @@
 os:
   - osx
-langauge: go
+language: go
 go:
   - 1.7.x 
 script:
