@@ -1,0 +1,9 @@
+os:
+  - osx
+langauge: go
+go:
+  - 1.7.x 
+script:
+  - go run build/make.go
+  - go test ./...
+  - go run build/make.go --install
