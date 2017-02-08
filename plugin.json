@@ -1,6 +1,6 @@
 {
     "id" : "html-report",
-    "version" : "3.0.1",
+    "version" : "3.1.0",
     "name" : "Html Report",
     "description" : "Html reporting plugin",
     "install": {
@@ -15,7 +15,7 @@
     },
     "scope" : ["Execution"],
     "gaugeVersionSupport": {
-        "minimum": "0.6.3",
+        "minimum": "0.8.0",
         "maximum": ""
     }
 }
