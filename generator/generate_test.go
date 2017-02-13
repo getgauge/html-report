@@ -235,6 +235,8 @@ var wSpecCommentsWithoutTableTag = `<span></span>
 <span><pre><code>gauge specs</code></pre></span>
 <span></span>`
 
+var wSpecCommentsWithCodeBlock = `<span><pre><code>{&#34;prop&#34;:&#34;value&#34;}</code></pre></span>`
+
 var wScenarioContainerStartPassDiv = `<div class='scenario-container passed'>`
 var wScenarioContainerStartFailDiv = `<div class='scenario-container failed'>`
 var wScenarioContainerStartSkipDiv = `<div class='scenario-container skipped'>`
@@ -361,6 +363,10 @@ var stepWithBracketsInFragment = &step{
 	},
 }
 
+var stepWithCodeBlock = &spec{
+	CommentsBeforeTable: []string{`    {"prop":"value"}`},
+}
+
 var stepWithFileParam = &step{
 	Fragments: []*fragment{
 		{FragmentKind: textFragmentKind, Text: "Say "},
@@ -429,6 +435,7 @@ var reportGenTests = []reportGenTest{
 	{"generate div for tags", tagsDiv, &specHeader{Tags: []string{"tag1", "tag2"}}, wTagsDiv},
 	{"generate spec comments with data table (if present)", specCommentsAndTableTag, newSpec(true), wSpecCommentsWithTableTag},
 	{"generate spec comments without data table", specCommentsAndTableTag, newSpec(false), wSpecCommentsWithoutTableTag},
+	{"generate spec comments with code block", specCommentsAndTableTag, stepWithCodeBlock, wSpecCommentsWithCodeBlock},
 	{"generate passing scenario container", scenarioContainerStartDiv, &scenario{ExecStatus: pass, TableRowIndex: -1}, wScenarioContainerStartPassDiv},
 	{"generate failed scenario container", scenarioContainerStartDiv, &scenario{ExecStatus: fail, TableRowIndex: -1}, wScenarioContainerStartFailDiv},
 	{"generate skipped scenario container", scenarioContainerStartDiv, &scenario{ExecStatus: skip, TableRowIndex: -1}, wScenarioContainerStartSkipDiv},
