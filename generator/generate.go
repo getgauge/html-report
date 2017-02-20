@@ -17,6 +17,7 @@
 package generator
 
 import (
+	"bytes"
 	"encoding/json"
 	"fmt"
 	"io"
@@ -29,6 +30,7 @@ import (
 
 	"github.com/getgauge/common"
 	gm "github.com/getgauge/html-report/gauge_messages"
+	"github.com/microcosm-cc/bluemonday"
 	"github.com/russross/blackfriday"
 )
 
@@ -218,7 +220,13 @@ func init() {
 		s := blackfriday.MarkdownCommon([]byte(fmt.Sprintf("%s", args...)))
 		return string(s)
 	}
-	var funcs = template.FuncMap{"parseMarkdown": parseMarkdown, "escapeHTML": template.HTMLEscapeString, "encodeNewLine": encodeNewLine}
+	var sanitizeHTML = func(s string) string {
+		var b bytes.Buffer
+		var html = bluemonday.UGCPolicy().SanitizeBytes([]byte(s))
+		b.Write(html)
+		return b.String()
+	}
+	var funcs = template.FuncMap{"parseMarkdown": parseMarkdown, "sanitize": sanitizeHTML, "escapeHTML": template.HTMLEscapeString, "encodeNewLine": encodeNewLine}
 	for _, tmpl := range templates {
 		t, err := template.New("Reports").Funcs(funcs).Parse(tmpl)
 		if err != nil {

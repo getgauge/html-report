@@ -141,7 +141,7 @@ const tagsDiv = `{{if .Tags}}<div class="tags scenario_tags contentSection">
 const messageDiv = `{{if .Messages}}<div class="message-container">
   <i class="fa fa-minus-square" aria-hidden="true"></i>
   <div class="messages">
-    {{range .Messages}}<div class="step-message">{{. | escapeHTML | encodeNewLine | parseMarkdown }} </div>{{end}}
+    {{range .Messages}}<div class="step-message">{{. | encodeNewLine | parseMarkdown | sanitize}} </div>{{end}}
   </div>
 </div>{{end}}`
 
@@ -185,7 +185,7 @@ const scenarioHeaderStartDiv = `<div class="scenario-head">
   <h3 class="head borderBottom">{{.Heading | escapeHTML }}</h3>
   <span class="time">{{.ExecTime}}</span>`
 
-const specCommentsAndTableTag = `{{range .CommentsBeforeTable}}<span>{{. | escapeHTML| parseMarkdown}}</span>{{end}}
+const specCommentsAndTableTag = `{{range .CommentsBeforeTable}}<span>{{. | parseMarkdown | sanitize}}</span>{{end}}
 {{if .Table}}<table class="data-table">
   <tr>
     {{range .Table.Headers}}<th>{{. | escapeHTML }}</th>{{end}}
@@ -201,7 +201,7 @@ const specCommentsAndTableTag = `{{range .CommentsBeforeTable}}<span>{{. | escap
     {{end}}
   </tbody>
 </table>{{end}}
-{{range .CommentsAfterTable}}<span>{{. | escapeHTML | parseMarkdown }}</span>{{end}}`
+{{range .CommentsAfterTable}}<span>{{. | parseMarkdown | sanitize}}</span>{{end}}`
 
 const htmlPageStartTag = `<!doctype html>
 <html><head>
@@ -319,7 +319,7 @@ const conceptSpan = `<i class="fa fa-plus-square" aria-hidden="true"></i>`
 
 const contextOrTeardownStartDiv = `<div class='context-step'>`
 
-const commentSpan = `<span>{{.Text | escapeHTML | parseMarkdown}}</span>`
+const commentSpan = `<span>{{.Text | parseMarkdown | sanitize}}</span>`
 
 const conceptStepsStartDiv = `<div class='concept-steps'>`
 
@@ -337,5 +337,5 @@ const htmlPageEndWithJS = `
   <script src="{{.BasePath}}js/search_index.js" type="text/javascript"></script>
   <script src="{{.BasePath}}js/main.js" type="text/javascript"></script>
   </body>
-</html>  
+</html>
 `
