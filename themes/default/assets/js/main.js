@@ -125,7 +125,11 @@ var initializers = {
             $(this).addClass('selected');
             var tr = $(this).data('rowindex');
             $(".scenario-container").each(function() {
-                if ($(this).data('tablerow') === tr) { $(this).show(); } else { $(this).hide(); }
+                if (typeof $(this).data('tablerow') != 'undefined'){
+                    if ($(this).data('tablerow') === tr) { $(this).show(); } else { $(this).hide(); }
+                }else {
+                    $(this).show();
+                }
             });
         });
     },
