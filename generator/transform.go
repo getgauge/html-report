@@ -296,11 +296,13 @@ func computeTableDrivenStatuses(spec *spec) {
 		r.Result = skip
 	}
 	for _, s := range spec.Scenarios {
-		var row = spec.Datatable.Rows[s.TableRowIndex]
-		if s.ExecutionStatus == fail {
-			row.Result = fail
-		} else if row.Result != fail && s.ExecutionStatus == pass {
-			row.Result = pass
+		if s.TableRowIndex >= 0 {
+			var row = spec.Datatable.Rows[s.TableRowIndex]
+			if s.ExecutionStatus == fail {
+				row.Result = fail
+			} else if row.Result != fail && s.ExecutionStatus == pass {
+				row.Result = pass
+			}
 		}
 	}
 }
