@@ -58,11 +58,11 @@ const reportOverviewTag = `<div class="report-overview">
       {{end}}
       <li>
         <label>Success Rate </label>
-        <span>{{.SuccRate}}%</span>
+        <span>{{.SuccessRate}}%</span>
       </li>
       <li>
         <label>Total Time </label>
-        <span>{{.ExecTime}}</span>
+        <span>{{.ExecutionTime}}</span>
       </li>
       <li>
         <label>Generated On </label>
@@ -89,7 +89,7 @@ const sidebarDiv = `{{if not .IsBeforeHookFailure}}<aside class="sidebar">
         {{else}} <li class='passed spec-name'>
         {{end}}
           <span id="scenarioName" class="scenarioname">{{$specMeta.SpecName | escapeHTML }}</span>
-          <span id="time" class="time">{{$specMeta.ExecTime}}</span>
+          <span id="time" class="time">{{$specMeta.ExecutionTime}}</span>
         </li>
       </a>
       {{end}}
@@ -174,26 +174,26 @@ const specHeaderStartTag = `<div id="specificationContainer" class="details">
           <i class="fa fa-clipboard" aria-hidden="true" title="Copy to Clipboard"></i>
       </button>
     </div>
-    <span class="time">{{.ExecTime}}</span>
+    <span class="time">{{.ExecutionTime}}</span>
   </div>`
 
-const scenarioContainerStartDiv = `<div class='scenario-container {{if eq .ExecStatus 0}}passed{{if gt .TableRowIndex 0}} hidden{{end}}'{{if ne .TableRowIndex -1}} data-tablerow='{{.TableRowIndex}}'{{end}}>
-{{else if eq .ExecStatus 1}}failed{{if gt .TableRowIndex 0}} hidden{{end}}'{{if ne .TableRowIndex -1}}  data-tablerow='{{.TableRowIndex}}'{{end}}>
+const scenarioContainerStartDiv = `<div class='scenario-container {{if eq .ExecutionStatus "pass"}}passed{{if gt .TableRowIndex 0}} hidden{{end}}'{{if ne .TableRowIndex -1}} data-tablerow='{{.TableRowIndex}}'{{end}}>
+{{else if eq .ExecutionStatus "fail"}}failed{{if gt .TableRowIndex 0}} hidden{{end}}'{{if ne .TableRowIndex -1}}  data-tablerow='{{.TableRowIndex}}'{{end}}>
 {{else}}skipped{{if gt .TableRowIndex 0}} hidden{{end}}'{{if ne .TableRowIndex -1}}  data-tablerow='{{.TableRowIndex}}'{{end}}>{{end}}`
 
 const scenarioHeaderStartDiv = `<div class="scenario-head">
   <h3 class="head borderBottom">{{.Heading | escapeHTML }}</h3>
-  <span class="time">{{.ExecTime}}</span>`
+  <span class="time">{{.ExecutionTime}}</span>`
 
-const specCommentsAndTableTag = `{{range .CommentsBeforeTable}}<span>{{. | parseMarkdown | sanitize}}</span>{{end}}
-{{if .Table}}<table class="data-table">
+const specCommentsAndTableTag = `{{range .CommentsBeforeDatatable}}<span>{{. | parseMarkdown | sanitize}}</span>{{end}}
+{{if .Datatable}}<table class="data-table">
   <tr>
-    {{range .Table.Headers}}<th>{{. | escapeHTML }}</th>{{end}}
+    {{range .Datatable.Headers}}<th>{{. | escapeHTML }}</th>{{end}}
   </tr>
-  <tbody data-rowCount={{len .Table.Rows}}>
-    {{range $index, $row := .Table.Rows}}
-      {{if eq $row.Res 0}}<tr class='row-selector passed{{if eq $index 0}} selected{{end}}' data-rowIndex='{{$index}}'>
-      {{else if eq $row.Res 1}}<tr class='row-selector failed{{if eq $index 0}} selected{{end}}' data-rowIndex='{{$index}}'>
+  <tbody data-rowCount={{len .Datatable.Rows}}>
+    {{range $index, $row := .Datatable.Rows}}
+      {{if eq $row.Result "pass"}}<tr class='row-selector passed{{if eq $index 0}} selected{{end}}' data-rowIndex='{{$index}}'>
+      {{else if eq $row.Result "fail"}}<tr class='row-selector failed{{if eq $index 0}} selected{{end}}' data-rowIndex='{{$index}}'>
       {{else}}<tr class='row-selector skipped{{if eq $index 0}} selected{{end}}' data-rowIndex='{{$index}}'>
       {{end}}
         {{range $row.Cells}}<td>{{. | escapeHTML }}</td>{{end}}
@@ -201,7 +201,7 @@ const specCommentsAndTableTag = `{{range .CommentsBeforeTable}}<span>{{. | parse
     {{end}}
   </tbody>
 </table>{{end}}
-{{range .CommentsAfterTable}}<span>{{. | parseMarkdown | sanitize}}</span>{{end}}`
+{{range .CommentsAfterDatatable}}<span>{{. | parseMarkdown | sanitize}}</span>{{end}}`
 
 const htmlPageStartTag = `<!doctype html>
 <html><head>
@@ -238,15 +238,15 @@ const conceptStartDiv = `<div class='step concept'>` + stepMetaDiv
 const stepStartDiv = `<div class='step'>` + stepMetaDiv
 
 const stepMetaDiv = `
-  {{if ne .Res.Status 2}}
+  {{if ne .Result.Status "skip"}}
   <h5 class='execution-time'>
-  <span class='time'>Execution Time : {{.Res.ExecTime}}</span>
+  <span class='time'>Execution Time : {{.Result.ExecutionTime}}</span>
   </h5>
   {{end}}
-    {{if eq .Res.Status 0}}<div class='step-info passed'>
-    {{else if eq .Res.Status 1}}<div class='step-info failed'>
-    {{else if eq .Res.Status 2}}<div class='step-info skipped'>
-    {{else if eq .Res.Status 3}}<div class='step-info not-executed'>
+    {{if eq .Result.Status "pass"}}<div class='step-info passed'>
+    {{else if eq .Result.Status "fail"}}<div class='step-info failed'>
+    {{else if eq .Result.Status "skip"}}<div class='step-info skipped'>
+    {{else if eq .Result.Status "not executed"}}<div class='step-info not-executed'>
     {{end}}
     <ul>
       <li class='step'>

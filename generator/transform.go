@@ -32,6 +32,31 @@ const (
 	dothtml        = ".html"
 )
 
+func toSuiteResult(psr *gm.ProtoSuiteResult) suiteResult {
+	suiteResult := suiteResult{
+		ProjectName:            psr.GetProjectName(),
+		Environment:            psr.GetEnvironment(),
+		Tags:                   psr.GetTags(),
+		ExecutionTime:          psr.GetExecutionTime(),
+		PassedSpecsCount:       len(psr.GetSpecResults()) - int(psr.GetSpecsFailedCount()) - int(psr.GetSpecsSkippedCount()),
+		FailedSpecsCount:       int(psr.GetSpecsFailedCount()),
+		SkippedSpecsCount:      int(psr.GetSpecsSkippedCount()),
+		BeforeSuiteHookFailure: toHookFailure(psr.GetPreHookFailure(), "Before Suite"),
+		AfterSuiteHookFailure:  toHookFailure(psr.GetPostHookFailure(), "After Suite"),
+		SuccessRate:            int(psr.GetSuccessRate()),
+		Timestamp:              psr.GetTimestamp(),
+		ExecutionStatus:        pass,
+	}
+	if psr.GetFailed() {
+		suiteResult.ExecutionStatus = fail
+	}
+	suiteResult.SpecResults = make([]spec, 0)
+	for _, protoSpecRes := range psr.GetSpecResults() {
+		suiteResult.SpecResults = append(suiteResult.SpecResults, *toSpec(protoSpecRes))
+	}
+	return suiteResult
+}
+
 func toOverview(res *gm.ProtoSuiteResult, specRes *gm.ProtoSpecResult) *overview {
 	totalSpecs := 0
 	if res.GetSpecResults() != nil {
@@ -44,14 +69,14 @@ func toOverview(res *gm.ProtoSuiteResult, specRes *gm.ProtoSpecResult) *overview
 		base = base + "/"
 	}
 	return &overview{
-		ProjectName: res.GetProjectName(),
-		Env:         res.GetEnvironment(),
-		Tags:        res.GetTags(),
-		SuccRate:    res.GetSuccessRate(),
-		ExecTime:    formatTime(res.GetExecutionTime()),
-		Timestamp:   res.GetTimestamp(),
-		Summary:     &summary{Failed: int(res.GetSpecsFailedCount()), Total: totalSpecs, Passed: passed, Skipped: int(res.GetSpecsSkippedCount())},
-		BasePath:    base,
+		ProjectName:   res.GetProjectName(),
+		Env:           res.GetEnvironment(),
+		Tags:          res.GetTags(),
+		SuccessRate:   res.GetSuccessRate(),
+		ExecutionTime: formatTime(res.GetExecutionTime()),
+		Timestamp:     res.GetTimestamp(),
+		Summary:       &summary{Failed: int(res.GetSpecsFailedCount()), Total: totalSpecs, Passed: passed, Skipped: int(res.GetSpecsSkippedCount())},
+		BasePath:      base,
 	}
 }
 
@@ -88,12 +113,12 @@ func toSidebar(res *gm.ProtoSuiteResult, currSpec *gm.ProtoSpecResult) *sidebar 
 	specsMetaList := make([]*specsMeta, 0)
 	for _, specRes := range res.SpecResults {
 		sm := &specsMeta{
-			SpecName:   getSpecName(specRes.ProtoSpec),
-			ExecTime:   formatTime(specRes.GetExecutionTime()),
-			Failed:     specRes.GetFailed(),
-			Skipped:    specRes.GetSkipped(),
-			Tags:       specRes.ProtoSpec.GetTags(),
-			ReportFile: toHTMLFileName(specRes.ProtoSpec.GetFileName(), basePath),
+			SpecName:      getSpecName(specRes.ProtoSpec),
+			ExecutionTime: formatTime(specRes.GetExecutionTime()),
+			Failed:        specRes.GetFailed(),
+			Skipped:       specRes.GetSkipped(),
+			Tags:          specRes.ProtoSpec.GetTags(),
+			ReportFile:    toHTMLFileName(specRes.ProtoSpec.GetFileName(), basePath),
 		}
 		specsMetaList = append(specsMetaList, sm)
 	}
@@ -129,7 +154,7 @@ func getState(r *specsMeta) int {
 	return 1
 }
 
-type bySceStatus []*scenario
+type bySceStatus []scenario
 
 func (s bySceStatus) Len() int {
 	return len(s)
@@ -142,11 +167,11 @@ func (s bySceStatus) Less(i, j int) bool {
 	return getSceState(s[i]) < getSceState(s[j])
 }
 
-func getSceState(s *scenario) int {
-	if s.ExecStatus == fail {
+func getSceState(s scenario) int {
+	if s.ExecutionStatus == fail {
 		return -1
 	}
-	if s.ExecStatus == skip {
+	if s.ExecutionStatus == skip {
 		return 0
 	}
 	return 1
@@ -162,20 +187,20 @@ func getSpecName(s *gm.ProtoSpec) string {
 
 func toSpecHeader(res *gm.ProtoSpecResult) *specHeader {
 	return &specHeader{
-		SpecName: getSpecName(res.ProtoSpec),
-		ExecTime: formatTime(res.GetExecutionTime()),
-		FileName: res.ProtoSpec.GetFileName(),
-		Tags:     res.ProtoSpec.GetTags(),
-		Summary:  toScenarioSummary(res.GetProtoSpec()),
+		SpecName:      getSpecName(res.ProtoSpec),
+		ExecutionTime: formatTime(res.GetExecutionTime()),
+		FileName:      res.ProtoSpec.GetFileName(),
+		Tags:          res.ProtoSpec.GetTags(),
+		Summary:       toScenarioSummary(res.GetProtoSpec()),
 	}
 }
 
 func toSpec(res *gm.ProtoSpecResult) *spec {
 	spec := &spec{
-		Scenarios:         make([]*scenario, 0),
-		BeforeHookFailure: toHookFailure(res.GetProtoSpec().GetPreHookFailure(), "Before Spec"),
-		AfterHookFailure:  toHookFailure(res.GetProtoSpec().GetPostHookFailure(), "After Spec"),
-		Errors:            make([]error, 0),
+		Scenarios:             make([]scenario, 0),
+		BeforeSpecHookFailure: toHookFailure(res.GetProtoSpec().GetPreHookFailure(), "Before Spec"),
+		AfterSpecHookFailure:  toHookFailure(res.GetProtoSpec().GetPostHookFailure(), "After Spec"),
+		Errors:                make([]error, 0),
 	}
 	if hasParseErrors(res.Errors) {
 		spec.Errors = toErrors(res.Errors)
@@ -186,17 +211,17 @@ func toSpec(res *gm.ProtoSpecResult) *spec {
 		switch item.GetItemType() {
 		case gm.ProtoItem_Comment:
 			if isTableScanned {
-				spec.CommentsAfterTable = append(spec.CommentsAfterTable, item.GetComment().GetText())
+				spec.CommentsAfterDatatable = append(spec.CommentsAfterDatatable, item.GetComment().GetText())
 			} else {
-				spec.CommentsBeforeTable = append(spec.CommentsBeforeTable, item.GetComment().GetText())
+				spec.CommentsBeforeDatatable = append(spec.CommentsBeforeDatatable, item.GetComment().GetText())
 			}
 		case gm.ProtoItem_Table:
-			spec.Table = toTable(item.GetTable())
+			spec.Datatable = toTable(item.GetTable())
 			isTableScanned = true
 		case gm.ProtoItem_Scenario:
-			spec.Scenarios = append(spec.Scenarios, toScenario(item.GetScenario(), -1))
+			spec.Scenarios = append(spec.Scenarios, *toScenario(item.GetScenario(), -1))
 		case gm.ProtoItem_TableDrivenScenario:
-			spec.Scenarios = append(spec.Scenarios, toScenario(item.GetTableDrivenScenario().GetScenario(), int(item.GetTableDrivenScenario().GetTableRowIndex())))
+			spec.Scenarios = append(spec.Scenarios, *toScenario(item.GetTableDrivenScenario().GetScenario(), int(item.GetTableDrivenScenario().GetTableRowIndex())))
 		}
 	}
 
@@ -212,9 +237,9 @@ func toErrors(errors []*gm.Error) []error {
 	for _, e := range errors {
 		err := buildError{FileName: e.Filename, LineNumber: int(e.LineNumber), Message: e.Message}
 		if e.Type == gm.Error_PARSE_ERROR {
-			err.ErrorType = parseError
+			err.ErrorType = parseErrorType
 		} else if e.Type == gm.Error_VALIDATION_ERROR {
-			err.ErrorType = validationError
+			err.ErrorType = validationErrorType
 		}
 		buildErrors = append(buildErrors, err)
 	}
@@ -231,15 +256,15 @@ func hasParseErrors(errors []*gm.Error) bool {
 }
 
 func computeTableDrivenStatuses(spec *spec) {
-	for _, r := range spec.Table.Rows {
-		r.Res = skip
+	for _, r := range spec.Datatable.Rows {
+		r.Result = skip
 	}
 	for _, s := range spec.Scenarios {
-		var row = spec.Table.Rows[s.TableRowIndex]
-		if s.ExecStatus == fail {
-			row.Res = fail
-		} else if row.Res != fail && s.ExecStatus == pass {
-			row.Res = pass
+		var row = spec.Datatable.Rows[s.TableRowIndex]
+		if s.ExecutionStatus == fail {
+			row.Result = fail
+		} else if row.Result != fail && s.ExecutionStatus == pass {
+			row.Result = pass
 		}
 	}
 }
@@ -264,16 +289,16 @@ func toScenarioSummary(s *gm.ProtoSpec) *summary {
 
 func toScenario(scn *gm.ProtoScenario, tableRowIndex int) *scenario {
 	return &scenario{
-		Heading:           scn.GetScenarioHeading(),
-		ExecTime:          formatTime(scn.GetExecutionTime()),
-		Tags:              scn.GetTags(),
-		ExecStatus:        getScenarioStatus(scn),
-		Contexts:          getItems(scn.GetContexts()),
-		Items:             getItems(scn.GetScenarioItems()),
-		Teardown:          getItems(scn.GetTearDownSteps()),
-		BeforeHookFailure: toHookFailure(scn.GetPreHookFailure(), "Before Scenario"),
-		AfterHookFailure:  toHookFailure(scn.GetPostHookFailure(), "After Scenario"),
-		TableRowIndex:     tableRowIndex,
+		Heading:                   scn.GetScenarioHeading(),
+		ExecutionTime:             formatTime(scn.GetExecutionTime()),
+		Tags:                      scn.GetTags(),
+		ExecutionStatus:           getScenarioStatus(scn),
+		Contexts:                  getItems(scn.GetContexts()),
+		Items:                     getItems(scn.GetScenarioItems()),
+		Teardowns:                 getItems(scn.GetTearDownSteps()),
+		BeforeScenarioHookFailure: toHookFailure(scn.GetPreHookFailure(), "Before Scenario"),
+		AfterScenarioHookFailure:  toHookFailure(scn.GetPostHookFailure(), "After Scenario"),
+		TableRowIndex:             tableRowIndex,
 	}
 }
 
@@ -284,29 +309,29 @@ func toComment(protoComment *gm.ProtoComment) *comment {
 func toStep(protoStep *gm.ProtoStep) *step {
 	res := protoStep.GetStepExecutionResult().GetExecutionResult()
 	result := &result{
-		Status:       getStepStatus(protoStep.GetStepExecutionResult()),
-		Screenshot:   base64.StdEncoding.EncodeToString(res.GetScreenShot()),
-		StackTrace:   res.GetStackTrace(),
-		ErrorMessage: res.GetErrorMessage(),
-		ExecTime:     formatTime(res.GetExecutionTime()),
-		Messages:     res.GetMessage(),
+		Status:        getStepStatus(protoStep.GetStepExecutionResult()),
+		Screenshot:    base64.StdEncoding.EncodeToString(res.GetScreenShot()),
+		StackTrace:    res.GetStackTrace(),
+		ErrorMessage:  res.GetErrorMessage(),
+		ExecutionTime: formatTime(res.GetExecutionTime()),
+		Messages:      res.GetMessage(),
 	}
 	if protoStep.GetStepExecutionResult().GetSkipped() {
 		result.SkippedReason = protoStep.GetStepExecutionResult().GetSkippedReason()
 	}
 	return &step{
-		Fragments:       toFragments(protoStep.GetFragments()),
-		Res:             result,
-		PreHookFailure:  toHookFailure(protoStep.GetStepExecutionResult().GetPreHookFailure(), "Before Step"),
-		PostHookFailure: toHookFailure(protoStep.GetStepExecutionResult().GetPostHookFailure(), "After Step"),
+		Fragments:             toFragments(protoStep.GetFragments()),
+		Result:                result,
+		BeforeStepHookFailure: toHookFailure(protoStep.GetStepExecutionResult().GetPreHookFailure(), "Before Step"),
+		AfterStepHookFailure:  toHookFailure(protoStep.GetStepExecutionResult().GetPostHookFailure(), "After Step"),
 	}
 }
 
 func toConcept(protoConcept *gm.ProtoConcept) *concept {
 	protoConcept.ConceptStep.StepExecutionResult = protoConcept.GetConceptExecutionResult()
 	return &concept{
-		CptStep: toStep(protoConcept.GetConceptStep()),
-		Items:   getItems(protoConcept.GetSteps()),
+		ConceptStep: toStep(protoConcept.GetConceptStep()),
+		Items:       getItems(protoConcept.GetSteps()),
 	}
 }
 
@@ -345,8 +370,8 @@ func toTable(protoTable *gm.ProtoTable) *table {
 	rows := make([]*row, len(protoTable.GetRows()))
 	for i, r := range protoTable.GetRows() {
 		rows[i] = &row{
-			Cells: r.GetCells(),
-			Res:   pass,
+			Cells:  r.GetCells(),
+			Result: pass,
 		}
 	}
 	return &table{Headers: protoTable.GetHeaders().GetCells(), Rows: rows}

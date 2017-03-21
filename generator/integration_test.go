@@ -26,7 +26,7 @@ import (
 	"sync"
 	"testing"
 
-	"github.com/documize/html-diff"
+	htmldiff "github.com/documize/html-diff"
 	gm "github.com/getgauge/html-report/gauge_messages"
 )
 

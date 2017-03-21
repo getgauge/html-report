@@ -42,23 +42,23 @@ type summary struct {
 }
 
 type overview struct {
-	ProjectName string
-	Env         string
-	Tags        string
-	SuccRate    float32
-	ExecTime    string
-	Timestamp   string
-	Summary     *summary
-	BasePath    string
+	ProjectName   string
+	Env           string
+	Tags          string
+	SuccessRate   float32
+	ExecutionTime string
+	Timestamp     string
+	Summary       *summary
+	BasePath      string
 }
 
 type specsMeta struct {
-	SpecName   string
-	ExecTime   string
-	Failed     bool
-	Skipped    bool
-	Tags       []string
-	ReportFile string
+	SpecName      string
+	ExecutionTime string
+	Failed        bool
+	Skipped       bool
+	Tags          []string
+	ReportFile    string
 }
 
 type sidebar struct {
@@ -66,48 +66,125 @@ type sidebar struct {
 	Specs               []*specsMeta
 }
 
-type hookFailure struct {
-	HookName   string
-	ErrMsg     string
-	Screenshot string
-	StackTrace string
-}
-
 type specHeader struct {
-	SpecName string
-	ExecTime string
-	FileName string
-	Tags     []string
-	Summary  *summary
+	SpecName      string
+	ExecutionTime string
+	FileName      string
+	Tags          []string
+	Summary       *summary
 }
 
-type row struct {
-	Cells []string
-	Res   status
-}
-
-type table struct {
-	Headers []string
-	Rows    []*row
-}
-
-type spec struct {
-	CommentsBeforeTable []string
-	Table               *table
-	CommentsAfterTable  []string
-	Scenarios           []*scenario
-	BeforeHookFailure   *hookFailure
-	AfterHookFailure    *hookFailure
-	Errors              []error
-}
-
-type errorType int
+type errorType string
+type tokenKind string
+type status string
 
 type buildError struct {
 	ErrorType  errorType
 	FileName   string
 	LineNumber int
 	Message    string
+}
+
+type suiteResult struct {
+	ProjectName            string       `json:"projectName"`
+	Timestamp              string       `json:"timestamp"`
+	SuccessRate            int          `json:"successRate"`
+	Environment            string       `json:"environment"`
+	Tags                   string       `json:"tags"`
+	ExecutionTime          int64        `json:"executionTime"`
+	ExecutionStatus        status       `json:"executionStatus"`
+	SpecResults            []spec       `json:"specResults"`
+	BeforeSuiteHookFailure *hookFailure `json:"beforeSuiteHookFailure"`
+	AfterSuiteHookFailure  *hookFailure `json:"afterSuiteHookFailure"`
+	PassedSpecsCount       int          `json:"passedSpecsCount"`
+	FailedSpecsCount       int          `json:"failedSpecsCount"`
+	SkippedSpecsCount      int          `json:"skippedSpecsCount"`
+}
+
+type spec struct {
+	CommentsBeforeDatatable []string     `json:"commentsBeforeDatatable"`
+	CommentsAfterDatatable  []string     `json:"comentsAfterDatatable"`
+	SpecHeading             string       `json:"specHeading"`
+	FileName                string       `json:"fileName"`
+	Tags                    []string     `json:"tags"`
+	ExecutionTime           int64        `json:"executionTime"`
+	ExecutionStatus         status       `json:"executionStatus"`
+	Scenarios               []scenario   `json:"scenarios"`
+	IsTableDriven           bool         `json:"isTableDriven"`
+	Datatable               *table       `json:"datatable"`
+	BeforeSpecHookFailure   *hookFailure `json:"beforeSpecHookFailure"`
+	AfterSpecHookFailure    *hookFailure `json:"afterSpecHookFailure"`
+	PassedScenarioCount     int          `json:"passedScenarioCount"`
+	FailedScenarioCount     int          `json:"failedScenarioCount"`
+	SkippedScenarioCount    int          `json:"skippedScenarioCount"`
+	Errors                  []error      `json:"errors"`
+}
+
+type scenario struct {
+	Heading                   string       `json:"scenarioHeading"`
+	Tags                      []string     `json:"tags"`
+	ExecutionTime             string       `json:"executionTime"`
+	ExecutionStatus           status       `json:"executionStatus"`
+	Contexts                  []item       `json:"contexts"`
+	Teardowns                 []item       `json:"teardowns"`
+	Items                     []item       `json:"items"`
+	BeforeScenarioHookFailure *hookFailure `json:"beforeScenarioHookFailure"`
+	AfterScenarioHookFailure  *hookFailure `json:"afterScenarioHookFailure"`
+	SkipErrors                []string     `json:"skipErrors"`
+	TableRowIndex             int          `json:"tableRowIndex"`
+}
+
+type step struct {
+	Fragments             []*fragment  `json:"fragments"`
+	ItemType              tokenKind    `json:"itemType"`
+	StepText              string       `json:"stepText"`
+	Table                 *table       `json:"table"`
+	BeforeStepHookFailure *hookFailure `json:"beforeStepHookFailure"`
+	AfterStepHookFailure  *hookFailure `json:"afterStepHookFailure"`
+	Result                *result      `json:"result"`
+}
+
+func (s *step) kind() tokenKind {
+	return stepKind
+}
+
+type result struct {
+	Status        status    `json:"status"`
+	StackTrace    string    `json:"stackTrace"`
+	Screenshot    string    `json:"screenshot"`
+	ErrorMessage  string    `json:"errorMessage"`
+	ExecutionTime string    `json:"executionTime"`
+	SkippedReason string    `json:"skippedReason"`
+	Messages      []string  `json:"messages"`
+	ErrorType     errorType `json:"errorType"`
+}
+
+type hookFailure struct {
+	HookName   string `json:"hookName"`
+	ErrMsg     string `json:"errorMessage"`
+	Screenshot string `json:"screenshot"`
+	StackTrace string `json:"stackTrace"`
+}
+
+type concept struct {
+	ItemType    tokenKind `json:"itemType"`
+	ConceptStep *step     `json:"conceptStep"`
+	Items       []item    `json:"items"`
+	Result      result    `json:"result"`
+}
+
+func (s *concept) kind() tokenKind {
+	return conceptKind
+}
+
+type table struct {
+	Headers []string `json:"headers"`
+	Rows    []*row   `json:"rows"`
+}
+
+type row struct {
+	Cells  []string `json:"cells"`
+	Result status   `json:"status"`
 }
 
 func (e buildError) Error() string {
@@ -118,75 +195,19 @@ func (e buildError) Error() string {
 }
 
 func (e buildError) isParseError() bool {
-	return e.ErrorType == parseError
+	return e.ErrorType == parseErrorType
 }
-
-const (
-	parseError errorType = iota
-	validationError
-)
-
-type scenario struct {
-	Heading           string
-	ExecTime          string
-	Tags              []string
-	ExecStatus        status
-	Contexts          []item
-	Items             []item
-	Teardown          []item
-	BeforeHookFailure *hookFailure
-	AfterHookFailure  *hookFailure
-	TableRowIndex     int
-}
-
-const (
-	stepKind kind = iota
-	commentKind
-	conceptKind
-)
-
-type kind int
 
 type item interface {
-	kind() kind
-}
-
-type step struct {
-	Fragments       []*fragment
-	Res             *result
-	PreHookFailure  *hookFailure
-	PostHookFailure *hookFailure
-}
-
-func (s *step) kind() kind {
-	return stepKind
-}
-
-type concept struct {
-	CptStep *step
-	Items   []item
-}
-
-func (c *concept) kind() kind {
-	return conceptKind
+	kind() tokenKind
 }
 
 type comment struct {
 	Text string
 }
 
-func (c *comment) kind() kind {
+func (c *comment) kind() tokenKind {
 	return commentKind
-}
-
-type result struct {
-	Status        status
-	StackTrace    string
-	Screenshot    string
-	ErrorMessage  string
-	ExecTime      string
-	SkippedReason string
-	Messages      []string
 }
 
 type searchIndex struct {
@@ -194,13 +215,18 @@ type searchIndex struct {
 	Specs map[string][]string `json:"specs"`
 }
 
-type status int
-
 const (
-	pass status = iota
-	fail
-	skip
-	notExecuted
+	pass                  status    = "pass"
+	fail                  status    = "fail"
+	skip                  status    = "skip"
+	notExecuted           status    = "not executed"
+	stepKind              tokenKind = "step"
+	conceptKind           tokenKind = "concept"
+	commentKind           tokenKind = "comment"
+	assertionErrorType    errorType = "assertion"
+	parseErrorType        errorType = "parse"
+	verificationErrorType errorType = "verification"
+	validationErrorType   errorType = "validation"
 )
 
 var parsedTemplates = make(map[string]*template.Template, 0)
@@ -430,24 +456,24 @@ func generateSpecDiv(w io.Writer, res *gm.ProtoSpecResult) {
 		return
 	}
 
-	if spec.BeforeHookFailure != nil {
-		execTemplate(hookFailureDiv, w, spec.BeforeHookFailure)
+	if spec.BeforeSpecHookFailure != nil {
+		execTemplate(hookFailureDiv, w, spec.BeforeSpecHookFailure)
 	}
 
 	execTemplate(specsItemsContentsDiv, w, nil)
 	execTemplate(specCommentsAndTableTag, w, spec)
 
-	if spec.BeforeHookFailure == nil {
+	if spec.BeforeSpecHookFailure == nil {
 		for _, scn := range spec.Scenarios {
-			generateScenario(w, scn)
+			generateScenario(w, &scn)
 		}
 	}
 
 	execTemplate(endDiv, w, nil)
 	execTemplate(endDiv, w, nil)
 
-	if spec.AfterHookFailure != nil {
-		execTemplate(hookFailureDiv, w, spec.AfterHookFailure)
+	if spec.AfterSpecHookFailure != nil {
+		execTemplate(hookFailureDiv, w, spec.AfterSpecHookFailure)
 	}
 
 	execTemplate(endDiv, w, nil)
@@ -458,16 +484,16 @@ func generateScenario(w io.Writer, scn *scenario) {
 	execTemplate(scenarioHeaderStartDiv, w, scn)
 	execTemplate(tagsDiv, w, scn)
 	execTemplate(endDiv, w, nil)
-	if scn.BeforeHookFailure != nil {
-		execTemplate(hookFailureDiv, w, scn.BeforeHookFailure)
+	if scn.BeforeScenarioHookFailure != nil {
+		execTemplate(hookFailureDiv, w, scn.BeforeScenarioHookFailure)
 	}
 
 	generateItems(w, scn.Contexts, generateContextOrTeardown)
 	generateItems(w, scn.Items, generateItem)
-	generateItems(w, scn.Teardown, generateContextOrTeardown)
+	generateItems(w, scn.Teardowns, generateContextOrTeardown)
 
-	if scn.AfterHookFailure != nil {
-		execTemplate(hookFailureDiv, w, scn.AfterHookFailure)
+	if scn.AfterScenarioHookFailure != nil {
+		execTemplate(hookFailureDiv, w, scn.AfterScenarioHookFailure)
 	}
 	execTemplate(endDiv, w, nil)
 }
@@ -490,17 +516,17 @@ func generateItem(w io.Writer, item item) {
 		execTemplate(stepStartDiv, w, item.(*step))
 		execTemplate(stepBodyDiv, w, item.(*step))
 
-		if item.(*step).PreHookFailure != nil {
-			execTemplate(hookFailureDiv, w, item.(*step).PreHookFailure)
+		if item.(*step).BeforeStepHookFailure != nil {
+			execTemplate(hookFailureDiv, w, item.(*step).BeforeStepHookFailure)
 		}
 
-		stepRes := item.(*step).Res
+		stepRes := item.(*step).Result
 		if stepRes.Status == fail && stepRes.ErrorMessage != "" && stepRes.StackTrace != "" {
 			execTemplate(stepFailureDiv, w, stepRes)
 		}
 
-		if item.(*step).PostHookFailure != nil {
-			execTemplate(hookFailureDiv, w, item.(*step).PostHookFailure)
+		if item.(*step).AfterStepHookFailure != nil {
+			execTemplate(hookFailureDiv, w, item.(*step).AfterStepHookFailure)
 		}
 		execTemplate(messageDiv, w, stepRes)
 		execTemplate(stepEndDiv, w, item.(*step))
@@ -510,10 +536,10 @@ func generateItem(w io.Writer, item item) {
 	case commentKind:
 		execTemplate(commentSpan, w, item.(*comment))
 	case conceptKind:
-		execTemplate(conceptStartDiv, w, item.(*concept).CptStep)
+		execTemplate(conceptStartDiv, w, item.(*concept).ConceptStep)
 		execTemplate(conceptSpan, w, nil)
-		execTemplate(stepBodyDiv, w, item.(*concept).CptStep)
-		execTemplate(stepEndDiv, w, item.(*concept).CptStep)
+		execTemplate(stepBodyDiv, w, item.(*concept).ConceptStep)
+		execTemplate(stepEndDiv, w, item.(*concept).ConceptStep)
 		execTemplate(conceptStepsStartDiv, w, nil)
 		generateItems(w, item.(*concept).Items, generateItem)
 		execTemplate(endDiv, w, nil)

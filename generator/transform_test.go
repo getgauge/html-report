@@ -432,13 +432,13 @@ var failedHookFailure = &gm.ProtoHookFailure{
 
 func TestToOverview(t *testing.T) {
 	want := &overview{
-		ProjectName: "projName",
-		Env:         "ci-java",
-		Tags:        "!unimplemented",
-		SuccRate:    80.00,
-		ExecTime:    "00:01:53",
-		Timestamp:   "Jun 3, 2016 at 12:29pm",
-		Summary:     &summary{Total: 15, Failed: 2, Passed: 8, Skipped: 5},
+		ProjectName:   "projName",
+		Env:           "ci-java",
+		Tags:          "!unimplemented",
+		SuccessRate:   80.00,
+		ExecutionTime: "00:01:53",
+		Timestamp:     "Jun 3, 2016 at 12:29pm",
+		Summary:       &summary{Total: 15, Failed: 2, Passed: 8, Skipped: 5},
 	}
 
 	got := toOverview(suiteRes1, nil)
@@ -466,11 +466,11 @@ func TestToSidebar(t *testing.T) {
 
 func TestToSpecHeader(t *testing.T) {
 	want := &specHeader{
-		SpecName: "specRes1",
-		ExecTime: "00:03:31",
-		FileName: "/tmp/gauge/specs/foobar.spec",
-		Tags:     []string{"tag1", "tag2"},
-		Summary:  &summary{},
+		SpecName:      "specRes1",
+		ExecutionTime: "00:03:31",
+		FileName:      "/tmp/gauge/specs/foobar.spec",
+		Tags:          []string{"tag1", "tag2"},
+		Summary:       &summary{},
 	}
 
 	got := toSpecHeader(specRes1)
@@ -481,14 +481,14 @@ func TestToSpecHeader(t *testing.T) {
 
 func TestToSpec(t *testing.T) {
 	want := &spec{
-		CommentsBeforeTable: []string{"\n", "This is an executable specification file. This file follows markdown syntax.", "\n", "To execute this specification, run", "\tgauge specs", "\n"},
-		Table: &table{
+		CommentsBeforeDatatable: []string{"\n", "This is an executable specification file. This file follows markdown syntax.", "\n", "To execute this specification, run", "\tgauge specs", "\n"},
+		Datatable: &table{
 			Headers: []string{"Word", "Count"},
-			Rows:    []*row{{Cells: []string{"Gauge", "3"}, Res: pass}, {Cells: []string{"Mingle", "2"}, Res: pass}},
+			Rows:    []*row{{Cells: []string{"Gauge", "3"}, Result: pass}, {Cells: []string{"Mingle", "2"}, Result: pass}},
 		},
-		CommentsAfterTable: []string{"Comment 1", "Comment 2", "Comment 3"},
-		Scenarios:          make([]*scenario, 0),
-		Errors:             make([]error, 0),
+		CommentsAfterDatatable: []string{"Comment 1", "Comment 2", "Comment 3"},
+		Scenarios:              make([]scenario, 0),
+		Errors:                 make([]error, 0),
 	}
 
 	got := toSpec(specRes1)
@@ -519,20 +519,20 @@ func TestToSpecWithScenariosInOrder(t *testing.T) {
 	if len(got.Scenarios) != 5 {
 		t.Errorf("want:%q\ngot:%q\n", 5, len(got.Scenarios))
 	}
-	if got.Scenarios[0].ExecStatus != fail {
-		t.Errorf("want:%q\ngot:%q\n", fail, got.Scenarios[0].ExecStatus)
+	if got.Scenarios[0].ExecutionStatus != fail {
+		t.Errorf("want:%q\ngot:%q\n", fail, got.Scenarios[0].ExecutionStatus)
 	}
-	if got.Scenarios[1].ExecStatus != fail {
-		t.Errorf("want:%q\ngot:%q\n", fail, got.Scenarios[1].ExecStatus)
+	if got.Scenarios[1].ExecutionStatus != fail {
+		t.Errorf("want:%q\ngot:%q\n", fail, got.Scenarios[1].ExecutionStatus)
 	}
-	if got.Scenarios[2].ExecStatus != skip {
-		t.Errorf("want:%q\ngot:%q\n", skip, got.Scenarios[2].ExecStatus)
+	if got.Scenarios[2].ExecutionStatus != skip {
+		t.Errorf("want:%q\ngot:%q\n", skip, got.Scenarios[2].ExecutionStatus)
 	}
-	if got.Scenarios[3].ExecStatus != pass {
-		t.Errorf("want:%q\ngot:%q\n", pass, got.Scenarios[3].ExecStatus)
+	if got.Scenarios[3].ExecutionStatus != pass {
+		t.Errorf("want:%q\ngot:%q\n", pass, got.Scenarios[3].ExecutionStatus)
 	}
-	if got.Scenarios[4].ExecStatus != pass {
-		t.Errorf("want:%q\ngot:%q\n", pass, got.Scenarios[4].ExecStatus)
+	if got.Scenarios[4].ExecutionStatus != pass {
+		t.Errorf("want:%q\ngot:%q\n", pass, got.Scenarios[4].ExecutionStatus)
 	}
 }
 
@@ -556,10 +556,10 @@ func TestToSpecWithErrors(t *testing.T) {
 
 	want := &spec{
 		Errors: []error{
-			buildError{FileName: "fileName", LineNumber: 2, Message: "message", ErrorType: parseError},
-			buildError{FileName: "fileName1", LineNumber: 4, Message: "message1", ErrorType: validationError},
+			buildError{FileName: "fileName", LineNumber: 2, Message: "message", ErrorType: parseErrorType},
+			buildError{FileName: "fileName1", LineNumber: 4, Message: "message1", ErrorType: validationErrorType},
 		},
-		Scenarios: make([]*scenario, 0),
+		Scenarios: make([]scenario, 0),
 	}
 
 	got := toSpec(specRes)
@@ -571,47 +571,47 @@ func TestToSpecWithErrors(t *testing.T) {
 
 func TestToSpecForTableDrivenSpec(t *testing.T) {
 	want := &spec{
-		Table: &table{
+		Datatable: &table{
 			Headers: []string{"Word", "Count"},
-			Rows:    []*row{{Cells: []string{"Gauge", "3"}, Res: fail}, {Cells: []string{"Mingle", "2"}, Res: pass}},
+			Rows:    []*row{{Cells: []string{"Gauge", "3"}, Result: fail}, {Cells: []string{"Mingle", "2"}, Result: pass}},
 		},
-		Scenarios: []*scenario{
-			&scenario{
-				Heading:  "Scenario 1",
-				ExecTime: "00:00:00",
+		Scenarios: []scenario{
+			scenario{
+				Heading:       "Scenario 1",
+				ExecutionTime: "00:00:00",
 				Items: []item{
 					&step{
 						Fragments: []*fragment{{FragmentKind: textFragmentKind, Text: "Step1"}},
-						Res:       &result{Status: fail, ExecTime: "00:03:31"},
+						Result:    &result{Status: fail, ExecutionTime: "00:03:31"},
 					},
 				},
-				Contexts:          make([]item, 0),
-				Teardown:          make([]item, 0),
-				ExecStatus:        fail,
-				TableRowIndex:     0,
-				BeforeHookFailure: nil,
-				AfterHookFailure:  nil,
+				Contexts:                  make([]item, 0),
+				Teardowns:                 make([]item, 0),
+				ExecutionStatus:           fail,
+				TableRowIndex:             0,
+				BeforeScenarioHookFailure: nil,
+				AfterScenarioHookFailure:  nil,
 			},
-			&scenario{
-				Heading:  "Scenario 1",
-				ExecTime: "00:00:00",
+			scenario{
+				Heading:       "Scenario 1",
+				ExecutionTime: "00:00:00",
 				Items: []item{
 					&step{
 						Fragments: []*fragment{{FragmentKind: textFragmentKind, Text: "Step1"}},
-						Res:       &result{Status: pass, ExecTime: "00:03:31"},
+						Result:    &result{Status: pass, ExecutionTime: "00:03:31"},
 					},
 				},
-				Contexts:          make([]item, 0),
-				Teardown:          make([]item, 0),
-				ExecStatus:        pass,
-				TableRowIndex:     1,
-				BeforeHookFailure: nil,
-				AfterHookFailure:  nil,
+				Contexts:                  make([]item, 0),
+				Teardowns:                 make([]item, 0),
+				ExecutionStatus:           pass,
+				TableRowIndex:             1,
+				BeforeScenarioHookFailure: nil,
+				AfterScenarioHookFailure:  nil,
 			},
 		},
-		BeforeHookFailure: nil,
-		AfterHookFailure:  nil,
-		Errors:            make([]error, 0),
+		BeforeSpecHookFailure: nil,
+		AfterSpecHookFailure:  nil,
+		Errors:                make([]error, 0),
 	}
 
 	got := toSpec(datatableDrivenSpec)
@@ -624,10 +624,10 @@ func TestToSpecForTableDrivenSpec(t *testing.T) {
 func TestToSpecWithHookFailure(t *testing.T) {
 	encodedScreenShot := base64.StdEncoding.EncodeToString([]byte("Screenshot"))
 	want := &spec{
-		Scenarios:         make([]*scenario, 0),
-		BeforeHookFailure: newHookFailure("Before Spec", "err", encodedScreenShot, "Stacktrace"),
-		AfterHookFailure:  newHookFailure("After Spec", "err", encodedScreenShot, "Stacktrace"),
-		Errors:            make([]error, 0),
+		Scenarios:             make([]scenario, 0),
+		BeforeSpecHookFailure: newHookFailure("Before Spec", "err", encodedScreenShot, "Stacktrace"),
+		AfterSpecHookFailure:  newHookFailure("After Spec", "err", encodedScreenShot, "Stacktrace"),
+		Errors:                make([]error, 0),
 	}
 
 	got := toSpec(specResWithSpecHookFailure)
@@ -709,42 +709,42 @@ func TestToScenarioSummary(t *testing.T) {
 
 func TestToScenario(t *testing.T) {
 	want := &scenario{
-		Heading:    "Vowel counts in single word",
-		ExecTime:   "00:01:53",
-		ExecStatus: pass,
-		Tags:       []string{"foo", "bar"},
+		Heading:         "Vowel counts in single word",
+		ExecutionTime:   "00:01:53",
+		ExecutionStatus: pass,
+		Tags:            []string{"foo", "bar"},
 		Contexts: []item{
 			&step{
 				Fragments: []*fragment{{FragmentKind: textFragmentKind, Text: "Context Step1"}},
-				Res:       &result{Status: pass, ExecTime: "00:03:31"},
+				Result:    &result{Status: pass, ExecutionTime: "00:03:31"},
 			},
 			&step{
 				Fragments: []*fragment{{FragmentKind: textFragmentKind, Text: "Context Step2"}},
-				Res:       &result{Status: fail, ExecTime: "00:03:31"},
+				Result:    &result{Status: fail, ExecutionTime: "00:03:31"},
 			},
 		},
 		Items: []item{
 			&comment{Text: "Comment0"},
 			&step{
 				Fragments: []*fragment{{FragmentKind: textFragmentKind, Text: "Step1"}},
-				Res:       &result{Status: fail, ExecTime: "00:03:31"},
+				Result:    &result{Status: fail, ExecutionTime: "00:03:31"},
 			},
 			&comment{Text: "Comment1"},
 			&comment{Text: "Comment2"},
 			&step{
 				Fragments: []*fragment{{FragmentKind: textFragmentKind, Text: "Step2"}},
-				Res:       &result{Status: pass, ExecTime: "00:03:31"},
+				Result:    &result{Status: pass, ExecutionTime: "00:03:31"},
 			},
 			&comment{Text: "Comment3"},
 		},
-		Teardown: []item{
+		Teardowns: []item{
 			&step{
 				Fragments: []*fragment{{FragmentKind: textFragmentKind, Text: "Teardown Step1"}},
-				Res:       &result{Status: pass, ExecTime: "00:03:31"},
+				Result:    &result{Status: pass, ExecutionTime: "00:03:31"},
 			},
 			&step{
 				Fragments: []*fragment{{FragmentKind: textFragmentKind, Text: "Teardown Step2"}},
-				Res:       &result{Status: fail, ExecTime: "00:03:31"},
+				Result:    &result{Status: fail, ExecutionTime: "00:03:31"},
 			},
 		},
 		TableRowIndex: -1,
@@ -759,20 +759,20 @@ func TestToScenario(t *testing.T) {
 func TestToScenarioWithHookFailures(t *testing.T) {
 	encodedScreenShot := base64.StdEncoding.EncodeToString([]byte("Screenshot"))
 	want := &scenario{
-		Heading:    "Vowel counts in single word",
-		ExecTime:   "00:01:53",
-		ExecStatus: fail,
-		Contexts:   []item{},
+		Heading:         "Vowel counts in single word",
+		ExecutionTime:   "00:01:53",
+		ExecutionStatus: fail,
+		Contexts:        []item{},
 		Items: []item{
 			&step{
 				Fragments: []*fragment{{FragmentKind: textFragmentKind, Text: "Step1"}},
-				Res:       &result{Status: fail, ExecTime: "00:03:31"},
+				Result:    &result{Status: fail, ExecutionTime: "00:03:31"},
 			},
 		},
-		Teardown:          []item{},
-		BeforeHookFailure: newHookFailure("Before Scenario", "err", encodedScreenShot, "Stacktrace"),
-		AfterHookFailure:  newHookFailure("After Scenario", "err", encodedScreenShot, "Stacktrace"),
-		TableRowIndex:     -1,
+		Teardowns:                 []item{},
+		BeforeScenarioHookFailure: newHookFailure("Before Scenario", "err", encodedScreenShot, "Stacktrace"),
+		AfterScenarioHookFailure:  newHookFailure("After Scenario", "err", encodedScreenShot, "Stacktrace"),
+		TableRowIndex:             -1,
 	}
 
 	got := toScenario(scnWithHookFailure, -1)
@@ -783,7 +783,7 @@ func TestToScenarioWithHookFailures(t *testing.T) {
 
 func TestToConcept(t *testing.T) {
 	want := &concept{
-		CptStep: &step{
+		ConceptStep: &step{
 			Fragments: []*fragment{
 				{FragmentKind: textFragmentKind, Text: "Say "},
 				{FragmentKind: dynamicFragmentKind, Text: "hello"},
@@ -791,25 +791,25 @@ func TestToConcept(t *testing.T) {
 				{FragmentKind: tableFragmentKind,
 					Table: &table{
 						Headers: []string{"Word", "Count"},
-						Rows:    []*row{{Cells: []string{"Gauge", "3"}}, {Cells: []string{"Mingle", "2"}}},
+						Rows:    []*row{{Cells: []string{"Gauge", "3"}, Result: pass}, {Cells: []string{"Mingle", "2"}, Result: pass}},
 					},
 				},
 			},
-			Res: &result{Status: pass, ExecTime: "00:03:31"},
+			Result: &result{Status: pass, ExecutionTime: "00:03:31"},
 		},
 		Items: []item{
 			&concept{
-				CptStep: &step{
+				ConceptStep: &step{
 					Fragments: []*fragment{
 						{FragmentKind: textFragmentKind, Text: "Tell "},
 						{FragmentKind: dynamicFragmentKind, Text: "hello"},
 					},
-					Res: &result{Status: pass, ExecTime: "00:03:31"},
+					Result: &result{Status: pass, ExecutionTime: "00:03:31"},
 				},
 				Items: []item{
 					&step{
 						Fragments: []*fragment{{FragmentKind: textFragmentKind, Text: "Say Hi"}},
-						Res:       &result{Status: pass, ExecTime: "00:03:31"},
+						Result:    &result{Status: pass, ExecutionTime: "00:03:31"},
 					},
 				},
 			},
@@ -822,11 +822,11 @@ func TestToConcept(t *testing.T) {
 					{FragmentKind: tableFragmentKind,
 						Table: &table{
 							Headers: []string{"Word", "Count"},
-							Rows:    []*row{{Cells: []string{"Gauge", "3"}}, {Cells: []string{"Mingle", "2"}}},
+							Rows:    []*row{{Cells: []string{"Gauge", "3"}, Result: pass}, {Cells: []string{"Mingle", "2"}, Result: pass}},
 						},
 					},
 				},
-				Res: &result{Status: pass, ExecTime: "00:03:31"},
+				Result: &result{Status: pass, ExecutionTime: "00:03:31"},
 			},
 		},
 	}
@@ -847,11 +847,11 @@ func TestToStep(t *testing.T) {
 			{FragmentKind: tableFragmentKind,
 				Table: &table{
 					Headers: []string{"Word", "Count"},
-					Rows:    []*row{{Cells: []string{"Gauge", "3"}}, {Cells: []string{"Mingle", "2"}}},
+					Rows:    []*row{{Cells: []string{"Gauge", "3"}, Result: pass}, {Cells: []string{"Mingle", "2"}, Result: pass}},
 				},
 			},
 		},
-		Res: &result{Status: skip, ExecTime: "00:03:31", SkippedReason: "Step impl not found"},
+		Result: &result{Status: skip, ExecutionTime: "00:03:31", SkippedReason: "Step impl not found"},
 	}
 
 	got := toStep(protoStep)
@@ -891,9 +891,9 @@ Mingle,2`,
 				FileName: "myTable.csv",
 			},
 		},
-		Res: &result{
-			Status:   pass,
-			ExecTime: "00:03:31",
+		Result: &result{
+			Status:        pass,
+			ExecutionTime: "00:03:31",
 		},
 	}
 
@@ -909,11 +909,11 @@ func TestToStepWithAfterHookFailure(t *testing.T) {
 		Fragments: []*fragment{
 			{FragmentKind: textFragmentKind, Text: "Some Step"},
 		},
-		Res: &result{
-			Status:   fail,
-			ExecTime: "00:03:31",
+		Result: &result{
+			Status:        fail,
+			ExecutionTime: "00:03:31",
 		},
-		PostHookFailure: newHookFailure("After Step", "err", encodedScreenShot, "Stacktrace"),
+		AfterStepHookFailure: newHookFailure("After Step", "err", encodedScreenShot, "Stacktrace"),
 	}
 
 	got := toStep(protoStepWithAfterHookFailure)
@@ -1004,45 +1004,45 @@ type tableDrivenStatusComputeTest struct {
 
 var tableDrivenStatusComputeTests = []*tableDrivenStatusComputeTest{
 	{"all passed",
-		&spec{Table: &table{Headers: []string{"foo"}, Rows: []*row{{Cells: []string{"foo1"}}}},
-			Scenarios: []*scenario{
-				{ExecStatus: pass, TableRowIndex: 0},
-				{ExecStatus: pass, TableRowIndex: 0},
+		&spec{Datatable: &table{Headers: []string{"foo"}, Rows: []*row{{Cells: []string{"foo1"}}}},
+			Scenarios: []scenario{
+				{ExecutionStatus: pass, TableRowIndex: 0},
+				{ExecutionStatus: pass, TableRowIndex: 0},
 			}},
 		pass},
 	{"pass and fail",
-		&spec{Table: &table{Headers: []string{"foo"}, Rows: []*row{{Cells: []string{"foo1"}}}},
-			Scenarios: []*scenario{
-				{ExecStatus: pass, TableRowIndex: 0},
-				{ExecStatus: fail, TableRowIndex: 0},
+		&spec{Datatable: &table{Headers: []string{"foo"}, Rows: []*row{{Cells: []string{"foo1"}}}},
+			Scenarios: []scenario{
+				{ExecutionStatus: pass, TableRowIndex: 0},
+				{ExecutionStatus: fail, TableRowIndex: 0},
 			}},
 		fail},
 	{"pass and skip",
-		&spec{Table: &table{Headers: []string{"foo"}, Rows: []*row{{Cells: []string{"foo1"}}}},
-			Scenarios: []*scenario{
-				{ExecStatus: pass, TableRowIndex: 0},
-				{ExecStatus: skip, TableRowIndex: 0},
+		&spec{Datatable: &table{Headers: []string{"foo"}, Rows: []*row{{Cells: []string{"foo1"}}}},
+			Scenarios: []scenario{
+				{ExecutionStatus: pass, TableRowIndex: 0},
+				{ExecutionStatus: skip, TableRowIndex: 0},
 			}},
 		pass},
 	{"skip and fail",
-		&spec{Table: &table{Headers: []string{"foo"}, Rows: []*row{{Cells: []string{"foo1"}}}},
-			Scenarios: []*scenario{
-				{ExecStatus: skip, TableRowIndex: 0},
-				{ExecStatus: fail, TableRowIndex: 0},
+		&spec{Datatable: &table{Headers: []string{"foo"}, Rows: []*row{{Cells: []string{"foo1"}}}},
+			Scenarios: []scenario{
+				{ExecutionStatus: skip, TableRowIndex: 0},
+				{ExecutionStatus: fail, TableRowIndex: 0},
 			}},
 		fail},
 	{"all fail",
-		&spec{Table: &table{Headers: []string{"foo"}, Rows: []*row{{Cells: []string{"foo1"}}}},
-			Scenarios: []*scenario{
-				{ExecStatus: fail, TableRowIndex: 0},
-				{ExecStatus: fail, TableRowIndex: 0},
+		&spec{Datatable: &table{Headers: []string{"foo"}, Rows: []*row{{Cells: []string{"foo1"}}}},
+			Scenarios: []scenario{
+				{ExecutionStatus: fail, TableRowIndex: 0},
+				{ExecutionStatus: fail, TableRowIndex: 0},
 			}},
 		fail},
 	{"all skip",
-		&spec{Table: &table{Headers: []string{"foo"}, Rows: []*row{{Cells: []string{"foo1"}}}},
-			Scenarios: []*scenario{
-				{ExecStatus: skip, TableRowIndex: 0},
-				{ExecStatus: skip, TableRowIndex: 0},
+		&spec{Datatable: &table{Headers: []string{"foo"}, Rows: []*row{{Cells: []string{"foo1"}}}},
+			Scenarios: []scenario{
+				{ExecutionStatus: skip, TableRowIndex: 0},
+				{ExecutionStatus: skip, TableRowIndex: 0},
 			}},
 		skip},
 }
@@ -1051,7 +1051,7 @@ func TestTableDrivenStatusCompute(t *testing.T) {
 	for _, test := range tableDrivenStatusComputeTests {
 		want := test.status
 		computeTableDrivenStatuses(test.spec)
-		got := test.spec.Table.Rows[0].Res
+		got := test.spec.Datatable.Rows[0].Result
 		if want != got {
 			t.Errorf("test: %s want:\n%q\ngot:\n%q\n", test.name, want, got)
 		}
