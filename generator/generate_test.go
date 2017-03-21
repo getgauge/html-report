@@ -357,14 +357,14 @@ var stepWithBracketsInFragment = &step{
 		{FragmentKind: textFragmentKind, Text: " to "},
 		{FragmentKind: dynamicFragmentKind, Text: "gauge"},
 	},
-	Res: &result{
-		Status:   pass,
-		ExecTime: "00:03:31",
+	Result: &result{
+		Status:        pass,
+		ExecutionTime: "00:03:31",
 	},
 }
 
 var stepWithCodeBlock = &spec{
-	CommentsBeforeTable: []string{`    {"prop":"value"}`},
+	CommentsBeforeDatatable: []string{`    {"prop":"value"}`},
 }
 
 var stepWithFileParam = &step{
@@ -373,9 +373,9 @@ var stepWithFileParam = &step{
 		{FragmentKind: specialStringFragmentKind, Text: "good morning", Name: "file:hello.txt"},
 		{FragmentKind: textFragmentKind, Text: " to gauge"},
 	},
-	Res: &result{
-		Status:   pass,
-		ExecTime: "00:03:31",
+	Result: &result{
+		Status:        pass,
+		ExecutionTime: "00:03:31",
 	},
 }
 
@@ -387,21 +387,21 @@ var stepWithSpecialTableParam = &step{
 				Headers: []string{"Word", "Count"},
 				Rows: []*row{
 					{
-						Cells: []string{"Gauge", "3"},
-						Res:   pass,
+						Cells:  []string{"Gauge", "3"},
+						Result: pass,
 					},
 					{
-						Cells: []string{"Mingle", "2"},
-						Res:   fail,
+						Cells:  []string{"Mingle", "2"},
+						Result: fail,
 					},
 				},
 			},
 		},
 		{FragmentKind: textFragmentKind, Text: " to gauge"},
 	},
-	Res: &result{
-		Status:   pass,
-		ExecTime: "00:03:31",
+	Result: &result{
+		Status:        pass,
+		ExecutionTime: "00:03:31",
 	},
 }
 
@@ -436,10 +436,10 @@ var reportGenTests = []reportGenTest{
 	{"generate spec comments with data table (if present)", specCommentsAndTableTag, newSpec(true), wSpecCommentsWithTableTag},
 	{"generate spec comments without data table", specCommentsAndTableTag, newSpec(false), wSpecCommentsWithoutTableTag},
 	{"generate spec comments with code block", specCommentsAndTableTag, stepWithCodeBlock, wSpecCommentsWithCodeBlock},
-	{"generate passing scenario container", scenarioContainerStartDiv, &scenario{ExecStatus: pass, TableRowIndex: -1}, wScenarioContainerStartPassDiv},
-	{"generate failed scenario container", scenarioContainerStartDiv, &scenario{ExecStatus: fail, TableRowIndex: -1}, wScenarioContainerStartFailDiv},
-	{"generate skipped scenario container", scenarioContainerStartDiv, &scenario{ExecStatus: skip, TableRowIndex: -1}, wScenarioContainerStartSkipDiv},
-	{"generate scenario header", scenarioHeaderStartDiv, &scenario{Heading: "Scenario Heading", ExecTime: "00:01:01"}, wscenarioHeaderStartDiv},
+	{"generate passing scenario container", scenarioContainerStartDiv, &scenario{ExecutionStatus: pass, TableRowIndex: -1}, wScenarioContainerStartPassDiv},
+	{"generate failed scenario container", scenarioContainerStartDiv, &scenario{ExecutionStatus: fail, TableRowIndex: -1}, wScenarioContainerStartFailDiv},
+	{"generate skipped scenario container", scenarioContainerStartDiv, &scenario{ExecutionStatus: skip, TableRowIndex: -1}, wScenarioContainerStartSkipDiv},
+	{"generate scenario header", scenarioHeaderStartDiv, &scenario{Heading: "Scenario Heading", ExecutionTime: "00:01:01"}, wscenarioHeaderStartDiv},
 	{"generate pass step start div", stepStartDiv, newStep(pass), wPassStepStartDiv},
 	{"generate fail step start div", stepStartDiv, newStep(fail), wFailStepStartDiv},
 	{"generate skipped step start div", stepStartDiv, newStep(skip), wSkipStepStartDiv},
@@ -448,7 +448,7 @@ var reportGenTests = []reportGenTest{
 	{"generate step body div with file special param", stepBodyDiv, stepWithFileParam, wStepWithFileParam},
 	{"generate step body div with special table param", stepBodyDiv, stepWithSpecialTableParam, wStepWithSpecialTableParam},
 	{"generate step failure div", stepFailureDiv, &result{ErrorMessage: "expected:<foo [foo] foo> but was:<foo [bar] foo>", StackTrace: "stacktrace"}, wStepFailDiv},
-	{"generate spec error div", specErrorDiv, &spec{Errors: []error{buildError{ErrorType: parseError, Message: "message"}}}, wSpecErrorDiv},
+	{"generate spec error div", specErrorDiv, &spec{Errors: []error{buildError{ErrorType: parseErrorType, Message: "message"}}}, wSpecErrorDiv},
 }
 
 func TestExecute(t *testing.T) {
@@ -485,22 +485,22 @@ func newHookFailure(name, errMsg, screenshot, stacktrace string) *hookFailure {
 
 func newOverview() *overview {
 	return &overview{
-		ProjectName: "gauge-testsss",
-		Env:         "default",
-		SuccRate:    95,
-		ExecTime:    "00:01:53",
-		Timestamp:   "Jun 3, 2016 at 12:29pm",
+		ProjectName:   "gauge-testsss",
+		Env:           "default",
+		SuccessRate:   95,
+		ExecutionTime: "00:01:53",
+		Timestamp:     "Jun 3, 2016 at 12:29pm",
 	}
 }
 
 func newSpecsMeta(name, execTime string, failed, skipped bool, tags []string, fileName string) *specsMeta {
 	return &specsMeta{
-		SpecName:   name,
-		ExecTime:   execTime,
-		Failed:     failed,
-		Skipped:    skipped,
-		Tags:       tags,
-		ReportFile: fileName,
+		SpecName:      name,
+		ExecutionTime: execTime,
+		Failed:        failed,
+		Skipped:       skipped,
+		Tags:          tags,
+		ReportFile:    fileName,
 	}
 }
 
@@ -509,16 +509,16 @@ func newSpec(withTable bool) *spec {
 		Headers: []string{"Word", "Count"},
 		Rows: []*row{
 			{
-				Cells: []string{"Gauge", "3"},
-				Res:   pass,
+				Cells:  []string{"Gauge", "3"},
+				Result: pass,
 			},
 			{
-				Cells: []string{"Mingle", "2"},
-				Res:   fail,
+				Cells:  []string{"Mingle", "2"},
+				Result: fail,
 			},
 			{
-				Cells: []string{"foobar", "1"},
-				Res:   skip,
+				Cells:  []string{"foobar", "1"},
+				Result: skip,
 			},
 		},
 	}
@@ -528,14 +528,14 @@ func newSpec(withTable bool) *spec {
 
 	if withTable {
 		return &spec{
-			CommentsBeforeTable: c1,
-			Table:               t,
-			CommentsAfterTable:  c2,
+			CommentsBeforeDatatable: c1,
+			Datatable:               t,
+			CommentsAfterDatatable:  c2,
 		}
 	}
 
 	return &spec{
-		CommentsBeforeTable: c1,
+		CommentsBeforeDatatable: c1,
 	}
 }
 
@@ -556,9 +556,9 @@ func newStep(s status) *step {
 				},
 			},
 		},
-		Res: &result{
-			Status:   s,
-			ExecTime: "00:03:31",
+		Result: &result{
+			Status:        s,
+			ExecutionTime: "00:03:31",
 		},
 	}
 }
