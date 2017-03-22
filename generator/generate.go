@@ -29,7 +29,7 @@ import (
 	"text/template"
 
 	"github.com/getgauge/common"
-	gm "github.com/getgauge/html-report/gauge_messages"
+	"github.com/getgauge/html-report/gauge_messages"
 	"github.com/microcosm-cc/bluemonday"
 	"github.com/russross/blackfriday"
 )
@@ -93,7 +93,7 @@ type suiteResult struct {
 	Tags                   string       `json:"tags"`
 	ExecutionTime          int64        `json:"executionTime"`
 	ExecutionStatus        status       `json:"executionStatus"`
-	SpecResults            []spec       `json:"specResults"`
+	SpecResults            []*spec      `json:"specResults"`
 	BeforeSuiteHookFailure *hookFailure `json:"beforeSuiteHookFailure"`
 	AfterSuiteHookFailure  *hookFailure `json:"afterSuiteHookFailure"`
 	PassedSpecsCount       int          `json:"passedSpecsCount"`
@@ -109,7 +109,7 @@ type spec struct {
 	Tags                    []string     `json:"tags"`
 	ExecutionTime           int64        `json:"executionTime"`
 	ExecutionStatus         status       `json:"executionStatus"`
-	Scenarios               []scenario   `json:"scenarios"`
+	Scenarios               []*scenario  `json:"scenarios"`
 	IsTableDriven           bool         `json:"isTableDriven"`
 	Datatable               *table       `json:"datatable"`
 	BeforeSpecHookFailure   *hookFailure `json:"beforeSpecHookFailure"`
@@ -277,28 +277,29 @@ func execTemplate(tmplName string, w io.Writer, data interface{}) {
 var ProjectRoot string
 
 // GenerateReports generates HTML report in the given report dir location
-func GenerateReports(suiteRes *gm.ProtoSuiteResult, reportDir string) error {
+func GenerateReports(res *gauge_messages.ProtoSuiteResult, reportDir string) error {
+	suiteRes := toSuiteResult(res)
 	f, err := os.Create(filepath.Join(reportDir, "index.html"))
 	if err != nil {
 		return err
 	}
-	if suiteRes.GetPreHookFailure() != nil {
+	if suiteRes.BeforeSuiteHookFailure != nil {
 		overview := toOverview(suiteRes, nil)
 		generateOverview(overview, f)
-		execTemplate(hookFailureDiv, f, toHookFailure(suiteRes.GetPreHookFailure(), "Before Suite"))
-		if suiteRes.GetPostHookFailure() != nil {
-			execTemplate(hookFailureDiv, f, toHookFailure(suiteRes.GetPostHookFailure(), "After Suite"))
+		execTemplate(hookFailureDiv, f, suiteRes.BeforeSuiteHookFailure)
+		if suiteRes.AfterSuiteHookFailure != nil {
+			execTemplate(hookFailureDiv, f, suiteRes.AfterSuiteHookFailure)
 		}
 		generatePageFooter(overview, f)
 	} else {
 		var wg sync.WaitGroup
 		wg.Add(1)
 		go generateIndexPage(suiteRes, f, &wg)
-		specRes := suiteRes.GetSpecResults()
+		specRes := suiteRes.SpecResults
 		for _, res := range specRes {
-			relPath, _ := filepath.Rel(ProjectRoot, res.GetProtoSpec().GetFileName())
+			relPath, _ := filepath.Rel(ProjectRoot, res.FileName)
 			CreateDirectory(filepath.Join(reportDir, filepath.Dir(relPath)))
-			sf, err := os.Create(filepath.Join(reportDir, toHTMLFileName(res.GetProtoSpec().GetFileName(), ProjectRoot)))
+			sf, err := os.Create(filepath.Join(reportDir, toHTMLFileName(res.FileName, ProjectRoot)))
 			if err != nil {
 				return err
 			}
@@ -348,37 +349,31 @@ func containsParseErrors(errors []error) bool {
 	return false
 }
 
-func generateSearchIndex(suiteRes *gm.ProtoSuiteResult, reportDir string) error {
+func generateSearchIndex(suiteRes *suiteResult, reportDir string) error {
 	CreateDirectory(filepath.Join(reportDir, "js"))
 	f, err := os.Create(filepath.Join(reportDir, "js", "search_index.js"))
 	if err != nil {
 		return err
 	}
 	index := newSearchIndex()
-	for _, r := range suiteRes.GetSpecResults() {
-		spec := r.GetProtoSpec()
-		specFileName := toHTMLFileName(spec.GetFileName(), ProjectRoot)
-		for _, t := range spec.GetTags() {
+	for _, r := range suiteRes.SpecResults {
+		specFileName := toHTMLFileName(r.FileName, ProjectRoot)
+		for _, t := range r.Tags {
 			if !index.hasValueForTag(t, specFileName) {
 				index.Tags[t] = append(index.Tags[t], specFileName)
 			}
 		}
-		var addTagsFromScenario = func(s *gm.ProtoScenario) {
-			for _, t := range s.GetTags() {
+		for _, s := range r.Scenarios {
+			for _, t := range s.Tags {
 				if !index.hasValueForTag(t, specFileName) {
 					index.Tags[t] = append(index.Tags[t], specFileName)
 				}
 			}
+			// if tds := i.GetTableDrivenScenario(); tds != nil {
+			// 	addTagsFromScenario(tds.GetScenario())
+			// }
 		}
-		for _, i := range spec.GetItems() {
-			if s := i.GetScenario(); s != nil {
-				addTagsFromScenario(s)
-			}
-			if tds := i.GetTableDrivenScenario(); tds != nil {
-				addTagsFromScenario(tds.GetScenario())
-			}
-		}
-		specHeading := spec.GetSpecHeading()
+		specHeading := r.SpecHeading
 		if !index.hasSpec(specHeading, specFileName) {
 			index.Specs[specHeading] = append(index.Specs[specHeading], specFileName)
 		}
@@ -391,37 +386,37 @@ func generateSearchIndex(suiteRes *gm.ProtoSuiteResult, reportDir string) error 
 	return nil
 }
 
-func generateIndexPage(suiteRes *gm.ProtoSuiteResult, w io.Writer, wg *sync.WaitGroup) {
+func generateIndexPage(suiteRes *suiteResult, w io.Writer, wg *sync.WaitGroup) {
 	defer wg.Done()
 	overview := toOverview(suiteRes, nil)
 	generateOverview(overview, w)
-	if suiteRes.GetPostHookFailure() != nil {
-		execTemplate(hookFailureDiv, w, toHookFailure(suiteRes.GetPostHookFailure(), "After Suite"))
+	if suiteRes.AfterSuiteHookFailure != nil {
+		execTemplate(hookFailureDiv, w, suiteRes.AfterSuiteHookFailure)
 	}
 	execTemplate(specsStartDiv, w, nil)
 	execTemplate(sidebarDiv, w, toSidebar(suiteRes, nil))
-	if !suiteRes.GetFailed() {
+	if suiteRes.ExecutionStatus != fail {
 		execTemplate(congratsDiv, w, nil)
 	}
 	execTemplate(endDiv, w, nil)
 	generatePageFooter(overview, w)
 }
 
-func generateSpecPage(suiteRes *gm.ProtoSuiteResult, specRes *gm.ProtoSpecResult, w io.Writer, wg *sync.WaitGroup) {
+func generateSpecPage(suiteRes *suiteResult, specRes *spec, w io.Writer, wg *sync.WaitGroup) {
 	defer wg.Done()
 	overview := toOverview(suiteRes, specRes)
 
 	generateOverview(overview, w)
 
-	if suiteRes.GetPreHookFailure() != nil {
-		execTemplate(hookFailureDiv, w, toHookFailure(suiteRes.GetPreHookFailure(), "Before Suite"))
+	if suiteRes.BeforeSuiteHookFailure != nil {
+		execTemplate(hookFailureDiv, w, suiteRes.BeforeSuiteHookFailure)
 	}
 
-	if suiteRes.GetPostHookFailure() != nil {
-		execTemplate(hookFailureDiv, w, toHookFailure(suiteRes.GetPostHookFailure(), "After Suite"))
+	if suiteRes.AfterSuiteHookFailure != nil {
+		execTemplate(hookFailureDiv, w, suiteRes.AfterSuiteHookFailure)
 	}
 
-	if suiteRes.GetPreHookFailure() == nil {
+	if suiteRes.BeforeSuiteHookFailure == nil {
 		execTemplate(specsStartDiv, w, nil)
 		execTemplate(sidebarDiv, w, toSidebar(suiteRes, specRes))
 		generateSpecDiv(w, specRes)
@@ -442,9 +437,8 @@ func generatePageFooter(overview *overview, w io.Writer) {
 	execTemplate(htmlPageEndWithJS, w, overview)
 }
 
-func generateSpecDiv(w io.Writer, res *gm.ProtoSpecResult) {
-	specHeader := toSpecHeader(res)
-	spec := toSpec(res)
+func generateSpecDiv(w io.Writer, spec *spec) {
+	specHeader := toSpecHeader(spec)
 
 	execTemplate(specHeaderStartTag, w, specHeader)
 	execTemplate(tagsDiv, w, specHeader)
@@ -465,7 +459,7 @@ func generateSpecDiv(w io.Writer, res *gm.ProtoSpecResult) {
 
 	if spec.BeforeSpecHookFailure == nil {
 		for _, scn := range spec.Scenarios {
-			generateScenario(w, &scn)
+			generateScenario(w, scn)
 		}
 	}
 

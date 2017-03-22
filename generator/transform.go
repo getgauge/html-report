@@ -32,7 +32,7 @@ const (
 	dothtml        = ".html"
 )
 
-func toSuiteResult(psr *gm.ProtoSuiteResult) suiteResult {
+func toSuiteResult(psr *gm.ProtoSuiteResult) *suiteResult {
 	suiteResult := suiteResult{
 		ProjectName:            psr.GetProjectName(),
 		Environment:            psr.GetEnvironment(),
@@ -50,32 +50,31 @@ func toSuiteResult(psr *gm.ProtoSuiteResult) suiteResult {
 	if psr.GetFailed() {
 		suiteResult.ExecutionStatus = fail
 	}
-	suiteResult.SpecResults = make([]spec, 0)
+	suiteResult.SpecResults = make([]*spec, 0)
 	for _, protoSpecRes := range psr.GetSpecResults() {
-		suiteResult.SpecResults = append(suiteResult.SpecResults, *toSpec(protoSpecRes))
+		suiteResult.SpecResults = append(suiteResult.SpecResults, toSpec(protoSpecRes))
 	}
-	return suiteResult
+	return &suiteResult
 }
 
-func toOverview(res *gm.ProtoSuiteResult, specRes *gm.ProtoSpecResult) *overview {
+func toOverview(res *suiteResult, specRes *spec) *overview {
 	totalSpecs := 0
-	if res.GetSpecResults() != nil {
-		totalSpecs = len(res.GetSpecResults())
+	if res.SpecResults != nil {
+		totalSpecs = len(res.SpecResults)
 	}
-	passed := totalSpecs - int(res.GetSpecsFailedCount()) - int(res.GetSpecsSkippedCount())
 	base := ""
 	if specRes != nil {
-		base, _ = filepath.Rel(filepath.Dir(specRes.ProtoSpec.GetFileName()), ProjectRoot)
+		base, _ = filepath.Rel(filepath.Dir(specRes.FileName), ProjectRoot)
 		base = base + "/"
 	}
 	return &overview{
-		ProjectName:   res.GetProjectName(),
-		Env:           res.GetEnvironment(),
-		Tags:          res.GetTags(),
-		SuccessRate:   res.GetSuccessRate(),
-		ExecutionTime: formatTime(res.GetExecutionTime()),
-		Timestamp:     res.GetTimestamp(),
-		Summary:       &summary{Failed: int(res.GetSpecsFailedCount()), Total: totalSpecs, Passed: passed, Skipped: int(res.GetSpecsSkippedCount())},
+		ProjectName:   res.ProjectName,
+		Env:           res.Environment,
+		Tags:          res.Tags,
+		SuccessRate:   float32(res.SuccessRate),
+		ExecutionTime: formatTime(res.ExecutionTime),
+		Timestamp:     res.Timestamp,
+		Summary:       &summary{Failed: res.FailedSpecsCount, Total: totalSpecs, Passed: res.PassedSpecsCount, Skipped: res.SkippedSpecsCount},
 		BasePath:      base,
 	}
 }
@@ -103,22 +102,22 @@ func toHTMLFileName(specName, projectRoot string) string {
 	return strings.TrimSuffix(specPath, ext) + dothtml
 }
 
-func toSidebar(res *gm.ProtoSuiteResult, currSpec *gm.ProtoSpecResult) *sidebar {
+func toSidebar(res *suiteResult, currSpec *spec) *sidebar {
 	var basePath string
 	if currSpec != nil {
-		basePath = filepath.Dir(currSpec.ProtoSpec.GetFileName())
+		basePath = filepath.Dir(currSpec.FileName)
 	} else {
 		basePath = ProjectRoot
 	}
 	specsMetaList := make([]*specsMeta, 0)
 	for _, specRes := range res.SpecResults {
 		sm := &specsMeta{
-			SpecName:      getSpecName(specRes.ProtoSpec),
-			ExecutionTime: formatTime(specRes.GetExecutionTime()),
-			Failed:        specRes.GetFailed(),
-			Skipped:       specRes.GetSkipped(),
-			Tags:          specRes.ProtoSpec.GetTags(),
-			ReportFile:    toHTMLFileName(specRes.ProtoSpec.GetFileName(), basePath),
+			SpecName:      specRes.SpecHeading,
+			ExecutionTime: formatTime(specRes.ExecutionTime),
+			Failed:        specRes.ExecutionStatus == fail,
+			Skipped:       specRes.ExecutionStatus == skip,
+			Tags:          specRes.Tags,
+			ReportFile:    toHTMLFileName(specRes.FileName, basePath),
 		}
 		specsMetaList = append(specsMetaList, sm)
 	}
@@ -126,7 +125,7 @@ func toSidebar(res *gm.ProtoSuiteResult, currSpec *gm.ProtoSpecResult) *sidebar 
 	sort.Sort(byStatus(specsMetaList))
 
 	return &sidebar{
-		IsBeforeHookFailure: res.PreHookFailure != nil,
+		IsBeforeHookFailure: res.BeforeSuiteHookFailure != nil,
 		Specs:               specsMetaList,
 	}
 }
@@ -154,7 +153,7 @@ func getState(r *specsMeta) int {
 	return 1
 }
 
-type bySceStatus []scenario
+type bySceStatus []*scenario
 
 func (s bySceStatus) Len() int {
 	return len(s)
@@ -167,7 +166,7 @@ func (s bySceStatus) Less(i, j int) bool {
 	return getSceState(s[i]) < getSceState(s[j])
 }
 
-func getSceState(s scenario) int {
+func getSceState(s *scenario) int {
 	if s.ExecutionStatus == fail {
 		return -1
 	}
@@ -185,22 +184,40 @@ func getSpecName(s *gm.ProtoSpec) string {
 	return specName
 }
 
-func toSpecHeader(res *gm.ProtoSpecResult) *specHeader {
+func toSpecHeader(res *spec) *specHeader {
 	return &specHeader{
-		SpecName:      getSpecName(res.ProtoSpec),
-		ExecutionTime: formatTime(res.GetExecutionTime()),
-		FileName:      res.ProtoSpec.GetFileName(),
-		Tags:          res.ProtoSpec.GetTags(),
-		Summary:       toScenarioSummary(res.GetProtoSpec()),
+		SpecName:      res.SpecHeading,
+		ExecutionTime: formatTime(res.ExecutionTime),
+		FileName:      res.FileName,
+		Tags:          res.Tags,
+		Summary:       toScenarioSummary(res),
 	}
 }
 
 func toSpec(res *gm.ProtoSpecResult) *spec {
 	spec := &spec{
-		Scenarios:             make([]scenario, 0),
+		Scenarios:             make([]*scenario, 0),
 		BeforeSpecHookFailure: toHookFailure(res.GetProtoSpec().GetPreHookFailure(), "Before Spec"),
 		AfterSpecHookFailure:  toHookFailure(res.GetProtoSpec().GetPostHookFailure(), "After Spec"),
 		Errors:                make([]error, 0),
+		FileName:              res.GetProtoSpec().GetFileName(),
+		SpecHeading:           res.GetProtoSpec().GetSpecHeading(),
+		IsTableDriven:         res.GetProtoSpec().GetIsTableDriven(),
+		ExecutionTime:         res.GetExecutionTime(),
+		ExecutionStatus:       pass,
+	}
+	if res.GetFailed() {
+		spec.ExecutionStatus = fail
+	}
+	if res.GetSkipped() {
+		spec.ExecutionStatus = skip
+	}
+	sourceTags := res.GetProtoSpec().GetTags()
+	if sourceTags != nil {
+		spec.Tags = make([]string, 0)
+		for _, t := range sourceTags {
+			spec.Tags = append(spec.Tags, t)
+		}
 	}
 	if hasParseErrors(res.Errors) {
 		spec.Errors = toErrors(res.Errors)
@@ -219,17 +236,35 @@ func toSpec(res *gm.ProtoSpecResult) *spec {
 			spec.Datatable = toTable(item.GetTable())
 			isTableScanned = true
 		case gm.ProtoItem_Scenario:
-			spec.Scenarios = append(spec.Scenarios, *toScenario(item.GetScenario(), -1))
+			spec.Scenarios = append(spec.Scenarios, toScenario(item.GetScenario(), -1))
 		case gm.ProtoItem_TableDrivenScenario:
-			spec.Scenarios = append(spec.Scenarios, *toScenario(item.GetTableDrivenScenario().GetScenario(), int(item.GetTableDrivenScenario().GetTableRowIndex())))
+			spec.Scenarios = append(spec.Scenarios, toScenario(item.GetTableDrivenScenario().GetScenario(), int(item.GetTableDrivenScenario().GetTableRowIndex())))
 		}
 	}
 
 	if res.GetProtoSpec().GetIsTableDriven() {
 		computeTableDrivenStatuses(spec)
 	}
+	p, f, s := computeScenarioStatistics(spec)
+	spec.PassedScenarioCount = p
+	spec.FailedScenarioCount = f
+	spec.SkippedScenarioCount = s
 	sort.Sort(bySceStatus(spec.Scenarios))
 	return spec
+}
+
+func computeScenarioStatistics(s *spec) (passed, failed, skipped int) {
+	for _, scn := range s.Scenarios {
+		switch scn.ExecutionStatus {
+		case pass:
+			passed++
+		case fail:
+			failed++
+		case skip:
+			skipped++
+		}
+	}
+	return passed, failed, skipped
 }
 
 func toErrors(errors []*gm.Error) []error {
@@ -269,20 +304,8 @@ func computeTableDrivenStatuses(spec *spec) {
 	}
 }
 
-func toScenarioSummary(s *gm.ProtoSpec) *summary {
-	var sum summary
-	for _, item := range s.GetItems() {
-		if item.GetItemType() == gm.ProtoItem_Scenario {
-			switch item.GetScenario().GetExecutionStatus() {
-			case gm.ExecutionStatus_FAILED:
-				sum.Failed++
-			case gm.ExecutionStatus_PASSED:
-				sum.Passed++
-			case gm.ExecutionStatus_SKIPPED:
-				sum.Skipped++
-			}
-		}
-	}
+func toScenarioSummary(s *spec) *summary {
+	var sum = summary{Failed: s.FailedScenarioCount, Passed: s.PassedScenarioCount, Skipped: s.SkippedScenarioCount}
 	sum.Total = sum.Failed + sum.Passed + sum.Skipped
 	return &sum
 }
