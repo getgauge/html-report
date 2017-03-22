@@ -23,6 +23,8 @@ import (
 	"reflect"
 	"testing"
 
+	"github.com/kylelemons/godebug/pretty"
+
 	gm "github.com/getgauge/html-report/gauge_messages"
 )
 
@@ -30,6 +32,12 @@ type transformTest struct {
 	name   string
 	input  *gm.ProtoSuiteResult
 	output interface{}
+}
+
+func checkEqual(t *testing.T, test string, want, got interface{}) {
+	if diff := pretty.Compare(got, want); diff != "" {
+		t.Errorf("Test:%s\n diff: (-got +want)\n%s", test, diff)
+	}
 }
 
 func newCommentItem(str string) *gm.ProtoItem {
@@ -149,7 +157,7 @@ var specRes1 = &gm.ProtoSpecResult{
 		SpecHeading:   "specRes1",
 		Tags:          []string{"tag1", "tag2"},
 		FileName:      "/tmp/gauge/specs/foobar.spec",
-		IsTableDriven: false,
+		IsTableDriven: true,
 		Items: []*gm.ProtoItem{
 			newCommentItem("\n"),
 			newCommentItem("This is an executable specification file. This file follows markdown syntax."),
@@ -166,6 +174,70 @@ var specRes1 = &gm.ProtoSpecResult{
 			newCommentItem("Comment 3"),
 		},
 	},
+}
+
+var specRes2 = &gm.ProtoSpecResult{
+	Failed:        true,
+	Skipped:       false,
+	ExecutionTime: 211316,
+	ProtoSpec: &gm.ProtoSpec{
+		FileName:    "specRes2.spec",
+		SpecHeading: "specRes2",
+		Tags:        []string{"tag1", "tag2", "tag3"},
+	},
+}
+
+var specRes3 = &gm.ProtoSpecResult{
+	Failed:        false,
+	Skipped:       true,
+	ExecutionTime: 211316,
+	ProtoSpec: &gm.ProtoSpec{
+		FileName:    "specRes3.spec",
+		SpecHeading: "specRes3",
+		Tags:        []string{"tag1"},
+	},
+}
+
+var spec1 = &spec{
+	SpecHeading:   "specRes1",
+	Tags:          []string{"tag1", "tag2"},
+	FileName:      "/tmp/gauge/specs/foobar.spec",
+	ExecutionTime: 211316,
+	IsTableDriven: true,
+	Datatable: &table{
+		Headers: []string{"Word", "Count"},
+		Rows: []*row{
+			&row{Cells: []string{"Gauge", "3"}},
+			&row{Cells: []string{"Mingle", "2"}}}},
+	CommentsBeforeDatatable: []string{
+		"\n",
+		"This is an executable specification file. This file follows markdown syntax.",
+		"\n",
+		"To execute this specification, run",
+		"\tgauge specs",
+		"\n",
+	},
+	CommentsAfterDatatable: []string{
+		"Comment 1",
+		"Comment 2",
+		"Comment 3",
+	},
+}
+
+var spec2 = &spec{
+	ExecutionStatus: fail,
+	ExecutionTime:   211316,
+	FileName:        "specRes2.spec",
+	SpecHeading:     "specRes2",
+	Tags:            []string{"tag1", "tag2", "tag3"},
+}
+
+var spec3 = &spec{
+	ExecutionStatus: skip,
+	ExecutionTime:   211316,
+	FileName:        "specRes3.spec",
+	SpecHeading:     "specRes3",
+	Tags:            []string{"tag1"},
 }
 
 var datatableDrivenSpec = &gm.ProtoSpecResult{
@@ -208,28 +280,6 @@ var datatableDrivenSpec = &gm.ProtoSpecResult{
 	},
 }
 
-var specRes2 = &gm.ProtoSpecResult{
-	Failed:        true,
-	Skipped:       false,
-	ExecutionTime: 211316,
-	ProtoSpec: &gm.ProtoSpec{
-		FileName:    "specRes2.spec",
-		SpecHeading: "specRes2",
-		Tags:        []string{"tag1", "tag2", "tag3"},
-	},
-}
-
-var specRes3 = &gm.ProtoSpecResult{
-	Failed:        false,
-	Skipped:       true,
-	ExecutionTime: 211316,
-	ProtoSpec: &gm.ProtoSpec{
-		FileName:    "specRes3.spec",
-		SpecHeading: "specRes3",
-		Tags:        []string{"tag1"},
-	},
-}
-
 var specResWithSpecHookFailure = &gm.ProtoSpecResult{
 	Failed:        false,
 	Skipped:       true,
@@ -250,16 +300,17 @@ var specResWithSpecHookFailure = &gm.ProtoSpecResult{
 	},
 }
 
-var suiteRes1 = &gm.ProtoSuiteResult{
+var suiteRes1 = &suiteResult{
 	ProjectName:       "projName",
 	Environment:       "ci-java",
 	Tags:              "!unimplemented",
-	SuccessRate:       80.00,
+	SuccessRate:       80,
 	ExecutionTime:     113163,
 	Timestamp:         "Jun 3, 2016 at 12:29pm",
-	SpecResults:       make([]*gm.ProtoSpecResult, 15),
-	SpecsFailedCount:  2,
-	SpecsSkippedCount: 5,
+	SpecResults:       make([]*spec, 15),
+	FailedSpecsCount:  2,
+	SkippedSpecsCount: 5,
+	PassedSpecsCount:  8,
 }
 
 var scn = &gm.ProtoScenario{
@@ -313,8 +364,8 @@ var skippedProtoSce = &gm.ProtoScenario{
 	},
 }
 
-var suiteRes2 = &gm.ProtoSuiteResult{
-	SpecResults: []*gm.ProtoSpecResult{specRes1, specRes2, specRes3},
+var suiteRes2 = &suiteResult{
+	SpecResults: []*spec{spec1, spec2, spec3},
 }
 
 var protoStep = &gm.ProtoStep{
@@ -442,9 +493,7 @@ func TestToOverview(t *testing.T) {
 	}
 
 	got := toOverview(suiteRes1, nil)
-	if !reflect.DeepEqual(got, want) {
-		t.Errorf("want:\n%v\ngot:\n%v\n", want, got)
-	}
+	checkEqual(t, "", want, got)
 }
 
 func TestToSidebar(t *testing.T) {
@@ -473,10 +522,8 @@ func TestToSpecHeader(t *testing.T) {
 		Summary:       &summary{},
 	}
 
-	got := toSpecHeader(specRes1)
-	if !reflect.DeepEqual(got, want) {
-		t.Errorf("want:\n%q\ngot:\n%q\n", want, got)
-	}
+	got := toSpecHeader(spec1)
+	checkEqual(t, "", want, got)
 }
 
 func TestToSpec(t *testing.T) {
@@ -484,17 +531,21 @@ func TestToSpec(t *testing.T) {
 		CommentsBeforeDatatable: []string{"\n", "This is an executable specification file. This file follows markdown syntax.", "\n", "To execute this specification, run", "\tgauge specs", "\n"},
 		Datatable: &table{
 			Headers: []string{"Word", "Count"},
-			Rows:    []*row{{Cells: []string{"Gauge", "3"}, Result: pass}, {Cells: []string{"Mingle", "2"}, Result: pass}},
+			Rows:    []*row{{Cells: []string{"Gauge", "3"}, Result: skip}, {Cells: []string{"Mingle", "2"}, Result: skip}},
 		},
 		CommentsAfterDatatable: []string{"Comment 1", "Comment 2", "Comment 3"},
-		Scenarios:              make([]scenario, 0),
+		Scenarios:              make([]*scenario, 0),
 		Errors:                 make([]error, 0),
+		SpecHeading:            "specRes1",
+		Tags:                   []string{"tag1", "tag2"},
+		FileName:               "/tmp/gauge/specs/foobar.spec",
+		IsTableDriven:          true,
+		ExecutionStatus:        pass,
+		ExecutionTime:          211316,
 	}
 
 	got := toSpec(specRes1)
-	if !reflect.DeepEqual(got, want) {
-		t.Errorf("want:\n%q\ngot:\n%q\n", want, got)
-	}
+	checkEqual(t, "", want, got)
 }
 
 func TestToSpecWithScenariosInOrder(t *testing.T) {
@@ -538,6 +589,7 @@ func TestToSpecWithScenariosInOrder(t *testing.T) {
 
 func TestToSpecWithErrors(t *testing.T) {
 	specRes := &gm.ProtoSpecResult{
+		Failed: true,
 		Errors: []*gm.Error{
 			{
 				Filename:   "fileName",
@@ -559,14 +611,13 @@ func TestToSpecWithErrors(t *testing.T) {
 			buildError{FileName: "fileName", LineNumber: 2, Message: "message", ErrorType: parseErrorType},
 			buildError{FileName: "fileName1", LineNumber: 4, Message: "message1", ErrorType: validationErrorType},
 		},
-		Scenarios: make([]scenario, 0),
+		Scenarios:       make([]*scenario, 0),
+		ExecutionStatus: fail,
 	}
 
 	got := toSpec(specRes)
 
-	if !reflect.DeepEqual(got, want) {
-		t.Errorf("want:\n%q\ngot:\n%q\n", want, got)
-	}
+	checkEqual(t, "", want, got)
 }
 
 func TestToSpecForTableDrivenSpec(t *testing.T) {
@@ -575,8 +626,13 @@ func TestToSpecForTableDrivenSpec(t *testing.T) {
 			Headers: []string{"Word", "Count"},
 			Rows:    []*row{{Cells: []string{"Gauge", "3"}, Result: fail}, {Cells: []string{"Mingle", "2"}, Result: pass}},
 		},
-		Scenarios: []scenario{
-			scenario{
+		SpecHeading:     "specRes1",
+		FileName:        "/tmp/gauge/specs/foobar.spec",
+		IsTableDriven:   true,
+		ExecutionStatus: pass,
+		ExecutionTime:   211316,
+		Scenarios: []*scenario{
+			&scenario{
 				Heading:       "Scenario 1",
 				ExecutionTime: "00:00:00",
 				Items: []item{
@@ -592,7 +648,7 @@ func TestToSpecForTableDrivenSpec(t *testing.T) {
 				BeforeScenarioHookFailure: nil,
 				AfterScenarioHookFailure:  nil,
 			},
-			scenario{
+			&scenario{
 				Heading:       "Scenario 1",
 				ExecutionTime: "00:00:00",
 				Items: []item{
@@ -612,86 +668,277 @@ func TestToSpecForTableDrivenSpec(t *testing.T) {
 		BeforeSpecHookFailure: nil,
 		AfterSpecHookFailure:  nil,
 		Errors:                make([]error, 0),
+		PassedScenarioCount:   1,
+		FailedScenarioCount:   1,
+		SkippedScenarioCount:  0,
 	}
 
 	got := toSpec(datatableDrivenSpec)
 
-	if !reflect.DeepEqual(got, want) {
-		t.Errorf("want:\n%q\ngot:\n%q\n", want.Scenarios[0], got.Scenarios[0])
-	}
+	checkEqual(t, "", want, got)
 }
 
 func TestToSpecWithHookFailure(t *testing.T) {
 	encodedScreenShot := base64.StdEncoding.EncodeToString([]byte("Screenshot"))
 	want := &spec{
-		Scenarios:             make([]scenario, 0),
+		Scenarios:             make([]*scenario, 0),
 		BeforeSpecHookFailure: newHookFailure("Before Spec", "err", encodedScreenShot, "Stacktrace"),
 		AfterSpecHookFailure:  newHookFailure("After Spec", "err", encodedScreenShot, "Stacktrace"),
 		Errors:                make([]error, 0),
+		Tags:                  []string{"tag1"},
+		SpecHeading:           "specRes3",
+		ExecutionStatus:       skip,
+		ExecutionTime:         211316,
 	}
 
 	got := toSpec(specResWithSpecHookFailure)
-	if !reflect.DeepEqual(got, want) {
-		t.Errorf("want:\n%q\ngot:\n%q\n", want, got)
+	checkEqual(t, "", want, got)
+}
+
+func TestToSpecWithFileName(t *testing.T) {
+	want := specRes1.GetProtoSpec().GetFileName()
+	got := toSpec(specRes1).FileName
+
+	if got != want {
+		t.Errorf("Expecting spec.FileName=%s, got %s\n", want, got)
+	}
+}
+
+func TestToSpecWithSpecHeading(t *testing.T) {
+	want := specRes1.GetProtoSpec().GetSpecHeading()
+	got := toSpec(specRes1).SpecHeading
+
+	if got != want {
+		t.Errorf("Expecting spec.SpecHeading=%s, got %s\n", want, got)
+	}
+}
+
+func TestToSpecWithTags(t *testing.T) {
+	want := specRes1.GetProtoSpec().GetTags()
+	got := toSpec(specRes1).Tags
+
+	checkEqual(t, "", want, got)
+}
+
+func TestToSpecWithDataTableMapsCommentsBeforeDatatable(t *testing.T) {
+	want := []string{
+		"\n",
+		"This is an executable specification file. This file follows markdown syntax.",
+		"\n",
+		"To execute this specification, run",
+		"\tgauge specs",
+		"\n",
+	}
+	got := toSpec(specRes1).CommentsBeforeDatatable
+
+	checkEqual(t, "", want, got)
+}
+
+func TestToSpecWithDataTableMapsCommentsAfterDatatable(t *testing.T) {
+	want := []string{
+		"Comment 1",
+		"Comment 2",
+		"Comment 3",
+	}
+	got := toSpec(specRes1).CommentsAfterDatatable
+
+	checkEqual(t, "", want, got)
+}
+
+func TestToSpecWithDataTableIsTableDriven(t *testing.T) {
+	got := toSpec(specRes1).IsTableDriven
+
+	if !got {
+		t.Errorf("Expecting spec.IsTableDriven=true\n")
+	}
+}
+
+func TestToSpecWithDataTableHasDatatable(t *testing.T) {
+	want := &table{
+		Headers: []string{"Word", "Count"},
+		Rows: []*row{
+			&row{Cells: []string{"Gauge", "3"}, Result: skip},
+			&row{Cells: []string{"Mingle", "2"}, Result: skip},
+		},
+	}
+	got := toSpec(specRes1).Datatable
+
+	checkEqual(t, "", want, got)
+}
+
+func TestToSpecWithDataTableExecutionTime(t *testing.T) {
+	want := 211316
+	got := toSpec(specRes1).ExecutionTime
+
+	checkEqual(t, "", want, got)
+}
+
+func TestToSpecWithDataTableExecutionStatusPass(t *testing.T) {
+	want := pass
+	got := toSpec(specRes1).ExecutionStatus
+
+	checkEqual(t, "", want, got)
+}
+
+func TestToSpecWithDataTableExecutionStatusSkip(t *testing.T) {
+	want := skip
+	got := toSpec(&gm.ProtoSpecResult{Skipped: true, Failed: false}).ExecutionStatus
+
+	checkEqual(t, "", want, got)
+}
+
+func TestToSpecWithDataTableExecutionStatusFail(t *testing.T) {
+	want := fail
+	got := toSpec(&gm.ProtoSpecResult{Skipped: false, Failed: true}).ExecutionStatus
+
+	checkEqual(t, "", want, got)
+}
+
+func TestToSpecWithBeforeHookFailure(t *testing.T) {
+	want := &hookFailure{ErrMsg: "err", HookName: "Before Spec", Screenshot: "U2NyZWVuc2hvdA==", StackTrace: "Stacktrace"}
+	got := toSpec(specResWithSpecHookFailure).BeforeSpecHookFailure
+
+	checkEqual(t, "", want, got)
+}
+
+func TestToSpecWithAfterHookFailure(t *testing.T) {
+	want := &hookFailure{ErrMsg: "err", HookName: "After Spec", Screenshot: "U2NyZWVuc2hvdA==", StackTrace: "Stacktrace"}
+	got := toSpec(specResWithSpecHookFailure).AfterSpecHookFailure
+
+	checkEqual(t, "", want, got)
+}
+
+func TestToSpecWithScenarios(t *testing.T) {
+	got := toSpec(&gm.ProtoSpecResult{
+		ProtoSpec: &gm.ProtoSpec{
+			Items: []*gm.ProtoItem{
+				&gm.ProtoItem{
+					ItemType: gm.ProtoItem_TableDrivenScenario,
+					TableDrivenScenario: &gm.ProtoTableDrivenScenario{
+						Scenario: &gm.ProtoScenario{
+							ScenarioHeading: "Scenario 1",
+							ExecutionStatus: gm.ExecutionStatus_FAILED,
+							ScenarioItems:   []*gm.ProtoItem{newStepItem(true, false, []*gm.Fragment{newTextFragment("Step1")})},
+						},
+						TableRowIndex: int32(0),
+					},
+				},
+				&gm.ProtoItem{
+					ItemType: gm.ProtoItem_TableDrivenScenario,
+					TableDrivenScenario: &gm.ProtoTableDrivenScenario{
+						Scenario: &gm.ProtoScenario{
+							ScenarioHeading: "Scenario 1",
+							ExecutionStatus: gm.ExecutionStatus_PASSED,
+							ScenarioItems:   []*gm.ProtoItem{newStepItem(false, false, []*gm.Fragment{newTextFragment("Step1")})},
+						},
+						TableRowIndex: int32(1),
+					},
+				},
+			},
+		},
+	}).Scenarios
+
+	if len(got) != 2 {
+		t.Errorf("Expected 2 scenarios, got %d\n", len(got))
+	}
+}
+
+func TestToSpecWithScenariosTableDriven(t *testing.T) {
+	got := toSpec(datatableDrivenSpec).Scenarios
+
+	if len(got) != 2 {
+		t.Errorf("Expected 2 scenarios, got %d\n", len(got))
+	}
+}
+
+func TestToSpecWithScenarioStatusCounts(t *testing.T) {
+	got := toSpec(&gm.ProtoSpecResult{
+		ProtoSpec: &gm.ProtoSpec{
+			Items: []*gm.ProtoItem{
+				&gm.ProtoItem{
+					ItemType: gm.ProtoItem_TableDrivenScenario,
+					TableDrivenScenario: &gm.ProtoTableDrivenScenario{
+						Scenario: &gm.ProtoScenario{
+							ScenarioHeading: "Scenario 1",
+							ExecutionStatus: gm.ExecutionStatus_FAILED,
+							ScenarioItems:   []*gm.ProtoItem{newStepItem(true, false, []*gm.Fragment{newTextFragment("Step1")})},
+						},
+						TableRowIndex: int32(0),
+					},
+				},
+				&gm.ProtoItem{
+					ItemType: gm.ProtoItem_TableDrivenScenario,
+					TableDrivenScenario: &gm.ProtoTableDrivenScenario{
+						Scenario: &gm.ProtoScenario{
+							ScenarioHeading: "Scenario 1",
+							ExecutionStatus: gm.ExecutionStatus_SKIPPED,
+							ScenarioItems:   []*gm.ProtoItem{newStepItem(true, false, []*gm.Fragment{newTextFragment("Step1")})},
+						},
+						TableRowIndex: int32(0),
+					},
+				},
+				&gm.ProtoItem{
+					ItemType: gm.ProtoItem_TableDrivenScenario,
+					TableDrivenScenario: &gm.ProtoTableDrivenScenario{
+						Scenario: &gm.ProtoScenario{
+							ScenarioHeading: "Scenario 1",
+							ExecutionStatus: gm.ExecutionStatus_PASSED,
+							ScenarioItems:   []*gm.ProtoItem{newStepItem(false, false, []*gm.Fragment{newTextFragment("Step1")})},
+						},
+						TableRowIndex: int32(1),
+					},
+				},
+			},
+		},
+	})
+
+	if got.PassedScenarioCount != 1 {
+		t.Errorf("Expected spec.PassedScenarioCount=1, got %d\n", got.PassedScenarioCount)
+	}
+	if got.SkippedScenarioCount != 1 {
+		t.Errorf("Expected spec.SkippedScenarioCount=1, got %d\n", got.SkippedScenarioCount)
+	}
+	if got.FailedScenarioCount != 1 {
+		t.Errorf("Expected spec.FailedScenarioCount=1, got %d\n", got.FailedScenarioCount)
 	}
 }
 
 type summaryTest struct {
 	name     string
-	result   *gm.ProtoSpec
+	result   *spec
 	expected summary
 }
 
 var summaryTests = []*summaryTest{
 	{"All Passed",
-		&gm.ProtoSpec{
-			SpecHeading:   "specRes1",
-			Tags:          []string{"tag1", "tag2"},
-			FileName:      "/tmp/gauge/specs/foobar.spec",
-			IsTableDriven: false,
-			Items: []*gm.ProtoItem{
-				newScenarioItem(&gm.ProtoScenario{ExecutionStatus: gm.ExecutionStatus_PASSED}),
-				newScenarioItem(&gm.ProtoScenario{ExecutionStatus: gm.ExecutionStatus_PASSED}),
-			},
+		&spec{
+			PassedScenarioCount:  2,
+			SkippedScenarioCount: 0,
+			FailedScenarioCount:  0,
 		},
 		summary{Failed: 0, Passed: 2, Skipped: 0, Total: 2},
 	},
 	{"With Skipped",
-		&gm.ProtoSpec{
-			SpecHeading:   "specRes1",
-			Tags:          []string{"tag1", "tag2"},
-			FileName:      "/tmp/gauge/specs/foobar.spec",
-			IsTableDriven: false,
-			Items: []*gm.ProtoItem{
-				newScenarioItem(&gm.ProtoScenario{ExecutionStatus: gm.ExecutionStatus_PASSED}),
-				newScenarioItem(&gm.ProtoScenario{ExecutionStatus: gm.ExecutionStatus_SKIPPED}),
-			},
+		&spec{
+			PassedScenarioCount:  1,
+			SkippedScenarioCount: 1,
+			FailedScenarioCount:  0,
 		},
 		summary{Failed: 0, Passed: 1, Skipped: 1, Total: 2},
 	},
 	{"With failed",
-		&gm.ProtoSpec{
-			SpecHeading:   "specRes1",
-			Tags:          []string{"tag1", "tag2"},
-			FileName:      "/tmp/gauge/specs/foobar.spec",
-			IsTableDriven: false,
-			Items: []*gm.ProtoItem{
-				newScenarioItem(&gm.ProtoScenario{ExecutionStatus: gm.ExecutionStatus_FAILED}),
-				newScenarioItem(&gm.ProtoScenario{ExecutionStatus: gm.ExecutionStatus_PASSED}),
-			},
+		&spec{
+			PassedScenarioCount:  1,
+			SkippedScenarioCount: 0,
+			FailedScenarioCount:  1,
 		},
 		summary{Failed: 1, Passed: 1, Skipped: 0, Total: 2},
 	},
 	{"With failed and skipped",
-		&gm.ProtoSpec{
-			SpecHeading:   "specRes1",
-			Tags:          []string{"tag1", "tag2"},
-			FileName:      "/tmp/gauge/specs/foobar.spec",
-			IsTableDriven: false,
-			Items: []*gm.ProtoItem{
-				newScenarioItem(&gm.ProtoScenario{ExecutionStatus: gm.ExecutionStatus_FAILED}),
-				newScenarioItem(&gm.ProtoScenario{ExecutionStatus: gm.ExecutionStatus_SKIPPED}),
-			},
+		&spec{
+			PassedScenarioCount:  0,
+			SkippedScenarioCount: 1,
+			FailedScenarioCount:  1,
 		},
 		summary{Failed: 1, Passed: 0, Skipped: 1, Total: 2},
 	},
@@ -701,9 +948,7 @@ func TestToScenarioSummary(t *testing.T) {
 	for _, test := range summaryTests {
 		want := test.expected
 		got := *toScenarioSummary(test.result)
-		if !reflect.DeepEqual(want, got) {
-			t.Errorf("Test:%s\nwant:\n%q\ngot:\n%q\n", test.name, want, got)
-		}
+		checkEqual(t, test.name, want, got)
 	}
 }
 
@@ -776,9 +1021,7 @@ func TestToScenarioWithHookFailures(t *testing.T) {
 	}
 
 	got := toScenario(scnWithHookFailure, -1)
-	if !reflect.DeepEqual(got, want) {
-		t.Errorf("want:\n%q\ngot:\n%q\n", want, got)
-	}
+	checkEqual(t, "", want, got)
 }
 
 func TestToConcept(t *testing.T) {
@@ -1005,42 +1248,42 @@ type tableDrivenStatusComputeTest struct {
 var tableDrivenStatusComputeTests = []*tableDrivenStatusComputeTest{
 	{"all passed",
 		&spec{Datatable: &table{Headers: []string{"foo"}, Rows: []*row{{Cells: []string{"foo1"}}}},
-			Scenarios: []scenario{
+			Scenarios: []*scenario{
 				{ExecutionStatus: pass, TableRowIndex: 0},
 				{ExecutionStatus: pass, TableRowIndex: 0},
 			}},
 		pass},
 	{"pass and fail",
 		&spec{Datatable: &table{Headers: []string{"foo"}, Rows: []*row{{Cells: []string{"foo1"}}}},
-			Scenarios: []scenario{
+			Scenarios: []*scenario{
 				{ExecutionStatus: pass, TableRowIndex: 0},
 				{ExecutionStatus: fail, TableRowIndex: 0},
 			}},
 		fail},
 	{"pass and skip",
 		&spec{Datatable: &table{Headers: []string{"foo"}, Rows: []*row{{Cells: []string{"foo1"}}}},
-			Scenarios: []scenario{
+			Scenarios: []*scenario{
 				{ExecutionStatus: pass, TableRowIndex: 0},
 				{ExecutionStatus: skip, TableRowIndex: 0},
 			}},
 		pass},
 	{"skip and fail",
 		&spec{Datatable: &table{Headers: []string{"foo"}, Rows: []*row{{Cells: []string{"foo1"}}}},
-			Scenarios: []scenario{
+			Scenarios: []*scenario{
 				{ExecutionStatus: skip, TableRowIndex: 0},
 				{ExecutionStatus: fail, TableRowIndex: 0},
 			}},
 		fail},
 	{"all fail",
 		&spec{Datatable: &table{Headers: []string{"foo"}, Rows: []*row{{Cells: []string{"foo1"}}}},
-			Scenarios: []scenario{
+			Scenarios: []*scenario{
 				{ExecutionStatus: fail, TableRowIndex: 0},
 				{ExecutionStatus: fail, TableRowIndex: 0},
 			}},
 		fail},
 	{"all skip",
 		&spec{Datatable: &table{Headers: []string{"foo"}, Rows: []*row{{Cells: []string{"foo1"}}}},
-			Scenarios: []scenario{
+			Scenarios: []*scenario{
 				{ExecutionStatus: skip, TableRowIndex: 0},
 				{ExecutionStatus: skip, TableRowIndex: 0},
 			}},
@@ -1056,5 +1299,140 @@ func TestTableDrivenStatusCompute(t *testing.T) {
 			t.Errorf("test: %s want:\n%q\ngot:\n%q\n", test.name, want, got)
 		}
 	}
+}
 
+func TestMapProjectNametoSuiteResult(t *testing.T) {
+	psr := &gm.ProtoSuiteResult{ProjectName: "foo"}
+	res := toSuiteResult(psr)
+
+	if res.ProjectName != "foo" {
+		t.Errorf("Expected ProjectName=foo, got %s", res.ProjectName)
+	}
+}
+
+func TestMapEnvironmenttoSuiteResult(t *testing.T) {
+	psr := &gm.ProtoSuiteResult{Environment: "foo"}
+	res := toSuiteResult(psr)
+
+	if res.Environment != "foo" {
+		t.Errorf("Expected Environment=foo, got %s", res.Environment)
+	}
+}
+
+func TestMapTagstoSuiteResult(t *testing.T) {
+	psr := &gm.ProtoSuiteResult{Tags: "foo, bar"}
+	res := toSuiteResult(psr)
+
+	if res.Tags != "foo, bar" {
+		t.Errorf("Expected Tags=foo, bar; got %s", res.Tags)
+	}
+}
+
+func TestMapExecutionTimeToSuiteResult(t *testing.T) {
+	psr := &gm.ProtoSuiteResult{ExecutionTime: 113163}
+	res := toSuiteResult(psr)
+
+	if res.ExecutionTime != 113163 {
+		t.Errorf("Expected ExecutionTime=113163; got %s", res.ExecutionTime)
+	}
+}
+
+func TestSpecsCountToSuiteResult(t *testing.T) {
+	psr := &gm.ProtoSuiteResult{SpecsFailedCount: 2, SpecsSkippedCount: 1, SpecResults: []*gm.ProtoSpecResult{
+		&gm.ProtoSpecResult{Skipped: false, Failed: false},
+		&gm.ProtoSpecResult{Skipped: false, Failed: true},
+		&gm.ProtoSpecResult{Skipped: true, Failed: false},
+		&gm.ProtoSpecResult{Skipped: false, Failed: true},
+		&gm.ProtoSpecResult{Skipped: false, Failed: false},
+		&gm.ProtoSpecResult{Skipped: false, Failed: false},
+	}}
+	res := toSuiteResult(psr)
+
+	if res.PassedSpecsCount != 3 {
+		t.Errorf("Expected PassedSpecsCount=3; got %s\n", res.PassedSpecsCount)
+	}
+	if res.SkippedSpecsCount != 1 {
+		t.Errorf("Expected SkippedSpecsCount=3; got %s\n", res.SkippedSpecsCount)
+	}
+	if res.FailedSpecsCount != 2 {
+		t.Errorf("Expected FailedSpecsCount=3; got %s\n", res.FailedSpecsCount)
+	}
+}
+
+func TestMapPreHookFailureToSuiteResult(t *testing.T) {
+	psr := &gm.ProtoSuiteResult{PreHookFailure: &gm.ProtoHookFailure{ErrorMessage: "foo failure"}}
+	res := toSuiteResult(psr)
+
+	if res.BeforeSuiteHookFailure == nil {
+		t.Errorf("Expected BeforeSuiteHookFailure not nil\n")
+	}
+
+	if res.BeforeSuiteHookFailure.ErrMsg != "foo failure" {
+		t.Errorf("Expected BeforeSuiteHookFailure.Message= 'foo failure', got %s\n", res.BeforeSuiteHookFailure.ErrMsg)
+	}
+}
+
+func TestMapPostHookFailureToSuiteResult(t *testing.T) {
+	psr := &gm.ProtoSuiteResult{PostHookFailure: &gm.ProtoHookFailure{ErrorMessage: "foo failure"}}
+	res := toSuiteResult(psr)
+
+	if res.AfterSuiteHookFailure == nil {
+		t.Errorf("Expected AfterSuiteHookFailure not nil\n")
+	}
+
+	if res.AfterSuiteHookFailure.ErrMsg != "foo failure" {
+		t.Errorf("Expected AfterSuiteHookFailure.Message= 'foo failure', got %s\n", res.AfterSuiteHookFailure.ErrMsg)
+	}
+}
+
+func TestMapTimestampToSuiteResult(t *testing.T) {
+	timestamp := "Jun 3, 2016 at 12:29pm"
+	psr := &gm.ProtoSuiteResult{Timestamp: timestamp}
+	res := toSuiteResult(psr)
+
+	if res.Timestamp != timestamp {
+		t.Errorf("Expected Timestamp=%s; got %s\n", timestamp, res.Timestamp)
+	}
+}
+
+func TestMapExecutionStatusPassByDefaultToSuiteResult(t *testing.T) {
+	psr := &gm.ProtoSuiteResult{}
+	res := toSuiteResult(psr)
+
+	if res.ExecutionStatus != pass {
+		t.Errorf("Expected ExecutionStatus=pass, got %s\n", res.ExecutionStatus)
+	}
+}
+
+func TestMapExecutionStatusOnFailureToSuiteResult(t *testing.T) {
+	psr := &gm.ProtoSuiteResult{Failed: true}
+	res := toSuiteResult(psr)
+
+	if res.ExecutionStatus != fail {
+		t.Errorf("Expected ExecutionStatus=fail, got %s\n", res.ExecutionStatus)
+	}
+}
+
+func TestMapSpecResultsToSuiteResult(t *testing.T) {
+	psr := &gm.ProtoSuiteResult{
+		SpecResults: []*gm.ProtoSpecResult{
+			&gm.ProtoSpecResult{ProtoSpec: &gm.ProtoSpec{FileName: "foo.spec", SpecHeading: "Foo Spec"}},
+			&gm.ProtoSpecResult{ProtoSpec: &gm.ProtoSpec{FileName: "bar.spec", SpecHeading: "Boo Spec"}},
+			&gm.ProtoSpecResult{ProtoSpec: &gm.ProtoSpec{FileName: "baz.spec", SpecHeading: "Baz Spec"}},
+		},
+	}
+
+	res := toSuiteResult(psr)
+
+	if len(res.SpecResults) != 3 {
+		t.Errorf("Expected 3 spec results, got %d\n", len(res.SpecResults))
+	}
+
+	for i, s := range res.SpecResults {
+		wantFileName := psr.GetSpecResults()[i].GetProtoSpec().GetFileName()
+		gotFileName := s.FileName
+		if wantFileName != gotFileName {
+			t.Errorf("Spec Filename Mismatch, want '%s', got '%s'", wantFileName, gotFileName)
+		}
+	}
 }

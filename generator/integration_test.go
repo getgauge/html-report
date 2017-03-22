@@ -592,32 +592,33 @@ var errorSpecResults = &gm.ProtoSpecResult{
 	Failed:        true,
 	ExecutionTime: 0,
 	ProtoSpec: &gm.ProtoSpec{
-		FileName: "error_specification.spec",
-		Tags:     []string{"bar"},
+		FileName:    "error_specification.spec",
+		SpecHeading: "Error Spec",
+		Tags:        []string{"bar"},
 	},
 	Errors: []*gm.Error{
 		{Type: gm.Error_PARSE_ERROR, Message: "message"},
 	},
 }
 
-var suiteRes = newProtoSuiteRes(false, 1, 1, 60, nil, nil, passSpecRes1, passSpecRes2, passSpecRes3, failSpecResWithAfterScenarioFailure, skipSpecRes1)
-var suiteResWithAfterSuiteFailure = newProtoSuiteRes(true, 1, 1, 60, nil, newProtoHookFailure(), passSpecRes1, passSpecRes2,
+var suiteRes = newSuiteResult(false, 1, 1, 60, nil, nil, passSpecRes1, passSpecRes2, passSpecRes3, failSpecResWithAfterScenarioFailure, skipSpecRes1)
+var suiteResWithAfterSuiteFailure = newSuiteResult(true, 1, 1, 60, nil, newProtoHookFailure(), passSpecRes1, passSpecRes2,
 	passSpecRes3, failSpecResWithAfterScenarioFailure, skipSpecRes1)
-var suiteResWithBeforeScenarioFailure = newProtoSuiteRes(true, 1, 0, 0, nil, nil, failSpecResWithBeforeScenarioFailure)
-var suiteResWithAfterScenarioFailure = newProtoSuiteRes(true, 1, 0, 0, nil, nil, failSpecResWithAfterScenarioFailure)
-var suiteResWithBeforeAndAfterScenarioFailure = newProtoSuiteRes(true, 1, 0, 0, nil, nil, failSpecResWithBeforeAndAfterScenarioFailure)
-var suiteResWithMultipleScenarios = newProtoSuiteRes(true, 1, 0, 0, nil, nil, specResWithMultipleScenarios)
-var suiteResWithBeforeStepFailure = newProtoSuiteRes(true, 1, 0, 0, nil, nil, failSpecResWithBeforeStepFailure)
-var suiteResWithAfterStepFailure = newProtoSuiteRes(true, 1, 0, 0, nil, nil, failSpecResWithAfterStepFailure)
-var suiteResWithBeforeAndAfterStepFailure = newProtoSuiteRes(true, 1, 0, 0, nil, nil, failSpecResWithBeforeAndAfterStepFailure)
-var suiteResWithStepFailure = newProtoSuiteRes(true, 1, 0, 0, nil, nil, failSpecResWithStepFailure)
-var suiteResWithBeforeSpecFailure = newProtoSuiteRes(true, 1, 0, 0, nil, nil, failSpecResWithBeforeSpecFailure)
-var suiteResWithAfterSpecFailure = newProtoSuiteRes(true, 1, 0, 0, nil, nil, failSpecResWithAfterSpecFailure)
-var suiteResWithBeforeAfterSpecFailure = newProtoSuiteRes(true, 1, 0, 0, nil, nil, failSpecResWithBeforeAfterSpecFailure)
-var suiteResWithConceptFailure = newProtoSuiteRes(true, 1, 0, 60, nil, nil, failSpecResWithConceptFailure)
-var suiteResWithSkippedSpec = newProtoSuiteRes(false, 0, 1, 0, nil, nil, skippedSpecRes)
-var suiteResWithAllPass = newProtoSuiteRes(false, 0, 0, 100, nil, nil, passSpecRes2)
-var suiteResWithSpecError = newProtoSuiteRes(true, 1, 0, 0.0, nil, nil, errorSpecResults)
+var suiteResWithBeforeScenarioFailure = newSuiteResult(true, 1, 0, 0, nil, nil, failSpecResWithBeforeScenarioFailure)
+var suiteResWithAfterScenarioFailure = newSuiteResult(true, 1, 0, 0, nil, nil, failSpecResWithAfterScenarioFailure)
+var suiteResWithBeforeAndAfterScenarioFailure = newSuiteResult(true, 1, 0, 0, nil, nil, failSpecResWithBeforeAndAfterScenarioFailure)
+var suiteResWithMultipleScenarios = newSuiteResult(true, 1, 0, 0, nil, nil, specResWithMultipleScenarios)
+var suiteResWithBeforeStepFailure = newSuiteResult(true, 1, 0, 0, nil, nil, failSpecResWithBeforeStepFailure)
+var suiteResWithAfterStepFailure = newSuiteResult(true, 1, 0, 0, nil, nil, failSpecResWithAfterStepFailure)
+var suiteResWithBeforeAndAfterStepFailure = newSuiteResult(true, 1, 0, 0, nil, nil, failSpecResWithBeforeAndAfterStepFailure)
+var suiteResWithStepFailure = newSuiteResult(true, 1, 0, 0, nil, nil, failSpecResWithStepFailure)
+var suiteResWithBeforeSpecFailure = newSuiteResult(true, 1, 0, 0, nil, nil, failSpecResWithBeforeSpecFailure)
+var suiteResWithAfterSpecFailure = newSuiteResult(true, 1, 0, 0, nil, nil, failSpecResWithAfterSpecFailure)
+var suiteResWithBeforeAfterSpecFailure = newSuiteResult(true, 1, 0, 0, nil, nil, failSpecResWithBeforeAfterSpecFailure)
+var suiteResWithConceptFailure = newSuiteResult(true, 1, 0, 60, nil, nil, failSpecResWithConceptFailure)
+var suiteResWithSkippedSpec = newSuiteResult(false, 0, 1, 0, nil, nil, skippedSpecRes)
+var suiteResWithAllPass = newSuiteResult(false, 0, 0, 100, nil, nil, passSpecRes2)
+var suiteResWithSpecError = newSuiteResult(true, 1, 0, 0.0, nil, nil, errorSpecResults)
 
 func newProtoHookFailure() *gm.ProtoHookFailure {
 	return &gm.ProtoHookFailure{
@@ -625,6 +626,10 @@ func newProtoHookFailure() *gm.ProtoHookFailure {
 		StackTrace:   newStackTrace(),
 		ScreenShot:   []byte(newScreenshot()),
 	}
+}
+
+func newSuiteResult(failed bool, failCount, skipCount int32, succRate float32, preHook, postHook *gm.ProtoHookFailure, specRes ...*gm.ProtoSpecResult) *suiteResult {
+	return toSuiteResult(newProtoSuiteRes(failed, failCount, skipCount, succRate, preHook, postHook, specRes...))
 }
 
 func newProtoSuiteRes(failed bool, failCount, skipCount int32, succRate float32, preHook, postHook *gm.ProtoHookFailure, specRes ...*gm.ProtoSpecResult) *gm.ProtoSuiteResult {
@@ -646,7 +651,7 @@ func newProtoSuiteRes(failed bool, failCount, skipCount int32, succRate float32,
 
 type HTMLGenerationTest struct {
 	name         string
-	res          *gm.ProtoSuiteResult
+	res          *suiteResult
 	expectedFile string
 }
 
@@ -680,7 +685,7 @@ func TestHTMLGeneration(t *testing.T) {
 		var wg sync.WaitGroup
 		wg.Add(1)
 
-		generateSpecPage(test.res, test.res.GetSpecResults()[0], buf, &wg)
+		generateSpecPage(test.res, test.res.SpecResults[0], buf, &wg)
 		wg.Wait()
 
 		want := removeNewline(string(content))
