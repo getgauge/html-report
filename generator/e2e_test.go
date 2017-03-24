@@ -26,16 +26,13 @@ import (
 
 var suiteRes3 = newProtoSuiteRes(true, 1, 1, 60, nil, nil, passSpecRes1, failSpecResWithStepFailure, skippedSpecRes)
 var suiteResWithBeforeSuiteFailure = newProtoSuiteRes(true, 0, 0, 0, newProtoHookFailure(), nil)
-
-func init() {
-	templateBasePath = "."
-}
+var templateBasePath = filepath.Join("..", "themes", "default")
 
 func TestEndToEndHTMLGenerationWhenBeforeSuiteFails(t *testing.T) {
 	reportDir := filepath.Join("_testdata", "e2e")
 	ProjectRoot = ""
 
-	err := GenerateReports(suiteResWithBeforeSuiteFailure, reportDir)
+	err := GenerateReports(suiteResWithBeforeSuiteFailure, reportDir, templateBasePath)
 
 	if err != nil {
 		t.Errorf("Expected error to be nil. Got: %s", err.Error())
@@ -59,7 +56,7 @@ func TestEndToEndHTMLGeneration(t *testing.T) {
 	reportDir := filepath.Join("_testdata", "e2e")
 	ProjectRoot = ""
 
-	err := GenerateReports(suiteRes3, reportDir)
+	err := GenerateReports(suiteRes3, reportDir, templateBasePath)
 
 	if err != nil {
 		t.Errorf("Expected error to be nil. Got: %s", err.Error())

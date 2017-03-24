@@ -451,10 +451,6 @@ var reportGenTests = []reportGenTest{
 	{"generate spec error div", "specErrorDiv", &spec{Errors: []error{buildError{ErrorType: parseErrorType, Message: "message"}}}, wSpecErrorDiv},
 }
 
-func init() {
-	templateBasePath = "."
-}
-
 func TestExecute(t *testing.T) {
 	testReportGen(reportGenTests, t)
 }
