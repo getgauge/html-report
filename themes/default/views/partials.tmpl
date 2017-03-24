@@ -406,3 +406,29 @@
     {{end }}
   {{end}}
 {{end}}
+
+{{define "concept"}}
+  {{template "conceptStartDiv" .ConceptStep}}
+  {{template "conceptSpan"}}
+  {{template "stepBodyDiv" .ConceptStep}}
+  {{template "stepEndDiv" .ConceptStep}}
+  {{template "conceptStepsStartDiv" }}
+  {{range $index, $item := .Items}}
+    {{template "item" $item}}
+  {{end}}
+  {{template "endDiv"}}
+{{end}}
+
+{{define "comment"}}
+  {{template "commentSpan" .}}
+{{end}}
+
+{{define "item"}}
+  {{if eq .Kind "step"}}
+    {{template "step" .}}
+  {{else if eq .Kind "comment"}}
+    {{template "comment" .}}
+  {{else if eq .Kind "concept"}}
+    {{template "concept" .}}
+  {{end}}
+{{end}}
