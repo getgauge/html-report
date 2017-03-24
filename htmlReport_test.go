@@ -21,18 +21,11 @@ import (
 	"fmt"
 	"os"
 	"path/filepath"
+	"reflect"
 	"strings"
 	"testing"
 	"time"
-
-	. "gopkg.in/check.v1"
 )
-
-func Test(t *testing.T) { TestingT(t) }
-
-type MySuite struct{}
-
-var _ = Suite(&MySuite{})
 
 var now = time.Now()
 
@@ -47,16 +40,18 @@ func (T testNameGenerator) randomName() string {
 	return now.Format(timeFormat)
 }
 
-func (s *MySuite) TestCopyingReportTemplates(c *C) {
+func TestCopyingReportTemplates(t *testing.T) {
 	dirToCopy := filepath.Join(os.TempDir(), randomName())
 	defer os.RemoveAll(dirToCopy)
 
 	err := copyReportTemplateFiles(dirToCopy)
-	c.Assert(err, IsNil)
-	verifyReportTemplateFilesAreCopied(dirToCopy, c)
+	if err != nil {
+		t.Errorf("Expected error == nil, got: %s \n", err.Error())
+	}
+	verifyReportTemplateFilesAreCopied(dirToCopy, t)
 }
 
-func (s *MySuite) TestGetReportsDirectory(c *C) {
+func TestGetReportsDirectory(t *testing.T) {
 	userSetReportsDir := filepath.Join(os.TempDir(), randomName())
 	os.Setenv(gaugeReportsDirEnvName, userSetReportsDir)
 	expectedReportsDir := filepath.Join(userSetReportsDir, htmlReport)
@@ -64,13 +59,15 @@ func (s *MySuite) TestGetReportsDirectory(c *C) {
 
 	reportsDir := getReportsDirectory(nil)
 
-	c.Assert(reportsDir, Equals, expectedReportsDir)
+	if reportsDir != expectedReportsDir {
+		t.Errorf("Expected reportsDir == %s, got: %s\n", expectedReportsDir, reportsDir)
+	}
 	if !fileExists(expectedReportsDir) {
-		c.Errorf("Expected %s report directory doesn't exist", expectedReportsDir)
+		t.Errorf("Expected %s report directory doesn't exist", expectedReportsDir)
 	}
 }
 
-func (s *MySuite) TestGetReportsDirectoryWithOverrideFlag(c *C) {
+func TestGetReportsDirectoryWithOverrideFlag(t *testing.T) {
 	userSetReportsDir := filepath.Join(os.TempDir(), randomName())
 	os.Setenv(gaugeReportsDirEnvName, userSetReportsDir)
 	os.Setenv(overwriteReportsEnvProperty, "true")
@@ -80,9 +77,11 @@ func (s *MySuite) TestGetReportsDirectoryWithOverrideFlag(c *C) {
 
 	reportsDir := getReportsDirectory(nameGen)
 
-	c.Assert(reportsDir, Equals, expectedReportsDir)
+	if reportsDir != expectedReportsDir {
+		t.Errorf("Expected reportsDir == %s, got: %s\n", expectedReportsDir, reportsDir)
+	}
 	if !fileExists(expectedReportsDir) {
-		c.Errorf("Expected %s report directory doesn't exist", expectedReportsDir)
+		t.Errorf("Expected %s report directory doesn't exist", expectedReportsDir)
 	}
 }
 
@@ -90,12 +89,12 @@ func randomName() string {
 	return fmt.Sprintf("%d", time.Now().UnixNano())
 }
 
-func verifyReportTemplateFilesAreCopied(dest string, c *C) {
+func verifyReportTemplateFilesAreCopied(dest string, t *testing.T) {
 	filepath.Walk(reportTemplateDir, func(path string, info os.FileInfo, err error) error {
 		path = strings.Replace(path, reportTemplateDir, "", 1)
 		destFilePath := filepath.Join(dest, path)
 		if !fileExists(destFilePath) {
-			c.Errorf("File %s not copied.", destFilePath)
+			t.Errorf("File %s not copied.", destFilePath)
 		}
 		return nil
 	})
@@ -109,12 +108,18 @@ func fileExists(path string) bool {
 	return !os.IsNotExist(err)
 }
 
-func (s *MySuite) TestCreatingReportShouldOverwriteReportsBasedOnEnv(c *C) {
+func TestCreatingReportShouldOverwriteReportsBasedOnEnv(t *testing.T) {
 	os.Setenv(overwriteReportsEnvProperty, "true")
 	nameGen := getNameGen()
-	c.Assert(nameGen, Equals, nil)
+	if nameGen != nil {
+		t.Errorf("Expected nameGen == nil, got %s", nameGen)
+	}
 
 	os.Setenv(overwriteReportsEnvProperty, "false")
 	nameGen = getNameGen()
-	c.Assert(nameGen, Equals, timeStampedNameGenerator{})
+	switch nameGen.(type) {
+	case timeStampedNameGenerator:
+	default:
+		t.Errorf("Expected nameGen to be type timeStampedNameGenerator, got %s", reflect.TypeOf(nameGen))
+	}
 }
