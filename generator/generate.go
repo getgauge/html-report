@@ -145,7 +145,7 @@ type step struct {
 	Result                *result      `json:"result"`
 }
 
-func (s *step) kind() tokenKind {
+func (s *step) Kind() tokenKind {
 	return stepKind
 }
 
@@ -174,7 +174,7 @@ type concept struct {
 	Result      result    `json:"result"`
 }
 
-func (s *concept) kind() tokenKind {
+func (s *concept) Kind() tokenKind {
 	return conceptKind
 }
 
@@ -200,14 +200,14 @@ func (e buildError) isParseError() bool {
 }
 
 type item interface {
-	kind() tokenKind
+	Kind() tokenKind
 }
 
 type comment struct {
 	Text string
 }
 
-func (c *comment) kind() tokenKind {
+func (c *comment) Kind() tokenKind {
 	return commentKind
 }
 
@@ -498,20 +498,7 @@ func generateContextOrTeardown(w io.Writer, item item) {
 }
 
 func generateItem(w io.Writer, item item) {
-	switch item.kind() {
-	case stepKind:
-		execTemplate("step", w, item.(*step))
-	case commentKind:
-		execTemplate("commentSpan", w, item.(*comment))
-	case conceptKind:
-		execTemplate("conceptStartDiv", w, item.(*concept).ConceptStep)
-		execTemplate("conceptSpan", w, nil)
-		execTemplate("stepBodyDiv", w, item.(*concept).ConceptStep)
-		execTemplate("stepEndDiv", w, item.(*concept).ConceptStep)
-		execTemplate("conceptStepsStartDiv", w, nil)
-		generateItems(w, item.(*concept).Items, generateItem)
-		execTemplate("endDiv", w, nil)
-	}
+	execTemplate("item", w, item)
 }
 
 // CreateDirectory creates given directory if it doesn't exist
