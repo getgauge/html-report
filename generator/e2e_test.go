@@ -27,6 +27,10 @@ import (
 var suiteRes3 = newProtoSuiteRes(true, 1, 1, 60, nil, nil, passSpecRes1, failSpecResWithStepFailure, skippedSpecRes)
 var suiteResWithBeforeSuiteFailure = newProtoSuiteRes(true, 0, 0, 0, newProtoHookFailure(), nil)
 
+func init() {
+	templateBasePath = "."
+}
+
 func TestEndToEndHTMLGenerationWhenBeforeSuiteFails(t *testing.T) {
 	reportDir := filepath.Join("_testdata", "e2e")
 	ProjectRoot = ""
