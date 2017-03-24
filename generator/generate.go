@@ -231,7 +231,7 @@ const (
 	validationErrorType   errorType = "validation"
 )
 
-var parsedTemplates = make(map[string]*template.Template, 0)
+var parsedTemplates *template.Template
 
 var templateBasePath string
 
@@ -263,19 +263,14 @@ func readTemplates() {
 	if err != nil {
 		log.Fatalf(err.Error())
 	}
-	t, _ := template.New("Reports").Funcs(funcs).Parse(string(f))
-
-	for _, tmpl := range t.Templates() {
-		parsedTemplates[tmpl.Name()] = tmpl
+	parsedTemplates, err = template.New("Reports").Funcs(funcs).Parse(string(f))
+	if err != nil {
+		log.Fatalf(err.Error())
 	}
 }
 
 func execTemplate(tmplName string, w io.Writer, data interface{}) {
-	tmpl := parsedTemplates[tmplName]
-	if tmpl == nil {
-		log.Fatalf("Error reading Template %s\n", tmplName)
-	}
-	err := tmpl.Execute(w, data)
+	err := parsedTemplates.ExecuteTemplate(w, tmplName, data)
 	if err != nil {
 		log.Fatalf(err.Error())
 	}
