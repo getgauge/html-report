@@ -248,7 +248,7 @@ func readTemplates(themePath string) {
 	}
 	var funcs = template.FuncMap{"parseMarkdown": parseMarkdown, "sanitize": sanitizeHTML, "escapeHTML": template.HTMLEscapeString, "encodeNewLine": encodeNewLine}
 
-	f, err := ioutil.ReadFile(filepath.Join(themePath, "views", "templates.tmpl"))
+	f, err := ioutil.ReadFile(filepath.Join(themePath, "views", "partials.tmpl"))
 	if err != nil {
 		log.Fatalf(err.Error())
 	}
@@ -500,26 +500,7 @@ func generateContextOrTeardown(w io.Writer, item item) {
 func generateItem(w io.Writer, item item) {
 	switch item.kind() {
 	case stepKind:
-		execTemplate("stepStartDiv", w, item.(*step))
-		execTemplate("stepBodyDiv", w, item.(*step))
-
-		if item.(*step).BeforeStepHookFailure != nil {
-			execTemplate("hookFailureDiv", w, item.(*step).BeforeStepHookFailure)
-		}
-
-		stepRes := item.(*step).Result
-		if stepRes.Status == fail && stepRes.ErrorMessage != "" && stepRes.StackTrace != "" {
-			execTemplate("stepFailureDiv", w, stepRes)
-		}
-
-		if item.(*step).AfterStepHookFailure != nil {
-			execTemplate("hookFailureDiv", w, item.(*step).AfterStepHookFailure)
-		}
-		execTemplate("messageDiv", w, stepRes)
-		execTemplate("stepEndDiv", w, item.(*step))
-		if stepRes.Status == skip && stepRes.SkippedReason != "" {
-			execTemplate("skippedReasonDiv", w, stepRes)
-		}
+		execTemplate("step", w, item.(*step))
 	case commentKind:
 		execTemplate("commentSpan", w, item.(*comment))
 	case conceptKind:
