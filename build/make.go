@@ -40,9 +40,9 @@ const (
 	dotGauge          = ".gauge"
 	plugins           = "plugins"
 	GOARCH            = "GOARCH"
-	GOOS              = "GOOS"
-	X86               = "386"
-	X86_64            = "amd64"
+	goOS              = "GOOS"
+	x86               = "386"
+	x86_64            = "amd64"
 	DARWIN            = "darwin"
 	LINUX             = "linux"
 	WINDOWS           = "windows"
@@ -51,9 +51,8 @@ const (
 	gauge             = "gauge"
 	htmlReport        = "html-report"
 	deploy            = "deploy"
-	pluginJsonFile    = "plugin.json"
-	reportTemplate    = "report-template"
-	GAUGE_MESSAGES    = "gauge_messages"
+	pluginJSONFile    = "plugin.json"
+	themesDir         = "themes"
 )
 
 var deployDir = filepath.Join(deploy, htmlReport)
@@ -82,8 +81,8 @@ func createPluginDistro(forAllPlatforms bool) {
 	if forAllPlatforms {
 		for _, platformEnv := range platformEnvs {
 			setEnv(platformEnv)
-			*binDir = filepath.Join(bin, fmt.Sprintf("%s_%s", platformEnv[GOOS], platformEnv[GOARCH]))
-			fmt.Printf("Creating distro for platform => OS:%s ARCH:%s \n", platformEnv[GOOS], platformEnv[GOARCH])
+			*binDir = filepath.Join(bin, fmt.Sprintf("%s_%s", platformEnv[goOS], platformEnv[GOARCH]))
+			fmt.Printf("Creating distro for platform => OS:%s ARCH:%s \n", platformEnv[goOS], platformEnv[GOARCH])
 			createDistro()
 		}
 	} else {
@@ -261,13 +260,13 @@ func copyPluginFiles(destDir string) {
 	} else {
 		files[filepath.Join(getBinDir(), htmlReport)] = bin
 	}
-	files[pluginJsonFile] = ""
-	files[reportTemplate] = reportTemplate
+	files[pluginJSONFile] = ""
+	files[themesDir] = themesDir
 	copyFiles(files, destDir)
 }
 
 func getPluginVersion() string {
-	pluginProperties, err := getPluginProperties(pluginJsonFile)
+	pluginProperties, err := getPluginProperties(pluginJSONFile)
 	if err != nil {
 		panic(fmt.Sprintf("Failed to get properties file. %s", err))
 	}
@@ -308,12 +307,12 @@ var binDir = flag.String("bin-dir", "", "Specifies OS_PLATFORM specific binaries
 
 var (
 	platformEnvs = []map[string]string{
-		map[string]string{GOARCH: X86, GOOS: DARWIN, CGO_ENABLED: "0"},
-		map[string]string{GOARCH: X86_64, GOOS: DARWIN, CGO_ENABLED: "0"},
-		map[string]string{GOARCH: X86, GOOS: LINUX, CGO_ENABLED: "0"},
-		map[string]string{GOARCH: X86_64, GOOS: LINUX, CGO_ENABLED: "0"},
-		map[string]string{GOARCH: X86, GOOS: WINDOWS, CGO_ENABLED: "0"},
-		map[string]string{GOARCH: X86_64, GOOS: WINDOWS, CGO_ENABLED: "0"},
+		map[string]string{GOARCH: x86, goOS: DARWIN, CGO_ENABLED: "0"},
+		map[string]string{GOARCH: x86_64, goOS: DARWIN, CGO_ENABLED: "0"},
+		map[string]string{GOARCH: x86, goOS: LINUX, CGO_ENABLED: "0"},
+		map[string]string{GOARCH: x86_64, goOS: LINUX, CGO_ENABLED: "0"},
+		map[string]string{GOARCH: x86, goOS: WINDOWS, CGO_ENABLED: "0"},
+		map[string]string{GOARCH: x86_64, goOS: WINDOWS, CGO_ENABLED: "0"},
 	}
 )
 
@@ -334,7 +333,7 @@ func getPluginProperties(jsonPropertiesFile string) (map[string]interface{}, err
 func compileAcrossPlatforms() {
 	for _, platformEnv := range platformEnvs {
 		setEnv(platformEnv)
-		fmt.Printf("Compiling for platform => OS:%s ARCH:%s \n", platformEnv[GOOS], platformEnv[GOARCH])
+		fmt.Printf("Compiling for platform => OS:%s ARCH:%s \n", platformEnv[goOS], platformEnv[GOARCH])
 		compileGoPackage(htmlReport)
 	}
 }
@@ -369,7 +368,7 @@ func getUserHome() string {
 
 func getArch() string {
 	arch := getGOARCH()
-	if arch == X86 {
+	if arch == x86 {
 		return "x86"
 	}
 	return "x86_64"
@@ -385,7 +384,7 @@ func getGOARCH() string {
 }
 
 func getGOOS() string {
-	os := os.Getenv(GOOS)
+	os := os.Getenv(goOS)
 	if os == "" {
 		return runtime.GOOS
 
