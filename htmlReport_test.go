@@ -39,6 +39,10 @@ var now = time.Now()
 type testNameGenerator struct {
 }
 
+func init() {
+	templateBasePath = "themes"
+}
+
 func (T testNameGenerator) randomName() string {
 	return now.Format(timeFormat)
 }

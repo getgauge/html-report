@@ -24,7 +24,6 @@ import (
 	"io/ioutil"
 	"log"
 	"os"
-	"path"
 	"path/filepath"
 	"strings"
 	"sync"
@@ -233,9 +232,7 @@ const (
 
 var parsedTemplates *template.Template
 
-var templateBasePath string
-
-func readTemplates() {
+func readTemplates(themePath string) {
 	var encodeNewLine = func(s string) string {
 		return strings.Replace(s, "\n", "<br/>", -1)
 	}
@@ -251,15 +248,7 @@ func readTemplates() {
 	}
 	var funcs = template.FuncMap{"parseMarkdown": parseMarkdown, "sanitize": sanitizeHTML, "escapeHTML": template.HTMLEscapeString, "encodeNewLine": encodeNewLine}
 
-	if templateBasePath == "" {
-		ex, err := os.Executable()
-		if err != nil {
-			log.Fatalf(err.Error())
-		}
-		templateBasePath = path.Dir(ex)
-	}
-
-	f, err := ioutil.ReadFile(filepath.Join(templateBasePath, "..", "report-template", "templates.tmpl"))
+	f, err := ioutil.ReadFile(filepath.Join(themePath, "views", "templates.tmpl"))
 	if err != nil {
 		log.Fatalf(err.Error())
 	}
@@ -280,8 +269,8 @@ func execTemplate(tmplName string, w io.Writer, data interface{}) {
 var ProjectRoot string
 
 // GenerateReports generates HTML report in the given report dir location
-func GenerateReports(res *gauge_messages.ProtoSuiteResult, reportDir string) error {
-	readTemplates()
+func GenerateReports(res *gauge_messages.ProtoSuiteResult, reportDir, themePath string) error {
+	readTemplates(themePath)
 	suiteRes := toSuiteResult(res)
 	f, err := os.Create(filepath.Join(reportDir, "index.html"))
 	if err != nil {

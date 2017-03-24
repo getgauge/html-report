@@ -21,10 +21,10 @@ import "os"
 
 func main() {
 	findPluginAndProjectRoot()
-	action := os.Getenv(PLUGIN_ACTION_ENV)
-	if action == SETUP_ACTION {
+	action := os.Getenv(pluginActionEnv)
+	if action == setupAction {
 		addDefaultPropertiesToProject()
-	} else if action == EXECUTION_ACTION {
+	} else if action == executionAction {
 		createExecutionReport()
 	}
 }

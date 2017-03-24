@@ -19,7 +19,9 @@ package main
 
 import (
 	"fmt"
+	"log"
 	"os"
+	"path"
 	"path/filepath"
 	"strings"
 	"time"
@@ -37,16 +39,19 @@ const (
 	overwriteReportsEnvProperty = "overwrite_reports"
 	resultJsFile                = "result.js"
 	htmlReport                  = "html-report"
-	SETUP_ACTION                = "setup"
-	EXECUTION_ACTION            = "execution"
-	GAUGE_HOST                  = "localhost"
-	GAUGE_PORT_ENV              = "plugin_connection_port"
-	PLUGIN_ACTION_ENV           = "html-report_action"
+	setupAction                 = "setup"
+	executionAction             = "execution"
+	gaugeHost                   = "localhost"
+	gaugePortEnv                = "plugin_connection_port"
+	pluginActionEnv             = "html-report_action"
 	timeFormat                  = "2006-01-02 15.04.05"
+	defaultTheme                = "default"
+	reportThemeProperty         = "GAUGE_HTML_REPORT_THEME"
 )
 
 var projectRoot string
 var pluginDir string
+var templateBasePath string
 
 type nameGenerator interface {
 	randomName() string
@@ -76,7 +81,7 @@ func findPluginAndProjectRoot() {
 
 func createExecutionReport() {
 	os.Chdir(projectRoot)
-	listener, err := listener.NewGaugeListener(GAUGE_HOST, os.Getenv(GAUGE_PORT_ENV))
+	listener, err := listener.NewGaugeListener(gaugeHost, os.Getenv(gaugePortEnv))
 	if err != nil {
 		fmt.Println("Could not create the gauge listener")
 		os.Exit(1)
@@ -121,7 +126,7 @@ func createReport(suiteResult *gauge_messages.SuiteExecutionResult) {
 	}
 	reportsDir := getReportsDirectory(getNameGen())
 	generator.ProjectRoot = projectRoot
-	err = generator.GenerateReports(suiteResult.GetSuiteResult(), reportsDir)
+	err = generator.GenerateReports(suiteResult.GetSuiteResult(), reportsDir, getThemePath())
 	if err != nil {
 		fmt.Printf("Failed to generate reports: %s\n", err.Error())
 		os.Exit(1)
@@ -161,9 +166,25 @@ func getReportsDirectory(nameGen nameGenerator) string {
 }
 
 func copyReportTemplateFiles(reportDir string) error {
-	reportTemplateDir := filepath.Join(pluginDir, reportTemplateDir)
-	_, err := common.MirrorDir(reportTemplateDir, reportDir)
+	reportTemplateDir := filepath.Join(getThemePath(), "assets")
+	r := filepath.Join(pluginDir, reportTemplateDir)
+	_, err := common.MirrorDir(r, reportDir)
 	return err
+}
+
+func getThemePath() string {
+	if templateBasePath == "" {
+		ex, err := os.Executable()
+		if err != nil {
+			log.Fatalf(err.Error())
+		}
+		templateBasePath = path.Dir(ex)
+	}
+	theme := os.Getenv(reportThemeProperty)
+	if theme == "" {
+		theme = defaultTheme
+	}
+	return filepath.Join(templateBasePath, theme)
 }
 
 func shouldOverwriteReports() bool {
