@@ -467,38 +467,7 @@ func generateSpecDiv(w io.Writer, spec *spec) {
 }
 
 func generateScenario(w io.Writer, scn *scenario) {
-	execTemplate("scenarioContainerStartDiv", w, scn)
-	execTemplate("scenarioHeaderStartDiv", w, scn)
-	execTemplate("tagsDiv", w, scn)
-	execTemplate("endDiv", w, nil)
-	if scn.BeforeScenarioHookFailure != nil {
-		execTemplate("hookFailureDiv", w, scn.BeforeScenarioHookFailure)
-	}
-
-	generateItems(w, scn.Contexts, generateContextOrTeardown)
-	generateItems(w, scn.Items, generateItem)
-	generateItems(w, scn.Teardowns, generateContextOrTeardown)
-
-	if scn.AfterScenarioHookFailure != nil {
-		execTemplate("hookFailureDiv", w, scn.AfterScenarioHookFailure)
-	}
-	execTemplate("endDiv", w, nil)
-}
-
-func generateItems(w io.Writer, items []item, predicate func(w io.Writer, item item)) {
-	for _, item := range items {
-		predicate(w, item)
-	}
-}
-
-func generateContextOrTeardown(w io.Writer, item item) {
-	execTemplate("contextOrTeardownStartDiv", w, nil)
-	generateItem(w, item)
-	execTemplate("endDiv", w, nil)
-}
-
-func generateItem(w io.Writer, item item) {
-	execTemplate("item", w, item)
+	execTemplate("scenario", w, scn)
 }
 
 // CreateDirectory creates given directory if it doesn't exist
