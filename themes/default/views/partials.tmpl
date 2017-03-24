@@ -352,8 +352,6 @@
 
 {{define "conceptSpan"}}<i class="fa fa-plus-square" aria-hidden="true"></i>{{end}}
 
-{{define "contextOrTeardownStartDiv"}}<div class='context-step'>{{end}}
-
 {{define "commentSpan"}}<span>{{.Text | parseMarkdown | sanitize}}</span>{{end}}
 
 {{define "conceptStepsStartDiv"}}<div class='concept-steps'>{{end}}
@@ -431,4 +429,33 @@
   {{else if eq .Kind "concept"}}
     {{template "concept" .}}
   {{end}}
+{{end}}
+
+{{define "scenario"}}
+	{{template "scenarioContainerStartDiv" .}}
+	{{template "scenarioHeaderStartDiv" .}}
+	{{template "tagsDiv" .}}
+	{{template "endDiv"}}
+	{{if .BeforeScenarioHookFailure}}
+		{{template "hookFailureDiv" .BeforeScenarioHookFailure}}
+	{{end}}
+
+  {{range $i, $c := .Contexts}}
+    <div class='context-step'>
+      {{template "item" $c}}
+    </div>
+  {{end}}
+  {{range $i, $item := .Items}}
+    {{template "item" $item}}
+  {{end}}
+  {{range $i, $t := .Teardowns}}
+    <div class='context-step'>
+      {{template "item" $t}}
+    </div>
+  {{end}}
+
+	{{if .AfterScenarioHookFailure }}
+		{{template "hookFailureDiv" .AfterScenarioHookFailure}}
+	{{end}}
+	{{template "endDiv"}}
 {{end}}
