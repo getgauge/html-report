@@ -413,42 +413,46 @@ var skippedStepRes = &result{
 var re = regexp.MustCompile("[\\s]*[\n\t][\\s]*")
 
 var reportGenTests = []reportGenTest{
-	{"generate html page start with project name", htmlPageStartTag, &overview{ProjectName: "projname"}, whtmlPageStartTag},
-	{"generate report overview with tags", reportOverviewTag, &overview{"projname", "default", "foo", 34, "00:01:53", "Jun 3, 2016 at 12:29pm", &summary{41, 2, 39, 0}, "/"},
+	{"generate html page start with project name", "htmlPageStartTag", &overview{ProjectName: "projname"}, whtmlPageStartTag},
+	{"generate report overview with tags", "reportOverviewTag", &overview{"projname", "default", "foo", 34, "00:01:53", "Jun 3, 2016 at 12:29pm", &summary{41, 2, 39, 0}, "/"},
 		wChartDiv + wResCntDiv + wEnvLi + wTagsLi + wSuccRateLi + wExecTimeLi + wTimestampLi},
-	{"generate report overview without tags", reportOverviewTag, &overview{"projname", "default", "", 34, "00:01:53", "Jun 3, 2016 at 12:29pm", &summary{41, 2, 39, 0}, "/"},
+	{"generate report overview without tags", "reportOverviewTag", &overview{"projname", "default", "", 34, "00:01:53", "Jun 3, 2016 at 12:29pm", &summary{41, 2, 39, 0}, "/"},
 		wChartDiv + wResCntDiv + wEnvLi + wSuccRateLi + wExecTimeLi + wTimestampLi},
-	{"generate sidebar with appropriate pass/fail/skip class", sidebarDiv, &sidebar{
+	{"generate sidebar with appropriate pass/fail/skip class", "sidebarDiv", &sidebar{
 		IsBeforeHookFailure: false,
 		Specs: []*specsMeta{
 			newSpecsMeta("Passing Spec", "00:01:04", false, false, nil, "passing_spec.html"),
 			newSpecsMeta("Failing Spec", "00:00:30", true, false, nil, "failing_spec.html"),
 			newSpecsMeta("Skipped Spec", "00:00:00", false, true, nil, "skipped_spec.html"),
 		}}, wSidebarAside},
-	{"do not generate sidebar if presuitehook failure", sidebarDiv, &sidebar{
+	{"do not generate sidebar if presuitehook failure", "sidebarDiv", &sidebar{
 		IsBeforeHookFailure: true,
 		Specs:               []*specsMeta{},
 	}, ""},
-	{"generate hook failure div with screenshot", hookFailureDiv, newHookFailure("BeforeSuite", "SomeError", "iVBO", "Stack trace"), wHookFailureWithScreenhotDiv},
-	{"generate hook failure div without screenshot", hookFailureDiv, newHookFailure("BeforeSuite", "SomeError", "", "Stack trace"), wHookFailureWithoutScreenhotDiv},
-	{"generate spec header with tags", specHeaderStartTag, &specHeader{"Spec heading", "00:01:01", "/tmp/gauge/specs/foobar.spec", []string{"foo", "bar"}, &summary{0, 0, 0, 0}}, wSpecHeaderStartWithTags},
-	{"generate div for tags", tagsDiv, &specHeader{Tags: []string{"tag1", "tag2"}}, wTagsDiv},
-	{"generate spec comments with data table (if present)", specCommentsAndTableTag, newSpec(true), wSpecCommentsWithTableTag},
-	{"generate spec comments without data table", specCommentsAndTableTag, newSpec(false), wSpecCommentsWithoutTableTag},
-	{"generate spec comments with code block", specCommentsAndTableTag, stepWithCodeBlock, wSpecCommentsWithCodeBlock},
-	{"generate passing scenario container", scenarioContainerStartDiv, &scenario{ExecutionStatus: pass, TableRowIndex: -1}, wScenarioContainerStartPassDiv},
-	{"generate failed scenario container", scenarioContainerStartDiv, &scenario{ExecutionStatus: fail, TableRowIndex: -1}, wScenarioContainerStartFailDiv},
-	{"generate skipped scenario container", scenarioContainerStartDiv, &scenario{ExecutionStatus: skip, TableRowIndex: -1}, wScenarioContainerStartSkipDiv},
-	{"generate scenario header", scenarioHeaderStartDiv, &scenario{Heading: "Scenario Heading", ExecutionTime: "00:01:01"}, wscenarioHeaderStartDiv},
-	{"generate pass step start div", stepStartDiv, newStep(pass), wPassStepStartDiv},
-	{"generate fail step start div", stepStartDiv, newStep(fail), wFailStepStartDiv},
-	{"generate skipped step start div", stepStartDiv, newStep(skip), wSkipStepStartDiv},
-	{"generate skipped step body div", stepBodyDiv, stepWithBracketsInFragment, wPassStepBodyDivWithBracketsInFragment},
-	{"generate skipped step skipped reason div", skippedReasonDiv, skippedStepRes, wSkippedStepWithSkippedReason},
-	{"generate step body div with file special param", stepBodyDiv, stepWithFileParam, wStepWithFileParam},
-	{"generate step body div with special table param", stepBodyDiv, stepWithSpecialTableParam, wStepWithSpecialTableParam},
-	{"generate step failure div", stepFailureDiv, &result{ErrorMessage: "expected:<foo [foo] foo> but was:<foo [bar] foo>", StackTrace: "stacktrace"}, wStepFailDiv},
-	{"generate spec error div", specErrorDiv, &spec{Errors: []error{buildError{ErrorType: parseErrorType, Message: "message"}}}, wSpecErrorDiv},
+	{"generate hook failure div with screenshot", "hookFailureDiv", newHookFailure("BeforeSuite", "SomeError", "iVBO", "Stack trace"), wHookFailureWithScreenhotDiv},
+	{"generate hook failure div without screenshot", "hookFailureDiv", newHookFailure("BeforeSuite", "SomeError", "", "Stack trace"), wHookFailureWithoutScreenhotDiv},
+	{"generate spec header with tags", "specHeaderStartTag", &specHeader{"Spec heading", "00:01:01", "/tmp/gauge/specs/foobar.spec", []string{"foo", "bar"}, &summary{0, 0, 0, 0}}, wSpecHeaderStartWithTags},
+	{"generate div for tags", "tagsDiv", &specHeader{Tags: []string{"tag1", "tag2"}}, wTagsDiv},
+	{"generate spec comments with data table (if present)", "specCommentsAndTableTag", newSpec(true), wSpecCommentsWithTableTag},
+	{"generate spec comments without data table", "specCommentsAndTableTag", newSpec(false), wSpecCommentsWithoutTableTag},
+	{"generate spec comments with code block", "specCommentsAndTableTag", stepWithCodeBlock, wSpecCommentsWithCodeBlock},
+	{"generate passing scenario container", "scenarioContainerStartDiv", &scenario{ExecutionStatus: pass, TableRowIndex: -1}, wScenarioContainerStartPassDiv},
+	{"generate failed scenario container", "scenarioContainerStartDiv", &scenario{ExecutionStatus: fail, TableRowIndex: -1}, wScenarioContainerStartFailDiv},
+	{"generate skipped scenario container", "scenarioContainerStartDiv", &scenario{ExecutionStatus: skip, TableRowIndex: -1}, wScenarioContainerStartSkipDiv},
+	{"generate scenario header", "scenarioHeaderStartDiv", &scenario{Heading: "Scenario Heading", ExecutionTime: "00:01:01"}, wscenarioHeaderStartDiv},
+	{"generate pass step start div", "stepStartDiv", newStep(pass), wPassStepStartDiv},
+	{"generate fail step start div", "stepStartDiv", newStep(fail), wFailStepStartDiv},
+	{"generate skipped step start div", "stepStartDiv", newStep(skip), wSkipStepStartDiv},
+	{"generate skipped step body div", "stepBodyDiv", stepWithBracketsInFragment, wPassStepBodyDivWithBracketsInFragment},
+	{"generate skipped step skipped reason div", "skippedReasonDiv", skippedStepRes, wSkippedStepWithSkippedReason},
+	{"generate step body div with file special param", "stepBodyDiv", stepWithFileParam, wStepWithFileParam},
+	{"generate step body div with special table param", "stepBodyDiv", stepWithSpecialTableParam, wStepWithSpecialTableParam},
+	{"generate step failure div", "stepFailureDiv", &result{ErrorMessage: "expected:<foo [foo] foo> but was:<foo [bar] foo>", StackTrace: "stacktrace"}, wStepFailDiv},
+	{"generate spec error div", "specErrorDiv", &spec{Errors: []error{buildError{ErrorType: parseErrorType, Message: "message"}}}, wSpecErrorDiv},
+}
+
+func init() {
+	templateBasePath = "."
 }
 
 func TestExecute(t *testing.T) {

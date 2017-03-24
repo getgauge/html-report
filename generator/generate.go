@@ -21,8 +21,10 @@ import (
 	"encoding/json"
 	"fmt"
 	"io"
+	"io/ioutil"
 	"log"
 	"os"
+	"path"
 	"path/filepath"
 	"strings"
 	"sync"
@@ -231,14 +233,9 @@ const (
 
 var parsedTemplates = make(map[string]*template.Template, 0)
 
-// Any new templates that are added in file `templates.go` should be registered here
-var templates = []string{bodyFooterTag, reportOverviewTag, sidebarDiv, congratsDiv, hookFailureDiv, tagsDiv, messageDiv, skippedReasonDiv,
-	specsStartDiv, specsItemsContainerDiv, specsItemsContentsDiv, specHeaderStartTag, scenarioContainerStartDiv, scenarioHeaderStartDiv, specCommentsAndTableTag,
-	htmlPageStartTag, headerEndTag, mainEndTag, endDiv, conceptStartDiv, stepStartDiv, stepMetaDiv, stepBodyDiv, stepFailureDiv, stepEndDiv, conceptSpan,
-	contextOrTeardownStartDiv, commentSpan, conceptStepsStartDiv, nestedConceptDiv, htmlPageEndWithJS, specErrorDiv,
-}
+var templateBasePath string
 
-func init() {
+func readTemplates() {
 	var encodeNewLine = func(s string) string {
 		return strings.Replace(s, "\n", "<br/>", -1)
 	}
@@ -253,19 +250,30 @@ func init() {
 		return b.String()
 	}
 	var funcs = template.FuncMap{"parseMarkdown": parseMarkdown, "sanitize": sanitizeHTML, "escapeHTML": template.HTMLEscapeString, "encodeNewLine": encodeNewLine}
-	for _, tmpl := range templates {
-		t, err := template.New("Reports").Funcs(funcs).Parse(tmpl)
+
+	if templateBasePath == "" {
+		ex, err := os.Executable()
 		if err != nil {
 			log.Fatalf(err.Error())
 		}
-		parsedTemplates[tmpl] = t
+		templateBasePath = path.Dir(ex)
+	}
+
+	f, err := ioutil.ReadFile(filepath.Join(templateBasePath, "..", "report-template", "templates.tmpl"))
+	if err != nil {
+		log.Fatalf(err.Error())
+	}
+	t, _ := template.New("Reports").Funcs(funcs).Parse(string(f))
+
+	for _, tmpl := range t.Templates() {
+		parsedTemplates[tmpl.Name()] = tmpl
 	}
 }
 
 func execTemplate(tmplName string, w io.Writer, data interface{}) {
 	tmpl := parsedTemplates[tmplName]
 	if tmpl == nil {
-		log.Fatal(tmplName)
+		log.Fatalf("Error reading Template %s\n", tmplName)
 	}
 	err := tmpl.Execute(w, data)
 	if err != nil {
@@ -278,17 +286,19 @@ var ProjectRoot string
 
 // GenerateReports generates HTML report in the given report dir location
 func GenerateReports(res *gauge_messages.ProtoSuiteResult, reportDir string) error {
+	readTemplates()
 	suiteRes := toSuiteResult(res)
 	f, err := os.Create(filepath.Join(reportDir, "index.html"))
 	if err != nil {
 		return err
 	}
+	defer f.Close()
 	if suiteRes.BeforeSuiteHookFailure != nil {
 		overview := toOverview(suiteRes, nil)
 		generateOverview(overview, f)
-		execTemplate(hookFailureDiv, f, suiteRes.BeforeSuiteHookFailure)
+		execTemplate("hookFailureDiv", f, suiteRes.BeforeSuiteHookFailure)
 		if suiteRes.AfterSuiteHookFailure != nil {
-			execTemplate(hookFailureDiv, f, suiteRes.AfterSuiteHookFailure)
+			execTemplate("hookFailureDiv", f, suiteRes.AfterSuiteHookFailure)
 		}
 		generatePageFooter(overview, f)
 	} else {
@@ -303,6 +313,7 @@ func GenerateReports(res *gauge_messages.ProtoSuiteResult, reportDir string) err
 			if err != nil {
 				return err
 			}
+			defer sf.Close()
 			wg.Add(1)
 			go generateSpecPage(suiteRes, res, sf, &wg)
 		}
@@ -355,6 +366,7 @@ func generateSearchIndex(suiteRes *suiteResult, reportDir string) error {
 	if err != nil {
 		return err
 	}
+	defer f.Close()
 	index := newSearchIndex()
 	for _, r := range suiteRes.SpecResults {
 		specFileName := toHTMLFileName(r.FileName, ProjectRoot)
@@ -369,9 +381,6 @@ func generateSearchIndex(suiteRes *suiteResult, reportDir string) error {
 					index.Tags[t] = append(index.Tags[t], specFileName)
 				}
 			}
-			// if tds := i.GetTableDrivenScenario(); tds != nil {
-			// 	addTagsFromScenario(tds.GetScenario())
-			// }
 		}
 		specHeading := r.SpecHeading
 		if !index.hasSpec(specHeading, specFileName) {
@@ -391,14 +400,14 @@ func generateIndexPage(suiteRes *suiteResult, w io.Writer, wg *sync.WaitGroup) {
 	overview := toOverview(suiteRes, nil)
 	generateOverview(overview, w)
 	if suiteRes.AfterSuiteHookFailure != nil {
-		execTemplate(hookFailureDiv, w, suiteRes.AfterSuiteHookFailure)
+		execTemplate("hookFailureDiv", w, suiteRes.AfterSuiteHookFailure)
 	}
-	execTemplate(specsStartDiv, w, nil)
-	execTemplate(sidebarDiv, w, toSidebar(suiteRes, nil))
+	execTemplate("specsStartDiv", w, nil)
+	execTemplate("sidebarDiv", w, toSidebar(suiteRes, nil))
 	if suiteRes.ExecutionStatus != fail {
-		execTemplate(congratsDiv, w, nil)
+		execTemplate("congratsDiv", w, nil)
 	}
-	execTemplate(endDiv, w, nil)
+	execTemplate("endDiv", w, nil)
 	generatePageFooter(overview, w)
 }
 
@@ -409,53 +418,53 @@ func generateSpecPage(suiteRes *suiteResult, specRes *spec, w io.Writer, wg *syn
 	generateOverview(overview, w)
 
 	if suiteRes.BeforeSuiteHookFailure != nil {
-		execTemplate(hookFailureDiv, w, suiteRes.BeforeSuiteHookFailure)
+		execTemplate("hookFailureDiv", w, suiteRes.BeforeSuiteHookFailure)
 	}
 
 	if suiteRes.AfterSuiteHookFailure != nil {
-		execTemplate(hookFailureDiv, w, suiteRes.AfterSuiteHookFailure)
+		execTemplate("hookFailureDiv", w, suiteRes.AfterSuiteHookFailure)
 	}
 
 	if suiteRes.BeforeSuiteHookFailure == nil {
-		execTemplate(specsStartDiv, w, nil)
-		execTemplate(sidebarDiv, w, toSidebar(suiteRes, specRes))
+		execTemplate("specsStartDiv", w, nil)
+		execTemplate("sidebarDiv", w, toSidebar(suiteRes, specRes))
 		generateSpecDiv(w, specRes)
-		execTemplate(endDiv, w, nil)
+		execTemplate("endDiv", w, nil)
 	}
 	generatePageFooter(overview, w)
 }
 
 func generateOverview(overview *overview, w io.Writer) {
-	execTemplate(htmlPageStartTag, w, overview)
-	execTemplate(reportOverviewTag, w, overview)
+	execTemplate("htmlPageStartTag", w, overview)
+	execTemplate("reportOverviewTag", w, overview)
 }
 
 func generatePageFooter(overview *overview, w io.Writer) {
-	execTemplate(endDiv, w, nil)
-	execTemplate(mainEndTag, w, nil)
-	execTemplate(bodyFooterTag, w, nil)
-	execTemplate(htmlPageEndWithJS, w, overview)
+	execTemplate("endDiv", w, nil)
+	execTemplate("mainEndTag", w, nil)
+	execTemplate("bodyFooterTag", w, nil)
+	execTemplate("htmlPageEndWithJS", w, overview)
 }
 
 func generateSpecDiv(w io.Writer, spec *spec) {
 	specHeader := toSpecHeader(spec)
 
-	execTemplate(specHeaderStartTag, w, specHeader)
-	execTemplate(tagsDiv, w, specHeader)
-	execTemplate(headerEndTag, w, nil)
-	execTemplate(specsItemsContainerDiv, w, nil)
+	execTemplate("specHeaderStartTag", w, specHeader)
+	execTemplate("tagsDiv", w, specHeader)
+	execTemplate("headerEndTag", w, nil)
+	execTemplate("specsItemsContainerDiv", w, nil)
 	if containsParseErrors(spec.Errors) {
-		execTemplate(specErrorDiv, w, spec)
-		execTemplate(endDiv, w, nil)
+		execTemplate("specErrorDiv", w, spec)
+		execTemplate("endDiv", w, nil)
 		return
 	}
 
 	if spec.BeforeSpecHookFailure != nil {
-		execTemplate(hookFailureDiv, w, spec.BeforeSpecHookFailure)
+		execTemplate("hookFailureDiv", w, spec.BeforeSpecHookFailure)
 	}
 
-	execTemplate(specsItemsContentsDiv, w, nil)
-	execTemplate(specCommentsAndTableTag, w, spec)
+	execTemplate("specsItemsContentsDiv", w, nil)
+	execTemplate("specCommentsAndTableTag", w, spec)
 
 	if spec.BeforeSpecHookFailure == nil {
 		for _, scn := range spec.Scenarios {
@@ -463,23 +472,23 @@ func generateSpecDiv(w io.Writer, spec *spec) {
 		}
 	}
 
-	execTemplate(endDiv, w, nil)
-	execTemplate(endDiv, w, nil)
+	execTemplate("endDiv", w, nil)
+	execTemplate("endDiv", w, nil)
 
 	if spec.AfterSpecHookFailure != nil {
-		execTemplate(hookFailureDiv, w, spec.AfterSpecHookFailure)
+		execTemplate("hookFailureDiv", w, spec.AfterSpecHookFailure)
 	}
 
-	execTemplate(endDiv, w, nil)
+	execTemplate("endDiv", w, nil)
 }
 
 func generateScenario(w io.Writer, scn *scenario) {
-	execTemplate(scenarioContainerStartDiv, w, scn)
-	execTemplate(scenarioHeaderStartDiv, w, scn)
-	execTemplate(tagsDiv, w, scn)
-	execTemplate(endDiv, w, nil)
+	execTemplate("scenarioContainerStartDiv", w, scn)
+	execTemplate("scenarioHeaderStartDiv", w, scn)
+	execTemplate("tagsDiv", w, scn)
+	execTemplate("endDiv", w, nil)
 	if scn.BeforeScenarioHookFailure != nil {
-		execTemplate(hookFailureDiv, w, scn.BeforeScenarioHookFailure)
+		execTemplate("hookFailureDiv", w, scn.BeforeScenarioHookFailure)
 	}
 
 	generateItems(w, scn.Contexts, generateContextOrTeardown)
@@ -487,9 +496,9 @@ func generateScenario(w io.Writer, scn *scenario) {
 	generateItems(w, scn.Teardowns, generateContextOrTeardown)
 
 	if scn.AfterScenarioHookFailure != nil {
-		execTemplate(hookFailureDiv, w, scn.AfterScenarioHookFailure)
+		execTemplate("hookFailureDiv", w, scn.AfterScenarioHookFailure)
 	}
-	execTemplate(endDiv, w, nil)
+	execTemplate("endDiv", w, nil)
 }
 
 func generateItems(w io.Writer, items []item, predicate func(w io.Writer, item item)) {
@@ -499,44 +508,44 @@ func generateItems(w io.Writer, items []item, predicate func(w io.Writer, item i
 }
 
 func generateContextOrTeardown(w io.Writer, item item) {
-	execTemplate(contextOrTeardownStartDiv, w, nil)
+	execTemplate("contextOrTeardownStartDiv", w, nil)
 	generateItem(w, item)
-	execTemplate(endDiv, w, nil)
+	execTemplate("endDiv", w, nil)
 }
 
 func generateItem(w io.Writer, item item) {
 	switch item.kind() {
 	case stepKind:
-		execTemplate(stepStartDiv, w, item.(*step))
-		execTemplate(stepBodyDiv, w, item.(*step))
+		execTemplate("stepStartDiv", w, item.(*step))
+		execTemplate("stepBodyDiv", w, item.(*step))
 
 		if item.(*step).BeforeStepHookFailure != nil {
-			execTemplate(hookFailureDiv, w, item.(*step).BeforeStepHookFailure)
+			execTemplate("hookFailureDiv", w, item.(*step).BeforeStepHookFailure)
 		}
 
 		stepRes := item.(*step).Result
 		if stepRes.Status == fail && stepRes.ErrorMessage != "" && stepRes.StackTrace != "" {
-			execTemplate(stepFailureDiv, w, stepRes)
+			execTemplate("stepFailureDiv", w, stepRes)
 		}
 
 		if item.(*step).AfterStepHookFailure != nil {
-			execTemplate(hookFailureDiv, w, item.(*step).AfterStepHookFailure)
+			execTemplate("hookFailureDiv", w, item.(*step).AfterStepHookFailure)
 		}
-		execTemplate(messageDiv, w, stepRes)
-		execTemplate(stepEndDiv, w, item.(*step))
+		execTemplate("messageDiv", w, stepRes)
+		execTemplate("stepEndDiv", w, item.(*step))
 		if stepRes.Status == skip && stepRes.SkippedReason != "" {
-			execTemplate(skippedReasonDiv, w, stepRes)
+			execTemplate("skippedReasonDiv", w, stepRes)
 		}
 	case commentKind:
-		execTemplate(commentSpan, w, item.(*comment))
+		execTemplate("commentSpan", w, item.(*comment))
 	case conceptKind:
-		execTemplate(conceptStartDiv, w, item.(*concept).ConceptStep)
-		execTemplate(conceptSpan, w, nil)
-		execTemplate(stepBodyDiv, w, item.(*concept).ConceptStep)
-		execTemplate(stepEndDiv, w, item.(*concept).ConceptStep)
-		execTemplate(conceptStepsStartDiv, w, nil)
+		execTemplate("conceptStartDiv", w, item.(*concept).ConceptStep)
+		execTemplate("conceptSpan", w, nil)
+		execTemplate("stepBodyDiv", w, item.(*concept).ConceptStep)
+		execTemplate("stepEndDiv", w, item.(*concept).ConceptStep)
+		execTemplate("conceptStepsStartDiv", w, nil)
 		generateItems(w, item.(*concept).Items, generateItem)
-		execTemplate(endDiv, w, nil)
+		execTemplate("endDiv", w, nil)
 	}
 }
 
