@@ -246,7 +246,16 @@ func readTemplates(themePath string) {
 		b.Write(html)
 		return b.String()
 	}
-	var funcs = template.FuncMap{"parseMarkdown": parseMarkdown, "sanitize": sanitizeHTML, "escapeHTML": template.HTMLEscapeString, "encodeNewLine": encodeNewLine}
+
+	var funcs = template.FuncMap{
+		"parseMarkdown":       parseMarkdown,
+		"sanitize":            sanitizeHTML,
+		"escapeHTML":          template.HTMLEscapeString,
+		"encodeNewLine":       encodeNewLine,
+		"containsParseErrors": containsParseErrors,
+		"toSpecHeader":        toSpecHeader,
+		"toSideBar":           toSidebar,
+	}
 
 	f, err := ioutil.ReadFile(filepath.Join(themePath, "views", "partials.tmpl"))
 	if err != nil {
@@ -412,7 +421,7 @@ func generateSpecPage(suiteRes *suiteResult, specRes *spec, w io.Writer, wg *syn
 	if suiteRes.BeforeSuiteHookFailure == nil {
 		execTemplate("specsStartDiv", w, nil)
 		execTemplate("sidebarDiv", w, toSidebar(suiteRes, specRes))
-		generateSpecDiv(w, specRes)
+		execTemplate("spec", w, specRes)
 		execTemplate("endDiv", w, nil)
 	}
 	generatePageFooter(overview, w)
@@ -428,46 +437,6 @@ func generatePageFooter(overview *overview, w io.Writer) {
 	execTemplate("mainEndTag", w, nil)
 	execTemplate("bodyFooterTag", w, nil)
 	execTemplate("htmlPageEndWithJS", w, overview)
-}
-
-func generateSpecDiv(w io.Writer, spec *spec) {
-	specHeader := toSpecHeader(spec)
-
-	execTemplate("specHeaderStartTag", w, specHeader)
-	execTemplate("tagsDiv", w, specHeader)
-	execTemplate("headerEndTag", w, nil)
-	execTemplate("specsItemsContainerDiv", w, nil)
-	if containsParseErrors(spec.Errors) {
-		execTemplate("specErrorDiv", w, spec)
-		execTemplate("endDiv", w, nil)
-		return
-	}
-
-	if spec.BeforeSpecHookFailure != nil {
-		execTemplate("hookFailureDiv", w, spec.BeforeSpecHookFailure)
-	}
-
-	execTemplate("specsItemsContentsDiv", w, nil)
-	execTemplate("specCommentsAndTableTag", w, spec)
-
-	if spec.BeforeSpecHookFailure == nil {
-		for _, scn := range spec.Scenarios {
-			generateScenario(w, scn)
-		}
-	}
-
-	execTemplate("endDiv", w, nil)
-	execTemplate("endDiv", w, nil)
-
-	if spec.AfterSpecHookFailure != nil {
-		execTemplate("hookFailureDiv", w, spec.AfterSpecHookFailure)
-	}
-
-	execTemplate("endDiv", w, nil)
-}
-
-func generateScenario(w io.Writer, scn *scenario) {
-	execTemplate("scenario", w, scn)
 }
 
 // CreateDirectory creates given directory if it doesn't exist
