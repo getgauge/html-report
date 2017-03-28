@@ -1,3 +1,4 @@
+/* The start of the report page. */
 {{define "htmlPageStartTag"}}
   <!doctype html>
   <html><head>
@@ -25,6 +26,8 @@
   <div class="container">
 {{end}}
 
+/* The overview section of the report. Contains execution result statistics.
+   Clicking on the pie chart causes the specs in sidebar to be filtered by the status. */
 {{define "reportOverviewTag"}}
   <div class="report-overview">
     <div class="report_chart">
@@ -76,6 +79,9 @@
   </div>
 {{end}}
 
+/* The sidebar resides on the side , and holds the list of specs that were part of the execution.
+   Users may click to view individual spec's output, search for a spec by either tags or spec heading.
+   Users are also given an autocomplete suggestion. */
 {{define "sidebarDiv"}}
   {{if not .IsBeforeHookFailure}}
     <aside class="sidebar">
@@ -106,12 +112,7 @@
   {{end}}
 {{end}}
 
-{{define "congratsDiv"}}
-  <div class="congratulations details">
-    <p>Congratulations! You've gone all <span class="green">green</span> and saved the environment!</p>
-  </div>
-{{end}}
-
+/* Container to display errors in Execution hooks. Execution hooks can be at Suite/Spec or Scenario level */
 {{define "hookFailureDiv"}}
   <div class="error-container failed">
     <div class="error-heading">{{.HookName}} Failed:<span class="error-message"> {{.ErrMsg | escapeHTML | encodeNewLine}}</span></div>
@@ -133,6 +134,7 @@
   </div>
 {{end}}
 
+/* Lists all errors in a Spec file */
 {{define "specErrorDiv"}}
   <div class="error-container failed">
     <div class="error-heading">Errors:</div>
@@ -148,6 +150,7 @@
   </div>
 {{end}}
 
+/* Lists the tags for a spec/scenario. */
 {{define "tagsDiv"}}
   {{if .Tags}}
     <div class="tags scenario_tags contentSection">
@@ -159,6 +162,7 @@
   {{end}}
 {{end}}
 
+/* Prints out the messages that the user may have introduces using teh Gauge.WriteMessage API */
 {{define "messageDiv"}}
   {{if .Messages}}
     <div class="message-container">
@@ -170,24 +174,14 @@
   {{end}}
 {{end}}
 
+/* Lists reason(s) for a spec being skipped in an execution */
 {{define "skippedReasonDiv"}}
   <div class="message-container">
     <h4 class="skipReason">Skipped Reason: {{.SkippedReason | escapeHTML }}</h4>
   </div>
 {{end}}
 
-{{define "specsStartDiv"}}
-  <div class="specifications">
-{{end}}
-
-{{define "specsItemsContainerDiv"}}
-  <div id="specItemsContainer">
-{{end}}
-
-{{define "specsItemsContentsDiv"}}
-  <div class="content">
-{{end}}
-
+/* Container for the spec header section. Holds the spec filename, scenario statistics etc */
 {{define "specHeaderStartTag"}}
   <div id="specificationContainer" class="details">
     <header class="curr-spec">
@@ -213,18 +207,23 @@
       </div>
 {{end}}
 
+
+/* Begin rendering Scenario. Holds Execution Status and also the table-row when rendering Table Driven Scenarios */
 {{define "scenarioContainerStartDiv"}}
   <div class='scenario-container {{if eq .ExecutionStatus "pass"}}passed{{if gt .TableRowIndex 0}} hidden{{end}}'{{if ne .TableRowIndex -1}} data-tablerow='{{.TableRowIndex}}'{{end}}>
     {{else if eq .ExecutionStatus "fail"}}failed{{if gt .TableRowIndex 0}} hidden{{end}}'{{if ne .TableRowIndex -1}}  data-tablerow='{{.TableRowIndex}}'{{end}}>
     {{else}}skipped{{if gt .TableRowIndex 0}} hidden{{end}}'{{if ne .TableRowIndex -1}}  data-tablerow='{{.TableRowIndex}}'{{end}}>{{end}}
 {{end}}
 
+/* Container for Scenario Header, holds the execution time of scenario */
 {{define "scenarioHeaderStartDiv"}}
   <div class="scenario-head">
     <h3 class="head borderBottom">{{.Heading | escapeHTML }}</h3>
     <span class="time">{{.ExecutionTime}}</span>
 {{end}}
 
+/* renders a Table. Incase of Table-driven execution, this table appears above all scenarios.
+   In case of a table parameter, this table appears as part of the Step */
 {{define "specCommentsAndTableTag"}}
   {{range .CommentsBeforeDatatable}}
   <span>{{. | parseMarkdown | sanitize}}</span>
@@ -252,22 +251,19 @@
   {{end}}
 {{end}}
 
-{{define "headerEndTag"}}</header>{{end}}
-
-{{define "mainEndTag"}}</main>{{end}}
-
-{{define "endDiv"}}</div>{{end}}
-
+/* start of Concept */
 {{define "conceptStartDiv"}}
   <div class='step concept'>
   {{template "stepMetaDiv" .}}
 {{end}}
 
+/* start of Step */
 {{define "stepStartDiv"}}
   <div class='step'>
   {{template "stepMetaDiv" .}}
 {{end}}
 
+/* Meta information about Step/Concept. Contains ExecutionTime and Status */
 {{define "stepMetaDiv"}}
   {{if ne .Result.Status "skip"}}
     <h5 class='execution-time'>
@@ -284,6 +280,7 @@
       <div class='step-txt'>
 {{end}}
 
+/* renders a table */
 {{define "Table"}}<table>
   <tr>
     {{range .Table.Headers}}<th>{{. | escapeHTML }}</th>{{end}}
@@ -296,6 +293,7 @@
 </table>
 {{end}}
 
+/* Brings up a Modal, used to display content of external file like csv */
 {{define "Modal"}}
   <span class="modal-link">&lt;{{.Name | escapeHTML }}&gt;</span>
     <div class="modal">
@@ -307,6 +305,7 @@
     </div>
 {{end}}
 
+/* Renders the body of a Step */
 {{define "stepBodyDiv"}}
   {{range .Fragments}}
     {{if eq .FragmentKind 0}}
@@ -330,6 +329,7 @@
   </div>
 {{end}}
 
+/* Holds the failures in a Step. Includes Stacktrace and Screenshot */
 {{define "stepFailureDiv"}}
   <div class="error-container failed">
     <div class="exception-container">
@@ -348,16 +348,7 @@
   </div>
 {{end}}
 
-{{define "stepEndDiv"}}</li></ul></div></div>{{end}}
-
-{{define "conceptSpan"}}<i class="fa fa-plus-square" aria-hidden="true"></i>{{end}}
-
-{{define "commentSpan"}}<span>{{.Text | parseMarkdown | sanitize}}</span>{{end}}
-
-{{define "conceptStepsStartDiv"}}<div class='concept-steps'>{{end}}
-
-{{define "nestedConceptDiv"}}<div class="nested concept-steps">{{end}}
-
+/* Load javascript in the end */
 {{define "htmlPageEndWithJS"}}
     <script type="text/javascript">
       var loadingImage = "{{.BasePath}}images/loading.gif";
@@ -381,7 +372,7 @@
   </footer>
 {{end}}
 
-
+/* container for a Step */
 {{define "step"}}
   {{template "stepStartDiv" .}}
   {{template "stepBodyDiv" .}}
@@ -397,7 +388,7 @@
     {{ template "hookFailureDiv" .AfterStepHookFailure }}
   {{end}}
 	{{template "messageDiv" .Result}}
-	{{template "stepEndDiv" . }}
+	</li></ul></div></div>
   {{with .Result}}
     {{if (and (eq .Status "skip") (ne .SkippedReason "")) }}
         {{template "skippedReasonDiv" .}}
@@ -405,37 +396,36 @@
   {{end}}
 {{end}}
 
+/* container for a Concept */
 {{define "concept"}}
   {{template "conceptStartDiv" .ConceptStep}}
-  {{template "conceptSpan"}}
+  <i class="fa fa-plus-square" aria-hidden="true"></i>
   {{template "stepBodyDiv" .ConceptStep}}
-  {{template "stepEndDiv" .ConceptStep}}
-  {{template "conceptStepsStartDiv" }}
+  </li></ul></div></div>
+  <div class='concept-steps'>
   {{range $index, $item := .Items}}
     {{template "item" $item}}
   {{end}}
-  {{template "endDiv"}}
+  </div>
 {{end}}
 
-{{define "comment"}}
-  {{template "commentSpan" .}}
-{{end}}
-
+/* generic container, switch based on kind */
 {{define "item"}}
   {{if eq .Kind "step"}}
     {{template "step" .}}
   {{else if eq .Kind "comment"}}
-    {{template "comment" .}}
+    <span>{{.Text | parseMarkdown | sanitize}}</span>
   {{else if eq .Kind "concept"}}
     {{template "concept" .}}
   {{end}}
 {{end}}
 
+/* container for a scenario */
 {{define "scenario"}}
 	{{template "scenarioContainerStartDiv" .}}
 	{{template "scenarioHeaderStartDiv" .}}
 	{{template "tagsDiv" .}}
-	{{template "endDiv"}}
+	</div>
 	{{if .BeforeScenarioHookFailure}}
 		{{template "hookFailureDiv" .BeforeScenarioHookFailure}}
 	{{end}}
@@ -457,15 +447,16 @@
 	{{if .AfterScenarioHookFailure }}
 		{{template "hookFailureDiv" .AfterScenarioHookFailure}}
 	{{end}}
-	{{template "endDiv"}}
+	</div>
 {{end}}
 
+/* container for a specification */
 {{define "spec"}}
   {{$specHeader := toSpecHeader .}}
 	{{template "specHeaderStartTag" $specHeader}}
 	{{template "tagsDiv" $specHeader}}
-	{{template "headerEndTag"}}
-	{{template "specsItemsContainerDiv"}}
+	</header>
+	<div id="specItemsContainer">
 	{{if containsParseErrors .Errors}}
 		{{template "specErrorDiv" .}}
 		</div>
@@ -474,7 +465,7 @@
       {{template "hookFailureDiv" .BeforeSpecHookFailure}}
     {{end}}
 
-    {{template "specsItemsContentsDiv"}}
+    <div class="content">
     {{template "specCommentsAndTableTag" .}}
 
     {{if not .BeforeSpecHookFailure}}
@@ -493,6 +484,7 @@
   {{end}}
 {{end}}
 
+/* holds definition to render a Spec page */
 {{define "specPage"}}
 	{{$overview := (toOverview .SuiteRes .SpecRes)}}
 	{{template "htmlPageStartTag" $overview}}
@@ -507,19 +499,19 @@
 	{{end}}
 
 	{{if not .SuiteRes.BeforeSuiteHookFailure }}
-		{{template "specsStartDiv"}}
+		<div class="specifications">
 		{{template "sidebarDiv" (toSidebar .SuiteRes .SpecRes)}}
 		{{template "spec"  .SpecRes}}
 		</div>
 	{{end}}
 
  	</div>
-	{{template "mainEndTag"}}
+	</main>
 	{{template "bodyFooterTag"}}
 	{{template "htmlPageEndWithJS" $overview}}
-
 {{end}}
 
+/* holds definition to render an index page */
 {{define "indexPage"}}
 	{{$overview := (toOverview . nil)}}
 	{{template "htmlPageStartTag" $overview}}
@@ -527,18 +519,21 @@
 	{{if .AfterSuiteHookFailure}}
 		{{template "hookFailureDiv" .AfterSuiteHookFailure}}
 	{{end}}
-  {{template "specsStartDiv"}}
+  <div class="specifications">
   {{template "sidebarDiv" (toSidebar . nil)}}
 	{{if ne .ExecutionStatus "fail" }}
-		{{template "congratsDiv"}}
+    <div class="congratulations details">
+      <p>Congratulations! You've gone all <span class="green">green</span> and saved the environment!</p>
+    </div>
 	{{end}}
  	</div>
  	</div>
-	{{template "mainEndTag"}}
+	</main>
 	{{template "bodyFooterTag"}}
 	{{template "htmlPageEndWithJS" $overview}}
 {{end}}
 
+/* holds definition to render an index page with before suite hook failure */
 {{define "indexPageFailure"}}
 	{{$overview := (toOverview . nil)}}
 	{{template "htmlPageStartTag" $overview}}
@@ -548,7 +543,7 @@
 		{{template "hookFailureDiv" .AfterSuiteHookFailure}}
 	{{end}}
  	</div>
-	{{template "mainEndTag"}}
+	</main>
 	{{template "bodyFooterTag"}}
 	{{template "htmlPageEndWithJS" $overview}}
 {{end}}
