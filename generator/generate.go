@@ -254,7 +254,8 @@ func readTemplates(themePath string) {
 		"encodeNewLine":       encodeNewLine,
 		"containsParseErrors": containsParseErrors,
 		"toSpecHeader":        toSpecHeader,
-		"toSideBar":           toSidebar,
+		"toSidebar":           toSidebar,
+		"toOverview":          toOverview,
 	}
 
 	f, err := ioutil.ReadFile(filepath.Join(themePath, "views", "partials.tmpl"))
@@ -287,13 +288,7 @@ func GenerateReports(res *gauge_messages.ProtoSuiteResult, reportDir, themePath 
 	}
 	defer f.Close()
 	if suiteRes.BeforeSuiteHookFailure != nil {
-		overview := toOverview(suiteRes, nil)
-		generateOverview(overview, f)
-		execTemplate("hookFailureDiv", f, suiteRes.BeforeSuiteHookFailure)
-		if suiteRes.AfterSuiteHookFailure != nil {
-			execTemplate("hookFailureDiv", f, suiteRes.AfterSuiteHookFailure)
-		}
-		generatePageFooter(overview, f)
+		execTemplate("indexPageFailure", f, suiteRes)
 	} else {
 		var wg sync.WaitGroup
 		wg.Add(1)
@@ -390,53 +385,15 @@ func generateSearchIndex(suiteRes *suiteResult, reportDir string) error {
 
 func generateIndexPage(suiteRes *suiteResult, w io.Writer, wg *sync.WaitGroup) {
 	defer wg.Done()
-	overview := toOverview(suiteRes, nil)
-	generateOverview(overview, w)
-	if suiteRes.AfterSuiteHookFailure != nil {
-		execTemplate("hookFailureDiv", w, suiteRes.AfterSuiteHookFailure)
-	}
-	execTemplate("specsStartDiv", w, nil)
-	execTemplate("sidebarDiv", w, toSidebar(suiteRes, nil))
-	if suiteRes.ExecutionStatus != fail {
-		execTemplate("congratsDiv", w, nil)
-	}
-	execTemplate("endDiv", w, nil)
-	generatePageFooter(overview, w)
+	execTemplate("indexPage", w, suiteRes)
 }
 
 func generateSpecPage(suiteRes *suiteResult, specRes *spec, w io.Writer, wg *sync.WaitGroup) {
 	defer wg.Done()
-	overview := toOverview(suiteRes, specRes)
-
-	generateOverview(overview, w)
-
-	if suiteRes.BeforeSuiteHookFailure != nil {
-		execTemplate("hookFailureDiv", w, suiteRes.BeforeSuiteHookFailure)
-	}
-
-	if suiteRes.AfterSuiteHookFailure != nil {
-		execTemplate("hookFailureDiv", w, suiteRes.AfterSuiteHookFailure)
-	}
-
-	if suiteRes.BeforeSuiteHookFailure == nil {
-		execTemplate("specsStartDiv", w, nil)
-		execTemplate("sidebarDiv", w, toSidebar(suiteRes, specRes))
-		execTemplate("spec", w, specRes)
-		execTemplate("endDiv", w, nil)
-	}
-	generatePageFooter(overview, w)
-}
-
-func generateOverview(overview *overview, w io.Writer) {
-	execTemplate("htmlPageStartTag", w, overview)
-	execTemplate("reportOverviewTag", w, overview)
-}
-
-func generatePageFooter(overview *overview, w io.Writer) {
-	execTemplate("endDiv", w, nil)
-	execTemplate("mainEndTag", w, nil)
-	execTemplate("bodyFooterTag", w, nil)
-	execTemplate("htmlPageEndWithJS", w, overview)
+	execTemplate("specPage", w, struct {
+		SuiteRes *suiteResult
+		SpecRes  *spec
+	}{suiteRes, specRes})
 }
 
 // CreateDirectory creates given directory if it doesn't exist

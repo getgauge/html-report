@@ -492,3 +492,63 @@
     </div>
   {{end}}
 {{end}}
+
+{{define "specPage"}}
+	{{$overview := (toOverview .SuiteRes .SpecRes)}}
+	{{template "htmlPageStartTag" $overview}}
+	{{template "reportOverviewTag" $overview}}
+
+	{{if .SuiteRes.BeforeSuiteHookFailure}}
+		{{template "hookFailureDiv" .SuiteRes.BeforeSuiteHookFailure}}
+	{{end}}
+
+	{{if .SuiteRes.AfterSuiteHookFailure}}
+		{{template "hookFailureDiv" .SuiteRes.AfterSuiteHookFailure}}
+	{{end}}
+
+	{{if not .SuiteRes.BeforeSuiteHookFailure }}
+		{{template "specsStartDiv"}}
+		{{template "sidebarDiv" (toSidebar .SuiteRes .SpecRes)}}
+		{{template "spec"  .SpecRes}}
+		</div>
+	{{end}}
+
+ 	</div>
+	{{template "mainEndTag"}}
+	{{template "bodyFooterTag"}}
+	{{template "htmlPageEndWithJS" $overview}}
+
+{{end}}
+
+{{define "indexPage"}}
+	{{$overview := (toOverview . nil)}}
+	{{template "htmlPageStartTag" $overview}}
+	{{template "reportOverviewTag" $overview}}
+	{{if .AfterSuiteHookFailure}}
+		{{template "hookFailureDiv" .AfterSuiteHookFailure}}
+	{{end}}
+  {{template "specsStartDiv"}}
+  {{template "sidebarDiv" (toSidebar . nil)}}
+	{{if ne .ExecutionStatus "fail" }}
+		{{template "congratsDiv"}}
+	{{end}}
+ 	</div>
+ 	</div>
+	{{template "mainEndTag"}}
+	{{template "bodyFooterTag"}}
+	{{template "htmlPageEndWithJS" $overview}}
+{{end}}
+
+{{define "indexPageFailure"}}
+	{{$overview := (toOverview . nil)}}
+	{{template "htmlPageStartTag" $overview}}
+	{{template "reportOverviewTag" $overview}}
+  {{template "hookFailureDiv" .BeforeSuiteHookFailure}}
+	{{if .AfterSuiteHookFailure}}
+		{{template "hookFailureDiv" .AfterSuiteHookFailure}}
+	{{end}}
+ 	</div>
+	{{template "mainEndTag"}}
+	{{template "bodyFooterTag"}}
+	{{template "htmlPageEndWithJS" $overview}}
+{{end}}
