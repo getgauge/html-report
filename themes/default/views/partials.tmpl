@@ -459,3 +459,36 @@
 	{{end}}
 	{{template "endDiv"}}
 {{end}}
+
+{{define "spec"}}
+  {{$specHeader := toSpecHeader .}}
+	{{template "specHeaderStartTag" $specHeader}}
+	{{template "tagsDiv" $specHeader}}
+	{{template "headerEndTag"}}
+	{{template "specsItemsContainerDiv"}}
+	{{if containsParseErrors .Errors}}
+		{{template "specErrorDiv" .}}
+		</div>
+	{{else}}
+    {{if .BeforeSpecHookFailure }}
+      {{template "hookFailureDiv" .BeforeSpecHookFailure}}
+    {{end}}
+
+    {{template "specsItemsContentsDiv"}}
+    {{template "specCommentsAndTableTag" .}}
+
+    {{if not .BeforeSpecHookFailure}}
+      {{range $index, $scn := .Scenarios}}
+        {{template "scenario" $scn}}
+      {{end}}
+    {{end}}
+
+    </div>
+    </div>
+
+    {{if .AfterSpecHookFailure}}
+      {{template "hookFailureDiv" .AfterSpecHookFailure}}
+    {{end}}
+    </div>
+  {{end}}
+{{end}}
