@@ -19,12 +19,15 @@ package main
 
 import (
 	"fmt"
+	"io/ioutil"
 	"log"
 	"os"
 	"path"
 	"path/filepath"
 	"strings"
 	"time"
+
+	"encoding/json"
 
 	"github.com/getgauge/common"
 	"github.com/getgauge/html-report/gauge_messages"
@@ -47,6 +50,7 @@ const (
 	timeFormat                  = "2006-01-02 15.04.05"
 	defaultTheme                = "default"
 	reportThemeProperty         = "GAUGE_HTML_REPORT_THEME"
+	resultFile                  = "last_run_result.json"
 )
 
 var projectRoot string
@@ -126,7 +130,9 @@ func createReport(suiteResult *gauge_messages.SuiteExecutionResult) {
 	}
 	reportsDir := getReportsDirectory(getNameGen())
 	generator.ProjectRoot = projectRoot
-	err = generator.GenerateReports(suiteResult.GetSuiteResult(), reportsDir, getThemePath())
+	res := generator.ToSuiteResult(suiteResult.GetSuiteResult())
+	go saveLastExecutionResult(res, reportsDir)
+	err = generator.GenerateReports(res, reportsDir, getThemePath())
 	if err != nil {
 		fmt.Printf("Failed to generate reports: %s\n", err.Error())
 		os.Exit(1)
@@ -166,31 +172,75 @@ func getReportsDirectory(nameGen nameGenerator) string {
 }
 
 func copyReportTemplateFiles(reportDir string) error {
-	reportTemplateDir := filepath.Join(getThemePath(), "assets")
-	r := filepath.Join(pluginDir, reportTemplateDir)
+	r := filepath.Join(getThemePath(), "assets")
 	_, err := common.MirrorDir(r, reportDir)
 	return err
 }
 
 func getThemePath() string {
 	if templateBasePath == "" {
-		ex, err := os.Executable()
-		if err != nil {
-			log.Fatalf(err.Error())
-		}
-		templateBasePath = path.Dir(ex)
+		dir, _ := getCurrentExecutableDir()
+		templateBasePath = filepath.Join(dir, "..", "themes")
 	}
+	return filepath.Join(templateBasePath, getApplicableReortTheme())
+}
+
+func getApplicableReortTheme() string {
 	theme := os.Getenv(reportThemeProperty)
 	if theme == "" {
 		theme = defaultTheme
 	}
-	return filepath.Join(templateBasePath, theme)
+	return theme
 }
 
+func getCurrentExecutableDir() (string, string) {
+	ex, err := os.Executable()
+	if err != nil {
+		log.Fatalf(err.Error())
+	}
+	return path.Dir(ex), filepath.Base(ex)
+
+}
 func shouldOverwriteReports() bool {
 	envValue := os.Getenv(overwriteReportsEnvProperty)
 	if strings.ToLower(envValue) == "true" {
 		return true
 	}
 	return false
+}
+
+func saveLastExecutionResult(r *generator.SuiteResult, reportsDir string) {
+	o, err := json.Marshal(r)
+	if err != nil {
+		log.Printf("[Warning] Error saving Last Execution Run: %s\n", err.Error())
+		return
+	}
+	outF := filepath.Join(reportsDir, resultFile)
+	err = ioutil.WriteFile(outF, o, common.NewFilePermissions)
+	if err != nil {
+		log.Printf("[Warning] Failed to write to %s. Reason: %s\n", outF, err.Error())
+		return
+	}
+	log.Printf("[Info] Result from current execution has been saved to %s", outF)
+	dir, bName := getCurrentExecutableDir()
+	exPath := filepath.Join(dir, bName)
+	exTarget := filepath.Join(reportsDir, bName)
+	if fileExists(exTarget) {
+		os.Remove(exTarget)
+	}
+	err = os.Symlink(exPath, exTarget)
+	instrFormat := "Run below command to regenerate the html-report\n  %s -i=%s [-o=%s] [-t=%s]\n  in working directory: %s"
+	if err != nil {
+		log.Printf("[Warning] Unable to create symlink %s\n", exTarget)
+		log.Printf(instrFormat, exPath, resultFile, reportsDir, getApplicableReortTheme(), reportsDir)
+	}
+	log.Printf(instrFormat, bName, resultFile, reportsDir, getApplicableReortTheme(), reportsDir)
+}
+
+func fileExists(path string) bool {
+	_, err := os.Stat(path)
+	if err == nil {
+		return true
+	}
+	return !os.IsNotExist(err)
 }

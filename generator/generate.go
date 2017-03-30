@@ -30,7 +30,6 @@ import (
 	"text/template"
 
 	"github.com/getgauge/common"
-	"github.com/getgauge/html-report/gauge_messages"
 	"github.com/microcosm-cc/bluemonday"
 	"github.com/russross/blackfriday"
 )
@@ -86,7 +85,8 @@ type buildError struct {
 	Message    string
 }
 
-type suiteResult struct {
+// SuiteResult holds the aggregated execution information for a run
+type SuiteResult struct {
 	ProjectName            string       `json:"projectName"`
 	Timestamp              string       `json:"timestamp"`
 	SuccessRate            int          `json:"successRate"`
@@ -279,35 +279,34 @@ func execTemplate(tmplName string, w io.Writer, data interface{}) {
 var ProjectRoot string
 
 // GenerateReports generates HTML report in the given report dir location
-func GenerateReports(res *gauge_messages.ProtoSuiteResult, reportDir, themePath string) error {
+func GenerateReports(res *SuiteResult, reportDir, themePath string) error {
 	readTemplates(themePath)
-	suiteRes := toSuiteResult(res)
 	f, err := os.Create(filepath.Join(reportDir, "index.html"))
 	if err != nil {
 		return err
 	}
 	defer f.Close()
-	if suiteRes.BeforeSuiteHookFailure != nil {
-		execTemplate("indexPageFailure", f, suiteRes)
+	if res.BeforeSuiteHookFailure != nil {
+		execTemplate("indexPageFailure", f, res)
 	} else {
 		var wg sync.WaitGroup
 		wg.Add(1)
-		go generateIndexPage(suiteRes, f, &wg)
-		specRes := suiteRes.SpecResults
-		for _, res := range specRes {
-			relPath, _ := filepath.Rel(ProjectRoot, res.FileName)
+		go generateIndexPage(res, f, &wg)
+		specRes := res.SpecResults
+		for _, r := range specRes {
+			relPath, _ := filepath.Rel(ProjectRoot, r.FileName)
 			CreateDirectory(filepath.Join(reportDir, filepath.Dir(relPath)))
-			sf, err := os.Create(filepath.Join(reportDir, toHTMLFileName(res.FileName, ProjectRoot)))
+			sf, err := os.Create(filepath.Join(reportDir, toHTMLFileName(r.FileName, ProjectRoot)))
 			if err != nil {
 				return err
 			}
 			defer sf.Close()
 			wg.Add(1)
-			go generateSpecPage(suiteRes, res, sf, &wg)
+			go generateSpecPage(res, r, sf, &wg)
 		}
 		wg.Wait()
 	}
-	err = generateSearchIndex(suiteRes, reportDir)
+	err = generateSearchIndex(res, reportDir)
 	if err != nil {
 		return err
 	}
@@ -348,7 +347,7 @@ func containsParseErrors(errors []error) bool {
 	return false
 }
 
-func generateSearchIndex(suiteRes *suiteResult, reportDir string) error {
+func generateSearchIndex(suiteRes *SuiteResult, reportDir string) error {
 	CreateDirectory(filepath.Join(reportDir, "js"))
 	f, err := os.Create(filepath.Join(reportDir, "js", "search_index.js"))
 	if err != nil {
@@ -383,15 +382,15 @@ func generateSearchIndex(suiteRes *suiteResult, reportDir string) error {
 	return nil
 }
 
-func generateIndexPage(suiteRes *suiteResult, w io.Writer, wg *sync.WaitGroup) {
+func generateIndexPage(suiteRes *SuiteResult, w io.Writer, wg *sync.WaitGroup) {
 	defer wg.Done()
 	execTemplate("indexPage", w, suiteRes)
 }
 
-func generateSpecPage(suiteRes *suiteResult, specRes *spec, w io.Writer, wg *sync.WaitGroup) {
+func generateSpecPage(suiteRes *SuiteResult, specRes *spec, w io.Writer, wg *sync.WaitGroup) {
 	defer wg.Done()
 	execTemplate("specPage", w, struct {
-		SuiteRes *suiteResult
+		SuiteRes *SuiteResult
 		SpecRes  *spec
 	}{suiteRes, specRes})
 }

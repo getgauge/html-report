@@ -32,8 +32,9 @@ const (
 	dothtml        = ".html"
 )
 
-func toSuiteResult(psr *gm.ProtoSuiteResult) *suiteResult {
-	suiteResult := suiteResult{
+// ToSuiteResult Converts the ProtoSuiteResult to SuiteResult type.
+func ToSuiteResult(psr *gm.ProtoSuiteResult) *SuiteResult {
+	suiteResult := SuiteResult{
 		ProjectName:            psr.GetProjectName(),
 		Environment:            psr.GetEnvironment(),
 		Tags:                   psr.GetTags(),
@@ -57,7 +58,7 @@ func toSuiteResult(psr *gm.ProtoSuiteResult) *suiteResult {
 	return &suiteResult
 }
 
-func toOverview(res *suiteResult, specRes *spec) *overview {
+func toOverview(res *SuiteResult, specRes *spec) *overview {
 	totalSpecs := 0
 	if res.SpecResults != nil {
 		totalSpecs = len(res.SpecResults)
@@ -102,7 +103,7 @@ func toHTMLFileName(specName, projectRoot string) string {
 	return strings.TrimSuffix(specPath, ext) + dothtml
 }
 
-func toSidebar(res *suiteResult, currSpec *spec) *sidebar {
+func toSidebar(res *SuiteResult, currSpec *spec) *sidebar {
 	var basePath string
 	if currSpec != nil {
 		basePath = filepath.Dir(currSpec.FileName)
