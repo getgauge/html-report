@@ -300,7 +300,7 @@ var specResWithSpecHookFailure = &gm.ProtoSpecResult{
 	},
 }
 
-var suiteRes1 = &suiteResult{
+var suiteRes1 = &SuiteResult{
 	ProjectName:       "projName",
 	Environment:       "ci-java",
 	Tags:              "!unimplemented",
@@ -364,7 +364,7 @@ var skippedProtoSce = &gm.ProtoScenario{
 	},
 }
 
-var suiteRes2 = &suiteResult{
+var suiteRes2 = &SuiteResult{
 	SpecResults: []*spec{spec1, spec2, spec3},
 }
 
@@ -636,9 +636,12 @@ func TestToSpecForTableDrivenSpec(t *testing.T) {
 				Heading:       "Scenario 1",
 				ExecutionTime: "00:00:00",
 				Items: []item{
-					&step{
-						Fragments: []*fragment{{FragmentKind: textFragmentKind, Text: "Step1"}},
-						Result:    &result{Status: fail, ExecutionTime: "00:03:31"},
+					item{
+						Kind: stepKind,
+						Step: &step{
+							Fragments: []*fragment{{FragmentKind: textFragmentKind, Text: "Step1"}},
+							Result:    &result{Status: fail, ExecutionTime: "00:03:31"},
+						},
 					},
 				},
 				Contexts:                  make([]item, 0),
@@ -652,9 +655,12 @@ func TestToSpecForTableDrivenSpec(t *testing.T) {
 				Heading:       "Scenario 1",
 				ExecutionTime: "00:00:00",
 				Items: []item{
-					&step{
-						Fragments: []*fragment{{FragmentKind: textFragmentKind, Text: "Step1"}},
-						Result:    &result{Status: pass, ExecutionTime: "00:03:31"},
+					item{
+						Kind: stepKind,
+						Step: &step{
+							Fragments: []*fragment{{FragmentKind: textFragmentKind, Text: "Step1"}},
+							Result:    &result{Status: pass, ExecutionTime: "00:03:31"},
+						},
 					},
 				},
 				Contexts:                  make([]item, 0),
@@ -959,37 +965,67 @@ func TestToScenario(t *testing.T) {
 		ExecutionStatus: pass,
 		Tags:            []string{"foo", "bar"},
 		Contexts: []item{
-			&step{
-				Fragments: []*fragment{{FragmentKind: textFragmentKind, Text: "Context Step1"}},
-				Result:    &result{Status: pass, ExecutionTime: "00:03:31"},
+			item{
+				Kind: stepKind,
+				Step: &step{
+					Fragments: []*fragment{{FragmentKind: textFragmentKind, Text: "Context Step1"}},
+					Result:    &result{Status: pass, ExecutionTime: "00:03:31"},
+				},
 			},
-			&step{
-				Fragments: []*fragment{{FragmentKind: textFragmentKind, Text: "Context Step2"}},
-				Result:    &result{Status: fail, ExecutionTime: "00:03:31"},
+			item{
+				Kind: stepKind,
+				Step: &step{
+					Fragments: []*fragment{{FragmentKind: textFragmentKind, Text: "Context Step2"}},
+					Result:    &result{Status: fail, ExecutionTime: "00:03:31"},
+				},
 			},
 		},
 		Items: []item{
-			&comment{Text: "Comment0"},
-			&step{
-				Fragments: []*fragment{{FragmentKind: textFragmentKind, Text: "Step1"}},
-				Result:    &result{Status: fail, ExecutionTime: "00:03:31"},
+			item{
+				Kind:    commentKind,
+				Comment: &comment{Text: "Comment0"},
 			},
-			&comment{Text: "Comment1"},
-			&comment{Text: "Comment2"},
-			&step{
-				Fragments: []*fragment{{FragmentKind: textFragmentKind, Text: "Step2"}},
-				Result:    &result{Status: pass, ExecutionTime: "00:03:31"},
+			item{
+				Kind: stepKind,
+				Step: &step{
+					Fragments: []*fragment{{FragmentKind: textFragmentKind, Text: "Step1"}},
+					Result:    &result{Status: fail, ExecutionTime: "00:03:31"},
+				},
 			},
-			&comment{Text: "Comment3"},
+			item{
+				Kind:    commentKind,
+				Comment: &comment{Text: "Comment1"},
+			},
+			item{
+				Kind:    commentKind,
+				Comment: &comment{Text: "Comment2"},
+			},
+			item{
+				Kind: stepKind,
+				Step: &step{
+					Fragments: []*fragment{{FragmentKind: textFragmentKind, Text: "Step2"}},
+					Result:    &result{Status: pass, ExecutionTime: "00:03:31"},
+				},
+			},
+			item{
+				Kind:    commentKind,
+				Comment: &comment{Text: "Comment3"},
+			},
 		},
 		Teardowns: []item{
-			&step{
-				Fragments: []*fragment{{FragmentKind: textFragmentKind, Text: "Teardown Step1"}},
-				Result:    &result{Status: pass, ExecutionTime: "00:03:31"},
+			item{
+				Kind: stepKind,
+				Step: &step{
+					Fragments: []*fragment{{FragmentKind: textFragmentKind, Text: "Teardown Step1"}},
+					Result:    &result{Status: pass, ExecutionTime: "00:03:31"},
+				},
 			},
-			&step{
-				Fragments: []*fragment{{FragmentKind: textFragmentKind, Text: "Teardown Step2"}},
-				Result:    &result{Status: fail, ExecutionTime: "00:03:31"},
+			item{
+				Kind: stepKind,
+				Step: &step{
+					Fragments: []*fragment{{FragmentKind: textFragmentKind, Text: "Teardown Step2"}},
+					Result:    &result{Status: fail, ExecutionTime: "00:03:31"},
+				},
 			},
 		},
 		TableRowIndex: -1,
@@ -1009,9 +1045,12 @@ func TestToScenarioWithHookFailures(t *testing.T) {
 		ExecutionStatus: fail,
 		Contexts:        []item{},
 		Items: []item{
-			&step{
-				Fragments: []*fragment{{FragmentKind: textFragmentKind, Text: "Step1"}},
-				Result:    &result{Status: fail, ExecutionTime: "00:03:31"},
+			item{
+				Kind: stepKind,
+				Step: &step{
+					Fragments: []*fragment{{FragmentKind: textFragmentKind, Text: "Step1"}},
+					Result:    &result{Status: fail, ExecutionTime: "00:03:31"},
+				},
 			},
 		},
 		Teardowns:                 []item{},
@@ -1041,35 +1080,44 @@ func TestToConcept(t *testing.T) {
 			Result: &result{Status: pass, ExecutionTime: "00:03:31"},
 		},
 		Items: []item{
-			&concept{
-				ConceptStep: &step{
-					Fragments: []*fragment{
-						{FragmentKind: textFragmentKind, Text: "Tell "},
-						{FragmentKind: dynamicFragmentKind, Text: "hello"},
+			item{
+				Kind: conceptKind,
+				Concept: &concept{
+					ConceptStep: &step{
+						Fragments: []*fragment{
+							{FragmentKind: textFragmentKind, Text: "Tell "},
+							{FragmentKind: dynamicFragmentKind, Text: "hello"},
+						},
+						Result: &result{Status: pass, ExecutionTime: "00:03:31"},
 					},
-					Result: &result{Status: pass, ExecutionTime: "00:03:31"},
-				},
-				Items: []item{
-					&step{
-						Fragments: []*fragment{{FragmentKind: textFragmentKind, Text: "Say Hi"}},
-						Result:    &result{Status: pass, ExecutionTime: "00:03:31"},
-					},
-				},
-			},
-			&step{
-				Fragments: []*fragment{
-					{FragmentKind: textFragmentKind, Text: "Say "},
-					{FragmentKind: staticFragmentKind, Text: "hi"},
-					{FragmentKind: textFragmentKind, Text: " to "},
-					{FragmentKind: dynamicFragmentKind, Text: "gauge"},
-					{FragmentKind: tableFragmentKind,
-						Table: &table{
-							Headers: []string{"Word", "Count"},
-							Rows:    []*row{{Cells: []string{"Gauge", "3"}, Result: pass}, {Cells: []string{"Mingle", "2"}, Result: pass}},
+					Items: []item{
+						item{
+							Kind: stepKind,
+							Step: &step{
+								Fragments: []*fragment{{FragmentKind: textFragmentKind, Text: "Say Hi"}},
+								Result:    &result{Status: pass, ExecutionTime: "00:03:31"},
+							},
 						},
 					},
 				},
-				Result: &result{Status: pass, ExecutionTime: "00:03:31"},
+			},
+			item{
+				Kind: stepKind,
+				Step: &step{
+					Fragments: []*fragment{
+						{FragmentKind: textFragmentKind, Text: "Say "},
+						{FragmentKind: staticFragmentKind, Text: "hi"},
+						{FragmentKind: textFragmentKind, Text: " to "},
+						{FragmentKind: dynamicFragmentKind, Text: "gauge"},
+						{FragmentKind: tableFragmentKind,
+							Table: &table{
+								Headers: []string{"Word", "Count"},
+								Rows:    []*row{{Cells: []string{"Gauge", "3"}, Result: pass}, {Cells: []string{"Mingle", "2"}, Result: pass}},
+							},
+						},
+					},
+					Result: &result{Status: pass, ExecutionTime: "00:03:31"},
+				},
 			},
 		},
 	}
@@ -1303,7 +1351,7 @@ func TestTableDrivenStatusCompute(t *testing.T) {
 
 func TestMapProjectNametoSuiteResult(t *testing.T) {
 	psr := &gm.ProtoSuiteResult{ProjectName: "foo"}
-	res := toSuiteResult(psr)
+	res := ToSuiteResult(psr)
 
 	if res.ProjectName != "foo" {
 		t.Errorf("Expected ProjectName=foo, got %s", res.ProjectName)
@@ -1312,7 +1360,7 @@ func TestMapProjectNametoSuiteResult(t *testing.T) {
 
 func TestMapEnvironmenttoSuiteResult(t *testing.T) {
 	psr := &gm.ProtoSuiteResult{Environment: "foo"}
-	res := toSuiteResult(psr)
+	res := ToSuiteResult(psr)
 
 	if res.Environment != "foo" {
 		t.Errorf("Expected Environment=foo, got %s", res.Environment)
@@ -1321,7 +1369,7 @@ func TestMapEnvironmenttoSuiteResult(t *testing.T) {
 
 func TestMapTagstoSuiteResult(t *testing.T) {
 	psr := &gm.ProtoSuiteResult{Tags: "foo, bar"}
-	res := toSuiteResult(psr)
+	res := ToSuiteResult(psr)
 
 	if res.Tags != "foo, bar" {
 		t.Errorf("Expected Tags=foo, bar; got %s", res.Tags)
@@ -1330,7 +1378,7 @@ func TestMapTagstoSuiteResult(t *testing.T) {
 
 func TestMapExecutionTimeToSuiteResult(t *testing.T) {
 	psr := &gm.ProtoSuiteResult{ExecutionTime: 113163}
-	res := toSuiteResult(psr)
+	res := ToSuiteResult(psr)
 
 	if res.ExecutionTime != 113163 {
 		t.Errorf("Expected ExecutionTime=113163; got %s", res.ExecutionTime)
@@ -1346,7 +1394,7 @@ func TestSpecsCountToSuiteResult(t *testing.T) {
 		&gm.ProtoSpecResult{Skipped: false, Failed: false},
 		&gm.ProtoSpecResult{Skipped: false, Failed: false},
 	}}
-	res := toSuiteResult(psr)
+	res := ToSuiteResult(psr)
 
 	if res.PassedSpecsCount != 3 {
 		t.Errorf("Expected PassedSpecsCount=3; got %s\n", res.PassedSpecsCount)
@@ -1361,7 +1409,7 @@ func TestSpecsCountToSuiteResult(t *testing.T) {
 
 func TestMapPreHookFailureToSuiteResult(t *testing.T) {
 	psr := &gm.ProtoSuiteResult{PreHookFailure: &gm.ProtoHookFailure{ErrorMessage: "foo failure"}}
-	res := toSuiteResult(psr)
+	res := ToSuiteResult(psr)
 
 	if res.BeforeSuiteHookFailure == nil {
 		t.Errorf("Expected BeforeSuiteHookFailure not nil\n")
@@ -1374,7 +1422,7 @@ func TestMapPreHookFailureToSuiteResult(t *testing.T) {
 
 func TestMapPostHookFailureToSuiteResult(t *testing.T) {
 	psr := &gm.ProtoSuiteResult{PostHookFailure: &gm.ProtoHookFailure{ErrorMessage: "foo failure"}}
-	res := toSuiteResult(psr)
+	res := ToSuiteResult(psr)
 
 	if res.AfterSuiteHookFailure == nil {
 		t.Errorf("Expected AfterSuiteHookFailure not nil\n")
@@ -1388,7 +1436,7 @@ func TestMapPostHookFailureToSuiteResult(t *testing.T) {
 func TestMapTimestampToSuiteResult(t *testing.T) {
 	timestamp := "Jun 3, 2016 at 12:29pm"
 	psr := &gm.ProtoSuiteResult{Timestamp: timestamp}
-	res := toSuiteResult(psr)
+	res := ToSuiteResult(psr)
 
 	if res.Timestamp != timestamp {
 		t.Errorf("Expected Timestamp=%s; got %s\n", timestamp, res.Timestamp)
@@ -1397,7 +1445,7 @@ func TestMapTimestampToSuiteResult(t *testing.T) {
 
 func TestMapExecutionStatusPassByDefaultToSuiteResult(t *testing.T) {
 	psr := &gm.ProtoSuiteResult{}
-	res := toSuiteResult(psr)
+	res := ToSuiteResult(psr)
 
 	if res.ExecutionStatus != pass {
 		t.Errorf("Expected ExecutionStatus=pass, got %s\n", res.ExecutionStatus)
@@ -1406,7 +1454,7 @@ func TestMapExecutionStatusPassByDefaultToSuiteResult(t *testing.T) {
 
 func TestMapExecutionStatusOnFailureToSuiteResult(t *testing.T) {
 	psr := &gm.ProtoSuiteResult{Failed: true}
-	res := toSuiteResult(psr)
+	res := ToSuiteResult(psr)
 
 	if res.ExecutionStatus != fail {
 		t.Errorf("Expected ExecutionStatus=fail, got %s\n", res.ExecutionStatus)
@@ -1422,7 +1470,7 @@ func TestMapSpecResultsToSuiteResult(t *testing.T) {
 		},
 	}
 
-	res := toSuiteResult(psr)
+	res := ToSuiteResult(psr)
 
 	if len(res.SpecResults) != 3 {
 		t.Errorf("Expected 3 spec results, got %d\n", len(res.SpecResults))

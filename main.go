@@ -17,9 +17,27 @@
 
 package main
 
-import "os"
+import (
+	"os"
+
+	flag "github.com/getgauge/mflag"
+)
+
+var inputFile = flag.String([]string{"-input", "i"}, "", "Source json file to generate report from")
+var outDir = flag.String([]string{"-out", "o"}, "", "Output location for generating report. Will create directory if it doesn't exist.")
+var theme = flag.String([]string{"-theme", "t"}, "default", "Theme to use for generating html report. 'default' theme will be used if not specified.")
 
 func main() {
+	flag.Parse()
+	if *inputFile != "" {
+		if *outDir == "" {
+			flag.PrintDefaults()
+			os.Exit(1)
+		}
+		regenerateReport(*inputFile, *outDir, *theme)
+		return
+	}
+
 	findPluginAndProjectRoot()
 	action := os.Getenv(pluginActionEnv)
 	if action == setupAction {

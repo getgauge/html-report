@@ -25,6 +25,10 @@ import (
 	"strings"
 	"testing"
 	"time"
+
+	"io/ioutil"
+
+	"github.com/getgauge/html-report/generator"
 )
 
 var now = time.Now()
@@ -90,22 +94,16 @@ func randomName() string {
 }
 
 func verifyReportTemplateFilesAreCopied(dest string, t *testing.T) {
-	filepath.Walk(reportTemplateDir, func(path string, info os.FileInfo, err error) error {
-		path = strings.Replace(path, reportTemplateDir, "", 1)
+	nameGen := &testNameGenerator{}
+	reportDir := getReportsDirectory(nameGen)
+	filepath.Walk(reportDir, func(path string, info os.FileInfo, err error) error {
+		path = strings.Replace(path, reportDir, "", 1)
 		destFilePath := filepath.Join(dest, path)
 		if !fileExists(destFilePath) {
 			t.Errorf("File %s not copied.", destFilePath)
 		}
 		return nil
 	})
-}
-
-func fileExists(path string) bool {
-	_, err := os.Stat(path)
-	if err == nil {
-		return true
-	}
-	return !os.IsNotExist(err)
 }
 
 func TestCreatingReportShouldOverwriteReportsBasedOnEnv(t *testing.T) {
@@ -121,5 +119,27 @@ func TestCreatingReportShouldOverwriteReportsBasedOnEnv(t *testing.T) {
 	case timeStampedNameGenerator:
 	default:
 		t.Errorf("Expected nameGen to be type timeStampedNameGenerator, got %s", reflect.TypeOf(nameGen))
+	}
+}
+
+func TestSaveLastExecutionResult(t *testing.T) {
+	reportsDir := filepath.Join(os.TempDir(), randomName())
+	os.MkdirAll(reportsDir, 0755)
+	defer os.RemoveAll(reportsDir)
+	res := &generator.SuiteResult{ProjectName: "foo"}
+
+	saveLastExecutionResult(res, reportsDir)
+
+	outF := filepath.Join(reportsDir, resultFile)
+
+	o, err := ioutil.ReadFile(outF)
+	if err != nil {
+		t.Errorf("Error reading %s: %s", outF, err.Error())
+
+	}
+	got := string(o)
+	want := "\"projectName\":\"foo\""
+	if !strings.Contains(got, want) {
+		t.Errorf("Want %s to be in %s", want, got)
 	}
 }

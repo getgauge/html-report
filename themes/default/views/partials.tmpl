@@ -412,11 +412,11 @@
 /* generic container, switch based on kind */
 {{define "item"}}
   {{if eq .Kind "step"}}
-    {{template "step" .}}
+    {{template "step" .Step}}
   {{else if eq .Kind "comment"}}
-    <span>{{.Text | parseMarkdown | sanitize}}</span>
+    <span>{{.Comment.Text | parseMarkdown | sanitize}}</span>
   {{else if eq .Kind "concept"}}
-    {{template "concept" .}}
+    {{template "concept" .Concept}}
   {{end}}
 {{end}}
 

@@ -199,8 +199,23 @@ func (e buildError) isParseError() bool {
 	return e.ErrorType == parseErrorType
 }
 
-type item interface {
-	Kind() tokenKind
+type item struct {
+	Kind    tokenKind
+	Step    *step
+	Concept *concept
+	Comment *comment
+}
+
+func (i *item) getStep() *step {
+	return i.Step
+}
+
+func (i *item) getComment() *comment {
+	return i.Comment
+}
+
+func (i *item) getConcept() *concept {
+	return i.Concept
 }
 
 type comment struct {

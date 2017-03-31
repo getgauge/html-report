@@ -414,11 +414,11 @@ func getItems(protoItems []*gm.ProtoItem) []item {
 	for _, i := range protoItems {
 		switch i.GetItemType() {
 		case gm.ProtoItem_Step:
-			items = append(items, toStep(i.GetStep()))
+			items = append(items, item{Kind: stepKind, Step: toStep(i.GetStep())})
 		case gm.ProtoItem_Comment:
-			items = append(items, toComment(i.GetComment()))
+			items = append(items, item{Kind: commentKind, Comment: toComment(i.GetComment())})
 		case gm.ProtoItem_Concept:
-			items = append(items, toConcept(i.GetConcept()))
+			items = append(items, item{Kind: conceptKind, Concept: toConcept(i.GetConcept())})
 		}
 	}
 	return items

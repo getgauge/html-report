@@ -628,8 +628,8 @@ func newProtoHookFailure() *gm.ProtoHookFailure {
 	}
 }
 
-func newSuiteResult(failed bool, failCount, skipCount int32, succRate float32, preHook, postHook *gm.ProtoHookFailure, specRes ...*gm.ProtoSpecResult) *suiteResult {
-	return toSuiteResult(newProtoSuiteRes(failed, failCount, skipCount, succRate, preHook, postHook, specRes...))
+func newSuiteResult(failed bool, failCount, skipCount int32, succRate float32, preHook, postHook *gm.ProtoHookFailure, specRes ...*gm.ProtoSpecResult) *SuiteResult {
+	return ToSuiteResult(newProtoSuiteRes(failed, failCount, skipCount, succRate, preHook, postHook, specRes...))
 }
 
 func newProtoSuiteRes(failed bool, failCount, skipCount int32, succRate float32, preHook, postHook *gm.ProtoHookFailure, specRes ...*gm.ProtoSpecResult) *gm.ProtoSuiteResult {
@@ -651,7 +651,7 @@ func newProtoSuiteRes(failed bool, failCount, skipCount int32, succRate float32,
 
 type HTMLGenerationTest struct {
 	name         string
-	res          *suiteResult
+	res          *SuiteResult
 	expectedFile string
 }
 
