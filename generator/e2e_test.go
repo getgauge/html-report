@@ -32,7 +32,8 @@ func TestEndToEndHTMLGenerationWhenBeforeSuiteFails(t *testing.T) {
 	reportDir := filepath.Join("_testdata", "e2e")
 	ProjectRoot = ""
 
-	err := GenerateReports(suiteResWithBeforeSuiteFailure, reportDir, templateBasePath)
+	r := ToSuiteResult(suiteResWithBeforeSuiteFailure)
+	err := GenerateReports(r, reportDir, templateBasePath)
 
 	if err != nil {
 		t.Errorf("Expected error to be nil. Got: %s", err.Error())
@@ -56,7 +57,8 @@ func TestEndToEndHTMLGeneration(t *testing.T) {
 	reportDir := filepath.Join("_testdata", "e2e")
 	ProjectRoot = ""
 
-	err := GenerateReports(suiteRes3, reportDir, templateBasePath)
+	r := ToSuiteResult(suiteRes3)
+	err := GenerateReports(r, reportDir, templateBasePath)
 
 	if err != nil {
 		t.Errorf("Expected error to be nil. Got: %s", err.Error())
