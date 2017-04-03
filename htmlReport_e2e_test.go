@@ -33,7 +33,7 @@ func TestEndToEndHTMLGenerationFromSavedResult(t *testing.T) {
 	reportDir := filepath.Join("generator", "_testdata", "e2e")
 	inputFile := filepath.Join("generator", "_testdata", "last_run_result.json")
 
-	regenerateReport(inputFile, reportDir, "default")
+	regenerateReport(inputFile, reportDir, "")
 	for _, expectedFile := range expectedFiles {
 		gotContent, err := ioutil.ReadFile(filepath.Join(reportDir, expectedFile))
 		if err != nil {

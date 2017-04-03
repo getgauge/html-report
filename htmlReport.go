@@ -48,7 +48,7 @@ const (
 	pluginActionEnv             = "html-report_action"
 	timeFormat                  = "2006-01-02 15.04.05"
 	defaultTheme                = "default"
-	reportThemeProperty         = "GAUGE_HTML_REPORT_THEME"
+	reportThemeProperty         = "GAUGE_HTML_REPORT_THEME_PATH"
 	resultFile                  = "last_run_result.json"
 )
 
@@ -130,7 +130,7 @@ func createReport(suiteResult *gauge_messages.SuiteExecutionResult) {
 	generator.ProjectRoot = projectRoot
 	res := generator.ToSuiteResult(suiteResult.GetSuiteResult())
 	go saveLastExecutionResult(res, reportsDir)
-	generateReport(res, reportsDir, getThemePath(""))
+	generateReport(res, reportsDir, getThemePath())
 }
 
 func regenerateReport(inputFile, reportsDir, theme string) {
@@ -143,7 +143,10 @@ func regenerateReport(inputFile, reportsDir, theme string) {
 		log.Fatal(err.Error())
 	}
 	generator.CreateDirectory(reportsDir)
-	generateReport(res, reportsDir, getThemePath(theme))
+	if theme == "" {
+		theme = getDefaultThemePath()
+	}
+	generateReport(res, reportsDir, theme)
 }
 
 func generateReport(res *generator.SuiteResult, reportsDir, themePath string) {
@@ -185,28 +188,25 @@ func getReportsDirectory(nameGen nameGenerator) string {
 }
 
 func copyReportTemplateFiles(reportDir string) error {
-	r := filepath.Join(getThemePath(""), "assets")
+	r := filepath.Join(getDefaultThemePath(), "assets")
 	_, err := common.MirrorDir(r, reportDir)
 	return err
 }
 
-func getThemePath(theme string) string {
+func getDefaultThemePath() string {
 	if templateBasePath == "" {
 		dir, _ := getCurrentExecutableDir()
 		templateBasePath = filepath.Join(dir, "..", "themes")
 	}
-	if theme == "" {
-		theme = getApplicableReportTheme()
-	}
-	return filepath.Join(templateBasePath, theme)
+	return filepath.Join(templateBasePath, "default")
 }
 
-func getApplicableReportTheme() string {
-	theme := os.Getenv(reportThemeProperty)
-	if theme == "" {
-		theme = defaultTheme
+func getThemePath() string {
+	t := os.Getenv(reportThemeProperty)
+	if t == "" {
+		t = getDefaultThemePath()
 	}
-	return theme
+	return t
 }
 
 func getCurrentExecutableDir() (string, string) {
@@ -249,12 +249,18 @@ func saveLastExecutionResult(r *generator.SuiteResult, reportsDir string) {
 		os.Remove(exTarget)
 	}
 	err = os.Symlink(exPath, exTarget)
-	instrFormat := "Run below command to regenerate the html-report\n\n  ./%s --input=%s --output=<OUT_DIR> [--theme=%s]\n  in working directory: %s\n\n"
+	instrFormat := "Run below command to regenerate the html-report\n\n  ./%s --input=%s --output=<OUT_DIR>\n  in working directory: %s\n\n"
+	t := os.Getenv(reportThemeProperty)
+	if t != "" {
+		instrFormat = "Run below command to regenerate the html-report\n\n  ./%s --input=%s --output=<OUT_DIR> --theme=" + t +
+			"\n  in working directory: %s\n\n"
+	}
+
 	if err != nil {
 		log.Printf("[Warning] Unable to create symlink %s\n", exTarget)
-		fmt.Printf(instrFormat, exPath, resultFile, getApplicableReportTheme(), reportsDir)
+		fmt.Printf(instrFormat, exPath, resultFile, reportsDir)
 	}
-	fmt.Printf(instrFormat, bName, resultFile, getApplicableReportTheme(), reportsDir)
+	fmt.Printf(instrFormat, bName, resultFile, reportsDir)
 }
 
 func fileExists(path string) bool {
