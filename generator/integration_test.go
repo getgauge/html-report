@@ -19,15 +19,13 @@ package generator
 
 import (
 	"bytes"
-	"fmt"
-	"html"
 	"io/ioutil"
 	"path/filepath"
 	"sync"
 	"testing"
 
-	htmldiff "github.com/documize/html-diff"
 	gm "github.com/getgauge/html-report/gauge_messages"
+	helper "github.com/getgauge/html-report/test_helper"
 )
 
 var scenario1 = &gm.ProtoScenario{
@@ -688,9 +686,9 @@ func TestHTMLGeneration(t *testing.T) {
 		generateSpecPage(test.res, test.res.SpecResults[0], buf, &wg)
 		wg.Wait()
 
-		want := removeNewline(string(content))
-		got := removeNewline(buf.String())
-		assertEqual(want, got, test.name, t)
+		want := helper.RemoveNewline(string(content))
+		got := helper.RemoveNewline(buf.String())
+		helper.AssertEqual(want, got, test.name, t)
 	}
 }
 
@@ -707,33 +705,8 @@ func TestIndexPageGeneration(t *testing.T) {
 	generateIndexPage(suiteResWithAllPass, buf, &wg)
 	wg.Wait()
 
-	want := removeNewline(string(content))
-	got := removeNewline(buf.String())
+	want := helper.RemoveNewline(string(content))
+	got := helper.RemoveNewline(buf.String())
 
-	assertEqual(want, got, "index", t)
-}
-
-func assertEqual(expected, actual, testName string, t *testing.T) {
-	if expected != actual {
-		diffHTML := compare(expected, actual)
-		tmpFile, err := ioutil.TempFile("", "")
-		if err != nil {
-			t.Errorf("Unable to dump to tmp file. Raw content:\n%s\n", diffHTML)
-		}
-		fileName := fmt.Sprintf("%s.html", tmpFile.Name())
-		ioutil.WriteFile(fileName, []byte(diffHTML), 0644)
-		tmpFile.Close()
-		t.Errorf("%s -  View Diff Output : %s\n", testName, fileName)
-	}
-}
-func compare(a, b string) string {
-	var cfg = &htmldiff.Config{
-		InsertedSpan: []htmldiff.Attribute{{Key: "style", Val: "background-color: palegreen;"}},
-		DeletedSpan:  []htmldiff.Attribute{{Key: "style", Val: "background-color: lightpink;"}},
-		ReplacedSpan: []htmldiff.Attribute{{Key: "style", Val: "background-color: lightskyblue;"}},
-		CleanTags:    []string{""},
-	}
-
-	res, _ := cfg.HTMLdiff([]string{html.EscapeString(a), html.EscapeString(b)})
-	return res[0]
+	helper.AssertEqual(want, got, "index", t)
 }

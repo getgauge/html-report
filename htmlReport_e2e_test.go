@@ -17,15 +17,13 @@
 package main
 
 import (
-	"fmt"
-	"html"
 	"io/ioutil"
 	"os"
 	"path/filepath"
 	"regexp"
 	"testing"
 
-	htmldiff "github.com/documize/html-diff"
+	helper "github.com/getgauge/html-report/test_helper"
 )
 
 var re = regexp.MustCompile("[\\s]*[\n\t][\\s]*")
@@ -45,10 +43,10 @@ func TestEndToEndHTMLGenerationFromSavedResult(t *testing.T) {
 		if err != nil {
 			t.Errorf("Error reading expected HTML file: %s", err.Error())
 		}
-		got := removeNewline(string(gotContent))
-		want := removeNewline(string(wantContent))
+		got := helper.RemoveNewline(string(gotContent))
+		want := helper.RemoveNewline(string(wantContent))
 		os.Remove(filepath.Join(reportDir, expectedFile))
-		assertEqual(want, got, expectedFile, t)
+		helper.AssertEqual(want, got, expectedFile, t)
 	}
 	cleanUp(t)
 }
@@ -65,33 +63,4 @@ func cleanUp(t *testing.T) {
 	for _, f := range s {
 		os.Remove(f)
 	}
-}
-
-func assertEqual(expected, actual, testName string, t *testing.T) {
-	if expected != actual {
-		diffHTML := compare(expected, actual)
-		tmpFile, err := ioutil.TempFile("", "")
-		if err != nil {
-			t.Errorf("Unable to dump to tmp file. Raw content:\n%s\n", diffHTML)
-		}
-		fileName := fmt.Sprintf("%s.html", tmpFile.Name())
-		ioutil.WriteFile(fileName, []byte(diffHTML), 0644)
-		tmpFile.Close()
-		t.Errorf("%s -  View Diff Output : %s\n", testName, fileName)
-	}
-}
-func compare(a, b string) string {
-	var cfg = &htmldiff.Config{
-		InsertedSpan: []htmldiff.Attribute{{Key: "style", Val: "background-color: palegreen;"}},
-		DeletedSpan:  []htmldiff.Attribute{{Key: "style", Val: "background-color: lightpink;"}},
-		ReplacedSpan: []htmldiff.Attribute{{Key: "style", Val: "background-color: lightskyblue;"}},
-		CleanTags:    []string{""},
-	}
-
-	res, _ := cfg.HTMLdiff([]string{html.EscapeString(a), html.EscapeString(b)})
-	return res[0]
-}
-
-func removeNewline(s string) string {
-	return re.ReplaceAllLiteralString(s, "")
 }

@@ -22,6 +22,8 @@ import (
 	"os"
 	"path/filepath"
 	"testing"
+
+	helper "github.com/getgauge/html-report/test_helper"
 )
 
 var suiteRes3 = newProtoSuiteRes(true, 1, 1, 60, nil, nil, passSpecRes1, failSpecResWithStepFailure, skippedSpecRes)
@@ -46,10 +48,10 @@ func TestEndToEndHTMLGenerationWhenBeforeSuiteFails(t *testing.T) {
 	if err != nil {
 		t.Errorf("Error reading expected HTML file: %s", err.Error())
 	}
-	got := removeNewline(string(gotContent))
-	want := removeNewline(string(wantContent))
+	got := helper.RemoveNewline(string(gotContent))
+	want := helper.RemoveNewline(string(wantContent))
 	os.Remove(filepath.Join(reportDir, "index.html"))
-	assertEqual(want, got, "index.html", t)
+	helper.AssertEqual(want, got, "index.html", t)
 }
 
 func TestEndToEndHTMLGeneration(t *testing.T) {
@@ -72,9 +74,9 @@ func TestEndToEndHTMLGeneration(t *testing.T) {
 		if err != nil {
 			t.Errorf("Error reading expected HTML file: %s", err.Error())
 		}
-		got := removeNewline(string(gotContent))
-		want := removeNewline(string(wantContent))
+		got := helper.RemoveNewline(string(gotContent))
+		want := helper.RemoveNewline(string(wantContent))
 		os.Remove(filepath.Join(reportDir, expectedFile))
-		assertEqual(want, got, expectedFile, t)
+		helper.AssertEqual(want, got, expectedFile, t)
 	}
 }
