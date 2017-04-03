@@ -249,18 +249,9 @@ func saveLastExecutionResult(r *generator.SuiteResult, reportsDir string) {
 		os.Remove(exTarget)
 	}
 	err = os.Symlink(exPath, exTarget)
-	instrFormat := "Run below command to regenerate the html-report\n\n  ./%s --input=%s --output=<OUT_DIR>\n  in working directory: %s\n\n"
-	t := os.Getenv(reportThemeProperty)
-	if t != "" {
-		instrFormat = "Run below command to regenerate the html-report\n\n  ./%s --input=%s --output=<OUT_DIR> --theme=" + t +
-			"\n  in working directory: %s\n\n"
-	}
-
 	if err != nil {
 		log.Printf("[Warning] Unable to create symlink %s\n", exTarget)
-		fmt.Printf(instrFormat, exPath, resultFile, reportsDir)
 	}
-	fmt.Printf(instrFormat, bName, resultFile, reportsDir)
 }
 
 func fileExists(path string) bool {
