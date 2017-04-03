@@ -19,8 +19,9 @@ package generator
 
 import (
 	"bytes"
-	"regexp"
 	"testing"
+
+	helper "github.com/getgauge/html-report/test_helper"
 )
 
 type reportGenTest struct {
@@ -410,8 +411,6 @@ var skippedStepRes = &result{
 	SkippedReason: "step impl not found",
 }
 
-var re = regexp.MustCompile("[\\s]*[\n\t][\\s]*")
-
 var reportGenTests = []reportGenTest{
 	{"generate html page start with project name", "htmlPageStartTag", &overview{ProjectName: "projname"}, whtmlPageStartTag},
 	{"generate report overview with tags", "reportOverviewTag", &overview{"projname", "default", "foo", 34, "00:01:53", "Jun 3, 2016 at 12:29pm", &summary{41, 2, 39, 0}, "/"},
@@ -460,18 +459,14 @@ func testReportGen(reportGenTests []reportGenTest, t *testing.T) {
 	for _, test := range reportGenTests {
 		execTemplate(test.tmpl, buf, test.input)
 
-		got := removeNewline(buf.String())
-		want := removeNewline(test.output)
+		got := helper.RemoveNewline(buf.String())
+		want := helper.RemoveNewline(test.output)
 
 		if got != want {
 			t.Errorf("%s:\nwant:\n%q\ngot:\n%q\n", test.name, want, got)
 		}
 		buf.Reset()
 	}
-}
-
-func removeNewline(s string) string {
-	return re.ReplaceAllLiteralString(s, "")
 }
 
 func newHookFailure(name, errMsg, screenshot, stacktrace string) *hookFailure {
