@@ -37,7 +37,7 @@ type testNameGenerator struct {
 }
 
 func init() {
-	templateBasePath = "themes"
+	generator.TemplateBasePath = "themes"
 }
 
 func (T testNameGenerator) randomName() string {
@@ -48,7 +48,7 @@ func TestCopyingReportTemplates(t *testing.T) {
 	dirToCopy := filepath.Join(os.TempDir(), randomName())
 	defer os.RemoveAll(dirToCopy)
 
-	err := copyReportTemplateFiles(dirToCopy)
+	err := generator.CopyReportTemplateFiles(getThemePath(), dirToCopy)
 	if err != nil {
 		t.Errorf("Expected error == nil, got: %s \n", err.Error())
 	}

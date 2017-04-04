@@ -24,6 +24,7 @@ import (
 	"io/ioutil"
 	"log"
 	"os"
+	"path"
 	"path/filepath"
 	"strings"
 	"sync"
@@ -260,7 +261,6 @@ func readTemplates(themePath string) {
 		"toSidebar":           toSidebar,
 		"toOverview":          toOverview,
 	}
-	fmt.Println("theme : " + themePath)
 	f, err := ioutil.ReadFile(filepath.Join(themePath, "views", "partials.tmpl"))
 	if err != nil {
 		log.Fatalf(err.Error())
@@ -280,6 +280,7 @@ func execTemplate(tmplName string, w io.Writer, data interface{}) {
 
 // ProjectRoot is root dir of current project
 var ProjectRoot string
+var TemplateBasePath string
 
 // GenerateReports generates HTML report in the given report dir location
 func GenerateReports(res *SuiteResult, reportDir, themePath string) error {
@@ -314,6 +315,34 @@ func GenerateReports(res *SuiteResult, reportDir, themePath string) error {
 		return err
 	}
 	return nil
+}
+
+func RegenerateReport(inputFile, reportsDir, theme string) {
+	b, err := ioutil.ReadFile(inputFile)
+	if err != nil {
+		log.Fatal(err.Error())
+	}
+	res := &SuiteResult{}
+	if err = json.Unmarshal(b, res); err != nil {
+		log.Fatal(err.Error())
+	}
+	CreateDirectory(reportsDir)
+	if theme == "" {
+		theme = GetDefaultThemePath()
+	}
+	GenerateReport(res, reportsDir, theme)
+}
+
+func GenerateReport(res *SuiteResult, reportsDir, themePath string) {
+	err := GenerateReports(res, reportsDir, themePath)
+	if err != nil {
+		log.Fatalf("Failed to generate reports: %s\n", err.Error())
+	}
+	err = CopyReportTemplateFiles(themePath, reportsDir)
+	if err != nil {
+		log.Fatalf("Error copying template directory :%s\n", err.Error())
+	}
+	fmt.Printf("Successfully generated html-report to => %s\n", reportsDir)
 }
 
 func newSearchIndex() *searchIndex {
@@ -407,4 +436,31 @@ func CreateDirectory(dir string) {
 		fmt.Printf("Failed to create directory %s: %s\n", dir, err)
 		os.Exit(1)
 	}
+}
+
+func CopyReportTemplateFiles(themePath, reportDir string) error {
+	r := filepath.Join(themePath, "assets")
+	_, err := common.MirrorDir(r, reportDir)
+	return err
+}
+
+func GetDefaultThemePath() string {
+	if TemplateBasePath == "" {
+		dir, _ := GetCurrentExecutableDir()
+		TemplateBasePath = filepath.Join(dir, "..", "themes")
+	}
+	return filepath.Join(TemplateBasePath, "default")
+}
+
+func GetCurrentExecutableDir() (string, string) {
+	ex, err := os.Executable()
+	if err != nil {
+		log.Fatalf(err.Error())
+	}
+	target, err := os.Readlink(ex)
+	if err != nil {
+		return path.Dir(ex), filepath.Base(ex)
+	}
+	return path.Dir(target), filepath.Base(ex)
+
 }
