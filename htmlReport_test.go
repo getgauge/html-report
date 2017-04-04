@@ -94,8 +94,7 @@ func randomName() string {
 }
 
 func verifyReportTemplateFilesAreCopied(dest string, t *testing.T) {
-	nameGen := &testNameGenerator{}
-	reportDir := getReportsDirectory(nameGen)
+	reportDir := filepath.Join(getThemePath(), "assets")
 	filepath.Walk(reportDir, func(path string, info os.FileInfo, err error) error {
 		path = strings.Replace(path, reportDir, "", 1)
 		destFilePath := filepath.Join(dest, path)
