@@ -206,18 +206,6 @@ type item struct {
 	Comment *comment
 }
 
-func (i *item) getStep() *step {
-	return i.Step
-}
-
-func (i *item) getComment() *comment {
-	return i.Comment
-}
-
-func (i *item) getConcept() *concept {
-	return i.Concept
-}
-
 type comment struct {
 	Text string
 }
