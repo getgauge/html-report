@@ -29,7 +29,11 @@ Build from Source
 * [Golang](http://golang.org/)
 
 ### Compiling
-
+Download dependencies
+```
+go get -t ./...
+```
+Compilation
 ```
 go run build/make.go
 ```
