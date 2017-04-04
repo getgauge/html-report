@@ -185,7 +185,6 @@ func saveLastExecutionResult(r *generator.SuiteResult, reportsDir string) {
 		log.Printf("[Warning] Failed to write to %s. Reason: %s\n", outF, err.Error())
 		return
 	}
-	fmt.Printf("Result from current execution has been saved to %s\n", outF)
 	dir, bName := generator.GetCurrentExecutableDir()
 	exPath := filepath.Join(dir, bName)
 	exTarget := filepath.Join(reportsDir, bName)
