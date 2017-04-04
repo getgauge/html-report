@@ -22,7 +22,6 @@ import (
 	"io/ioutil"
 	"log"
 	"os"
-	"path"
 	"path/filepath"
 	"strings"
 	"time"
@@ -54,7 +53,6 @@ const (
 
 var projectRoot string
 var pluginDir string
-var templateBasePath string
 
 type nameGenerator interface {
 	randomName() string
@@ -130,35 +128,7 @@ func createReport(suiteResult *gauge_messages.SuiteExecutionResult) {
 	generator.ProjectRoot = projectRoot
 	res := generator.ToSuiteResult(suiteResult.GetSuiteResult())
 	go saveLastExecutionResult(res, reportsDir)
-	generateReport(res, reportsDir, getThemePath())
-}
-
-func regenerateReport(inputFile, reportsDir, theme string) {
-	b, err := ioutil.ReadFile(inputFile)
-	if err != nil {
-		log.Fatal(err.Error())
-	}
-	res := &generator.SuiteResult{}
-	if err = json.Unmarshal(b, res); err != nil {
-		log.Fatal(err.Error())
-	}
-	generator.CreateDirectory(reportsDir)
-	if theme == "" {
-		theme = getDefaultThemePath()
-	}
-	generateReport(res, reportsDir, theme)
-}
-
-func generateReport(res *generator.SuiteResult, reportsDir, themePath string) {
-	err := generator.GenerateReports(res, reportsDir, themePath)
-	if err != nil {
-		log.Fatalf("Failed to generate reports: %s\n", err.Error())
-	}
-	err = copyReportTemplateFiles(reportsDir)
-	if err != nil {
-		log.Fatalf("Error copying template directory :%s\n", err.Error())
-	}
-	fmt.Printf("Successfully generated html-report to => %s\n", reportsDir)
+	generator.GenerateReport(res, reportsDir, getThemePath())
 }
 
 func getNameGen() nameGenerator {
@@ -187,40 +157,14 @@ func getReportsDirectory(nameGen nameGenerator) string {
 	return currentReportDir
 }
 
-func copyReportTemplateFiles(reportDir string) error {
-	r := filepath.Join(getDefaultThemePath(), "assets")
-	_, err := common.MirrorDir(r, reportDir)
-	return err
-}
-
-func getDefaultThemePath() string {
-	if templateBasePath == "" {
-		dir, _ := getCurrentExecutableDir()
-		templateBasePath = filepath.Join(dir, "..", "themes")
-	}
-	return filepath.Join(templateBasePath, "default")
-}
-
 func getThemePath() string {
 	t := os.Getenv(reportThemeProperty)
 	if t == "" {
-		t = getDefaultThemePath()
+		t = generator.GetDefaultThemePath()
 	}
 	return t
 }
 
-func getCurrentExecutableDir() (string, string) {
-	ex, err := os.Executable()
-	if err != nil {
-		log.Fatalf(err.Error())
-	}
-	target, err := os.Readlink(ex)
-	if err != nil {
-		return path.Dir(ex), filepath.Base(ex)
-	}
-	return path.Dir(target), filepath.Base(ex)
-
-}
 func shouldOverwriteReports() bool {
 	envValue := os.Getenv(overwriteReportsEnvProperty)
 	if strings.ToLower(envValue) == "true" {
@@ -242,7 +186,7 @@ func saveLastExecutionResult(r *generator.SuiteResult, reportsDir string) {
 		return
 	}
 	fmt.Printf("Result from current execution has been saved to %s\n", outF)
-	dir, bName := getCurrentExecutableDir()
+	dir, bName := generator.GetCurrentExecutableDir()
 	exPath := filepath.Join(dir, bName)
 	exTarget := filepath.Join(reportsDir, bName)
 	if fileExists(exTarget) {

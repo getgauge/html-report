@@ -20,6 +20,7 @@ package main
 import (
 	"os"
 
+	"github.com/getgauge/html-report/generator"
 	flag "github.com/getgauge/mflag"
 )
 
@@ -34,7 +35,7 @@ func main() {
 			flag.PrintDefaults()
 			os.Exit(1)
 		}
-		regenerateReport(*inputFile, *outDir, *theme)
+		generator.RegenerateReport(*inputFile, *outDir, *theme)
 		return
 	}
 
