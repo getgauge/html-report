@@ -29,9 +29,11 @@ import (
 	"encoding/json"
 
 	"github.com/getgauge/common"
+	"github.com/getgauge/html-report/env"
 	"github.com/getgauge/html-report/gauge_messages"
 	"github.com/getgauge/html-report/generator"
 	"github.com/getgauge/html-report/listener"
+	"github.com/getgauge/html-report/theme"
 )
 
 const (
@@ -47,7 +49,6 @@ const (
 	pluginActionEnv             = "html-report_action"
 	timeFormat                  = "2006-01-02 15.04.05"
 	defaultTheme                = "default"
-	reportThemeProperty         = "GAUGE_HTML_REPORT_THEME_PATH"
 	resultFile                  = "last_run_result.json"
 )
 
@@ -128,7 +129,7 @@ func createReport(suiteResult *gauge_messages.SuiteExecutionResult) {
 	generator.ProjectRoot = projectRoot
 	res := generator.ToSuiteResult(suiteResult.GetSuiteResult())
 	go saveLastExecutionResult(res, reportsDir)
-	generator.GenerateReport(res, reportsDir, getThemePath())
+	generator.GenerateReport(res, reportsDir, theme.GetThemePath())
 }
 
 func getNameGen() nameGenerator {
@@ -146,23 +147,15 @@ func getReportsDirectory(nameGen nameGenerator) string {
 	if reportsDir == "" || err != nil {
 		reportsDir = defaultReportsDir
 	}
-	generator.CreateDirectory(reportsDir)
+	env.CreateDirectory(reportsDir)
 	var currentReportDir string
 	if nameGen != nil {
 		currentReportDir = filepath.Join(reportsDir, htmlReport, nameGen.randomName())
 	} else {
 		currentReportDir = filepath.Join(reportsDir, htmlReport)
 	}
-	generator.CreateDirectory(currentReportDir)
+	env.CreateDirectory(currentReportDir)
 	return currentReportDir
-}
-
-func getThemePath() string {
-	t := os.Getenv(reportThemeProperty)
-	if t == "" {
-		t = generator.GetDefaultThemePath()
-	}
-	return t
 }
 
 func shouldOverwriteReports() bool {
@@ -185,7 +178,7 @@ func saveLastExecutionResult(r *generator.SuiteResult, reportsDir string) {
 		log.Printf("[Warning] Failed to write to %s. Reason: %s\n", outF, err.Error())
 		return
 	}
-	dir, bName := generator.GetCurrentExecutableDir()
+	dir, bName := env.GetCurrentExecutableDir()
 	exPath := filepath.Join(dir, bName)
 	exTarget := filepath.Join(reportsDir, bName)
 	if fileExists(exTarget) {

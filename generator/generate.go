@@ -24,13 +24,13 @@ import (
 	"io/ioutil"
 	"log"
 	"os"
-	"path"
 	"path/filepath"
 	"strings"
 	"sync"
 	"text/template"
 
-	"github.com/getgauge/common"
+	"github.com/getgauge/html-report/env"
+	"github.com/getgauge/html-report/theme"
 	"github.com/microcosm-cc/bluemonday"
 	"github.com/russross/blackfriday"
 )
@@ -280,7 +280,6 @@ func execTemplate(tmplName string, w io.Writer, data interface{}) {
 
 // ProjectRoot is root dir of current project
 var ProjectRoot string
-var TemplateBasePath string
 
 // GenerateReports generates HTML report in the given report dir location
 func GenerateReports(res *SuiteResult, reportDir, themePath string) error {
@@ -299,7 +298,7 @@ func GenerateReports(res *SuiteResult, reportDir, themePath string) error {
 		specRes := res.SpecResults
 		for _, r := range specRes {
 			relPath, _ := filepath.Rel(ProjectRoot, r.FileName)
-			CreateDirectory(filepath.Join(reportDir, filepath.Dir(relPath)))
+			env.CreateDirectory(filepath.Join(reportDir, filepath.Dir(relPath)))
 			sf, err := os.Create(filepath.Join(reportDir, toHTMLFileName(r.FileName, ProjectRoot)))
 			if err != nil {
 				return err
@@ -317,7 +316,7 @@ func GenerateReports(res *SuiteResult, reportDir, themePath string) error {
 	return nil
 }
 
-func RegenerateReport(inputFile, reportsDir, theme string) {
+func RegenerateReport(inputFile, reportsDir, themePath string) {
 	b, err := ioutil.ReadFile(inputFile)
 	if err != nil {
 		log.Fatal(err.Error())
@@ -326,11 +325,11 @@ func RegenerateReport(inputFile, reportsDir, theme string) {
 	if err = json.Unmarshal(b, res); err != nil {
 		log.Fatal(err.Error())
 	}
-	CreateDirectory(reportsDir)
-	if theme == "" {
-		theme = GetDefaultThemePath()
+	env.CreateDirectory(reportsDir)
+	if themePath == "" {
+		themePath = theme.GetDefaultThemePath()
 	}
-	GenerateReport(res, reportsDir, theme)
+	GenerateReport(res, reportsDir, themePath)
 }
 
 func GenerateReport(res *SuiteResult, reportsDir, themePath string) {
@@ -338,7 +337,7 @@ func GenerateReport(res *SuiteResult, reportsDir, themePath string) {
 	if err != nil {
 		log.Fatalf("Failed to generate reports: %s\n", err.Error())
 	}
-	err = CopyReportTemplateFiles(themePath, reportsDir)
+	err = theme.CopyReportTemplateFiles(themePath, reportsDir)
 	if err != nil {
 		log.Fatalf("Error copying template directory :%s\n", err.Error())
 	}
@@ -380,7 +379,7 @@ func containsParseErrors(errors []error) bool {
 }
 
 func generateSearchIndex(suiteRes *SuiteResult, reportDir string) error {
-	CreateDirectory(filepath.Join(reportDir, "js"))
+	env.CreateDirectory(filepath.Join(reportDir, "js"))
 	f, err := os.Create(filepath.Join(reportDir, "js", "search_index.js"))
 	if err != nil {
 		return err
@@ -425,42 +424,4 @@ func generateSpecPage(suiteRes *SuiteResult, specRes *spec, w io.Writer, wg *syn
 		SuiteRes *SuiteResult
 		SpecRes  *spec
 	}{suiteRes, specRes})
-}
-
-// CreateDirectory creates given directory if it doesn't exist
-func CreateDirectory(dir string) {
-	if common.DirExists(dir) {
-		return
-	}
-	if err := os.MkdirAll(dir, common.NewDirectoryPermissions); err != nil {
-		fmt.Printf("Failed to create directory %s: %s\n", dir, err)
-		os.Exit(1)
-	}
-}
-
-func CopyReportTemplateFiles(themePath, reportDir string) error {
-	r := filepath.Join(themePath, "assets")
-	_, err := common.MirrorDir(r, reportDir)
-	return err
-}
-
-func GetDefaultThemePath() string {
-	if TemplateBasePath == "" {
-		dir, _ := GetCurrentExecutableDir()
-		TemplateBasePath = filepath.Join(dir, "..", "themes")
-	}
-	return filepath.Join(TemplateBasePath, "default")
-}
-
-func GetCurrentExecutableDir() (string, string) {
-	ex, err := os.Executable()
-	if err != nil {
-		log.Fatalf(err.Error())
-	}
-	target, err := os.Readlink(ex)
-	if err != nil {
-		return path.Dir(ex), filepath.Base(ex)
-	}
-	return path.Dir(target), filepath.Base(ex)
-
 }
