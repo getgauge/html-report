@@ -26,7 +26,7 @@ import (
 
 var inputFile = flag.String([]string{"-input", "i"}, "", "Source json file to generate report from")
 var outDir = flag.String([]string{"-out", "o"}, "", "Output location for generating report. Will create directory if it doesn't exist.")
-var theme = flag.String([]string{"-theme", "t"}, "default", "Theme to use for generating html report. 'default' theme will be used if not specified.")
+var themePath = flag.String([]string{"-theme", "t"}, "default", "Theme to use for generating html report. 'default' theme will be used if not specified.")
 
 func main() {
 	flag.Parse()
@@ -35,7 +35,7 @@ func main() {
 			flag.PrintDefaults()
 			os.Exit(1)
 		}
-		generator.RegenerateReport(*inputFile, *outDir, *theme)
+		generator.RegenerateReport(*inputFile, *outDir, *themePath)
 		return
 	}
 

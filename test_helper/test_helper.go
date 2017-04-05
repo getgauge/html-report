@@ -21,6 +21,7 @@ import (
 	"fmt"
 	"html"
 	"io/ioutil"
+	"os"
 	"regexp"
 	"testing"
 
@@ -57,4 +58,12 @@ func compare(a, b string) string {
 
 	res, _ := cfg.HTMLdiff([]string{html.EscapeString(a), html.EscapeString(b)})
 	return res[0]
+}
+
+func FileExists(path string) bool {
+	_, err := os.Stat(path)
+	if err == nil {
+		return true
+	}
+	return !os.IsNotExist(err)
 }

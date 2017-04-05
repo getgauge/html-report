@@ -29,6 +29,7 @@ import (
 	"io/ioutil"
 
 	"github.com/getgauge/html-report/generator"
+	helper "github.com/getgauge/html-report/test_helper"
 )
 
 var now = time.Now()
@@ -36,23 +37,8 @@ var now = time.Now()
 type testNameGenerator struct {
 }
 
-func init() {
-	generator.TemplateBasePath = "themes"
-}
-
 func (T testNameGenerator) randomName() string {
 	return now.Format(timeFormat)
-}
-
-func TestCopyingReportTemplates(t *testing.T) {
-	dirToCopy := filepath.Join(os.TempDir(), randomName())
-	defer os.RemoveAll(dirToCopy)
-
-	err := generator.CopyReportTemplateFiles(getThemePath(), dirToCopy)
-	if err != nil {
-		t.Errorf("Expected error == nil, got: %s \n", err.Error())
-	}
-	verifyReportTemplateFilesAreCopied(dirToCopy, t)
 }
 
 func TestGetReportsDirectory(t *testing.T) {
@@ -66,7 +52,7 @@ func TestGetReportsDirectory(t *testing.T) {
 	if reportsDir != expectedReportsDir {
 		t.Errorf("Expected reportsDir == %s, got: %s\n", expectedReportsDir, reportsDir)
 	}
-	if !fileExists(expectedReportsDir) {
+	if !helper.FileExists(expectedReportsDir) {
 		t.Errorf("Expected %s report directory doesn't exist", expectedReportsDir)
 	}
 }
@@ -84,25 +70,13 @@ func TestGetReportsDirectoryWithOverrideFlag(t *testing.T) {
 	if reportsDir != expectedReportsDir {
 		t.Errorf("Expected reportsDir == %s, got: %s\n", expectedReportsDir, reportsDir)
 	}
-	if !fileExists(expectedReportsDir) {
+	if !helper.FileExists(expectedReportsDir) {
 		t.Errorf("Expected %s report directory doesn't exist", expectedReportsDir)
 	}
 }
 
 func randomName() string {
 	return fmt.Sprintf("%d", time.Now().UnixNano())
-}
-
-func verifyReportTemplateFilesAreCopied(dest string, t *testing.T) {
-	reportDir := filepath.Join(getThemePath(), "assets")
-	filepath.Walk(reportDir, func(path string, info os.FileInfo, err error) error {
-		path = strings.Replace(path, reportDir, "", 1)
-		destFilePath := filepath.Join(dest, path)
-		if !fileExists(destFilePath) {
-			t.Errorf("File %s not copied.", destFilePath)
-		}
-		return nil
-	})
 }
 
 func TestCreatingReportShouldOverwriteReportsBasedOnEnv(t *testing.T) {
