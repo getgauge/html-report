@@ -28,6 +28,7 @@ import (
 
 	"io/ioutil"
 
+	"github.com/getgauge/html-report/env"
 	"github.com/getgauge/html-report/generator"
 	helper "github.com/getgauge/html-report/test_helper"
 )
@@ -43,7 +44,7 @@ func (T testNameGenerator) randomName() string {
 
 func TestGetReportsDirectory(t *testing.T) {
 	userSetReportsDir := filepath.Join(os.TempDir(), randomName())
-	os.Setenv(gaugeReportsDirEnvName, userSetReportsDir)
+	os.Setenv(env.GaugeReportsDirEnvName, userSetReportsDir)
 	expectedReportsDir := filepath.Join(userSetReportsDir, htmlReport)
 	defer os.RemoveAll(userSetReportsDir)
 
@@ -59,8 +60,8 @@ func TestGetReportsDirectory(t *testing.T) {
 
 func TestGetReportsDirectoryWithOverrideFlag(t *testing.T) {
 	userSetReportsDir := filepath.Join(os.TempDir(), randomName())
-	os.Setenv(gaugeReportsDirEnvName, userSetReportsDir)
-	os.Setenv(overwriteReportsEnvProperty, "true")
+	os.Setenv(env.GaugeReportsDirEnvName, userSetReportsDir)
+	os.Setenv(env.OverwriteReportsEnvProperty, "true")
 	nameGen := &testNameGenerator{}
 	expectedReportsDir := filepath.Join(userSetReportsDir, htmlReport, nameGen.randomName())
 	defer os.RemoveAll(userSetReportsDir)
@@ -80,13 +81,13 @@ func randomName() string {
 }
 
 func TestCreatingReportShouldOverwriteReportsBasedOnEnv(t *testing.T) {
-	os.Setenv(overwriteReportsEnvProperty, "true")
+	os.Setenv(env.OverwriteReportsEnvProperty, "true")
 	nameGen := getNameGen()
 	if nameGen != nil {
 		t.Errorf("Expected nameGen == nil, got %s", nameGen)
 	}
 
-	os.Setenv(overwriteReportsEnvProperty, "false")
+	os.Setenv(env.OverwriteReportsEnvProperty, "false")
 	nameGen = getNameGen()
 	switch nameGen.(type) {
 	case timeStampedNameGenerator:
