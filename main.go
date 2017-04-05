@@ -20,6 +20,7 @@ package main
 import (
 	"os"
 
+	"github.com/getgauge/html-report/env"
 	"github.com/getgauge/html-report/generator"
 	flag "github.com/getgauge/mflag"
 )
@@ -39,10 +40,9 @@ func main() {
 		return
 	}
 
-	findPluginAndProjectRoot()
 	action := os.Getenv(pluginActionEnv)
 	if action == setupAction {
-		addDefaultPropertiesToProject()
+		env.AddDefaultPropertiesToProject()
 	} else if action == executionAction {
 		createExecutionReport()
 	}
