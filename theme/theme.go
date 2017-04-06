@@ -34,7 +34,7 @@ var TemplateBasePath string
 func GetDefaultThemePath() string {
 	if TemplateBasePath == "" {
 		dir, _ := env.GetCurrentExecutableDir()
-		TemplateBasePath = filepath.Join(dir, "..", "..", "themes")
+		TemplateBasePath = filepath.Join(dir, "..", "themes")
 	}
 	return filepath.Join(TemplateBasePath, "default")
 }
