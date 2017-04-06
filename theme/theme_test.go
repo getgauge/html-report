@@ -29,7 +29,7 @@ import (
 )
 
 func init() {
-	TemplateBasePath = filepath.Join("..", "themes")
+	templateBasePath = filepath.Join("..", "themes")
 }
 
 func TestCopyingReportTemplates(t *testing.T) {
