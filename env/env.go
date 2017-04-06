@@ -49,9 +49,6 @@ func GetCurrentExecutableDir() (string, string) {
 
 // CreateDirectory creates given directory if it doesn't exist
 func CreateDirectory(dir string) {
-	if common.DirExists(dir) {
-		return
-	}
 	if err := os.MkdirAll(dir, common.NewDirectoryPermissions); err != nil {
 		fmt.Printf("Failed to create directory %s: %s\n", dir, err)
 		os.Exit(1)

@@ -29,14 +29,14 @@ const (
 	reportThemeProperty = "GAUGE_HTML_REPORT_THEME_PATH"
 )
 
-var TemplateBasePath string
+var templateBasePath string
 
 func GetDefaultThemePath() string {
-	if TemplateBasePath == "" {
+	if templateBasePath == "" {
 		dir, _ := env.GetCurrentExecutableDir()
-		TemplateBasePath = filepath.Join(dir, "..", "themes")
+		templateBasePath = filepath.Join(dir, "..", "themes")
 	}
-	return filepath.Join(TemplateBasePath, "default")
+	return filepath.Join(templateBasePath, "default")
 }
 
 func CopyReportTemplateFiles(themePath, reportDir string) error {
