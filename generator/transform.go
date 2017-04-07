@@ -34,7 +34,7 @@ const (
 
 // ToSuiteResult Converts the ProtoSuiteResult to SuiteResult type.
 func ToSuiteResult(pRoot string, psr *gm.ProtoSuiteResult) *SuiteResult {
-	projectRoot = pRoot 
+	projectRoot = pRoot
 	suiteResult := SuiteResult{
 		ProjectName:            psr.GetProjectName(),
 		Environment:            psr.GetEnvironment(),

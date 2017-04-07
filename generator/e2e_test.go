@@ -28,7 +28,7 @@ import (
 
 var suiteRes3 = newProtoSuiteRes(true, 1, 1, 60, nil, nil, passSpecRes1, failSpecResWithStepFailure, skippedSpecRes)
 var suiteResWithBeforeSuiteFailure = newProtoSuiteRes(true, 0, 0, 0, newProtoHookFailure(), nil)
-var templateBasePath,_ = filepath.Abs(filepath.Join("..","themes", "default"))
+var templateBasePath, _ = filepath.Abs(filepath.Join("..", "themes", "default"))
 
 func TestEndToEndHTMLGenerationWhenBeforeSuiteFails(t *testing.T) {
 	reportDir := filepath.Join("_testdata", "e2e")
@@ -77,7 +77,7 @@ func TestEndToEndHTMLGenerationForThemeWithRelativePath(t *testing.T) {
 	if err != nil {
 		t.Errorf("Expected error to be nil. Got: %s", err.Error())
 	}
-	
+
 	verifyExpectedFiles(t, reportDir, expectedFiles)
 }
 
@@ -148,5 +148,5 @@ func verifyExpectedFiles(t *testing.T, reportDir string, expectedFiles []string)
 		os.Remove(filepath.Join(reportDir, expectedFile))
 		helper.AssertEqual(want, got, expectedFile, t)
 	}
-	
+
 }

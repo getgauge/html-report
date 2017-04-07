@@ -564,7 +564,7 @@ func TestGetAbsThemePathForRelPath(t *testing.T) {
 	projectRoot, _ = filepath.Abs(filepath.Join("Dummy", "Project", "Root"))
 	themePath := filepath.Join("some", "path")
 	want := filepath.Join(projectRoot, themePath)
-	
+
 	got := getAbsThemePath(themePath)
 
 	if want != got {

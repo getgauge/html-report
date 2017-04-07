@@ -24,7 +24,6 @@ import (
 	"testing"
 
 	"github.com/kylelemons/godebug/pretty"
-
 	gm "github.com/getgauge/html-report/gauge_messages"
 )
 
@@ -1464,9 +1463,9 @@ func TestMapExecutionStatusOnFailureToSuiteResult(t *testing.T) {
 func TestMapSpecResultsToSuiteResult(t *testing.T) {
 	psr := &gm.ProtoSuiteResult{
 		SpecResults: []*gm.ProtoSpecResult{
-			&gm.ProtoSpecResult{ProtoSpec: &gm.ProtoSpec{FileName: "foo.spec", SpecHeading: "Foo Spec"}},
-			&gm.ProtoSpecResult{ProtoSpec: &gm.ProtoSpec{FileName: "bar.spec", SpecHeading: "Boo Spec"}},
-			&gm.ProtoSpecResult{ProtoSpec: &gm.ProtoSpec{FileName: "baz.spec", SpecHeading: "Baz Spec"}},
+			{ProtoSpec: &gm.ProtoSpec{FileName: "foo.spec", SpecHeading: "Foo Spec"}},
+			{ProtoSpec: &gm.ProtoSpec{FileName: "bar.spec", SpecHeading: "Boo Spec"}},
+			{ProtoSpec: &gm.ProtoSpec{FileName: "baz.spec", SpecHeading: "Baz Spec"}},
 		},
 	}
 

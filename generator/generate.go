@@ -272,7 +272,7 @@ func readTemplates(themePath string) {
 	}
 }
 
-func getAbsThemePath(themePath string) (string) {
+func getAbsThemePath(themePath string) string {
 	if path.IsAbs(themePath) {
 		return themePath
 	}
