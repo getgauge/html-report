@@ -29,6 +29,7 @@ import (
 	"sync"
 	"text/template"
 
+	"github.com/getgauge/common"
 	"github.com/getgauge/html-report/env"
 	"github.com/getgauge/html-report/theme"
 	"github.com/microcosm-cc/bluemonday"
@@ -303,6 +304,7 @@ func GenerateReports(res *SuiteResult, reportDir, themePath string) error {
 		var wg sync.WaitGroup
 		wg.Add(1)
 		go generateIndexPage(res, f, &wg)
+		go generateIndexPages(res, reportDir, &wg)
 		specRes := res.SpecResults
 		for _, r := range specRes {
 			relPath, _ := filepath.Rel(projectRoot, r.FileName)
@@ -424,6 +426,39 @@ func generateSearchIndex(suiteRes *SuiteResult, reportDir string) error {
 func generateIndexPage(suiteRes *SuiteResult, w io.Writer, wg *sync.WaitGroup) {
 	defer wg.Done()
 	execTemplate("indexPage", w, suiteRes)
+}
+
+func generateIndexPages(suiteRes *SuiteResult, reportDir string, wg *sync.WaitGroup) {
+	dirs := make(map[string]int)
+	for _, s := range suiteRes.SpecResults {
+		p, err := filepath.Rel(projectRoot, filepath.Dir(s.FileName))
+		if err != nil {
+			log.Fatal(err)
+		}
+		childDirs := filepath.SplitList(p)
+		basePath := ""
+		for _, d := range childDirs {
+			if _, ok := dirs[d]; !ok {
+				dirs[d] = 1
+			}
+			basePath = filepath.Join(basePath, d)
+		}
+
+	}
+	delete(dirs, ".")
+	for d := range dirs {
+		dirPath := filepath.Join(reportDir, d)
+		os.MkdirAll(dirPath, common.NewDirectoryPermissions)
+		p := filepath.Join(dirPath, "index.html")
+		f, err := os.Create(p)
+		if err != nil {
+			log.Fatal(err)
+		}
+		defer f.Close()
+		wg.Add(1)
+		res := toNestedSuiteResult(d, suiteRes)
+		generateIndexPage(res, f, wg)
+	}
 }
 
 func generateSpecPage(suiteRes *SuiteResult, specRes *spec, w io.Writer, wg *sync.WaitGroup) {

@@ -23,8 +23,8 @@ import (
 	"reflect"
 	"testing"
 
-	"github.com/kylelemons/godebug/pretty"
 	gm "github.com/getgauge/html-report/gauge_messages"
+	"github.com/kylelemons/godebug/pretty"
 )
 
 type transformTest struct {
@@ -1481,5 +1481,89 @@ func TestMapSpecResultsToSuiteResult(t *testing.T) {
 		if wantFileName != gotFileName {
 			t.Errorf("Spec Filename Mismatch, want '%s', got '%s'", wantFileName, gotFileName)
 		}
+	}
+}
+
+func TestToNestedSuiteResultMapsProjectName(t *testing.T) {
+	want := "foo"
+	sr := &SuiteResult{ProjectName: want}
+
+	got := toNestedSuiteResult("some/path", sr)
+
+	if got.ProjectName != want {
+		t.Fatalf("Expected ProjectName=%s, got %s", want, got)
+	}
+}
+
+/*
+	SuccessRate            int          `json:"successRate"`
+	ExecutionTime          int64        `json:"executionTime"`
+	ExecutionStatus        status       `json:"executionStatus"`
+	SpecResults            []*spec      `json:"specResults"`
+	PassedSpecsCount       int          `json:"passedSpecsCount"`
+	FailedSpecsCount       int          `json:"failedSpecsCount"`
+	SkippedSpecsCount      int          `json:"skippedSpecsCount"`
+
+*/
+func TestToNestedSuiteResultMapsTimeStamp(t *testing.T) {
+	want := "Jul 13, 2016 at 11:49am"
+	sr := &SuiteResult{Timestamp: want}
+
+	got := toNestedSuiteResult("some/path", sr)
+
+	if got.Timestamp != want {
+		t.Fatalf("Expected TimeStamp=%s, got %s", want, got)
+	}
+}
+
+func TestToNestedSuiteResultMapsEnvironment(t *testing.T) {
+	want := "foo"
+	sr := &SuiteResult{Environment: want}
+
+	got := toNestedSuiteResult("some/path", sr)
+
+	if got.Environment != want {
+		t.Fatalf("Expected Environment=%s, got %s", want, got)
+	}
+}
+
+func TestToNestedSuiteResultMapsTags(t *testing.T) {
+	want := "tag1, tag2"
+	sr := &SuiteResult{Tags: want}
+
+	got := toNestedSuiteResult("some/path", sr)
+
+	if got.Tags != want {
+		t.Fatalf("Expected Tags=%s, got %s", want, got.Tags)
+	}
+}
+
+func TestToNestedSuiteResultMapsBeforeSuiteHookFailure(t *testing.T) {
+	want := "fooHookFailure"
+	sr := &SuiteResult{BeforeSuiteHookFailure: &hookFailure{HookName: want}}
+
+	got := toNestedSuiteResult("some/path", sr)
+
+	if got.BeforeSuiteHookFailure == nil {
+		t.Fatal("Expected BeforeSuiteHookFailure to be not nil")
+	}
+
+	if got.BeforeSuiteHookFailure.HookName != want {
+		t.Fatalf("expected BeforeSuiteHookFailure to have HookName = %s, got %s", want, got)
+	}
+}
+
+func TestToNestedSuiteResultMapsAfterSuiteHookFailure(t *testing.T) {
+	want := "fooHookFailure"
+	sr := &SuiteResult{AfterSuiteHookFailure: &hookFailure{HookName: want}}
+
+	got := toNestedSuiteResult("some/path", sr)
+
+	if got.AfterSuiteHookFailure == nil {
+		t.Fatal("Expected AfterSuiteHookFailure to be not nil")
+	}
+
+	if got.AfterSuiteHookFailure.HookName != want {
+		t.Fatalf("expected AfterSuiteHookFailure to have HookName = %s, got %s", want, got)
 	}
 }

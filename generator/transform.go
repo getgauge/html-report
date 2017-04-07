@@ -59,6 +59,17 @@ func ToSuiteResult(pRoot string, psr *gm.ProtoSuiteResult) *SuiteResult {
 	return &suiteResult
 }
 
+func toNestedSuiteResult(basePath string, result *SuiteResult) *SuiteResult {
+	return &SuiteResult{
+		ProjectName: result.ProjectName,
+		Timestamp:   result.Timestamp,
+		Environment: result.Environment,
+		Tags:        result.Tags,
+		BeforeSuiteHookFailure: result.BeforeSuiteHookFailure,
+		AfterSuiteHookFailure:  result.AfterSuiteHookFailure,
+	}
+}
+
 func toOverview(res *SuiteResult, specRes *spec) *overview {
 	totalSpecs := 0
 	if res.SpecResults != nil {
