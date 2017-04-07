@@ -28,12 +28,11 @@ import (
 
 var suiteRes3 = newProtoSuiteRes(true, 1, 1, 60, nil, nil, passSpecRes1, failSpecResWithStepFailure, skippedSpecRes)
 var suiteResWithBeforeSuiteFailure = newProtoSuiteRes(true, 0, 0, 0, newProtoHookFailure(), nil)
-var templateBasePath = filepath.Join("..", "themes", "default")
+var templateBasePath,_ = filepath.Abs(filepath.Join("..","themes", "default"))
 
 func TestEndToEndHTMLGenerationWhenBeforeSuiteFails(t *testing.T) {
 	reportDir := filepath.Join("_testdata", "e2e")
 	ProjectRoot = ""
-
 	r := ToSuiteResult(suiteResWithBeforeSuiteFailure)
 	err := GenerateReports(r, reportDir, templateBasePath)
 
@@ -65,20 +64,40 @@ func TestEndToEndHTMLGeneration(t *testing.T) {
 	if err != nil {
 		t.Errorf("Expected error to be nil. Got: %s", err.Error())
 	}
-	for _, expectedFile := range expectedFiles {
-		gotContent, err := ioutil.ReadFile(filepath.Join(reportDir, expectedFile))
-		if err != nil {
-			t.Errorf("Error reading generated HTML file: %s", err.Error())
-		}
-		wantContent, err := ioutil.ReadFile(filepath.Join("_testdata", "expectedE2E", expectedFile))
-		if err != nil {
-			t.Errorf("Error reading expected HTML file: %s", err.Error())
-		}
-		got := helper.RemoveNewline(string(gotContent))
-		want := helper.RemoveNewline(string(wantContent))
-		os.Remove(filepath.Join(reportDir, expectedFile))
-		helper.AssertEqual(want, got, expectedFile, t)
+
+	verifyExpectedFiles(t, reportDir, expectedFiles)
+}
+
+func TestEndToEndHTMLGenerationForThemeWithRelativePath(t *testing.T) {
+	expectedFiles := []string{"index.html", "passing_specification_1.html", "failing_specification_1.html", "skipped_specification.html", "js/search_index.js"}
+	reportDir := filepath.Join("_testdata", "e2e")
+	ProjectRoot = ""
+	defaultThemePath := filepath.Join("..", "themes", "default")
+
+	r := ToSuiteResult(suiteRes3)
+	err := GenerateReports(r, reportDir, defaultThemePath)
+
+	if err != nil {
+		t.Errorf("Expected error to be nil. Got: %s", err.Error())
 	}
+	
+	verifyExpectedFiles(t, reportDir, expectedFiles)
+}
+
+func TestEndToEndHTMLGenerationForCustomTheme(t *testing.T) {
+	expectedFiles := []string{"index.html", "passing_specification_1.html", "failing_specification_1.html", "skipped_specification.html", "js/search_index.js"}
+	reportDir := filepath.Join("_testdata", "e2e")
+	ProjectRoot = ""
+	defaultThemePath := filepath.Join("_testdata", "dummyReportTheme")
+
+	r := ToSuiteResult(suiteRes3)
+	err := GenerateReports(r, reportDir, defaultThemePath)
+
+	if err != nil {
+		t.Errorf("Expected error to be nil. Got: %s", err.Error())
+	}
+
+	verifyExpectedFiles(t, reportDir, expectedFiles)
 }
 
 func TestEndToEndHTMLGenerationFromSavedResult(t *testing.T) {
@@ -116,4 +135,22 @@ func cleanUp(t *testing.T) {
 	for _, f := range s {
 		os.Remove(f)
 	}
+}
+
+func verifyExpectedFiles(t *testing.T, reportDir string, expectedFiles []string) {
+	for _, expectedFile := range expectedFiles {
+		gotContent, err := ioutil.ReadFile(filepath.Join(reportDir, expectedFile))
+		if err != nil {
+			t.Errorf("Error reading generated HTML file: %s", err.Error())
+		}
+		wantContent, err := ioutil.ReadFile(filepath.Join("_testdata", "expectedE2E", expectedFile))
+		if err != nil {
+			t.Errorf("Error reading expected HTML file: %s", err.Error())
+		}
+		got := helper.RemoveNewline(string(gotContent))
+		want := helper.RemoveNewline(string(wantContent))
+		os.Remove(filepath.Join(reportDir, expectedFile))
+		helper.AssertEqual(want, got, expectedFile, t)
+	}
+	
 }

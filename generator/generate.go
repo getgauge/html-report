@@ -33,6 +33,7 @@ import (
 	"github.com/getgauge/html-report/theme"
 	"github.com/microcosm-cc/bluemonday"
 	"github.com/russross/blackfriday"
+	"path"
 )
 
 type summary struct {
@@ -261,7 +262,7 @@ func readTemplates(themePath string) {
 		"toSidebar":           toSidebar,
 		"toOverview":          toOverview,
 	}
-	f, err := ioutil.ReadFile(filepath.Join(themePath, "views", "partials.tmpl"))
+	f, err := ioutil.ReadFile(filepath.Join(getAbsThemePath(themePath), "views", "partials.tmpl"))
 	if err != nil {
 		log.Fatalf(err.Error())
 	}
@@ -269,6 +270,17 @@ func readTemplates(themePath string) {
 	if err != nil {
 		log.Fatalf(err.Error())
 	}
+}
+
+func getAbsThemePath(themePath string) (string) {
+	if path.IsAbs(themePath) {
+		return themePath
+	}
+	absPath,err := filepath.Abs(filepath.Join(ProjectRoot, themePath))
+	if err != nil {
+		log.Fatalf(err.Error())
+	}
+	return absPath
 }
 
 func execTemplate(tmplName string, w io.Writer, data interface{}) {
