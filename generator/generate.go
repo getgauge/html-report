@@ -276,11 +276,7 @@ func getAbsThemePath(themePath string) (string) {
 	if path.IsAbs(themePath) {
 		return themePath
 	}
-	absPath,err := filepath.Abs(filepath.Join(projectRoot, themePath))
-	if err != nil {
-		log.Fatalf(err.Error())
-	}
-	return absPath
+	return filepath.Join(projectRoot, themePath)
 }
 
 func execTemplate(tmplName string, w io.Writer, data interface{}) {
