@@ -32,8 +32,7 @@ var templateBasePath,_ = filepath.Abs(filepath.Join("..","themes", "default"))
 
 func TestEndToEndHTMLGenerationWhenBeforeSuiteFails(t *testing.T) {
 	reportDir := filepath.Join("_testdata", "e2e")
-	ProjectRoot = ""
-	r := ToSuiteResult(suiteResWithBeforeSuiteFailure)
+	r := ToSuiteResult("", suiteResWithBeforeSuiteFailure)
 	err := GenerateReports(r, reportDir, templateBasePath)
 
 	if err != nil {
@@ -56,9 +55,8 @@ func TestEndToEndHTMLGenerationWhenBeforeSuiteFails(t *testing.T) {
 func TestEndToEndHTMLGeneration(t *testing.T) {
 	expectedFiles := []string{"index.html", "passing_specification_1.html", "failing_specification_1.html", "skipped_specification.html", "js/search_index.js"}
 	reportDir := filepath.Join("_testdata", "e2e")
-	ProjectRoot = ""
 
-	r := ToSuiteResult(suiteRes3)
+	r := ToSuiteResult("", suiteRes3)
 	err := GenerateReports(r, reportDir, templateBasePath)
 
 	if err != nil {
@@ -71,10 +69,9 @@ func TestEndToEndHTMLGeneration(t *testing.T) {
 func TestEndToEndHTMLGenerationForThemeWithRelativePath(t *testing.T) {
 	expectedFiles := []string{"index.html", "passing_specification_1.html", "failing_specification_1.html", "skipped_specification.html", "js/search_index.js"}
 	reportDir := filepath.Join("_testdata", "e2e")
-	ProjectRoot = ""
 	defaultThemePath := filepath.Join("..", "themes", "default")
 
-	r := ToSuiteResult(suiteRes3)
+	r := ToSuiteResult("", suiteRes3)
 	err := GenerateReports(r, reportDir, defaultThemePath)
 
 	if err != nil {
@@ -87,10 +84,9 @@ func TestEndToEndHTMLGenerationForThemeWithRelativePath(t *testing.T) {
 func TestEndToEndHTMLGenerationForCustomTheme(t *testing.T) {
 	expectedFiles := []string{"index.html", "passing_specification_1.html", "failing_specification_1.html", "skipped_specification.html", "js/search_index.js"}
 	reportDir := filepath.Join("_testdata", "e2e")
-	ProjectRoot = ""
 	defaultThemePath := filepath.Join("_testdata", "dummyReportTheme")
 
-	r := ToSuiteResult(suiteRes3)
+	r := ToSuiteResult("", suiteRes3)
 	err := GenerateReports(r, reportDir, defaultThemePath)
 
 	if err != nil {

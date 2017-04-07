@@ -76,8 +76,7 @@ func createReport(suiteResult *gauge_messages.SuiteExecutionResult) {
 		log.Fatalf("%s", err.Error())
 	}
 	reportsDir := getReportsDirectory(getNameGen())
-	generator.ProjectRoot = projectRoot
-	res := generator.ToSuiteResult(suiteResult.GetSuiteResult())
+	res := generator.ToSuiteResult(projectRoot, suiteResult.GetSuiteResult())
 	go saveLastExecutionResult(res, reportsDir)
 	generator.GenerateReport(res, reportsDir, theme.GetThemePath())
 }

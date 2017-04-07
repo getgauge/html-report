@@ -22,6 +22,7 @@ import (
 	"testing"
 
 	helper "github.com/getgauge/html-report/test_helper"
+	"path/filepath"
 )
 
 type reportGenTest struct {
@@ -556,4 +557,18 @@ func newStep(s status) *step {
 			ExecutionTime: "00:03:31",
 		},
 	}
+}
+
+func TestGetAbsThemePathForRelPath(t *testing.T) {
+	oldProjectRoot := projectRoot
+	projectRoot, _ = filepath.Abs(filepath.Join("Dummy", "Project", "Root"))
+	themePath := filepath.Join("some", "path")
+	want := filepath.Join(projectRoot, themePath)
+	
+	got := getAbsThemePath(themePath)
+
+	if want != got {
+		t.Errorf("Expected theme path = %s, got %s", want, got)
+	}
+	projectRoot = oldProjectRoot
 }

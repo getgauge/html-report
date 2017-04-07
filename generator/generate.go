@@ -276,7 +276,7 @@ func getAbsThemePath(themePath string) (string) {
 	if path.IsAbs(themePath) {
 		return themePath
 	}
-	absPath,err := filepath.Abs(filepath.Join(ProjectRoot, themePath))
+	absPath,err := filepath.Abs(filepath.Join(projectRoot, themePath))
 	if err != nil {
 		log.Fatalf(err.Error())
 	}
@@ -291,7 +291,7 @@ func execTemplate(tmplName string, w io.Writer, data interface{}) {
 }
 
 // ProjectRoot is root dir of current project
-var ProjectRoot string
+var projectRoot string
 
 // GenerateReports generates HTML report in the given report dir location
 func GenerateReports(res *SuiteResult, reportDir, themePath string) error {
@@ -309,9 +309,9 @@ func GenerateReports(res *SuiteResult, reportDir, themePath string) error {
 		go generateIndexPage(res, f, &wg)
 		specRes := res.SpecResults
 		for _, r := range specRes {
-			relPath, _ := filepath.Rel(ProjectRoot, r.FileName)
+			relPath, _ := filepath.Rel(projectRoot, r.FileName)
 			env.CreateDirectory(filepath.Join(reportDir, filepath.Dir(relPath)))
-			sf, err := os.Create(filepath.Join(reportDir, toHTMLFileName(r.FileName, ProjectRoot)))
+			sf, err := os.Create(filepath.Join(reportDir, toHTMLFileName(r.FileName, projectRoot)))
 			if err != nil {
 				return err
 			}
@@ -399,7 +399,7 @@ func generateSearchIndex(suiteRes *SuiteResult, reportDir string) error {
 	defer f.Close()
 	index := newSearchIndex()
 	for _, r := range suiteRes.SpecResults {
-		specFileName := toHTMLFileName(r.FileName, ProjectRoot)
+		specFileName := toHTMLFileName(r.FileName, projectRoot)
 		for _, t := range r.Tags {
 			if !index.hasValueForTag(t, specFileName) {
 				index.Tags[t] = append(index.Tags[t], specFileName)

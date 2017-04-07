@@ -627,7 +627,7 @@ func newProtoHookFailure() *gm.ProtoHookFailure {
 }
 
 func newSuiteResult(failed bool, failCount, skipCount int32, succRate float32, preHook, postHook *gm.ProtoHookFailure, specRes ...*gm.ProtoSpecResult) *SuiteResult {
-	return ToSuiteResult(newProtoSuiteRes(failed, failCount, skipCount, succRate, preHook, postHook, specRes...))
+	return ToSuiteResult("", newProtoSuiteRes(failed, failCount, skipCount, succRate, preHook, postHook, specRes...))
 }
 
 func newProtoSuiteRes(failed bool, failCount, skipCount int32, succRate float32, preHook, postHook *gm.ProtoHookFailure, specRes ...*gm.ProtoSpecResult) *gm.ProtoSuiteResult {

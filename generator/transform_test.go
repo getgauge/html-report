@@ -1351,7 +1351,7 @@ func TestTableDrivenStatusCompute(t *testing.T) {
 
 func TestMapProjectNametoSuiteResult(t *testing.T) {
 	psr := &gm.ProtoSuiteResult{ProjectName: "foo"}
-	res := ToSuiteResult(psr)
+	res := ToSuiteResult("", psr)
 
 	if res.ProjectName != "foo" {
 		t.Errorf("Expected ProjectName=foo, got %s", res.ProjectName)
@@ -1360,7 +1360,7 @@ func TestMapProjectNametoSuiteResult(t *testing.T) {
 
 func TestMapEnvironmenttoSuiteResult(t *testing.T) {
 	psr := &gm.ProtoSuiteResult{Environment: "foo"}
-	res := ToSuiteResult(psr)
+	res := ToSuiteResult("", psr)
 
 	if res.Environment != "foo" {
 		t.Errorf("Expected Environment=foo, got %s", res.Environment)
@@ -1369,7 +1369,7 @@ func TestMapEnvironmenttoSuiteResult(t *testing.T) {
 
 func TestMapTagstoSuiteResult(t *testing.T) {
 	psr := &gm.ProtoSuiteResult{Tags: "foo, bar"}
-	res := ToSuiteResult(psr)
+	res := ToSuiteResult("", psr)
 
 	if res.Tags != "foo, bar" {
 		t.Errorf("Expected Tags=foo, bar; got %s", res.Tags)
@@ -1378,7 +1378,7 @@ func TestMapTagstoSuiteResult(t *testing.T) {
 
 func TestMapExecutionTimeToSuiteResult(t *testing.T) {
 	psr := &gm.ProtoSuiteResult{ExecutionTime: 113163}
-	res := ToSuiteResult(psr)
+	res := ToSuiteResult("", psr)
 
 	if res.ExecutionTime != 113163 {
 		t.Errorf("Expected ExecutionTime=113163; got %s", res.ExecutionTime)
@@ -1387,14 +1387,14 @@ func TestMapExecutionTimeToSuiteResult(t *testing.T) {
 
 func TestSpecsCountToSuiteResult(t *testing.T) {
 	psr := &gm.ProtoSuiteResult{SpecsFailedCount: 2, SpecsSkippedCount: 1, SpecResults: []*gm.ProtoSpecResult{
-		&gm.ProtoSpecResult{Skipped: false, Failed: false},
-		&gm.ProtoSpecResult{Skipped: false, Failed: true},
-		&gm.ProtoSpecResult{Skipped: true, Failed: false},
-		&gm.ProtoSpecResult{Skipped: false, Failed: true},
-		&gm.ProtoSpecResult{Skipped: false, Failed: false},
-		&gm.ProtoSpecResult{Skipped: false, Failed: false},
+		{Skipped: false, Failed: false},
+		{Skipped: false, Failed: true},
+		{Skipped: true, Failed: false},
+		{Skipped: false, Failed: true},
+		{Skipped: false, Failed: false},
+		{Skipped: false, Failed: false},
 	}}
-	res := ToSuiteResult(psr)
+	res := ToSuiteResult("", psr)
 
 	if res.PassedSpecsCount != 3 {
 		t.Errorf("Expected PassedSpecsCount=3; got %s\n", res.PassedSpecsCount)
@@ -1409,7 +1409,7 @@ func TestSpecsCountToSuiteResult(t *testing.T) {
 
 func TestMapPreHookFailureToSuiteResult(t *testing.T) {
 	psr := &gm.ProtoSuiteResult{PreHookFailure: &gm.ProtoHookFailure{ErrorMessage: "foo failure"}}
-	res := ToSuiteResult(psr)
+	res := ToSuiteResult("", psr)
 
 	if res.BeforeSuiteHookFailure == nil {
 		t.Errorf("Expected BeforeSuiteHookFailure not nil\n")
@@ -1422,7 +1422,7 @@ func TestMapPreHookFailureToSuiteResult(t *testing.T) {
 
 func TestMapPostHookFailureToSuiteResult(t *testing.T) {
 	psr := &gm.ProtoSuiteResult{PostHookFailure: &gm.ProtoHookFailure{ErrorMessage: "foo failure"}}
-	res := ToSuiteResult(psr)
+	res := ToSuiteResult("", psr)
 
 	if res.AfterSuiteHookFailure == nil {
 		t.Errorf("Expected AfterSuiteHookFailure not nil\n")
@@ -1436,7 +1436,7 @@ func TestMapPostHookFailureToSuiteResult(t *testing.T) {
 func TestMapTimestampToSuiteResult(t *testing.T) {
 	timestamp := "Jun 3, 2016 at 12:29pm"
 	psr := &gm.ProtoSuiteResult{Timestamp: timestamp}
-	res := ToSuiteResult(psr)
+	res := ToSuiteResult("", psr)
 
 	if res.Timestamp != timestamp {
 		t.Errorf("Expected Timestamp=%s; got %s\n", timestamp, res.Timestamp)
@@ -1445,7 +1445,7 @@ func TestMapTimestampToSuiteResult(t *testing.T) {
 
 func TestMapExecutionStatusPassByDefaultToSuiteResult(t *testing.T) {
 	psr := &gm.ProtoSuiteResult{}
-	res := ToSuiteResult(psr)
+	res := ToSuiteResult("", psr)
 
 	if res.ExecutionStatus != pass {
 		t.Errorf("Expected ExecutionStatus=pass, got %s\n", res.ExecutionStatus)
@@ -1454,7 +1454,7 @@ func TestMapExecutionStatusPassByDefaultToSuiteResult(t *testing.T) {
 
 func TestMapExecutionStatusOnFailureToSuiteResult(t *testing.T) {
 	psr := &gm.ProtoSuiteResult{Failed: true}
-	res := ToSuiteResult(psr)
+	res := ToSuiteResult("", psr)
 
 	if res.ExecutionStatus != fail {
 		t.Errorf("Expected ExecutionStatus=fail, got %s\n", res.ExecutionStatus)
@@ -1470,7 +1470,7 @@ func TestMapSpecResultsToSuiteResult(t *testing.T) {
 		},
 	}
 
-	res := ToSuiteResult(psr)
+	res := ToSuiteResult("", psr)
 
 	if len(res.SpecResults) != 3 {
 		t.Errorf("Expected 3 spec results, got %d\n", len(res.SpecResults))

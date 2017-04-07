@@ -33,7 +33,8 @@ const (
 )
 
 // ToSuiteResult Converts the ProtoSuiteResult to SuiteResult type.
-func ToSuiteResult(psr *gm.ProtoSuiteResult) *SuiteResult {
+func ToSuiteResult(pRoot string, psr *gm.ProtoSuiteResult) *SuiteResult {
+	projectRoot = pRoot 
 	suiteResult := SuiteResult{
 		ProjectName:            psr.GetProjectName(),
 		Environment:            psr.GetEnvironment(),
@@ -65,7 +66,7 @@ func toOverview(res *SuiteResult, specRes *spec) *overview {
 	}
 	base := ""
 	if specRes != nil {
-		base, _ = filepath.Rel(filepath.Dir(specRes.FileName), ProjectRoot)
+		base, _ = filepath.Rel(filepath.Dir(specRes.FileName), projectRoot)
 		base = base + "/"
 	}
 	return &overview{
@@ -108,7 +109,7 @@ func toSidebar(res *SuiteResult, currSpec *spec) *sidebar {
 	if currSpec != nil {
 		basePath = filepath.Dir(currSpec.FileName)
 	} else {
-		basePath = ProjectRoot
+		basePath = projectRoot
 	}
 	specsMetaList := make([]*specsMeta, 0)
 	for _, specRes := range res.SpecResults {
