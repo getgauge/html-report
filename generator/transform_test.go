@@ -1567,3 +1567,100 @@ func TestToNestedSuiteResultMapsAfterSuiteHookFailure(t *testing.T) {
 		t.Fatalf("expected AfterSuiteHookFailure to have HookName = %s, got %s", want, got)
 	}
 }
+
+func TestToNestedSuiteResultMapsExecutionTime(t *testing.T) {
+	want := int64(2000)
+	sr := &SuiteResult{SpecResults: []*spec{
+		{FileName: "nested1/foo.spec", SpecHeading: "Foo Spec", ExecutionTime: 1000},
+		{FileName: "nested1/nested2/boo.spec", SpecHeading: "Boo Spec", ExecutionTime: 1000},
+		{FileName: "bar.spec", SpecHeading: "Bar Spec", ExecutionTime: 1000},
+	}}
+
+	got := toNestedSuiteResult("nested1", sr)
+
+	if got.ExecutionTime != want {
+		t.Fatalf("expected ExecutionTime = %d, got %d", want, got.ExecutionTime)
+	}
+}
+
+func TestToNestedSuiteResultMapsPassedCount(t *testing.T) {
+	want := 1
+	sr := &SuiteResult{SpecResults: []*spec{
+		{FileName: "nested1/foo.spec", SpecHeading: "Foo Spec", ExecutionStatus: pass},
+		{FileName: "nested1/nested2/boo.spec", SpecHeading: "Boo Spec", ExecutionStatus: skip},
+		{FileName: "bar.spec", SpecHeading: "Bar Spec", ExecutionStatus: pass},
+	}}
+
+	got := toNestedSuiteResult("nested1", sr)
+
+	if got.PassedSpecsCount != want {
+		t.Fatalf("Expected FailedCount=%d, got %d", want, got.PassedSpecsCount)
+	}
+}
+
+func TestToNestedSuiteResultMapsFailedCount(t *testing.T) {
+	want := 1
+	sr := &SuiteResult{SpecResults: []*spec{
+		{FileName: "nested1/foo.spec", SpecHeading: "Foo Spec", ExecutionStatus: pass},
+		{FileName: "nested1/nested2/boo.spec", SpecHeading: "Boo Spec", ExecutionStatus: fail},
+		{FileName: "nested1/bar.spec", SpecHeading: "Bar Spec", ExecutionStatus: pass},
+	}}
+
+	got := toNestedSuiteResult("nested1", sr)
+
+	if got.FailedSpecsCount != want {
+		t.Fatalf("Expected FailedCount=%d, got %d", want, got.FailedSpecsCount)
+	}
+}
+
+func TestToNestedSuiteResultMapsSkippedCount(t *testing.T) {
+	want := 2
+	sr := &SuiteResult{SpecResults: []*spec{
+		{FileName: "nested1/foo.spec", SpecHeading: "Foo Spec", ExecutionStatus: skip},
+		{FileName: "nested1/nested2/boo.spec", SpecHeading: "Boo Spec", ExecutionStatus: skip},
+		{FileName: "nested1/bar.spec", SpecHeading: "Bar Spec", ExecutionStatus: fail},
+	}}
+
+	got := toNestedSuiteResult("nested1", sr)
+
+	if got.SkippedSpecsCount != want {
+		t.Fatalf("Expected SkippedCount=%d, got %d", want, got.SkippedSpecsCount)
+	}
+}
+
+func TestToNestedSuiteResultMapsSuccessRate(t *testing.T) {
+	want := float32(50.0)
+	sr := &SuiteResult{SpecResults: []*spec{
+		{FileName: "nested1/foo.spec", SpecHeading: "Foo Spec", ExecutionStatus: fail},
+		{FileName: "nested1/nested2/boo.spec", SpecHeading: "Boo Spec", ExecutionStatus: skip},
+		{FileName: "nested1/nested2/bar.spec", SpecHeading: "Bar Spec", ExecutionStatus: pass},
+		{FileName: "nested1/bar.spec", SpecHeading: "Baz Spec", ExecutionStatus: pass},
+	}}
+
+	got := toNestedSuiteResult("nested1", sr)
+
+	if got.SuccessRate != want {
+		t.Fatalf("Expected SuccessRate=%f, got %f", want, got.SuccessRate)
+	}
+}
+
+func TestToNestedSuiteResultMapsSpecResults(t *testing.T) {
+	fooSpec := spec{FileName: "nested1/foo.spec", SpecHeading: "Foo Spec"}
+	booSpec := spec{FileName: "nested1/nested2/boo.spec", SpecHeading: "Boo Spec"}
+	barSpec := spec{FileName: "nested1/bar.spec", SpecHeading: "Bar Spec"}
+	bazSpec := spec{FileName: "nested2/nested1/baz.spec", SpecHeading: "Baz Spec"}
+	specResults := []*spec{
+		&fooSpec,
+		&booSpec,
+		&bazSpec,
+		&barSpec,
+	}
+	got := toNestedSuiteResult("nested1", &SuiteResult{SpecResults: specResults})
+	want := []*spec{
+		&fooSpec,
+		&booSpec,
+		&barSpec,
+	}
+
+	checkEqual(t, "", want, got.SpecResults)
+}

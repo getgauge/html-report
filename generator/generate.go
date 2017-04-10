@@ -92,7 +92,7 @@ type buildError struct {
 type SuiteResult struct {
 	ProjectName            string       `json:"projectName"`
 	Timestamp              string       `json:"timestamp"`
-	SuccessRate            int          `json:"successRate"`
+	SuccessRate            float32      `json:"successRate"`
 	Environment            string       `json:"environment"`
 	Tags                   string       `json:"tags"`
 	ExecutionTime          int64        `json:"executionTime"`

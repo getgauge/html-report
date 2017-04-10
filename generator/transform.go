@@ -45,7 +45,7 @@ func ToSuiteResult(pRoot string, psr *gm.ProtoSuiteResult) *SuiteResult {
 		SkippedSpecsCount:      int(psr.GetSpecsSkippedCount()),
 		BeforeSuiteHookFailure: toHookFailure(psr.GetPreHookFailure(), "Before Suite"),
 		AfterSuiteHookFailure:  toHookFailure(psr.GetPostHookFailure(), "After Suite"),
-		SuccessRate:            int(psr.GetSuccessRate()),
+		SuccessRate:            psr.GetSuccessRate(),
 		Timestamp:              psr.GetTimestamp(),
 		ExecutionStatus:        pass,
 	}
@@ -60,14 +60,50 @@ func ToSuiteResult(pRoot string, psr *gm.ProtoSuiteResult) *SuiteResult {
 }
 
 func toNestedSuiteResult(basePath string, result *SuiteResult) *SuiteResult {
-	return &SuiteResult{
+	sr := &SuiteResult{
 		ProjectName: result.ProjectName,
 		Timestamp:   result.Timestamp,
 		Environment: result.Environment,
 		Tags:        result.Tags,
 		BeforeSuiteHookFailure: result.BeforeSuiteHookFailure,
 		AfterSuiteHookFailure:  result.AfterSuiteHookFailure,
+		ExecutionStatus:        pass,
+		SpecResults:            getNestedSpecResults(result.SpecResults, basePath),
 	}
+
+	for _, spec := range sr.SpecResults {
+		if spec.ExecutionStatus == fail {
+			sr.ExecutionStatus = fail
+			sr.FailedSpecsCount++
+		}
+		if spec.ExecutionStatus == skip {
+			sr.SkippedSpecsCount++
+		}
+		if spec.ExecutionStatus == pass {
+			sr.PassedSpecsCount++
+		}
+		sr.ExecutionTime += spec.ExecutionTime
+	}
+	sr.SuccessRate = getSuccessRate(len(sr.SpecResults), sr.FailedSpecsCount+sr.SkippedSpecsCount)
+	return sr
+}
+
+func getSuccessRate(totalSpecs int, failedSpecs int) float32 {
+	if totalSpecs == 0 {
+		return 0
+	}
+	return (float32)(100.0 * (totalSpecs - failedSpecs) / totalSpecs)
+}
+
+func getNestedSpecResults(specResults []*spec, basePath string) []*spec {
+	nestedSpecResults := make([]*spec, 0)
+	for _, specResult := range specResults {
+		rel, _ := filepath.Rel(projectRoot, specResult.FileName)
+		if strings.HasPrefix(rel, basePath) {
+			nestedSpecResults = append(nestedSpecResults, specResult)
+		}
+	}
+	return nestedSpecResults
 }
 
 func toOverview(res *SuiteResult, specRes *spec) *overview {
@@ -84,7 +120,7 @@ func toOverview(res *SuiteResult, specRes *spec) *overview {
 		ProjectName:   res.ProjectName,
 		Env:           res.Environment,
 		Tags:          res.Tags,
-		SuccessRate:   float32(res.SuccessRate),
+		SuccessRate:   res.SuccessRate,
 		ExecutionTime: formatTime(res.ExecutionTime),
 		Timestamp:     res.Timestamp,
 		Summary:       &summary{Failed: res.FailedSpecsCount, Total: totalSpecs, Passed: res.PassedSpecsCount, Skipped: res.SkippedSpecsCount},
