@@ -506,7 +506,7 @@ func TestToSidebar(t *testing.T) {
 		},
 	}
 
-	got := toSidebar(suiteRes2, "", "")
+	got := toSidebar(suiteRes2, "")
 	if !reflect.DeepEqual(got, want) {
 		t.Errorf("want:\n%v\ngot:\n%v\n", want, got)
 	}

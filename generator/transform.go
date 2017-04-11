@@ -25,6 +25,7 @@ import (
 	"time"
 
 	gm "github.com/getgauge/html-report/gauge_messages"
+	"path"
 )
 
 const (
@@ -69,6 +70,7 @@ func toNestedSuiteResult(basePath string, result *SuiteResult) *SuiteResult {
 		AfterSuiteHookFailure:  result.AfterSuiteHookFailure,
 		ExecutionStatus:        pass,
 		SpecResults:            getNestedSpecResults(result.SpecResults, basePath),
+		BasePath:               filepath.Clean(basePath),
 	}
 
 	for _, spec := range sr.SpecResults {
@@ -114,7 +116,10 @@ func toOverview(res *SuiteResult, filePath string) *overview {
 	base := ""
 	if filePath != "" {
 		base, _ = filepath.Rel(filepath.Dir(filePath), projectRoot)
-		base = base + "/"
+		base = path.Join(base, "/")
+	} else if res.BasePath != "" {
+		base, _ = filepath.Rel(filepath.Join(projectRoot, res.BasePath), projectRoot)
+		base = path.Join(base, "/")
 	}
 	return &overview{
 		ProjectName:   res.ProjectName,
@@ -156,14 +161,13 @@ func getFilePathBasedOnSpecLocation(specFilePath, path string) string {
 		return filepath.Dir(specFilePath)
 	}
 	if path != "" {
-		rel, _ := filepath.Rel(reportsDir, filepath.Dir(path))
-		return filepath.Join(projectRoot, rel)
-	} 
+		return filepath.Join(projectRoot, path)
+	}
 	return projectRoot
 }
 
-func toSidebar(res *SuiteResult, specFilePath, reportFilePath string) *sidebar {
-	basePath := getFilePathBasedOnSpecLocation(specFilePath, reportFilePath)
+func toSidebar(res *SuiteResult, specFilePath string) *sidebar {
+	basePath := getFilePathBasedOnSpecLocation(specFilePath, res.BasePath)
 	specsMetaList := make([]*specsMeta, 0)
 	for _, specRes := range res.SpecResults {
 		sm := &specsMeta{

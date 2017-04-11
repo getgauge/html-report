@@ -489,7 +489,7 @@ var nestedSpecRes = &gm.ProtoSpecResult{
 	ProtoSpec: &gm.ProtoSpec{
 		SpecHeading: "Nested Specification",
 		Tags:        []string{},
-		FileName:    filepath.Join("nested","nested_specification.spec"),
+		FileName:    filepath.Join("nested", "nested_specification.spec"),
 		Items: []*gm.ProtoItem{
 			newScenarioItem(scenario2),
 		},
@@ -716,7 +716,7 @@ func TestIndexPageGeneration(t *testing.T) {
 	var wg sync.WaitGroup
 	wg.Add(1)
 
-	generateIndexPage(suiteResWithAllPass, "", buf, &wg)
+	generateIndexPage(suiteResWithAllPass, buf, &wg)
 	wg.Wait()
 
 	want := helper.RemoveNewline(string(content))

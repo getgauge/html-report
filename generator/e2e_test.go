@@ -31,14 +31,14 @@ var suiteResWithBeforeSuiteFailure = newProtoSuiteRes(true, 0, 0, 0, newProtoHoo
 var templateBasePath, _ = filepath.Abs(filepath.Join("..", "themes", "default"))
 
 func TestEndToEndHTMLGenerationWhenBeforeSuiteFails(t *testing.T) {
-	reportsDir = filepath.Join("_testdata", "e2e")
+	reportDir := filepath.Join("_testdata", "e2e")
 	r := ToSuiteResult("", suiteResWithBeforeSuiteFailure)
-	err := GenerateReports(r, templateBasePath)
+	err := GenerateReports(r, reportDir, templateBasePath)
 
 	if err != nil {
 		t.Errorf("Expected error to be nil. Got: %s", err.Error())
 	}
-	gotContent, err := ioutil.ReadFile(filepath.Join(reportsDir, "index.html"))
+	gotContent, err := ioutil.ReadFile(filepath.Join(reportDir, "index.html"))
 	if err != nil {
 		t.Errorf("Error reading generated HTML file: %s", err.Error())
 	}
@@ -49,54 +49,54 @@ func TestEndToEndHTMLGenerationWhenBeforeSuiteFails(t *testing.T) {
 	got := helper.RemoveNewline(string(gotContent))
 	want := helper.RemoveNewline(string(wantContent))
 	helper.AssertEqual(want, got, "index.html", t)
-	cleanUp(t)
+	cleanUp(t, reportDir)
 }
 
 func TestEndToEndHTMLGeneration(t *testing.T) {
 	expectedFiles := []string{"index.html", "passing_specification_1.html", "failing_specification_1.html", "skipped_specification.html", "js/search_index.js"}
-	reportsDir = filepath.Join("_testdata", "e2e")
+	reportDir := filepath.Join("_testdata", "e2e")
 
 	r := ToSuiteResult("", suiteRes3)
-	err := GenerateReports(r, templateBasePath)
+	err := GenerateReports(r, reportDir, templateBasePath)
 
 	if err != nil {
 		t.Errorf("Expected error to be nil. Got: %s", err.Error())
 	}
 
-	verifyExpectedFiles(t, "simpleSuiteRes", reportsDir, expectedFiles)
-	cleanUp(t)
+	verifyExpectedFiles(t, "simpleSuiteRes", reportDir, expectedFiles)
+	cleanUp(t, reportDir)
 }
 
 func TestEndToEndHTMLGenerationForThemeWithRelativePath(t *testing.T) {
 	expectedFiles := []string{"index.html", "passing_specification_1.html", "failing_specification_1.html", "skipped_specification.html", "js/search_index.js"}
-	reportsDir = filepath.Join("_testdata", "e2e")
+	reportDir := filepath.Join("_testdata", "e2e")
 	defaultThemePath := filepath.Join("..", "themes", "default")
 
 	r := ToSuiteResult("", suiteRes3)
-	err := GenerateReports(r, defaultThemePath)
+	err := GenerateReports(r, reportDir, defaultThemePath)
 
 	if err != nil {
 		t.Errorf("Expected error to be nil. Got: %s", err.Error())
 	}
 
-	verifyExpectedFiles(t, "simpleSuiteRes", reportsDir, expectedFiles)
-	cleanUp(t)
+	verifyExpectedFiles(t, "simpleSuiteRes", reportDir, expectedFiles)
+	cleanUp(t, reportDir)
 }
 
 func TestEndToEndHTMLGenerationForCustomTheme(t *testing.T) {
 	expectedFiles := []string{"index.html", "passing_specification_1.html", "failing_specification_1.html", "skipped_specification.html", "js/search_index.js"}
-	reportsDir := filepath.Join("_testdata", "e2e")
+	reportDir := filepath.Join("_testdata", "e2e")
 	defaultThemePath := filepath.Join("_testdata", "dummyReportTheme")
 
 	r := ToSuiteResult("", suiteRes3)
-	err := GenerateReports(r, defaultThemePath)
+	err := GenerateReports(r, reportDir, defaultThemePath)
 
 	if err != nil {
 		t.Errorf("Expected error to be nil. Got: %s", err.Error())
 	}
 
-	verifyExpectedFiles(t, "simpleSuiteRes", reportsDir, expectedFiles)
-	cleanUp(t)
+	verifyExpectedFiles(t, "simpleSuiteRes", reportDir, expectedFiles)
+	cleanUp(t, reportDir)
 }
 
 func TestEndToEndHTMLGenerationFromSavedResult(t *testing.T) {
@@ -118,7 +118,7 @@ func TestEndToEndHTMLGenerationFromSavedResult(t *testing.T) {
 		want := helper.RemoveNewline(string(wantContent))
 		helper.AssertEqual(want, got, expectedFile, t)
 	}
-	cleanUp(t)
+	cleanUp(t, reportDir)
 }
 
 func TestEndToEndHTMLGenerationForNestedSpecs(t *testing.T) {
@@ -130,25 +130,25 @@ func TestEndToEndHTMLGenerationForNestedSpecs(t *testing.T) {
 		filepath.Join("nested", "index.html"),
 		"js/search_index.js",
 	}
-	reportsDir = filepath.Join("_testdata", "e2e")
-	
+	reportDir := filepath.Join("_testdata", "e2e")
+
 	r := ToSuiteResult("", suiteRes4)
-	err := GenerateReports(r, templateBasePath)
+	err := GenerateReports(r, reportDir, templateBasePath)
 
 	if err != nil {
 		t.Errorf("Expected error to be nil. Got: %s", err.Error())
 	}
-	verifyExpectedFiles(t, "nestedSuiteRes", reportsDir, expectedFiles)
-	cleanUp(t)
+	verifyExpectedFiles(t, "nestedSuiteRes", reportDir, expectedFiles)
+	cleanUp(t, reportDir)
 }
 
-func cleanUp(t *testing.T) {
-	s, err := filepath.Glob(filepath.Join(reportsDir, "*"))
+func cleanUp(t *testing.T, reportDir string) {
+	s, err := filepath.Glob(filepath.Join(reportDir, "*"))
 	if err != nil {
 		t.Error(err)
 	}
 	for _, f := range s {
-		if f != filepath.Join(reportsDir, ".gitkeep") {
+		if f != filepath.Join(reportDir, ".gitkeep") {
 			os.RemoveAll(f)
 		}
 	}
