@@ -491,7 +491,7 @@ func TestToOverview(t *testing.T) {
 		Summary:       &summary{Total: 15, Failed: 2, Passed: 8, Skipped: 5},
 	}
 
-	got := toOverview(suiteRes1, nil)
+	got := toOverview(suiteRes1, "")
 	checkEqual(t, "", want, got)
 }
 
@@ -506,7 +506,7 @@ func TestToSidebar(t *testing.T) {
 		},
 	}
 
-	got := toSidebar(suiteRes2, nil)
+	got := toSidebar(suiteRes2, "", "")
 	if !reflect.DeepEqual(got, want) {
 		t.Errorf("want:\n%v\ngot:\n%v\n", want, got)
 	}
@@ -1495,16 +1495,6 @@ func TestToNestedSuiteResultMapsProjectName(t *testing.T) {
 	}
 }
 
-/*
-	SuccessRate            int          `json:"successRate"`
-	ExecutionTime          int64        `json:"executionTime"`
-	ExecutionStatus        status       `json:"executionStatus"`
-	SpecResults            []*spec      `json:"specResults"`
-	PassedSpecsCount       int          `json:"passedSpecsCount"`
-	FailedSpecsCount       int          `json:"failedSpecsCount"`
-	SkippedSpecsCount      int          `json:"skippedSpecsCount"`
-
-*/
 func TestToNestedSuiteResultMapsTimeStamp(t *testing.T) {
 	want := "Jul 13, 2016 at 11:49am"
 	sr := &SuiteResult{Timestamp: want}

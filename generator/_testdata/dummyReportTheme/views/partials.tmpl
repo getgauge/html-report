@@ -486,7 +486,7 @@
 
 /* holds definition to render a Spec page */
 {{define "specPage"}}
-	{{$overview := (toOverview .SuiteRes .SpecRes)}}
+	{{$overview := (toOverview .SuiteRes .SpecRes.FileName)}}
 	{{template "htmlPageStartTag" $overview}}
 	{{template "reportOverviewTag" $overview}}
 
@@ -500,7 +500,7 @@
 
 	{{if not .SuiteRes.BeforeSuiteHookFailure }}
 		<div class="specifications">
-		{{template "sidebarDiv" (toSidebar .SuiteRes .SpecRes)}}
+		{{template "sidebarDiv" (toSidebar .SuiteRes .SpecRes.FileName "")}}
 		{{template "spec"  .SpecRes}}
 		</div>
 	{{end}}
@@ -513,15 +513,15 @@
 
 /* holds definition to render an index page */
 {{define "indexPage"}}
-	{{$overview := (toOverview . nil)}}
+	{{$overview := (toOverview .SuiteRes .FilePath)}}
 	{{template "htmlPageStartTag" $overview}}
 	{{template "reportOverviewTag" $overview}}
-	{{if .AfterSuiteHookFailure}}
-		{{template "hookFailureDiv" .AfterSuiteHookFailure}}
+	{{if .SuiteRes.AfterSuiteHookFailure}}
+		{{template "hookFailureDiv" .SuiteRes.AfterSuiteHookFailure}}
 	{{end}}
   <div class="specifications">
-  {{template "sidebarDiv" (toSidebar . nil)}}
-	{{if ne .ExecutionStatus "fail" }}
+  {{template "sidebarDiv" (toSidebar .SuiteRes "" .FilePath)}}
+	{{if ne .SuiteRes.ExecutionStatus "fail" }}
     <div class="congratulations details">
       <p>Congratulations! You've gone all <span class="green">green</span> and saved the environment!</p>
     </div>
@@ -535,7 +535,7 @@
 
 /* holds definition to render an index page with before suite hook failure */
 {{define "indexPageFailure"}}
-	{{$overview := (toOverview . nil)}}
+	{{$overview := (toOverview . "")}}
 	{{template "htmlPageStartTag" $overview}}
 	{{template "reportOverviewTag" $overview}}
   {{template "hookFailureDiv" .BeforeSuiteHookFailure}}

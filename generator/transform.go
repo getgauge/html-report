@@ -106,14 +106,14 @@ func getNestedSpecResults(specResults []*spec, basePath string) []*spec {
 	return nestedSpecResults
 }
 
-func toOverview(res *SuiteResult, specRes *spec) *overview {
+func toOverview(res *SuiteResult, filePath string) *overview {
 	totalSpecs := 0
 	if res.SpecResults != nil {
 		totalSpecs = len(res.SpecResults)
 	}
 	base := ""
-	if specRes != nil {
-		base, _ = filepath.Rel(filepath.Dir(specRes.FileName), projectRoot)
+	if filePath != "" {
+		base, _ = filepath.Rel(filepath.Dir(filePath), projectRoot)
 		base = base + "/"
 	}
 	return &overview{
@@ -141,23 +141,29 @@ func toHookFailure(failure *gm.ProtoHookFailure, hookName string) *hookFailure {
 	}
 }
 
-func toHTMLFileName(specName, projectRoot string) string {
-	specPath, err := filepath.Rel(projectRoot, specName)
+func toHTMLFileName(specName, basePath string) string {
+	specPath, err := filepath.Rel(basePath, specName)
 	if err != nil {
-		specPath = filepath.Join(projectRoot, filepath.Base(specName))
+		specPath = filepath.Join(basePath, filepath.Base(specName))
 	}
 	// specPath = strings.Replace(specPath, string(filepath.Separator), "_", -1)
 	ext := filepath.Ext(specPath)
 	return strings.TrimSuffix(specPath, ext) + dothtml
 }
 
-func toSidebar(res *SuiteResult, currSpec *spec) *sidebar {
-	var basePath string
-	if currSpec != nil {
-		basePath = filepath.Dir(currSpec.FileName)
-	} else {
-		basePath = projectRoot
+func getFilePathBasedOnSpecLocation(specFilePath, path string) string {
+	if specFilePath != "" {
+		return filepath.Dir(specFilePath)
 	}
+	if path != "" {
+		rel, _ := filepath.Rel(reportsDir, filepath.Dir(path))
+		return filepath.Join(projectRoot, rel)
+	} 
+	return projectRoot
+}
+
+func toSidebar(res *SuiteResult, specFilePath, reportFilePath string) *sidebar {
+	basePath := getFilePathBasedOnSpecLocation(specFilePath, reportFilePath)
 	specsMetaList := make([]*specsMeta, 0)
 	for _, specRes := range res.SpecResults {
 		sm := &specsMeta{
@@ -170,7 +176,6 @@ func toSidebar(res *SuiteResult, currSpec *spec) *sidebar {
 		}
 		specsMetaList = append(specsMetaList, sm)
 	}
-
 	sort.Sort(byStatus(specsMetaList))
 
 	return &sidebar{

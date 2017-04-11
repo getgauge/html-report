@@ -289,11 +289,12 @@ func execTemplate(tmplName string, w io.Writer, data interface{}) {
 
 // ProjectRoot is root dir of current project
 var projectRoot string
+var reportsDir string
 
 // GenerateReports generates HTML report in the given report dir location
-func GenerateReports(res *SuiteResult, reportDir, themePath string) error {
+func GenerateReports(res *SuiteResult, themePath string) error {
 	readTemplates(themePath)
-	f, err := os.Create(filepath.Join(reportDir, "index.html"))
+	f, err := os.Create(filepath.Join(reportsDir, "index.html"))
 	if err != nil {
 		return err
 	}
@@ -303,13 +304,13 @@ func GenerateReports(res *SuiteResult, reportDir, themePath string) error {
 	} else {
 		var wg sync.WaitGroup
 		wg.Add(1)
-		go generateIndexPage(res, f, &wg)
-		go generateIndexPages(res, reportDir, &wg)
+		go generateIndexPage(res, "", f, &wg)
+		go generateIndexPages(res, &wg)
 		specRes := res.SpecResults
 		for _, r := range specRes {
 			relPath, _ := filepath.Rel(projectRoot, r.FileName)
-			env.CreateDirectory(filepath.Join(reportDir, filepath.Dir(relPath)))
-			sf, err := os.Create(filepath.Join(reportDir, toHTMLFileName(r.FileName, projectRoot)))
+			env.CreateDirectory(filepath.Join(reportsDir, filepath.Dir(relPath)))
+			sf, err := os.Create(filepath.Join(reportsDir, toHTMLFileName(r.FileName, projectRoot)))
 			if err != nil {
 				return err
 			}
@@ -319,7 +320,7 @@ func GenerateReports(res *SuiteResult, reportDir, themePath string) error {
 		}
 		wg.Wait()
 	}
-	err = generateSearchIndex(res, reportDir)
+	err = generateSearchIndex(res)
 	if err != nil {
 		return err
 	}
@@ -342,16 +343,17 @@ func RegenerateReport(inputFile, reportsDir, themePath string) {
 	GenerateReport(res, reportsDir, themePath)
 }
 
-func GenerateReport(res *SuiteResult, reportsDir, themePath string) {
-	err := GenerateReports(res, reportsDir, themePath)
+func GenerateReport(res *SuiteResult, reportDir, themePath string) {
+	reportsDir = reportDir
+	err := GenerateReports(res, themePath)
 	if err != nil {
 		log.Fatalf("Failed to generate reports: %s\n", err.Error())
 	}
-	err = theme.CopyReportTemplateFiles(themePath, reportsDir)
+	err = theme.CopyReportTemplateFiles(themePath, reportDir)
 	if err != nil {
 		log.Fatalf("Error copying template directory :%s\n", err.Error())
 	}
-	fmt.Printf("Successfully generated html-report to => %s\n", reportsDir)
+	fmt.Printf("Successfully generated html-report to => %s\n", reportDir)
 }
 
 func newSearchIndex() *searchIndex {
@@ -388,9 +390,9 @@ func containsParseErrors(errors []error) bool {
 	return false
 }
 
-func generateSearchIndex(suiteRes *SuiteResult, reportDir string) error {
-	env.CreateDirectory(filepath.Join(reportDir, "js"))
-	f, err := os.Create(filepath.Join(reportDir, "js", "search_index.js"))
+func generateSearchIndex(suiteRes *SuiteResult) error {
+	env.CreateDirectory(filepath.Join(reportsDir, "js"))
+	f, err := os.Create(filepath.Join(reportsDir, "js", "search_index.js"))
 	if err != nil {
 		return err
 	}
@@ -423,12 +425,15 @@ func generateSearchIndex(suiteRes *SuiteResult, reportDir string) error {
 	return nil
 }
 
-func generateIndexPage(suiteRes *SuiteResult, w io.Writer, wg *sync.WaitGroup) {
+func generateIndexPage(suiteRes *SuiteResult, path string, w io.Writer, wg *sync.WaitGroup) {
 	defer wg.Done()
-	execTemplate("indexPage", w, suiteRes)
+	execTemplate("indexPage", w, struct {
+		SuiteRes *SuiteResult
+		FilePath string
+	}{suiteRes, path})
 }
 
-func generateIndexPages(suiteRes *SuiteResult, reportDir string, wg *sync.WaitGroup) {
+func generateIndexPages(suiteRes *SuiteResult, wg *sync.WaitGroup) {
 	dirs := make(map[string]int)
 	for _, s := range suiteRes.SpecResults {
 		p, err := filepath.Rel(projectRoot, filepath.Dir(s.FileName))
@@ -447,7 +452,7 @@ func generateIndexPages(suiteRes *SuiteResult, reportDir string, wg *sync.WaitGr
 	}
 	delete(dirs, ".")
 	for d := range dirs {
-		dirPath := filepath.Join(reportDir, d)
+		dirPath := filepath.Join(reportsDir, d)
 		os.MkdirAll(dirPath, common.NewDirectoryPermissions)
 		p := filepath.Join(dirPath, "index.html")
 		f, err := os.Create(p)
@@ -457,7 +462,7 @@ func generateIndexPages(suiteRes *SuiteResult, reportDir string, wg *sync.WaitGr
 		defer f.Close()
 		wg.Add(1)
 		res := toNestedSuiteResult(d, suiteRes)
-		generateIndexPage(res, f, wg)
+		generateIndexPage(res, p, f, wg)
 	}
 }
 
