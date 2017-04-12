@@ -23,9 +23,8 @@ import (
 	"reflect"
 	"testing"
 
-	"github.com/kylelemons/godebug/pretty"
-
 	gm "github.com/getgauge/html-report/gauge_messages"
+	"github.com/kylelemons/godebug/pretty"
 )
 
 type transformTest struct {
@@ -492,7 +491,7 @@ func TestToOverview(t *testing.T) {
 		Summary:       &summary{Total: 15, Failed: 2, Passed: 8, Skipped: 5},
 	}
 
-	got := toOverview(suiteRes1, nil)
+	got := toOverview(suiteRes1, "")
 	checkEqual(t, "", want, got)
 }
 
@@ -507,7 +506,7 @@ func TestToSidebar(t *testing.T) {
 		},
 	}
 
-	got := toSidebar(suiteRes2, nil)
+	got := toSidebar(suiteRes2, "")
 	if !reflect.DeepEqual(got, want) {
 		t.Errorf("want:\n%v\ngot:\n%v\n", want, got)
 	}
@@ -1464,9 +1463,9 @@ func TestMapExecutionStatusOnFailureToSuiteResult(t *testing.T) {
 func TestMapSpecResultsToSuiteResult(t *testing.T) {
 	psr := &gm.ProtoSuiteResult{
 		SpecResults: []*gm.ProtoSpecResult{
-			&gm.ProtoSpecResult{ProtoSpec: &gm.ProtoSpec{FileName: "foo.spec", SpecHeading: "Foo Spec"}},
-			&gm.ProtoSpecResult{ProtoSpec: &gm.ProtoSpec{FileName: "bar.spec", SpecHeading: "Boo Spec"}},
-			&gm.ProtoSpecResult{ProtoSpec: &gm.ProtoSpec{FileName: "baz.spec", SpecHeading: "Baz Spec"}},
+			{ProtoSpec: &gm.ProtoSpec{FileName: "foo.spec", SpecHeading: "Foo Spec"}},
+			{ProtoSpec: &gm.ProtoSpec{FileName: "bar.spec", SpecHeading: "Boo Spec"}},
+			{ProtoSpec: &gm.ProtoSpec{FileName: "baz.spec", SpecHeading: "Baz Spec"}},
 		},
 	}
 
@@ -1483,4 +1482,175 @@ func TestMapSpecResultsToSuiteResult(t *testing.T) {
 			t.Errorf("Spec Filename Mismatch, want '%s', got '%s'", wantFileName, gotFileName)
 		}
 	}
+}
+
+func TestToNestedSuiteResultMapsProjectName(t *testing.T) {
+	want := "foo"
+	sr := &SuiteResult{ProjectName: want}
+
+	got := toNestedSuiteResult("some/path", sr)
+
+	if got.ProjectName != want {
+		t.Fatalf("Expected ProjectName=%s, got %s", want, got)
+	}
+}
+
+func TestToNestedSuiteResultMapsTimeStamp(t *testing.T) {
+	want := "Jul 13, 2016 at 11:49am"
+	sr := &SuiteResult{Timestamp: want}
+
+	got := toNestedSuiteResult("some/path", sr)
+
+	if got.Timestamp != want {
+		t.Fatalf("Expected TimeStamp=%s, got %s", want, got)
+	}
+}
+
+func TestToNestedSuiteResultMapsEnvironment(t *testing.T) {
+	want := "foo"
+	sr := &SuiteResult{Environment: want}
+
+	got := toNestedSuiteResult("some/path", sr)
+
+	if got.Environment != want {
+		t.Fatalf("Expected Environment=%s, got %s", want, got)
+	}
+}
+
+func TestToNestedSuiteResultMapsTags(t *testing.T) {
+	want := "tag1, tag2"
+	sr := &SuiteResult{Tags: want}
+
+	got := toNestedSuiteResult("some/path", sr)
+
+	if got.Tags != want {
+		t.Fatalf("Expected Tags=%s, got %s", want, got.Tags)
+	}
+}
+
+func TestToNestedSuiteResultMapsBeforeSuiteHookFailure(t *testing.T) {
+	want := "fooHookFailure"
+	sr := &SuiteResult{BeforeSuiteHookFailure: &hookFailure{HookName: want}}
+
+	got := toNestedSuiteResult("some/path", sr)
+
+	if got.BeforeSuiteHookFailure == nil {
+		t.Fatal("Expected BeforeSuiteHookFailure to be not nil")
+	}
+
+	if got.BeforeSuiteHookFailure.HookName != want {
+		t.Fatalf("expected BeforeSuiteHookFailure to have HookName = %s, got %s", want, got)
+	}
+}
+
+func TestToNestedSuiteResultMapsAfterSuiteHookFailure(t *testing.T) {
+	want := "fooHookFailure"
+	sr := &SuiteResult{AfterSuiteHookFailure: &hookFailure{HookName: want}}
+
+	got := toNestedSuiteResult("some/path", sr)
+
+	if got.AfterSuiteHookFailure == nil {
+		t.Fatal("Expected AfterSuiteHookFailure to be not nil")
+	}
+
+	if got.AfterSuiteHookFailure.HookName != want {
+		t.Fatalf("expected AfterSuiteHookFailure to have HookName = %s, got %s", want, got)
+	}
+}
+
+func TestToNestedSuiteResultMapsExecutionTime(t *testing.T) {
+	want := int64(2000)
+	sr := &SuiteResult{SpecResults: []*spec{
+		{FileName: "nested1/foo.spec", SpecHeading: "Foo Spec", ExecutionTime: 1000},
+		{FileName: "nested1/nested2/boo.spec", SpecHeading: "Boo Spec", ExecutionTime: 1000},
+		{FileName: "bar.spec", SpecHeading: "Bar Spec", ExecutionTime: 1000},
+	}}
+
+	got := toNestedSuiteResult("nested1", sr)
+
+	if got.ExecutionTime != want {
+		t.Fatalf("expected ExecutionTime = %d, got %d", want, got.ExecutionTime)
+	}
+}
+
+func TestToNestedSuiteResultMapsPassedCount(t *testing.T) {
+	want := 1
+	sr := &SuiteResult{SpecResults: []*spec{
+		{FileName: "nested1/foo.spec", SpecHeading: "Foo Spec", ExecutionStatus: pass},
+		{FileName: "nested1/nested2/boo.spec", SpecHeading: "Boo Spec", ExecutionStatus: skip},
+		{FileName: "bar.spec", SpecHeading: "Bar Spec", ExecutionStatus: pass},
+	}}
+
+	got := toNestedSuiteResult("nested1", sr)
+
+	if got.PassedSpecsCount != want {
+		t.Fatalf("Expected FailedCount=%d, got %d", want, got.PassedSpecsCount)
+	}
+}
+
+func TestToNestedSuiteResultMapsFailedCount(t *testing.T) {
+	want := 1
+	sr := &SuiteResult{SpecResults: []*spec{
+		{FileName: "nested1/foo.spec", SpecHeading: "Foo Spec", ExecutionStatus: pass},
+		{FileName: "nested1/nested2/boo.spec", SpecHeading: "Boo Spec", ExecutionStatus: fail},
+		{FileName: "nested1/bar.spec", SpecHeading: "Bar Spec", ExecutionStatus: pass},
+	}}
+
+	got := toNestedSuiteResult("nested1", sr)
+
+	if got.FailedSpecsCount != want {
+		t.Fatalf("Expected FailedCount=%d, got %d", want, got.FailedSpecsCount)
+	}
+}
+
+func TestToNestedSuiteResultMapsSkippedCount(t *testing.T) {
+	want := 2
+	sr := &SuiteResult{SpecResults: []*spec{
+		{FileName: "nested1/foo.spec", SpecHeading: "Foo Spec", ExecutionStatus: skip},
+		{FileName: "nested1/nested2/boo.spec", SpecHeading: "Boo Spec", ExecutionStatus: skip},
+		{FileName: "nested1/bar.spec", SpecHeading: "Bar Spec", ExecutionStatus: fail},
+	}}
+
+	got := toNestedSuiteResult("nested1", sr)
+
+	if got.SkippedSpecsCount != want {
+		t.Fatalf("Expected SkippedCount=%d, got %d", want, got.SkippedSpecsCount)
+	}
+}
+
+func TestToNestedSuiteResultMapsSuccessRate(t *testing.T) {
+	want := float32(50.0)
+	sr := &SuiteResult{SpecResults: []*spec{
+		{FileName: "nested1/foo.spec", SpecHeading: "Foo Spec", ExecutionStatus: fail},
+		{FileName: "nested1/nested2/boo.spec", SpecHeading: "Boo Spec", ExecutionStatus: skip},
+		{FileName: "nested1/nested2/bar.spec", SpecHeading: "Bar Spec", ExecutionStatus: pass},
+		{FileName: "nested1/bar.spec", SpecHeading: "Baz Spec", ExecutionStatus: pass},
+	}}
+
+	got := toNestedSuiteResult("nested1", sr)
+
+	if got.SuccessRate != want {
+		t.Fatalf("Expected SuccessRate=%f, got %f", want, got.SuccessRate)
+	}
+}
+
+func TestToNestedSuiteResultMapsSpecResults(t *testing.T) {
+	fooSpec := spec{FileName: "nested1/foo.spec", SpecHeading: "Foo Spec"}
+	booSpec := spec{FileName: "nested1/nested2/boo.spec", SpecHeading: "Boo Spec"}
+	barSpec := spec{FileName: "nested1/bar.spec", SpecHeading: "Bar Spec"}
+	bazSpec := spec{FileName: "nested2/nested1/baz.spec", SpecHeading: "Baz Spec"}
+	specResults := []*spec{
+		&fooSpec,
+		&booSpec,
+		&bazSpec,
+		&barSpec,
+	}
+	got := toNestedSuiteResult("nested1", &SuiteResult{SpecResults: specResults})
+	want := []*spec{
+		&fooSpec,
+		&booSpec,
+		&barSpec,
+	}
+
+	checkEqual(t, "", want, got.SpecResults)
 }

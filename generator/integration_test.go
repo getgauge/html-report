@@ -482,6 +482,20 @@ var skippedSpecRes = &gm.ProtoSpecResult{
 	},
 }
 
+var nestedSpecRes = &gm.ProtoSpecResult{
+	Failed:        false,
+	Skipped:       true,
+	ExecutionTime: 0,
+	ProtoSpec: &gm.ProtoSpec{
+		SpecHeading: "Nested Specification",
+		Tags:        []string{},
+		FileName:    filepath.Join("nested", "nested_specification.spec"),
+		Items: []*gm.ProtoItem{
+			newScenarioItem(scenario2),
+		},
+	},
+}
+
 var failSpecResWithAfterSpecFailure = &gm.ProtoSpecResult{
 	Failed:        true,
 	Skipped:       false,

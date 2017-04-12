@@ -5,18 +5,18 @@
     <meta http-equiv="X-UA-Compatible" content="IE=9; IE=8; IE=7; IE=EDGE" />
     <meta charset="utf-8" />
     <title>Gauge Test Results</title>
-    <link rel="shortcut icon" type="image/x-icon" href="{{.BasePath}}images/favicon.ico">
-    <link rel="stylesheet" type="text/css" href="{{.BasePath}}css/open-sans.css">
-    <link rel="stylesheet" type="text/css" href="{{.BasePath}}css/font-awesome.css">
-    <link rel="stylesheet" type="text/css" href="{{.BasePath}}css/normalize.css" />
-    <link rel="stylesheet" type="text/css" href="{{.BasePath}}css/style.css" />
+    <link rel="shortcut icon" type="image/x-icon" href="{{(toPath .BasePath "images/favicon.ico")}}">
+    <link rel="stylesheet" type="text/css" href="{{(toPath .BasePath "css/open-sans.css")}}">
+    <link rel="stylesheet" type="text/css" href="{{(toPath .BasePath "css/font-awesome.css")}}">
+    <link rel="stylesheet" type="text/css" href="{{(toPath .BasePath "css/normalize.css")}}" />
+    <link rel="stylesheet" type="text/css" href="{{(toPath .BasePath "css/style.css")}}" />
   </head>
   <body>
   <header class="top">
     <div class="header">
       <div class="container">
         <div class="logo">
-          <a href="{{.BasePath}}"><img src="{{.BasePath}}images/logo.png" alt="Report logo"></a>
+          <a href="{{.BasePath}}"><img src="{{(toPath .BasePath "images/logo.png")}}" alt="Report logo"></a>
         </div>
         <h2 class="project">Project: {{.ProjectName}}</h2>
       </div>
@@ -351,15 +351,15 @@
 /* Load javascript in the end */
 {{define "htmlPageEndWithJS"}}
     <script type="text/javascript">
-      var loadingImage = "{{.BasePath}}images/loading.gif";
-      var closeButton = "{{.BasePath}}images/close.gif";
+      var loadingImage = "{{(toPath .BasePath "images/loading.gif")}}";
+      var closeButton = "{{(toPath .BasePath "images/close.gif")}}";
     </script>
-    <script src="{{.BasePath}}js/lightbox.js"></script>
-    <script src="{{.BasePath}}js/jquery-3.1.0.min.js" type="text/javascript"></script>
-    <script src="{{.BasePath}}js/auto-complete.min.js" type="text/javascript"></script>
-    <script src="{{.BasePath}}js/clipboard.min.js" type="text/javascript"></script>
-    <script src="{{.BasePath}}js/search_index.js" type="text/javascript"></script>
-    <script src="{{.BasePath}}js/main.js" type="text/javascript"></script>
+    <script src="{{(toPath .BasePath "js/lightbox.js")}}"></script>
+    <script src="{{(toPath .BasePath "js/jquery-3.1.0.min.js")}}" type="text/javascript"></script>
+    <script src="{{(toPath .BasePath "js/auto-complete.min.js")}}" type="text/javascript"></script>
+    <script src="{{(toPath .BasePath "js/clipboard.min.js")}}" type="text/javascript"></script>
+    <script src="{{(toPath .BasePath "js/search_index.js")}}" type="text/javascript"></script>
+    <script src="{{(toPath .BasePath "js/main.js")}}" type="text/javascript"></script>
     </body>
   </html>
 {{end}}
@@ -486,7 +486,7 @@
 
 /* holds definition to render a Spec page */
 {{define "specPage"}}
-	{{$overview := (toOverview .SuiteRes .SpecRes)}}
+	{{$overview := (toOverview .SuiteRes .SpecRes.FileName)}}
 	{{template "htmlPageStartTag" $overview}}
 	{{template "reportOverviewTag" $overview}}
 
@@ -500,7 +500,7 @@
 
 	{{if not .SuiteRes.BeforeSuiteHookFailure }}
 		<div class="specifications">
-		{{template "sidebarDiv" (toSidebar .SuiteRes .SpecRes)}}
+		{{template "sidebarDiv" (toSidebar .SuiteRes .SpecRes.FileName)}}
 		{{template "spec"  .SpecRes}}
 		</div>
 	{{end}}
@@ -513,14 +513,14 @@
 
 /* holds definition to render an index page */
 {{define "indexPage"}}
-	{{$overview := (toOverview . nil)}}
+	{{$overview := (toOverview . "")}}
 	{{template "htmlPageStartTag" $overview}}
 	{{template "reportOverviewTag" $overview}}
 	{{if .AfterSuiteHookFailure}}
 		{{template "hookFailureDiv" .AfterSuiteHookFailure}}
 	{{end}}
   <div class="specifications">
-  {{template "sidebarDiv" (toSidebar . nil)}}
+  {{template "sidebarDiv" (toSidebar . "")}}
 	{{if ne .ExecutionStatus "fail" }}
     <div class="congratulations details">
       <p>Congratulations! You've gone all <span class="green">green</span> and saved the environment!</p>
@@ -535,7 +535,7 @@
 
 /* holds definition to render an index page with before suite hook failure */
 {{define "indexPageFailure"}}
-	{{$overview := (toOverview . nil)}}
+	{{$overview := (toOverview . "")}}
 	{{template "htmlPageStartTag" $overview}}
 	{{template "reportOverviewTag" $overview}}
   {{template "hookFailureDiv" .BeforeSuiteHookFailure}}

@@ -24,6 +24,8 @@ import (
 	"strings"
 	"time"
 
+	"path"
+
 	gm "github.com/getgauge/html-report/gauge_messages"
 )
 
@@ -34,7 +36,7 @@ const (
 
 // ToSuiteResult Converts the ProtoSuiteResult to SuiteResult type.
 func ToSuiteResult(pRoot string, psr *gm.ProtoSuiteResult) *SuiteResult {
-	projectRoot = pRoot 
+	projectRoot = pRoot
 	suiteResult := SuiteResult{
 		ProjectName:            psr.GetProjectName(),
 		Environment:            psr.GetEnvironment(),
@@ -45,7 +47,7 @@ func ToSuiteResult(pRoot string, psr *gm.ProtoSuiteResult) *SuiteResult {
 		SkippedSpecsCount:      int(psr.GetSpecsSkippedCount()),
 		BeforeSuiteHookFailure: toHookFailure(psr.GetPreHookFailure(), "Before Suite"),
 		AfterSuiteHookFailure:  toHookFailure(psr.GetPostHookFailure(), "After Suite"),
-		SuccessRate:            int(psr.GetSuccessRate()),
+		SuccessRate:            psr.GetSuccessRate(),
 		Timestamp:              psr.GetTimestamp(),
 		ExecutionStatus:        pass,
 	}
@@ -59,21 +61,72 @@ func ToSuiteResult(pRoot string, psr *gm.ProtoSuiteResult) *SuiteResult {
 	return &suiteResult
 }
 
-func toOverview(res *SuiteResult, specRes *spec) *overview {
+func toNestedSuiteResult(basePath string, result *SuiteResult) *SuiteResult {
+	sr := &SuiteResult{
+		ProjectName: result.ProjectName,
+		Timestamp:   result.Timestamp,
+		Environment: result.Environment,
+		Tags:        result.Tags,
+		BeforeSuiteHookFailure: result.BeforeSuiteHookFailure,
+		AfterSuiteHookFailure:  result.AfterSuiteHookFailure,
+		ExecutionStatus:        pass,
+		SpecResults:            getNestedSpecResults(result.SpecResults, basePath),
+		BasePath:               filepath.Clean(basePath),
+	}
+
+	for _, spec := range sr.SpecResults {
+		if spec.ExecutionStatus == fail {
+			sr.ExecutionStatus = fail
+			sr.FailedSpecsCount++
+		}
+		if spec.ExecutionStatus == skip {
+			sr.SkippedSpecsCount++
+		}
+		if spec.ExecutionStatus == pass {
+			sr.PassedSpecsCount++
+		}
+		sr.ExecutionTime += spec.ExecutionTime
+	}
+	sr.SuccessRate = getSuccessRate(len(sr.SpecResults), sr.FailedSpecsCount+sr.SkippedSpecsCount)
+	return sr
+}
+
+func getSuccessRate(totalSpecs int, failedSpecs int) float32 {
+	if totalSpecs == 0 {
+		return 0
+	}
+	return (float32)(100.0 * (totalSpecs - failedSpecs) / totalSpecs)
+}
+
+func getNestedSpecResults(specResults []*spec, basePath string) []*spec {
+	nestedSpecResults := make([]*spec, 0)
+	for _, specResult := range specResults {
+		rel, _ := filepath.Rel(projectRoot, specResult.FileName)
+		if strings.HasPrefix(rel, basePath) {
+			nestedSpecResults = append(nestedSpecResults, specResult)
+		}
+	}
+	return nestedSpecResults
+}
+
+func toOverview(res *SuiteResult, filePath string) *overview {
 	totalSpecs := 0
 	if res.SpecResults != nil {
 		totalSpecs = len(res.SpecResults)
 	}
 	base := ""
-	if specRes != nil {
-		base, _ = filepath.Rel(filepath.Dir(specRes.FileName), projectRoot)
-		base = base + "/"
+	if filePath != "" {
+		base, _ = filepath.Rel(filepath.Dir(filePath), projectRoot)
+		base = path.Join(base, "/")
+	} else if res.BasePath != "" {
+		base, _ = filepath.Rel(filepath.Join(projectRoot, res.BasePath), projectRoot)
+		base = path.Join(base, "/")
 	}
 	return &overview{
 		ProjectName:   res.ProjectName,
 		Env:           res.Environment,
 		Tags:          res.Tags,
-		SuccessRate:   float32(res.SuccessRate),
+		SuccessRate:   res.SuccessRate,
 		ExecutionTime: formatTime(res.ExecutionTime),
 		Timestamp:     res.Timestamp,
 		Summary:       &summary{Failed: res.FailedSpecsCount, Total: totalSpecs, Passed: res.PassedSpecsCount, Skipped: res.SkippedSpecsCount},
@@ -94,23 +147,28 @@ func toHookFailure(failure *gm.ProtoHookFailure, hookName string) *hookFailure {
 	}
 }
 
-func toHTMLFileName(specName, projectRoot string) string {
-	specPath, err := filepath.Rel(projectRoot, specName)
+func toHTMLFileName(specName, basePath string) string {
+	specPath, err := filepath.Rel(basePath, specName)
 	if err != nil {
-		specPath = filepath.Join(projectRoot, filepath.Base(specName))
+		specPath = filepath.Join(basePath, filepath.Base(specName))
 	}
 	// specPath = strings.Replace(specPath, string(filepath.Separator), "_", -1)
 	ext := filepath.Ext(specPath)
 	return strings.TrimSuffix(specPath, ext) + dothtml
 }
 
-func toSidebar(res *SuiteResult, currSpec *spec) *sidebar {
-	var basePath string
-	if currSpec != nil {
-		basePath = filepath.Dir(currSpec.FileName)
-	} else {
-		basePath = projectRoot
+func getFilePathBasedOnSpecLocation(specFilePath, path string) string {
+	if specFilePath != "" {
+		return filepath.Dir(specFilePath)
 	}
+	if path != "" {
+		return filepath.Join(projectRoot, path)
+	}
+	return projectRoot
+}
+
+func toSidebar(res *SuiteResult, specFilePath string) *sidebar {
+	basePath := getFilePathBasedOnSpecLocation(specFilePath, res.BasePath)
 	specsMetaList := make([]*specsMeta, 0)
 	for _, specRes := range res.SpecResults {
 		sm := &specsMeta{
@@ -123,7 +181,6 @@ func toSidebar(res *SuiteResult, currSpec *spec) *sidebar {
 		}
 		specsMetaList = append(specsMetaList, sm)
 	}
-
 	sort.Sort(byStatus(specsMetaList))
 
 	return &sidebar{
