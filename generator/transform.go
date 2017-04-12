@@ -24,8 +24,9 @@ import (
 	"strings"
 	"time"
 
-	gm "github.com/getgauge/html-report/gauge_messages"
 	"path"
+
+	gm "github.com/getgauge/html-report/gauge_messages"
 )
 
 const (

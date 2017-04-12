@@ -29,12 +29,13 @@ import (
 	"sync"
 	"text/template"
 
+	"path"
+
 	"github.com/getgauge/common"
 	"github.com/getgauge/html-report/env"
 	"github.com/getgauge/html-report/theme"
 	"github.com/microcosm-cc/bluemonday"
 	"github.com/russross/blackfriday"
-	"path"
 )
 
 type summary struct {

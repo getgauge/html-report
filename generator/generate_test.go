@@ -21,8 +21,9 @@ import (
 	"bytes"
 	"testing"
 
-	helper "github.com/getgauge/html-report/test_helper"
 	"path/filepath"
+
+	helper "github.com/getgauge/html-report/test_helper"
 )
 
 type reportGenTest struct {
