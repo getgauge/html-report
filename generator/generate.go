@@ -108,22 +108,22 @@ type SuiteResult struct {
 }
 
 type spec struct {
-	CommentsBeforeDatatable []string     `json:"commentsBeforeDatatable"`
-	CommentsAfterDatatable  []string     `json:"comentsAfterDatatable"`
-	SpecHeading             string       `json:"specHeading"`
-	FileName                string       `json:"fileName"`
-	Tags                    []string     `json:"tags"`
-	ExecutionTime           int64        `json:"executionTime"`
-	ExecutionStatus         status       `json:"executionStatus"`
-	Scenarios               []*scenario  `json:"scenarios"`
-	IsTableDriven           bool         `json:"isTableDriven"`
-	Datatable               *table       `json:"datatable"`
-	BeforeSpecHookFailure   *hookFailure `json:"beforeSpecHookFailure"`
-	AfterSpecHookFailure    *hookFailure `json:"afterSpecHookFailure"`
-	PassedScenarioCount     int          `json:"passedScenarioCount"`
-	FailedScenarioCount     int          `json:"failedScenarioCount"`
-	SkippedScenarioCount    int          `json:"skippedScenarioCount"`
-	Errors                  []buildError `json:"errors"`
+	CommentsBeforeDatatable []string       `json:"commentsBeforeDatatable"`
+	CommentsAfterDatatable  []string       `json:"comentsAfterDatatable"`
+	SpecHeading             string         `json:"specHeading"`
+	FileName                string         `json:"fileName"`
+	Tags                    []string       `json:"tags"`
+	ExecutionTime           int64          `json:"executionTime"`
+	ExecutionStatus         status         `json:"executionStatus"`
+	Scenarios               []*scenario    `json:"scenarios"`
+	IsTableDriven           bool           `json:"isTableDriven"`
+	Datatable               *table         `json:"datatable"`
+	BeforeSpecHookFailure   []*hookFailure `json:"beforeSpecHookFailure"`
+	AfterSpecHookFailure    []*hookFailure `json:"afterSpecHookFailure"`
+	PassedScenarioCount     int            `json:"passedScenarioCount"`
+	FailedScenarioCount     int            `json:"failedScenarioCount"`
+	SkippedScenarioCount    int            `json:"skippedScenarioCount"`
+	Errors                  []error        `json:"errors"`
 }
 
 type scenario struct {
@@ -166,10 +166,11 @@ type result struct {
 }
 
 type hookFailure struct {
-	HookName   string `json:"hookName"`
-	ErrMsg     string `json:"errorMessage"`
-	Screenshot string `json:"screenshot"`
-	StackTrace string `json:"stackTrace"`
+	HookName      string `json:"hookName"`
+	ErrMsg        string `json:"errorMessage"`
+	Screenshot    string `json:"screenshot"`
+	StackTrace    string `json:"stackTrace"`
+	TableRowIndex int32  `json:"tableRowIndex"`
 }
 
 type concept struct {
@@ -265,6 +266,7 @@ func readTemplates(themePath string) {
 		"toSidebar":           toSidebar,
 		"toOverview":          toOverview,
 		"toPath":              path.Join,
+		"toError":	       toError,
 	}
 	f, err := ioutil.ReadFile(filepath.Join(getAbsThemePath(themePath), "views", "partials.tmpl"))
 	if err != nil {

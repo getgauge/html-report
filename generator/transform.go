@@ -109,6 +109,14 @@ func getNestedSpecResults(specResults []*spec, basePath string) []*spec {
 	return nestedSpecResults
 }
 
+type hookError struct {
+	hookFailure *hookFailure
+	s string
+}
+
+func toError(hookFailure *hookFailure, s string) *hookError {
+	return &hookError{hookFailure: hookFailure, s:s}
+}
 func toOverview(res *SuiteResult, filePath string) *overview {
 	totalSpecs := 0
 	if res.SpecResults != nil {
@@ -140,10 +148,11 @@ func toHookFailure(failure *gm.ProtoHookFailure, hookName string) *hookFailure {
 	}
 
 	return &hookFailure{
-		ErrMsg:     failure.GetErrorMessage(),
-		HookName:   hookName,
-		Screenshot: base64.StdEncoding.EncodeToString(failure.GetScreenShot()),
-		StackTrace: failure.GetStackTrace(),
+		ErrMsg:        failure.GetErrorMessage(),
+		HookName:      hookName,
+		Screenshot:    base64.StdEncoding.EncodeToString(failure.GetScreenShot()),
+		StackTrace:    failure.GetStackTrace(),
+		TableRowIndex: failure.TableRowIndex,
 	}
 }
 
@@ -256,9 +265,9 @@ func toSpecHeader(res *spec) *specHeader {
 func toSpec(res *gm.ProtoSpecResult) *spec {
 	spec := &spec{
 		Scenarios:             make([]*scenario, 0),
-		BeforeSpecHookFailure: toHookFailure(res.GetProtoSpec().GetPreHookFailure(), "Before Spec"),
-		AfterSpecHookFailure:  toHookFailure(res.GetProtoSpec().GetPostHookFailure(), "After Spec"),
-		Errors:                make([]buildError, 0),
+		BeforeSpecHookFailure: make([]*hookFailure, 0),
+		AfterSpecHookFailure:  make([]*hookFailure, 0),
+		Errors:                make([]error, 0),
 		FileName:              res.GetProtoSpec().GetFileName(),
 		SpecHeading:           res.GetProtoSpec().GetSpecHeading(),
 		IsTableDriven:         res.GetProtoSpec().GetIsTableDriven(),
@@ -299,6 +308,12 @@ func toSpec(res *gm.ProtoSpecResult) *spec {
 		case gm.ProtoItem_TableDrivenScenario:
 			spec.Scenarios = append(spec.Scenarios, toScenario(item.GetTableDrivenScenario().GetScenario(), int(item.GetTableDrivenScenario().GetTableRowIndex())))
 		}
+	}
+	for _, preHookFailure := range res.GetProtoSpec().GetPreHookFailures() {
+		spec.BeforeSpecHookFailure = append(spec.BeforeSpecHookFailure, toHookFailure(preHookFailure, "Before Spec"))
+	}
+	for _, postHookFailure := range res.GetProtoSpec().GetPostHookFailures() {
+		spec.AfterSpecHookFailure = append(spec.AfterSpecHookFailure, toHookFailure(postHookFailure, "After Spec"))
 	}
 
 	if res.GetProtoSpec().GetIsTableDriven() {

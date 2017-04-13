@@ -145,7 +145,7 @@ var wSidebarAside = `<aside class="sidebar">
   </div>
 </aside>`
 
-var wHookFailureWithScreenhotDiv = `<div class="error-container failed">
+var wHookFailureWithScreenhotDiv = `<div class="error-container failed " data-tablerow='0'>
 <div class="error-heading">BeforeSuite Failed:<span class="error-message"> SomeError</span></div>
   <div class="toggle-show">
     [Show details]
@@ -162,7 +162,7 @@ var wHookFailureWithScreenhotDiv = `<div class="error-container failed">
   </div>
 </div>`
 
-var wHookFailureWithoutScreenhotDiv = `<div class="error-container failed">
+var wHookFailureWithoutScreenhotDiv = `<div class="error-container failed " data-tablerow='0'>
   <div class="error-heading">BeforeSuite Failed:<span class="error-message"> SomeError</span></div>
   <div class="toggle-show">
     [Show details]
