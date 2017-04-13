@@ -131,6 +131,14 @@ var initializers = {
                     $(this).show();
                 }
             });
+            $(".error-container .spec").each(function() {
+                if (typeof $(this).data('tablerow') != 'undefined'){
+                    if ($(this).data('tablerow') === tr) { $(this).show(); } else { $(this).hide(); }
+                }else {
+                    $(this).show();
+                }
+            });
+
         });
     },
     "attachSpecFilter": function() {

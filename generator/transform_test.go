@@ -286,16 +286,16 @@ var specResWithSpecHookFailure = &gm.ProtoSpecResult{
 	ProtoSpec: &gm.ProtoSpec{
 		SpecHeading: "specRes3",
 		Tags:        []string{"tag1"},
-		PreHookFailure: &gm.ProtoHookFailure{
+		PreHookFailures: []*gm.ProtoHookFailure{{
+					ErrorMessage: "err",
+					StackTrace:   "Stacktrace",
+					ScreenShot:   []byte("Screenshot"),
+				}},
+		PostHookFailures: []*gm.ProtoHookFailure{{
 			ErrorMessage: "err",
 			StackTrace:   "Stacktrace",
 			ScreenShot:   []byte("Screenshot"),
-		},
-		PostHookFailure: &gm.ProtoHookFailure{
-			ErrorMessage: "err",
-			StackTrace:   "Stacktrace",
-			ScreenShot:   []byte("Screenshot"),
-		},
+		}},
 	},
 }
 
@@ -687,9 +687,9 @@ func TestToSpecWithHookFailure(t *testing.T) {
 	encodedScreenShot := base64.StdEncoding.EncodeToString([]byte("Screenshot"))
 	want := &spec{
 		Scenarios:             make([]*scenario, 0),
-		BeforeSpecHookFailure: newHookFailure("Before Spec", "err", encodedScreenShot, "Stacktrace"),
-		AfterSpecHookFailure:  newHookFailure("After Spec", "err", encodedScreenShot, "Stacktrace"),
-		Errors:                make([]buildError, 0),
+		BeforeSpecHookFailure: []*hookFailure{newHookFailure("Before Spec", "err", encodedScreenShot, "Stacktrace")},
+		AfterSpecHookFailure:  []*hookFailure{newHookFailure("After Spec", "err", encodedScreenShot, "Stacktrace")},
+		Errors:                make([]error, 0),
 		Tags:                  []string{"tag1"},
 		SpecHeading:           "specRes3",
 		ExecutionStatus:       skip,
@@ -800,14 +800,14 @@ func TestToSpecWithDataTableExecutionStatusFail(t *testing.T) {
 }
 
 func TestToSpecWithBeforeHookFailure(t *testing.T) {
-	want := &hookFailure{ErrMsg: "err", HookName: "Before Spec", Screenshot: "U2NyZWVuc2hvdA==", StackTrace: "Stacktrace"}
+	want := []*hookFailure{{ErrMsg: "err", HookName: "Before Spec", Screenshot: "U2NyZWVuc2hvdA==", StackTrace: "Stacktrace"}}
 	got := toSpec(specResWithSpecHookFailure).BeforeSpecHookFailure
 
 	checkEqual(t, "", want, got)
 }
 
 func TestToSpecWithAfterHookFailure(t *testing.T) {
-	want := &hookFailure{ErrMsg: "err", HookName: "After Spec", Screenshot: "U2NyZWVuc2hvdA==", StackTrace: "Stacktrace"}
+	want := []*hookFailure{{ErrMsg: "err", HookName: "After Spec", Screenshot: "U2NyZWVuc2hvdA==", StackTrace: "Stacktrace", TableRowIndex: 0}}
 	got := toSpec(specResWithSpecHookFailure).AfterSpecHookFailure
 
 	checkEqual(t, "", want, got)

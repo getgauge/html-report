@@ -520,11 +520,11 @@ var failSpecResWithAfterSpecFailure = &gm.ProtoSpecResult{
 			newCommentItem("Comment 3"),
 			newScenarioItem(scenario2),
 		},
-		PostHookFailure: &gm.ProtoHookFailure{
+		PostHookFailures: []*gm.ProtoHookFailure{{
 			ErrorMessage: "java.lang.RuntimeException",
 			StackTrace:   newStackTrace(),
 			ScreenShot:   []byte(newScreenshot()),
-		},
+		}},
 	},
 }
 
@@ -548,11 +548,11 @@ var failSpecResWithBeforeSpecFailure = &gm.ProtoSpecResult{
 			newCommentItem("Comment 3"),
 			newScenarioItem(scenario2),
 		},
-		PreHookFailure: &gm.ProtoHookFailure{
+		PreHookFailures: []*gm.ProtoHookFailure{{
 			ErrorMessage: "java.lang.RuntimeException",
 			StackTrace:   newStackTrace(),
 			ScreenShot:   []byte(newScreenshot()),
-		},
+		}},
 	},
 }
 
@@ -576,16 +576,16 @@ var failSpecResWithBeforeAfterSpecFailure = &gm.ProtoSpecResult{
 			newCommentItem("Comment 3"),
 			newScenarioItem(scenario2),
 		},
-		PreHookFailure: &gm.ProtoHookFailure{
+		PreHookFailures: []*gm.ProtoHookFailure{{
 			ErrorMessage: "java.lang.RuntimeException",
 			StackTrace:   newStackTrace(),
 			ScreenShot:   []byte(newScreenshot()),
-		},
-		PostHookFailure: &gm.ProtoHookFailure{
+		}},
+		PostHookFailures: []*gm.ProtoHookFailure{{
 			ErrorMessage: "java.lang.RuntimeException",
 			StackTrace:   newStackTrace(),
 			ScreenShot:   []byte(newScreenshot()),
-		},
+		}},
 	},
 }
 
