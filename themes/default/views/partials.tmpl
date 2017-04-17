@@ -114,7 +114,7 @@
 
 /* Container to display errors in Execution hooks. Execution hooks can be at Suite/Spec or Scenario level */
 {{define "hookFailureDiv"}}
-  <div class="error-container failed {{if .s}}{{.s}}{{end}}{{if gt .TableRowIndex 0}} hidden{{end}}"{{if ne .TableRowIndex -1}} data-tablerow='{{.TableRowIndex}}'{{end}}>
+  <div class="error-container failed{{if gt .TableRowIndex 0}} hidden{{end}}"{{if ne .TableRowIndex -1}} data-tablerow='{{.TableRowIndex}}'{{end}}{{if .HookType}} data-hooktype='{{.HookType}}'{{end}}>
     <div class="error-heading">{{.HookName}} Failed:<span class="error-message"> {{.ErrMsg | escapeHTML | encodeNewLine}}</span></div>
     <div class="toggle-show">
       [Show details]
@@ -462,7 +462,7 @@
 		</div>
 	{{else}}
     {{range $index, $beforeHook := .BeforeSpecHookFailure}}
-      {{template "hookFailureDiv" (toError $beforeHook "spec")}}
+      {{template "hookFailureDiv" $beforeHook}}
     {{end}}
 
     <div class="content">

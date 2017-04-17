@@ -81,6 +81,7 @@ type specHeader struct {
 type errorType string
 type tokenKind string
 type status string
+type hookType string
 
 type buildError struct {
 	ErrorType  errorType
@@ -166,11 +167,12 @@ type result struct {
 }
 
 type hookFailure struct {
-	HookName      string `json:"hookName"`
-	ErrMsg        string `json:"errorMessage"`
-	Screenshot    string `json:"screenshot"`
-	StackTrace    string `json:"stackTrace"`
-	TableRowIndex int32  `json:"tableRowIndex"`
+	HookName      string   `json:"hookName"`
+	ErrMsg        string   `json:"errorMessage"`
+	Screenshot    string   `json:"screenshot"`
+	StackTrace    string   `json:"stackTrace"`
+	TableRowIndex int32    `json:"tableRowIndex"`
+	HookType      hookType `json:"hookType"`
 }
 
 type concept struct {
@@ -237,6 +239,10 @@ const (
 	parseErrorType        errorType = "parse"
 	verificationErrorType errorType = "verification"
 	validationErrorType   errorType = "validation"
+	suiteType             hookType  = "suite"
+	specType              hookType  = "spec"
+	stepType              hookType  = "step"
+	scenarioType          hookType  = "scenario"
 )
 
 var parsedTemplates *template.Template
@@ -266,7 +272,6 @@ func readTemplates(themePath string) {
 		"toSidebar":           toSidebar,
 		"toOverview":          toOverview,
 		"toPath":              path.Join,
-		"toError":	       toError,
 	}
 	f, err := ioutil.ReadFile(filepath.Join(getAbsThemePath(themePath), "views", "partials.tmpl"))
 	if err != nil {
