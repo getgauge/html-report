@@ -23,6 +23,8 @@ import (
 	"github.com/getgauge/html-report/env"
 	"github.com/getgauge/html-report/generator"
 	flag "github.com/getgauge/mflag"
+	"log"
+	"github.com/getgauge/common"
 )
 
 var inputFile = flag.String([]string{"-input", "i"}, "", "Source json file to generate report from")
@@ -36,7 +38,11 @@ func main() {
 			flag.PrintDefaults()
 			os.Exit(1)
 		}
-		generator.RegenerateReport(*inputFile, *outDir, *themePath)
+		projectRoot, err := common.GetProjectRoot()
+		if err != nil {
+			log.Fatalf("%s", err.Error())
+		}
+		generator.RegenerateReport(*inputFile, *outDir, *themePath, projectRoot)
 		return
 	}
 

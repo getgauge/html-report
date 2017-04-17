@@ -330,7 +330,8 @@ func GenerateReports(res *SuiteResult, reportsDir, themePath string) error {
 	return nil
 }
 
-func RegenerateReport(inputFile, reportsDir, themePath string) {
+func RegenerateReport(inputFile, reportsDir, themePath, pRoot string) {
+	projectRoot = pRoot
 	b, err := ioutil.ReadFile(inputFile)
 	if err != nil {
 		log.Fatal(err.Error())
