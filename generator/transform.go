@@ -374,13 +374,13 @@ func computeTableDrivenStatuses(spec *spec) {
 	for _, s := range spec.BeforeSpecHookFailure {
 		if s.TableRowIndex >= 0 {
 			var row = spec.Datatable.Rows[s.TableRowIndex]
-				row.Result = fail
+			row.Result = fail
 		}
 	}
 	for _, s := range spec.AfterSpecHookFailure {
 		if s.TableRowIndex >= 0 {
 			var row = spec.Datatable.Rows[s.TableRowIndex]
-				row.Result = fail
+			row.Result = fail
 		}
 	}
 }

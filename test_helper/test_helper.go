@@ -55,7 +55,7 @@ func compare(a, b string) string {
 		ReplacedSpan: []htmldiff.Attribute{{Key: "style", Val: "background-color: lightskyblue;"}},
 		CleanTags:    []string{""},
 	}
-
+	
 	res, _ := cfg.HTMLdiff([]string{html.EscapeString(a), html.EscapeString(b)})
 	return res[0]
 }
