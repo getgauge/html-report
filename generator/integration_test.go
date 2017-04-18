@@ -556,6 +556,94 @@ var failSpecResWithBeforeSpecFailure = &gm.ProtoSpecResult{
 	},
 }
 
+var failSpecResWithBeforeSpecFailureWithTableDriven = &gm.ProtoSpecResult{
+	Failed:        true,
+	Skipped:       false,
+	ExecutionTime: 211316,
+	ProtoSpec: &gm.ProtoSpec{
+		IsTableDriven: true,
+		SpecHeading:   "Failing Specification Table Driven",
+		Tags:          []string{},
+		FileName:      "table_driven_before_spec_fail.spec",
+		Items: []*gm.ProtoItem{
+			newTableItem(
+				[]string{"Word", "Count"}, [][]string{
+					[]string{"Gauge", "3"},
+					[]string{"Mingle", "2"},
+				}),
+			&gm.ProtoItem{
+				ItemType: gm.ProtoItem_TableDrivenScenario,
+				TableDrivenScenario: &gm.ProtoTableDrivenScenario{
+					Scenario: &gm.ProtoScenario{
+						ScenarioHeading: "Scenario 1",
+						ExecutionStatus: gm.ExecutionStatus_PASSED,
+						ScenarioItems:   []*gm.ProtoItem{newStepItem(false, false, []*gm.Fragment{newTextFragment("Step1")})},
+					},
+					TableRowIndex: int32(0),
+				},
+			},
+			&gm.ProtoItem{
+				ItemType: gm.ProtoItem_TableDrivenScenario,
+				TableDrivenScenario: &gm.ProtoTableDrivenScenario{
+					Scenario: &gm.ProtoScenario{
+						ScenarioHeading: "Scenario 1",
+						ExecutionStatus: gm.ExecutionStatus_PASSED,
+						ScenarioItems:   []*gm.ProtoItem{newStepItem(false, false, []*gm.Fragment{newTextFragment("Step1")})},
+					},
+					TableRowIndex: int32(1),
+				},
+			},
+		},
+		PreHookFailures: []*gm.ProtoHookFailure{
+			{ErrorMessage: "java.lang.RuntimeException", StackTrace: newStackTrace(), ScreenShot: []byte(newScreenshot()), TableRowIndex: int32(1)},
+		},
+	},
+}
+
+var failSpecResWithAfterSpecFailureWithTableDriven = &gm.ProtoSpecResult{
+	Failed:        true,
+	Skipped:       false,
+	ExecutionTime: 211316,
+	ProtoSpec: &gm.ProtoSpec{
+		IsTableDriven: true,
+		SpecHeading:   "Failing Specification Table Driven",
+		Tags:          []string{},
+		FileName:      "table_driven_after_spec_fail.spec",
+		Items: []*gm.ProtoItem{
+			newTableItem(
+				[]string{"Word", "Count"}, [][]string{
+					[]string{"Gauge", "3"},
+					[]string{"Mingle", "2"},
+				}),
+			&gm.ProtoItem{
+				ItemType: gm.ProtoItem_TableDrivenScenario,
+				TableDrivenScenario: &gm.ProtoTableDrivenScenario{
+					Scenario: &gm.ProtoScenario{
+						ScenarioHeading: "Scenario 1",
+						ExecutionStatus: gm.ExecutionStatus_PASSED,
+						ScenarioItems:   []*gm.ProtoItem{newStepItem(false, false, []*gm.Fragment{newTextFragment("Step1")})},
+					},
+					TableRowIndex: int32(0),
+				},
+			},
+			&gm.ProtoItem{
+				ItemType: gm.ProtoItem_TableDrivenScenario,
+				TableDrivenScenario: &gm.ProtoTableDrivenScenario{
+					Scenario: &gm.ProtoScenario{
+						ScenarioHeading: "Scenario 1",
+						ExecutionStatus: gm.ExecutionStatus_PASSED,
+						ScenarioItems:   []*gm.ProtoItem{newStepItem(false, false, []*gm.Fragment{newTextFragment("Step1")})},
+					},
+					TableRowIndex: int32(1),
+				},
+			},
+		},
+		PostHookFailures: []*gm.ProtoHookFailure{
+			{ErrorMessage: "java.lang.RuntimeException", StackTrace: newStackTrace(), ScreenShot: []byte(newScreenshot()), TableRowIndex: int32(0)},
+		},
+	},
+}
+
 var failSpecResWithBeforeAfterSpecFailure = &gm.ProtoSpecResult{
 	Failed:        true,
 	Skipped:       false,
@@ -625,6 +713,8 @@ var suiteResWithAfterStepFailure = newSuiteResult(true, 1, 0, 0, nil, nil, failS
 var suiteResWithBeforeAndAfterStepFailure = newSuiteResult(true, 1, 0, 0, nil, nil, failSpecResWithBeforeAndAfterStepFailure)
 var suiteResWithStepFailure = newSuiteResult(true, 1, 0, 0, nil, nil, failSpecResWithStepFailure)
 var suiteResWithBeforeSpecFailure = newSuiteResult(true, 1, 0, 0, nil, nil, failSpecResWithBeforeSpecFailure)
+var suiteResWithBeforeSpecFailureWithTableDriven = newSuiteResult(true, 1, 0, 0, nil, nil, failSpecResWithBeforeSpecFailureWithTableDriven)
+var suiteResWithAfterSpecFailureWithTableDriven = newSuiteResult(true, 1, 0, 0, nil, nil, failSpecResWithAfterSpecFailureWithTableDriven)
 var suiteResWithAfterSpecFailure = newSuiteResult(true, 1, 0, 0, nil, nil, failSpecResWithAfterSpecFailure)
 var suiteResWithBeforeAfterSpecFailure = newSuiteResult(true, 1, 0, 0, nil, nil, failSpecResWithBeforeAfterSpecFailure)
 var suiteResWithConceptFailure = newSuiteResult(true, 1, 0, 60, nil, nil, failSpecResWithConceptFailure)
@@ -671,6 +761,8 @@ var HTMLGenerationTests = []*HTMLGenerationTest{
 	{"happy path", suiteRes, "pass.html"},
 	{"after suite failure", suiteResWithAfterSuiteFailure, "after_suite_fail.html"},
 	{"before spec failure", suiteResWithBeforeSpecFailure, "before_spec_fail.html"},
+	{"before spec failure with table driven", suiteResWithBeforeSpecFailureWithTableDriven, "table_driven_before_spec_fail.html"},
+	{"after spec failure with table driven", suiteResWithAfterSpecFailureWithTableDriven, "table_driven_after_spec_fail.html"},
 	{"after spec failure", suiteResWithAfterSpecFailure, "after_spec_fail.html"},
 	{"skipped specification", suiteResWithSkippedSpec, "skipped_spec.html"},
 	{"both before and after spec failure", suiteResWithBeforeAfterSpecFailure, "before_after_spec_fail.html"},
