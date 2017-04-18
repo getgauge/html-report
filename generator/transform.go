@@ -258,7 +258,7 @@ func toSpec(res *gm.ProtoSpecResult) *spec {
 		Scenarios:             make([]*scenario, 0),
 		BeforeSpecHookFailure: toHookFailure(res.GetProtoSpec().GetPreHookFailure(), "Before Spec"),
 		AfterSpecHookFailure:  toHookFailure(res.GetProtoSpec().GetPostHookFailure(), "After Spec"),
-		Errors:                make([]error, 0),
+		Errors:                make([]buildError, 0),
 		FileName:              res.GetProtoSpec().GetFileName(),
 		SpecHeading:           res.GetProtoSpec().GetSpecHeading(),
 		IsTableDriven:         res.GetProtoSpec().GetIsTableDriven(),
@@ -326,8 +326,8 @@ func computeScenarioStatistics(s *spec) (passed, failed, skipped int) {
 	return passed, failed, skipped
 }
 
-func toErrors(errors []*gm.Error) []error {
-	var buildErrors []error
+func toErrors(errors []*gm.Error) []buildError {
+	var buildErrors []buildError
 	for _, e := range errors {
 		err := buildError{FileName: e.Filename, LineNumber: int(e.LineNumber), Message: e.Message}
 		if e.Type == gm.Error_PARSE_ERROR {

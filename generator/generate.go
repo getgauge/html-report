@@ -123,7 +123,7 @@ type spec struct {
 	PassedScenarioCount     int          `json:"passedScenarioCount"`
 	FailedScenarioCount     int          `json:"failedScenarioCount"`
 	SkippedScenarioCount    int          `json:"skippedScenarioCount"`
-	Errors                  []error      `json:"errors"`
+	Errors                  []buildError `json:"errors"`
 }
 
 type scenario struct {
@@ -384,9 +384,9 @@ func (i *searchIndex) hasSpec(specHeading string, specFileName string) bool {
 	return false
 }
 
-func containsParseErrors(errors []error) bool {
+func containsParseErrors(errors []buildError) bool {
 	for _, e := range errors {
-		if e.(buildError).isParseError() {
+		if e.isParseError() {
 			return true
 		}
 	}
