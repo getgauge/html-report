@@ -534,7 +534,7 @@ func TestToSpec(t *testing.T) {
 		},
 		CommentsAfterDatatable: []string{"Comment 1", "Comment 2", "Comment 3"},
 		Scenarios:              make([]*scenario, 0),
-		Errors:                 make([]error, 0),
+		Errors:                 make([]buildError, 0),
 		SpecHeading:            "specRes1",
 		Tags:                   []string{"tag1", "tag2"},
 		FileName:               "/tmp/gauge/specs/foobar.spec",
@@ -606,9 +606,9 @@ func TestToSpecWithErrors(t *testing.T) {
 	}
 
 	want := &spec{
-		Errors: []error{
-			buildError{FileName: "fileName", LineNumber: 2, Message: "message", ErrorType: parseErrorType},
-			buildError{FileName: "fileName1", LineNumber: 4, Message: "message1", ErrorType: validationErrorType},
+		Errors: []buildError{
+			{FileName: "fileName", LineNumber: 2, Message: "message", ErrorType: parseErrorType},
+			{FileName: "fileName1", LineNumber: 4, Message: "message1", ErrorType: validationErrorType},
 		},
 		Scenarios:       make([]*scenario, 0),
 		ExecutionStatus: fail,
@@ -672,7 +672,7 @@ func TestToSpecForTableDrivenSpec(t *testing.T) {
 		},
 		BeforeSpecHookFailure: nil,
 		AfterSpecHookFailure:  nil,
-		Errors:                make([]error, 0),
+		Errors:                make([]buildError, 0),
 		PassedScenarioCount:   1,
 		FailedScenarioCount:   1,
 		SkippedScenarioCount:  0,
@@ -689,7 +689,7 @@ func TestToSpecWithHookFailure(t *testing.T) {
 		Scenarios:             make([]*scenario, 0),
 		BeforeSpecHookFailure: newHookFailure("Before Spec", "err", encodedScreenShot, "Stacktrace"),
 		AfterSpecHookFailure:  newHookFailure("After Spec", "err", encodedScreenShot, "Stacktrace"),
-		Errors:                make([]error, 0),
+		Errors:                make([]buildError, 0),
 		Tags:                  []string{"tag1"},
 		SpecHeading:           "specRes3",
 		ExecutionStatus:       skip,

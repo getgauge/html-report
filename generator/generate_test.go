@@ -449,7 +449,7 @@ var reportGenTests = []reportGenTest{
 	{"generate step body div with file special param", "stepBodyDiv", stepWithFileParam, wStepWithFileParam},
 	{"generate step body div with special table param", "stepBodyDiv", stepWithSpecialTableParam, wStepWithSpecialTableParam},
 	{"generate step failure div", "stepFailureDiv", &result{ErrorMessage: "expected:<foo [foo] foo> but was:<foo [bar] foo>", StackTrace: "stacktrace"}, wStepFailDiv},
-	{"generate spec error div", "specErrorDiv", &spec{Errors: []error{buildError{ErrorType: parseErrorType, Message: "message"}}}, wSpecErrorDiv},
+	{"generate spec error div", "specErrorDiv", &spec{Errors: []buildError{{ErrorType: parseErrorType, Message: "message"}}}, wSpecErrorDiv},
 }
 
 func TestExecute(t *testing.T) {
