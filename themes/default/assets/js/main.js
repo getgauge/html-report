@@ -132,7 +132,7 @@ var initializers = {
                 }
             });
             $(".error-container").each(function() {
-                if (($(this).data('hooktype') === "spec") && (typeof $(this).data('tablerow') != 'undefined')){
+                if (typeof $(this).data('tablerow') != 'undefined'){
                     if ($(this).data('tablerow') === tr) { $(this).show(); } else { $(this).hide(); }
                 }else {
                     $(this).show();

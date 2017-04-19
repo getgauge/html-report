@@ -81,7 +81,6 @@ type specHeader struct {
 type errorType string
 type tokenKind string
 type status string
-type hookType string
 
 type buildError struct {
 	ErrorType  errorType
@@ -172,7 +171,6 @@ type hookFailure struct {
 	Screenshot    string   `json:"screenshot"`
 	StackTrace    string   `json:"stackTrace"`
 	TableRowIndex int32    `json:"tableRowIndex"`
-	HookType      hookType `json:"hookType"`
 }
 
 type concept struct {
@@ -239,10 +237,6 @@ const (
 	parseErrorType        errorType = "parse"
 	verificationErrorType errorType = "verification"
 	validationErrorType   errorType = "validation"
-	suiteType             hookType  = "suite"
-	specType              hookType  = "spec"
-	stepType              hookType  = "step"
-	scenarioType          hookType  = "scenario"
 )
 
 var parsedTemplates *template.Template

@@ -45,8 +45,8 @@ func ToSuiteResult(pRoot string, psr *gm.ProtoSuiteResult) *SuiteResult {
 		PassedSpecsCount:       len(psr.GetSpecResults()) - int(psr.GetSpecsFailedCount()) - int(psr.GetSpecsSkippedCount()),
 		FailedSpecsCount:       int(psr.GetSpecsFailedCount()),
 		SkippedSpecsCount:      int(psr.GetSpecsSkippedCount()),
-		BeforeSuiteHookFailure: toHookFailure(psr.GetPreHookFailure(), "Before Suite", suiteType),
-		AfterSuiteHookFailure:  toHookFailure(psr.GetPostHookFailure(), "After Suite", suiteType),
+		BeforeSuiteHookFailure: toHookFailure(psr.GetPreHookFailure(), "Before Suite"),
+		AfterSuiteHookFailure:  toHookFailure(psr.GetPostHookFailure(), "After Suite"),
 		SuccessRate:            psr.GetSuccessRate(),
 		Timestamp:              psr.GetTimestamp(),
 		ExecutionStatus:        pass,
@@ -134,7 +134,7 @@ func toOverview(res *SuiteResult, filePath string) *overview {
 	}
 }
 
-func toHookFailure(failure *gm.ProtoHookFailure, hookName string, hookType hookType) *hookFailure {
+func toHookFailure(failure *gm.ProtoHookFailure, hookName string) *hookFailure {
 	if failure == nil {
 		return nil
 	}
@@ -145,7 +145,6 @@ func toHookFailure(failure *gm.ProtoHookFailure, hookName string, hookType hookT
 		Screenshot:    base64.StdEncoding.EncodeToString(failure.GetScreenShot()),
 		StackTrace:    failure.GetStackTrace(),
 		TableRowIndex: failure.TableRowIndex,
-		HookType:      hookType,
 	}
 }
 
@@ -303,10 +302,10 @@ func toSpec(res *gm.ProtoSpecResult) *spec {
 		}
 	}
 	for _, preHookFailure := range res.GetProtoSpec().GetPreHookFailures() {
-		spec.BeforeSpecHookFailure = append(spec.BeforeSpecHookFailure, toHookFailure(preHookFailure, "Before Spec", specType))
+		spec.BeforeSpecHookFailure = append(spec.BeforeSpecHookFailure, toHookFailure(preHookFailure, "Before Spec"))
 	}
 	for _, postHookFailure := range res.GetProtoSpec().GetPostHookFailures() {
-		spec.AfterSpecHookFailure = append(spec.AfterSpecHookFailure, toHookFailure(postHookFailure, "After Spec", specType))
+		spec.AfterSpecHookFailure = append(spec.AfterSpecHookFailure, toHookFailure(postHookFailure, "After Spec"))
 	}
 
 	if res.GetProtoSpec().GetIsTableDriven() {
@@ -400,8 +399,8 @@ func toScenario(scn *gm.ProtoScenario, tableRowIndex int) *scenario {
 		Contexts:                  getItems(scn.GetContexts()),
 		Items:                     getItems(scn.GetScenarioItems()),
 		Teardowns:                 getItems(scn.GetTearDownSteps()),
-		BeforeScenarioHookFailure: toHookFailure(scn.GetPreHookFailure(), "Before Scenario", scenarioType),
-		AfterScenarioHookFailure:  toHookFailure(scn.GetPostHookFailure(), "After Scenario", scenarioType),
+		BeforeScenarioHookFailure: toHookFailure(scn.GetPreHookFailure(), "Before Scenario"),
+		AfterScenarioHookFailure:  toHookFailure(scn.GetPostHookFailure(), "After Scenario"),
 		TableRowIndex:             tableRowIndex,
 	}
 }
@@ -426,8 +425,8 @@ func toStep(protoStep *gm.ProtoStep) *step {
 	return &step{
 		Fragments:             toFragments(protoStep.GetFragments()),
 		Result:                result,
-		BeforeStepHookFailure: toHookFailure(protoStep.GetStepExecutionResult().GetPreHookFailure(), "Before Step", stepType),
-		AfterStepHookFailure:  toHookFailure(protoStep.GetStepExecutionResult().GetPostHookFailure(), "After Step", stepType),
+		BeforeStepHookFailure: toHookFailure(protoStep.GetStepExecutionResult().GetPreHookFailure(), "Before Step"),
+		AfterStepHookFailure:  toHookFailure(protoStep.GetStepExecutionResult().GetPostHookFailure(), "After Step"),
 	}
 }
 
