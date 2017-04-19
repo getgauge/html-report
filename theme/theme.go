@@ -22,7 +22,6 @@ import (
 	"path/filepath"
 
 	"github.com/getgauge/common"
-	"github.com/getgauge/html-report/env"
 )
 
 const (
@@ -31,10 +30,9 @@ const (
 
 var templateBasePath string
 
-func GetDefaultThemePath() string {
+func GetDefaultThemePath(pluginsDir string) string {
 	if templateBasePath == "" {
-		dir, _ := env.GetCurrentExecutableDir()
-		templateBasePath = filepath.Join(dir, "..", "themes")
+		templateBasePath = filepath.Join(pluginsDir, "themes")
 	}
 	return filepath.Join(templateBasePath, "default")
 }
@@ -45,10 +43,10 @@ func CopyReportTemplateFiles(themePath, reportDir string) error {
 	return err
 }
 
-func GetThemePath() string {
+func GetThemePath(pluginsDir string) string {
 	t := os.Getenv(reportThemeProperty)
 	if t == "" {
-		t = GetDefaultThemePath()
+		t = GetDefaultThemePath(pluginsDir)
 	}
 	return t
 }

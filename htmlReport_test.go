@@ -102,7 +102,7 @@ func TestSaveLastExecutionResult(t *testing.T) {
 	defer os.RemoveAll(reportsDir)
 	res := &generator.SuiteResult{ProjectName: "foo"}
 
-	saveLastExecutionResult(res, reportsDir)
+	saveLastExecutionResult(res, reportsDir, "")
 
 	outF := filepath.Join(reportsDir, resultFile)
 

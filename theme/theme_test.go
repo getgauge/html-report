@@ -36,7 +36,7 @@ func TestCopyingReportTemplates(t *testing.T) {
 	dirToCopy := filepath.Join(os.TempDir(), randomName())
 	defer os.RemoveAll(dirToCopy)
 
-	err := CopyReportTemplateFiles(GetThemePath(), dirToCopy)
+	err := CopyReportTemplateFiles(GetThemePath(""), dirToCopy)
 	if err != nil {
 		t.Errorf("Expected error == nil, got: %s \n", err.Error())
 	}
@@ -44,7 +44,7 @@ func TestCopyingReportTemplates(t *testing.T) {
 }
 
 func verifyReportTemplateFilesAreCopied(dest string, t *testing.T) {
-	reportDir := filepath.Join(GetThemePath(), "assets")
+	reportDir := filepath.Join(GetThemePath(""), "assets")
 	filepath.Walk(reportDir, func(path string, info os.FileInfo, err error) error {
 		path = strings.Replace(path, reportDir, "", 1)
 		destFilePath := filepath.Join(dest, path)

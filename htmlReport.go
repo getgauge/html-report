@@ -59,7 +59,10 @@ func (T timeStampedNameGenerator) randomName() string {
 	return time.Now().Format(timeFormat)
 }
 
+var pluginsDir string
+
 func createExecutionReport() {
+	pluginsDir, _ = os.Getwd()
 	os.Chdir(env.GetProjectRoot())
 	listener, err := listener.NewGaugeListener(gaugeHost, os.Getenv(gaugePortEnv))
 	if err != nil {
@@ -77,8 +80,8 @@ func createReport(suiteResult *gauge_messages.SuiteExecutionResult) {
 	}
 	reportsDir := getReportsDirectory(getNameGen())
 	res := generator.ToSuiteResult(projectRoot, suiteResult.GetSuiteResult())
-	go saveLastExecutionResult(res, reportsDir)
-	generator.GenerateReport(res, reportsDir, theme.GetThemePath())
+	go saveLastExecutionResult(res, reportsDir, pluginsDir)
+	generator.GenerateReport(res, reportsDir, theme.GetThemePath(pluginsDir))
 }
 
 func getNameGen() nameGenerator {
@@ -107,7 +110,7 @@ func getReportsDirectory(nameGen nameGenerator) string {
 	return currentReportDir
 }
 
-func saveLastExecutionResult(r *generator.SuiteResult, reportsDir string) {
+func saveLastExecutionResult(r *generator.SuiteResult, reportsDir, pluginsDir string) {
 	o, err := json.Marshal(r)
 	if err != nil {
 		log.Printf("[Warning] Error saving Last Execution Run: %s\n", err.Error())
@@ -119,8 +122,8 @@ func saveLastExecutionResult(r *generator.SuiteResult, reportsDir string) {
 		log.Printf("[Warning] Failed to write to %s. Reason: %s\n", outF, err.Error())
 		return
 	}
-	dir, bName := env.GetCurrentExecutableDir()
-	exPath := filepath.Join(dir, bName)
+	_, bName := env.GetCurrentExecutableDir()
+	exPath := filepath.Join(pluginsDir, "bin", bName)
 	exTarget := filepath.Join(reportsDir, bName)
 	if fileExists(exTarget) {
 		os.Remove(exTarget)

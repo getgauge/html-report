@@ -39,12 +39,11 @@ func GetCurrentExecutableDir() (string, string) {
 	if err != nil {
 		log.Fatalf(err.Error())
 	}
-	target, err := os.Readlink(ex)
+	target, err := filepath.EvalSymlinks(ex)
 	if err != nil {
 		return path.Dir(ex), filepath.Base(ex)
 	}
-	return path.Dir(target), filepath.Base(ex)
-
+	return filepath.Dir(target), filepath.Base(ex)
 }
 
 // CreateDirectory creates given directory if it doesn't exist

@@ -20,11 +20,12 @@ package main
 import (
 	"os"
 
+	"log"
+
+	"github.com/getgauge/common"
 	"github.com/getgauge/html-report/env"
 	"github.com/getgauge/html-report/generator"
 	flag "github.com/getgauge/mflag"
-	"log"
-	"github.com/getgauge/common"
 )
 
 var inputFile = flag.String([]string{"-input", "i"}, "", "Source json file to generate report from")

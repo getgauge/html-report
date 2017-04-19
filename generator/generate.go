@@ -277,7 +277,7 @@ func readTemplates(themePath string) {
 }
 
 func getAbsThemePath(themePath string) string {
-	if path.IsAbs(themePath) {
+	if filepath.IsAbs(themePath) {
 		return themePath
 	}
 	return filepath.Join(projectRoot, themePath)
@@ -342,7 +342,8 @@ func RegenerateReport(inputFile, reportsDir, themePath, pRoot string) {
 	}
 	env.CreateDirectory(reportsDir)
 	if themePath == "" {
-		themePath = theme.GetDefaultThemePath()
+		workingDir, _ := env.GetCurrentExecutableDir()
+		themePath = theme.GetDefaultThemePath(filepath.Dir(workingDir))
 	}
 	GenerateReport(res, reportsDir, themePath)
 }
