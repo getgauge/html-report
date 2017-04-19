@@ -145,7 +145,7 @@ var wSidebarAside = `<aside class="sidebar">
   </div>
 </aside>`
 
-var wHookFailureWithScreenhotDiv = `<div class="error-container failed" data-tablerow='0' data-hooktype='suite'>
+var wHookFailureWithScreenhotDiv = `<div class="error-container failed" data-tablerow='0'>
 <div class="error-heading">BeforeSuite Failed:<span class="error-message"> SomeError</span></div>
   <div class="toggle-show">
     [Show details]
@@ -162,7 +162,7 @@ var wHookFailureWithScreenhotDiv = `<div class="error-container failed" data-tab
   </div>
 </div>`
 
-var wHookFailureWithoutScreenhotDiv = `<div class="error-container failed" data-tablerow='0' data-hooktype='suite'>
+var wHookFailureWithoutScreenhotDiv = `<div class="error-container failed" data-tablerow='0'>
   <div class="error-heading">BeforeSuite Failed:<span class="error-message"> SomeError</span></div>
   <div class="toggle-show">
     [Show details]
@@ -430,8 +430,8 @@ var reportGenTests = []reportGenTest{
 		IsBeforeHookFailure: true,
 		Specs:               []*specsMeta{},
 	}, ""},
-	{"generate hook failure div with screenshot", "hookFailureDiv", newHookFailure("BeforeSuite", "SomeError", "iVBO", "Stack trace", suiteType), wHookFailureWithScreenhotDiv},
-	{"generate hook failure div without screenshot", "hookFailureDiv", newHookFailure("BeforeSuite", "SomeError", "", "Stack trace", suiteType), wHookFailureWithoutScreenhotDiv},
+	{"generate hook failure div with screenshot", "hookFailureDiv", newHookFailure("BeforeSuite", "SomeError", "iVBO", "Stack trace"), wHookFailureWithScreenhotDiv},
+	{"generate hook failure div without screenshot", "hookFailureDiv", newHookFailure("BeforeSuite", "SomeError", "", "Stack trace"), wHookFailureWithoutScreenhotDiv},
 	{"generate spec header with tags", "specHeaderStartTag", &specHeader{"Spec heading", "00:01:01", "/tmp/gauge/specs/foobar.spec", []string{"foo", "bar"}, &summary{0, 0, 0, 0}}, wSpecHeaderStartWithTags},
 	{"generate div for tags", "tagsDiv", &specHeader{Tags: []string{"tag1", "tag2"}}, wTagsDiv},
 	{"generate spec comments with data table (if present)", "specCommentsAndTableTag", newSpec(true), wSpecCommentsWithTableTag},
@@ -471,13 +471,12 @@ func testReportGen(reportGenTests []reportGenTest, t *testing.T) {
 	}
 }
 
-func newHookFailure(name, errMsg, screenshot, stacktrace string, hookType hookType) *hookFailure {
+func newHookFailure(name, errMsg, screenshot, stacktrace string) *hookFailure {
 	return &hookFailure{
 		HookName:   name,
 		ErrMsg:     errMsg,
 		Screenshot: screenshot,
 		StackTrace: stacktrace,
-		HookType:   hookType,
 	}
 }
 
