@@ -16,11 +16,15 @@
                 "afterSuiteHookFailure",
                 "passedSpecsCount",
                 "failedSpecsCount",
-                "skippedSpecsCount"
+                "skippedSpecsCount",
+                "basePath"
             ],
             "properties": {
                 "afterSuiteHookFailure": {
                     "$ref": "#/definitions/hookFailure"
+                },
+                "basePath": {
+                    "type": "string"
                 },
                 "beforeSuiteHookFailure": {
                     "$ref": "#/definitions/hookFailure"
@@ -54,12 +58,36 @@
                     "type": "array"
                 },
                 "successRate": {
-                    "type": "integer"
+                    "type": "number"
                 },
                 "tags": {
                     "type": "string"
                 },
                 "timestamp": {
+                    "type": "string"
+                }
+            },
+            "additionalProperties": false,
+            "type": "object"
+        },
+        "buildError": {
+            "required": [
+                "ErrorType",
+                "FileName",
+                "LineNumber",
+                "Message"
+            ],
+            "properties": {
+                "ErrorType": {
+                    "type": "string"
+                },
+                "FileName": {
+                    "type": "string"
+                },
+                "LineNumber": {
+                    "type": "integer"
+                },
+                "Message": {
                     "type": "string"
                 }
             },
@@ -139,7 +167,8 @@
                 "hookName",
                 "errorMessage",
                 "screenshot",
-                "stackTrace"
+                "stackTrace",
+                "tableRowIndex"
             ],
             "properties": {
                 "errorMessage": {
@@ -153,6 +182,9 @@
                 },
                 "stackTrace": {
                     "type": "string"
+                },
+                "tableRowIndex": {
+                    "type": "integer"
                 }
             },
             "additionalProperties": false,
@@ -327,19 +359,25 @@
                 "scenarios",
                 "isTableDriven",
                 "datatable",
-                "beforeSpecHookFailure",
-                "afterSpecHookFailure",
+                "beforeSpecHookFailures",
+                "afterSpecHookFailures",
                 "passedScenarioCount",
                 "failedScenarioCount",
                 "skippedScenarioCount",
                 "errors"
             ],
             "properties": {
-                "afterSpecHookFailure": {
-                    "$ref": "#/definitions/hookFailure"
+                "afterSpecHookFailures": {
+                    "items": {
+                        "$ref": "#/definitions/hookFailure"
+                    },
+                    "type": "array"
                 },
-                "beforeSpecHookFailure": {
-                    "$ref": "#/definitions/hookFailure"
+                "beforeSpecHookFailures": {
+                    "items": {
+                        "$ref": "#/definitions/hookFailure"
+                    },
+                    "type": "array"
                 },
                 "comentsAfterDatatable": {
                     "items": {
@@ -358,8 +396,8 @@
                 },
                 "errors": {
                     "items": {
-                        "additionalProperties": true,
-                        "type": "object"
+                        "$schema": "http://json-schema.org/draft-04/schema#",
+                        "$ref": "#/definitions/buildError"
                     },
                     "type": "array"
                 },
