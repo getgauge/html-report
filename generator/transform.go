@@ -259,7 +259,7 @@ func toSpec(res *gm.ProtoSpecResult) *spec {
 		Scenarios:             make([]*scenario, 0),
 		BeforeSpecHookFailure: make([]*hookFailure, 0),
 		AfterSpecHookFailure:  make([]*hookFailure, 0),
-		Errors:                make([]error, 0),
+		Errors:                make([]buildError, 0),
 		FileName:              res.GetProtoSpec().GetFileName(),
 		SpecHeading:           res.GetProtoSpec().GetSpecHeading(),
 		IsTableDriven:         res.GetProtoSpec().GetIsTableDriven(),

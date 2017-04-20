@@ -123,7 +123,7 @@ type spec struct {
 	PassedScenarioCount     int            `json:"passedScenarioCount"`
 	FailedScenarioCount     int            `json:"failedScenarioCount"`
 	SkippedScenarioCount    int            `json:"skippedScenarioCount"`
-	Errors                  []error        `json:"errors"`
+	Errors                  []buildError   `json:"errors"`
 }
 
 type scenario struct {
@@ -166,11 +166,11 @@ type result struct {
 }
 
 type hookFailure struct {
-	HookName      string   `json:"hookName"`
-	ErrMsg        string   `json:"errorMessage"`
-	Screenshot    string   `json:"screenshot"`
-	StackTrace    string   `json:"stackTrace"`
-	TableRowIndex int32    `json:"tableRowIndex"`
+	HookName      string `json:"hookName"`
+	ErrMsg        string `json:"errorMessage"`
+	Screenshot    string `json:"screenshot"`
+	StackTrace    string `json:"stackTrace"`
+	TableRowIndex int32  `json:"tableRowIndex"`
 }
 
 type concept struct {
