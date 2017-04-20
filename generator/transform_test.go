@@ -670,12 +670,12 @@ func TestToSpecForTableDrivenSpec(t *testing.T) {
 				AfterScenarioHookFailure:  nil,
 			},
 		},
-		BeforeSpecHookFailure: nil,
-		AfterSpecHookFailure:  nil,
-		Errors:                make([]buildError, 0),
-		PassedScenarioCount:   1,
-		FailedScenarioCount:   1,
-		SkippedScenarioCount:  0,
+		BeforeSpecHookFailures: nil,
+		AfterSpecHookFailures:  nil,
+		Errors:                 make([]buildError, 0),
+		PassedScenarioCount:    1,
+		FailedScenarioCount:    1,
+		SkippedScenarioCount:   0,
 	}
 
 	got := toSpec(datatableDrivenSpec)
@@ -686,14 +686,14 @@ func TestToSpecForTableDrivenSpec(t *testing.T) {
 func TestToSpecWithHookFailure(t *testing.T) {
 	encodedScreenShot := base64.StdEncoding.EncodeToString([]byte("Screenshot"))
 	want := &spec{
-		Scenarios:             make([]*scenario, 0),
-		BeforeSpecHookFailure: []*hookFailure{newHookFailure("Before Spec", "err", encodedScreenShot, "Stacktrace")},
-		AfterSpecHookFailure:  []*hookFailure{newHookFailure("After Spec", "err", encodedScreenShot, "Stacktrace")},
-		Errors:                make([]buildError, 0),
-		Tags:                  []string{"tag1"},
-		SpecHeading:           "specRes3",
-		ExecutionStatus:       skip,
-		ExecutionTime:         211316,
+		Scenarios:              make([]*scenario, 0),
+		BeforeSpecHookFailures: []*hookFailure{newHookFailure("Before Spec", "err", encodedScreenShot, "Stacktrace")},
+		AfterSpecHookFailures:  []*hookFailure{newHookFailure("After Spec", "err", encodedScreenShot, "Stacktrace")},
+		Errors:                 make([]buildError, 0),
+		Tags:                   []string{"tag1"},
+		SpecHeading:            "specRes3",
+		ExecutionStatus:        skip,
+		ExecutionTime:          211316,
 	}
 
 	got := toSpec(specResWithSpecHookFailure)
@@ -801,14 +801,14 @@ func TestToSpecWithDataTableExecutionStatusFail(t *testing.T) {
 
 func TestToSpecWithBeforeHookFailure(t *testing.T) {
 	want := []*hookFailure{{ErrMsg: "err", HookName: "Before Spec", Screenshot: "U2NyZWVuc2hvdA==", StackTrace: "Stacktrace"}}
-	got := toSpec(specResWithSpecHookFailure).BeforeSpecHookFailure
+	got := toSpec(specResWithSpecHookFailure).BeforeSpecHookFailures
 
 	checkEqual(t, "", want, got)
 }
 
 func TestToSpecWithAfterHookFailure(t *testing.T) {
 	want := []*hookFailure{{ErrMsg: "err", HookName: "After Spec", Screenshot: "U2NyZWVuc2hvdA==", StackTrace: "Stacktrace", TableRowIndex: 0}}
-	got := toSpec(specResWithSpecHookFailure).AfterSpecHookFailure
+	got := toSpec(specResWithSpecHookFailure).AfterSpecHookFailures
 
 	checkEqual(t, "", want, got)
 }
@@ -1336,7 +1336,7 @@ var tableDrivenStatusComputeTests = []*tableDrivenStatusComputeTest{
 			}},
 		skip},
 	{"spec before hook fail",
-		&spec{BeforeSpecHookFailure: []*hookFailure{
+		&spec{BeforeSpecHookFailures: []*hookFailure{
 			{HookName: "Some failure", TableRowIndex: 0},
 		}, Datatable: &table{Headers: []string{"foo"}, Rows: []*row{{Cells: []string{"foo1"}}}},
 			Scenarios: []*scenario{
@@ -1344,7 +1344,7 @@ var tableDrivenStatusComputeTests = []*tableDrivenStatusComputeTest{
 			}},
 		fail},
 	{"spec after hook fail",
-		&spec{AfterSpecHookFailure: []*hookFailure{
+		&spec{AfterSpecHookFailures: []*hookFailure{
 			{HookName: "Some failure", TableRowIndex: 0},
 		}, Datatable: &table{Headers: []string{"foo"}, Rows: []*row{{Cells: []string{"foo1"}}}},
 			Scenarios: []*scenario{

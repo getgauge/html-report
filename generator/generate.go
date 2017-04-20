@@ -118,8 +118,8 @@ type spec struct {
 	Scenarios               []*scenario    `json:"scenarios"`
 	IsTableDriven           bool           `json:"isTableDriven"`
 	Datatable               *table         `json:"datatable"`
-	BeforeSpecHookFailure   []*hookFailure `json:"beforeSpecHookFailure"`
-	AfterSpecHookFailure    []*hookFailure `json:"afterSpecHookFailure"`
+	BeforeSpecHookFailures  []*hookFailure `json:"beforeSpecHookFailures"`
+	AfterSpecHookFailures   []*hookFailure `json:"afterSpecHookFailures"`
 	PassedScenarioCount     int            `json:"passedScenarioCount"`
 	FailedScenarioCount     int            `json:"failedScenarioCount"`
 	SkippedScenarioCount    int            `json:"skippedScenarioCount"`

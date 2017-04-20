@@ -256,15 +256,15 @@ func toSpecHeader(res *spec) *specHeader {
 
 func toSpec(res *gm.ProtoSpecResult) *spec {
 	spec := &spec{
-		Scenarios:             make([]*scenario, 0),
-		BeforeSpecHookFailure: make([]*hookFailure, 0),
-		AfterSpecHookFailure:  make([]*hookFailure, 0),
-		Errors:                make([]buildError, 0),
-		FileName:              res.GetProtoSpec().GetFileName(),
-		SpecHeading:           res.GetProtoSpec().GetSpecHeading(),
-		IsTableDriven:         res.GetProtoSpec().GetIsTableDriven(),
-		ExecutionTime:         res.GetExecutionTime(),
-		ExecutionStatus:       pass,
+		Scenarios:              make([]*scenario, 0),
+		BeforeSpecHookFailures: make([]*hookFailure, 0),
+		AfterSpecHookFailures:  make([]*hookFailure, 0),
+		Errors:                 make([]buildError, 0),
+		FileName:               res.GetProtoSpec().GetFileName(),
+		SpecHeading:            res.GetProtoSpec().GetSpecHeading(),
+		IsTableDriven:          res.GetProtoSpec().GetIsTableDriven(),
+		ExecutionTime:          res.GetExecutionTime(),
+		ExecutionStatus:        pass,
 	}
 	if res.GetFailed() {
 		spec.ExecutionStatus = fail
@@ -302,10 +302,10 @@ func toSpec(res *gm.ProtoSpecResult) *spec {
 		}
 	}
 	for _, preHookFailure := range res.GetProtoSpec().GetPreHookFailures() {
-		spec.BeforeSpecHookFailure = append(spec.BeforeSpecHookFailure, toHookFailure(preHookFailure, "Before Spec"))
+		spec.BeforeSpecHookFailures = append(spec.BeforeSpecHookFailures, toHookFailure(preHookFailure, "Before Spec"))
 	}
 	for _, postHookFailure := range res.GetProtoSpec().GetPostHookFailures() {
-		spec.AfterSpecHookFailure = append(spec.AfterSpecHookFailure, toHookFailure(postHookFailure, "After Spec"))
+		spec.AfterSpecHookFailures = append(spec.AfterSpecHookFailures, toHookFailure(postHookFailure, "After Spec"))
 	}
 
 	if res.GetProtoSpec().GetIsTableDriven() {
@@ -370,16 +370,14 @@ func computeTableDrivenStatuses(spec *spec) {
 			}
 		}
 	}
-	for _, s := range spec.BeforeSpecHookFailure {
-		if s.TableRowIndex >= 0 {
-			var row = spec.Datatable.Rows[s.TableRowIndex]
-			row.Result = fail
-		}
-	}
-	for _, s := range spec.AfterSpecHookFailure {
-		if s.TableRowIndex >= 0 {
-			var row = spec.Datatable.Rows[s.TableRowIndex]
-			row.Result = fail
+	SetRowFailures(spec.BeforeSpecHookFailures)
+	SetRowFailures(spec.AfterSpecHookFailures)
+}
+
+func SetRowFailures(failures []*hookFailure) {
+	for _, f := range failures {
+		if f.TableRowIndex >= 0 {
+			spec.Datatable.Rows[f.TableRowIndex].Result = fail
 		}
 	}
 }
