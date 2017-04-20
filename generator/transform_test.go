@@ -689,7 +689,7 @@ func TestToSpecWithHookFailure(t *testing.T) {
 		Scenarios:             make([]*scenario, 0),
 		BeforeSpecHookFailure: []*hookFailure{newHookFailure("Before Spec", "err", encodedScreenShot, "Stacktrace")},
 		AfterSpecHookFailure:  []*hookFailure{newHookFailure("After Spec", "err", encodedScreenShot, "Stacktrace")},
-		Errors:                make([]error, 0),
+		Errors:                make([]buildError, 0),
 		Tags:                  []string{"tag1"},
 		SpecHeading:           "specRes3",
 		ExecutionStatus:       skip,
