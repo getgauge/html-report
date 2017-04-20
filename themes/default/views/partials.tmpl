@@ -461,7 +461,7 @@
 		{{template "specErrorDiv" .}}
 		</div>
 	{{else}}
-    {{range $index, $beforeHook := .BeforeSpecHookFailure}}
+    {{range $index, $beforeHook := .BeforeSpecHookFailures}}
       {{template "hookFailureDiv" $beforeHook}}
     {{end}}
 
@@ -474,7 +474,7 @@
     </div>
     </div>
 
-    {{range $index, $afterHook := .AfterSpecHookFailure}}
+    {{range $index, $afterHook := .AfterSpecHookFailures}}
       {{template "hookFailureDiv" $afterHook}}
     {{end}}
     </div>

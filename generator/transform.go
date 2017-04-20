@@ -370,11 +370,11 @@ func computeTableDrivenStatuses(spec *spec) {
 			}
 		}
 	}
-	SetRowFailures(spec.BeforeSpecHookFailures)
-	SetRowFailures(spec.AfterSpecHookFailures)
+	SetRowFailures(spec.BeforeSpecHookFailures, spec)
+	SetRowFailures(spec.AfterSpecHookFailures, spec)
 }
 
-func SetRowFailures(failures []*hookFailure) {
+func SetRowFailures(failures []*hookFailure, spec *spec) {
 	for _, f := range failures {
 		if f.TableRowIndex >= 0 {
 			spec.Datatable.Rows[f.TableRowIndex].Result = fail
