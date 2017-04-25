@@ -33,6 +33,8 @@ import (
 	"github.com/getgauge/html-report/generator"
 	"github.com/getgauge/html-report/listener"
 	"github.com/getgauge/html-report/theme"
+	"runtime"
+	"strings"
 )
 
 const (
@@ -128,7 +130,27 @@ func saveLastExecutionResult(r *generator.SuiteResult, reportsDir, pluginsDir st
 	if fileExists(exTarget) {
 		os.Remove(exTarget)
 	}
-	err = os.Symlink(exPath, exTarget)
+	if runtime.GOOS == "windows" {
+		createBatFileToExecuteHtmlReport(exPath, exTarget)
+	} else {
+		createSymlinkToHtmlReport(exPath, exTarget)
+	}
+}
+
+func createBatFileToExecuteHtmlReport(exPath, exTarget string) {
+	content := "@echo off \n" + exPath + " %*"
+	o := []byte(content)
+	exTarget = strings.TrimSuffix(exTarget, filepath.Ext(exTarget))
+	outF := exTarget + ".bat"
+	err := ioutil.WriteFile(outF, o, common.NewFilePermissions)
+	if err != nil {
+		log.Printf("[Warning] Failed to write to %s. Reason: %s\n", outF, err.Error())
+		return
+	}
+}
+
+func createSymlinkToHtmlReport(exPath, exTarget string) {
+	err := os.Symlink(exPath, exTarget)
 	if err != nil {
 		log.Printf("[Warning] Unable to create symlink %s\n", exTarget)
 	}
