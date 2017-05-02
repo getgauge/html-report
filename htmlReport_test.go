@@ -112,7 +112,7 @@ func TestSaveLastExecutionResult(t *testing.T) {
 
 	}
 	got := string(o)
-	want := "\"projectName\":\"foo\""
+	want := "\"ProjectName\":\"foo\""
 	if !strings.Contains(got, want) {
 		t.Errorf("Want %s to be in %s", want, got)
 	}

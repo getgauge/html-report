@@ -91,63 +91,63 @@ type buildError struct {
 
 // SuiteResult holds the aggregated execution information for a run
 type SuiteResult struct {
-	ProjectName            string       `json:"projectName"`
-	Timestamp              string       `json:"timestamp"`
-	SuccessRate            float32      `json:"successRate"`
-	Environment            string       `json:"environment"`
-	Tags                   string       `json:"tags"`
-	ExecutionTime          int64        `json:"executionTime"`
-	ExecutionStatus        status       `json:"executionStatus"`
-	SpecResults            []*spec      `json:"specResults"`
-	BeforeSuiteHookFailure *hookFailure `json:"beforeSuiteHookFailure"`
-	AfterSuiteHookFailure  *hookFailure `json:"afterSuiteHookFailure"`
-	PassedSpecsCount       int          `json:"passedSpecsCount"`
-	FailedSpecsCount       int          `json:"failedSpecsCount"`
-	SkippedSpecsCount      int          `json:"skippedSpecsCount"`
-	BasePath               string       `json:"basePath"`
+	ProjectName            string       `json:"ProjectName"`
+	Timestamp              string       `json:"Timestamp"`
+	SuccessRate            float32      `json:"SuccessRate"`
+	Environment            string       `json:"Environment"`
+	Tags                   string       `json:"Tags"`
+	ExecutionTime          int64        `json:"ExecutionTime"`
+	ExecutionStatus        status       `json:"ExecutionStatus"`
+	SpecResults            []*spec      `json:"SpecResults"`
+	BeforeSuiteHookFailure *hookFailure `json:"BeforeSuiteHookFailure"`
+	AfterSuiteHookFailure  *hookFailure `json:"AfterSuiteHookFailure"`
+	PassedSpecsCount       int          `json:"PassedSpecsCount"`
+	FailedSpecsCount       int          `json:"FailedSpecsCount"`
+	SkippedSpecsCount      int          `json:"SkippedSpecsCount"`
+	BasePath               string       `json:"BasePath"`
 }
 
 type spec struct {
-	CommentsBeforeDatatable []string       `json:"commentsBeforeDatatable"`
-	CommentsAfterDatatable  []string       `json:"comentsAfterDatatable"`
-	SpecHeading             string         `json:"specHeading"`
-	FileName                string         `json:"fileName"`
-	Tags                    []string       `json:"tags"`
-	ExecutionTime           int64          `json:"executionTime"`
-	ExecutionStatus         status         `json:"executionStatus"`
-	Scenarios               []*scenario    `json:"scenarios"`
-	IsTableDriven           bool           `json:"isTableDriven"`
-	Datatable               *table         `json:"datatable"`
-	BeforeSpecHookFailures  []*hookFailure `json:"beforeSpecHookFailures"`
-	AfterSpecHookFailures   []*hookFailure `json:"afterSpecHookFailures"`
-	PassedScenarioCount     int            `json:"passedScenarioCount"`
-	FailedScenarioCount     int            `json:"failedScenarioCount"`
-	SkippedScenarioCount    int            `json:"skippedScenarioCount"`
-	Errors                  []buildError   `json:"errors"`
+	CommentsBeforeDatatable []string       `json:"CommentsBeforeDatatable"`
+	CommentsAfterDatatable  []string       `json:"CommentsAfterDatatable"`
+	SpecHeading             string         `json:"SpecHeading"`
+	FileName                string         `json:"FileName"`
+	Tags                    []string       `json:"Tags"`
+	ExecutionTime           int64          `json:"ExecutionTime"`
+	ExecutionStatus         status         `json:"ExecutionStatus"`
+	Scenarios               []*scenario    `json:"Scenarios"`
+	IsTableDriven           bool           `json:"IsTableDriven"`
+	Datatable               *table         `json:"Datatable"`
+	BeforeSpecHookFailures  []*hookFailure `json:"BeforeSpecHookFailures"`
+	AfterSpecHookFailures   []*hookFailure `json:"AfterSpecHookFailures"`
+	PassedScenarioCount     int            `json:"PassedScenarioCount"`
+	FailedScenarioCount     int            `json:"FailedScenarioCount"`
+	SkippedScenarioCount    int            `json:"SkippedScenarioCount"`
+	Errors                  []buildError   `json:"Errors"`
 }
 
 type scenario struct {
-	Heading                   string       `json:"scenarioHeading"`
-	Tags                      []string     `json:"tags"`
-	ExecutionTime             string       `json:"executionTime"`
-	ExecutionStatus           status       `json:"executionStatus"`
-	Contexts                  []item       `json:"contexts"`
-	Teardowns                 []item       `json:"teardowns"`
-	Items                     []item       `json:"items"`
-	BeforeScenarioHookFailure *hookFailure `json:"beforeScenarioHookFailure"`
-	AfterScenarioHookFailure  *hookFailure `json:"afterScenarioHookFailure"`
-	SkipErrors                []string     `json:"skipErrors"`
-	TableRowIndex             int          `json:"tableRowIndex"`
+	Heading                   string       `json:"Heading"`
+	Tags                      []string     `json:"Tags"`
+	ExecutionTime             string       `json:"ExecutionTime"`
+	ExecutionStatus           status       `json:"ExecutionStatus"`
+	Contexts                  []item       `json:"Contexts"`
+	Teardowns                 []item       `json:"Teardowns"`
+	Items                     []item       `json:"Items"`
+	BeforeScenarioHookFailure *hookFailure `json:"BeforeScenarioHookFailure"`
+	AfterScenarioHookFailure  *hookFailure `json:"AfterScenarioHookFailure"`
+	SkipErrors                []string     `json:"SkipErrors"`
+	TableRowIndex             int          `json:"TableRowIndex"`
 }
 
 type step struct {
-	Fragments             []*fragment  `json:"fragments"`
-	ItemType              tokenKind    `json:"itemType"`
-	StepText              string       `json:"stepText"`
-	Table                 *table       `json:"table"`
-	BeforeStepHookFailure *hookFailure `json:"beforeStepHookFailure"`
-	AfterStepHookFailure  *hookFailure `json:"afterStepHookFailure"`
-	Result                *result      `json:"result"`
+	Fragments             []*fragment  `json:"Fragments"`
+	ItemType              tokenKind    `json:"ItemType"`
+	StepText              string       `json:"StepText"`
+	Table                 *table       `json:"Table"`
+	BeforeStepHookFailure *hookFailure `json:"BeforeStepHookFailure"`
+	AfterStepHookFailure  *hookFailure `json:"AfterStepHookFailure"`
+	Result                *result      `json:"Result"`
 }
 
 func (s *step) Kind() tokenKind {
@@ -155,29 +155,29 @@ func (s *step) Kind() tokenKind {
 }
 
 type result struct {
-	Status        status    `json:"status"`
-	StackTrace    string    `json:"stackTrace"`
-	Screenshot    string    `json:"screenshot"`
-	ErrorMessage  string    `json:"errorMessage"`
-	ExecutionTime string    `json:"executionTime"`
-	SkippedReason string    `json:"skippedReason"`
-	Messages      []string  `json:"messages"`
-	ErrorType     errorType `json:"errorType"`
+	Status        status    `json:"Status"`
+	StackTrace    string    `json:"StackTrace"`
+	Screenshot    string    `json:"Screenshot"`
+	ErrorMessage  string    `json:"ErrorMessage"`
+	ExecutionTime string    `json:"ExecutionTime"`
+	SkippedReason string    `json:"SkippedReason"`
+	Messages      []string  `json:"Messages"`
+	ErrorType     errorType `json:"ErrorType"`
 }
 
 type hookFailure struct {
-	HookName      string `json:"hookName"`
-	ErrMsg        string `json:"errorMessage"`
-	Screenshot    string `json:"screenshot"`
-	StackTrace    string `json:"stackTrace"`
-	TableRowIndex int32  `json:"tableRowIndex"`
+	HookName      string `json:"HookName"`
+	ErrMsg        string `json:"ErrMsg"`
+	Screenshot    string `json:"Screenshot"`
+	StackTrace    string `json:"StackTrace"`
+	TableRowIndex int32  `json:"TableRowIndex"`
 }
 
 type concept struct {
-	ItemType    tokenKind `json:"itemType"`
-	ConceptStep *step     `json:"conceptStep"`
-	Items       []item    `json:"items"`
-	Result      result    `json:"result"`
+	ItemType    tokenKind `json:"ItemType"`
+	ConceptStep *step     `json:"ConceptStep"`
+	Items       []item    `json:"Items"`
+	Result      result    `json:"Result"`
 }
 
 func (s *concept) Kind() tokenKind {
@@ -185,13 +185,13 @@ func (s *concept) Kind() tokenKind {
 }
 
 type table struct {
-	Headers []string `json:"headers"`
-	Rows    []*row   `json:"rows"`
+	Headers []string `json:"Headers"`
+	Rows    []*row   `json:"Rows"`
 }
 
 type row struct {
-	Cells  []string `json:"cells"`
-	Result status   `json:"status"`
+	Cells  []string `json:"Cells"`
+	Result status   `json:"Status"`
 }
 
 func (e buildError) Error() string {
@@ -221,8 +221,8 @@ func (c *comment) Kind() tokenKind {
 }
 
 type searchIndex struct {
-	Tags  map[string][]string `json:"tags"`
-	Specs map[string][]string `json:"specs"`
+	Tags  map[string][]string `json:"Tags"`
+	Specs map[string][]string `json:"Specs"`
 }
 
 const (
