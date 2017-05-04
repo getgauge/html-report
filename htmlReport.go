@@ -27,14 +27,15 @@ import (
 
 	"encoding/json"
 
+	"runtime"
+	"strings"
+
 	"github.com/getgauge/common"
 	"github.com/getgauge/html-report/env"
 	"github.com/getgauge/html-report/gauge_messages"
 	"github.com/getgauge/html-report/generator"
 	"github.com/getgauge/html-report/listener"
 	"github.com/getgauge/html-report/theme"
-	"runtime"
-	"strings"
 )
 
 const (

@@ -23,6 +23,7 @@ import (
 	"path/filepath"
 	"testing"
 
+	"github.com/getgauge/html-report/env"
 	helper "github.com/getgauge/html-report/test_helper"
 )
 
@@ -122,6 +123,7 @@ func TestEndToEndHTMLGenerationFromSavedResult(t *testing.T) {
 }
 
 func TestEndToEndHTMLGenerationForNestedSpecs(t *testing.T) {
+	os.Setenv(env.UseNestedSpecs, "true")
 	var suiteRes4 = newProtoSuiteRes(false, 0, 0, 100, nil, nil, passSpecRes1, nestedSpecRes)
 	expectedFiles := []string{
 		"index.html",

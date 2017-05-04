@@ -309,7 +309,9 @@ func GenerateReports(res *SuiteResult, reportsDir, themePath string) error {
 		wg.Add(1)
 		res.BasePath = ""
 		go generateIndexPage(res, f, &wg)
-		go generateIndexPages(res, reportsDir, &wg)
+		if env.ShouldUseNestedSpecs() {
+			go generateIndexPages(res, reportsDir, &wg)
+		}
 		specRes := res.SpecResults
 		for _, r := range specRes {
 			relPath, _ := filepath.Rel(projectRoot, r.FileName)
