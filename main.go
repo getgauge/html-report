@@ -24,11 +24,11 @@ import (
 
 	"github.com/getgauge/common"
 	"github.com/getgauge/html-report/env"
-	"github.com/getgauge/html-report/generator"
+	"github.com/getgauge/html-report/regenerate"
 	flag "github.com/getgauge/mflag"
 )
 
-var inputFile = flag.String([]string{"-input", "i"}, "", "Source json file to generate report from")
+var inputFile = flag.String([]string{"-input", "i"}, "", "Source file to generate report from. This should be generated in <PROJECTROOT>/.gauge folder.")
 var outDir = flag.String([]string{"-output", "o"}, "", "Output location for generating report. Will create directory if it doesn't exist.")
 var themePath = flag.String([]string{"-theme", "t"}, "", "Theme to use for generating html report. 'default' theme will be used if not specified.")
 
@@ -43,7 +43,10 @@ func main() {
 		if err != nil {
 			log.Fatalf("%s", err.Error())
 		}
-		generator.RegenerateReport(*inputFile, *outDir, *themePath, projectRoot)
+		if !common.FileExists(*inputFile) {
+			log.Fatalf("Input file does not exist: %s", *inputFile)
+		}
+		regenerate.Report(*inputFile, *outDir, *themePath, projectRoot)
 		return
 	}
 

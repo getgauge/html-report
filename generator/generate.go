@@ -333,24 +333,6 @@ func GenerateReports(res *SuiteResult, reportsDir, themePath string) error {
 	return nil
 }
 
-func RegenerateReport(inputFile, reportsDir, themePath, pRoot string) {
-	projectRoot = pRoot
-	b, err := ioutil.ReadFile(inputFile)
-	if err != nil {
-		log.Fatal(err.Error())
-	}
-	res := &SuiteResult{}
-	if err = json.Unmarshal(b, res); err != nil {
-		log.Fatal(err.Error())
-	}
-	env.CreateDirectory(reportsDir)
-	if themePath == "" {
-		workingDir, _ := env.GetCurrentExecutableDir()
-		themePath = theme.GetDefaultThemePath(filepath.Dir(workingDir))
-	}
-	GenerateReport(res, reportsDir, themePath)
-}
-
 func GenerateReport(res *SuiteResult, reportDir, themePath string) {
 	err := GenerateReports(res, reportDir, themePath)
 	if err != nil {
