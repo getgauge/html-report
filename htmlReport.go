@@ -25,9 +25,6 @@ import (
 	"path/filepath"
 	"time"
 
-	"encoding/json"
-
-	"runtime"
 	"strings"
 
 	"github.com/getgauge/common"
@@ -83,9 +80,6 @@ func createReport(suiteResult *gauge_messages.SuiteExecutionResult) {
 	}
 	reportsDir := getReportsDirectory(getNameGen())
 	res := generator.ToSuiteResult(projectRoot, suiteResult.GetSuiteResult())
-	if env.ShouldSaveExecutionResult() {
-		go saveLastExecutionResult(res, reportsDir, pluginsDir)
-	}
 	generator.GenerateReport(res, reportsDir, theme.GetThemePath(pluginsDir))
 }
 
@@ -113,31 +107,6 @@ func getReportsDirectory(nameGen nameGenerator) string {
 	}
 	env.CreateDirectory(currentReportDir)
 	return currentReportDir
-}
-
-func saveLastExecutionResult(r *generator.SuiteResult, reportsDir, pluginsDir string) {
-	o, err := json.Marshal(r)
-	if err != nil {
-		log.Printf("[Warning] Error saving Last Execution Run: %s\n", err.Error())
-		return
-	}
-	outF := filepath.Join(reportsDir, resultFile)
-	err = ioutil.WriteFile(outF, o, common.NewFilePermissions)
-	if err != nil {
-		log.Printf("[Warning] Failed to write to %s. Reason: %s\n", outF, err.Error())
-		return
-	}
-	_, bName := env.GetCurrentExecutableDir()
-	exPath := filepath.Join(pluginsDir, "bin", bName)
-	exTarget := filepath.Join(reportsDir, bName)
-	if fileExists(exTarget) {
-		os.Remove(exTarget)
-	}
-	if runtime.GOOS == "windows" {
-		createBatFileToExecuteHtmlReport(exPath, exTarget)
-	} else {
-		createSymlinkToHtmlReport(exPath, exTarget)
-	}
 }
 
 func createBatFileToExecuteHtmlReport(exPath, exTarget string) {
