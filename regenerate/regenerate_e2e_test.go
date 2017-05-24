@@ -16,7 +16,7 @@ func TestEndToEndHTMLGenerationFromSavedResult(t *testing.T) {
 	reportDir := filepath.Join("_testdata", "e2e")
 	inputFile := filepath.Join("_testdata", "last_run_result")
 
-	RegenerateReport(inputFile, reportDir, templateBasePath, "")
+	Report(inputFile, reportDir, templateBasePath, "")
 	for _, expectedFile := range expectedFiles {
 		gotContent, err := ioutil.ReadFile(filepath.Join(reportDir, expectedFile))
 		if err != nil {
