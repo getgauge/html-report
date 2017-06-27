@@ -27,6 +27,8 @@ import (
 
 	"strings"
 
+	"runtime"
+
 	"github.com/getgauge/common"
 	"github.com/getgauge/html-report/env"
 	"github.com/getgauge/html-report/gauge_messages"
@@ -80,6 +82,7 @@ func createReport(suiteResult *gauge_messages.SuiteExecutionResult) {
 	}
 	reportsDir := getReportsDirectory(getNameGen())
 	res := generator.ToSuiteResult(projectRoot, suiteResult.GetSuiteResult())
+	go createReportExecutableFile(reportsDir, pluginsDir)
 	generator.GenerateReport(res, reportsDir, theme.GetThemePath(pluginsDir))
 }
 
@@ -107,6 +110,20 @@ func getReportsDirectory(nameGen nameGenerator) string {
 	}
 	env.CreateDirectory(currentReportDir)
 	return currentReportDir
+}
+
+func createReportExecutableFile(reportsDir, pluginsDir string) {
+	_, bName := env.GetCurrentExecutableDir()
+	exPath := filepath.Join(pluginsDir, "bin", bName)
+	exTarget := filepath.Join(reportsDir, bName)
+	if fileExists(exTarget) {
+		os.Remove(exTarget)
+	}
+	if runtime.GOOS == "windows" {
+		createBatFileToExecuteHtmlReport(exPath, exTarget)
+	} else {
+		createSymlinkToHtmlReport(exPath, exTarget)
+	}
 }
 
 func createBatFileToExecuteHtmlReport(exPath, exTarget string) {
