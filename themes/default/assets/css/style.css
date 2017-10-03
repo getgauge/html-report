@@ -1029,6 +1029,7 @@ footer p {
 
     .specifications .sidebar {
         min-width: 350px;
+        width: 350px;
     }
 
     .details .content {
