@@ -342,7 +342,7 @@ func GenerateReport(res *SuiteResult, reportDir, themePath string) {
 	if err != nil {
 		log.Fatalf("Error copying template directory :%s\n", err.Error())
 	}
-	fmt.Printf("Successfully generated html-report to => %s\n", reportDir)
+	fmt.Printf("Successfully generated html-report to => %s\n", filepath.Join(reportDir, "index.html"))
 }
 
 func newSearchIndex() *searchIndex {
