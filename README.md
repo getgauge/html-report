@@ -13,7 +13,7 @@ gauge install html-report
 
 * Installing specific version
 ```
-gauge install html-report --plugin-version 2.1.0
+gauge install html-report --version 2.1.0
 ```
 
 ### Offline installation
@@ -48,13 +48,13 @@ go run build/make.go --all-platforms
 After compilation
 
 ```
-go run build/make.go install
+go run build/make.go --install
 ```
 
 Installing to a CUSTOM_LOCATION
 
 ```
-go run build/make.go install --plugin-prefix CUSTOM_LOCATION
+go run build/make.go --install --plugin-prefix CUSTOM_LOCATION
 ```
 
 ### Creating distributable
