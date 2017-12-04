@@ -353,6 +353,28 @@ var wSpecErrorDiv = `<div class="error-container failed">
    </div>
 </div>`
 
+var wBeforeSuiteMessageDiv = `<div class="suite_messages">
+	<div>
+		<div class="step-message"><p>Before Suite message</p></div>
+	</div>
+</div>`
+
+var wAfterSuiteMessageDiv = `<div class="suite_messages">
+	<div>
+		<div class="step-message"><p>After Suite message</p></div>
+	</div>
+</div>`
+
+var wBeforeAndAfterSuiteMessageDiv = `<div class="suite_messages">
+	<div>
+		<div class="step-message"><p>Before Suite message</p></div>
+	</div>
+	<div class="message_separator">--------</div>
+	<div>
+		<div class="step-message"><p>After Suite message</p></div>
+	</div>
+</div>`
+
 var stepWithBracketsInFragment = &step{
 	Fragments: []*fragment{
 		{FragmentKind: textFragmentKind, Text: "Say "},
@@ -415,10 +437,16 @@ var skippedStepRes = &result{
 
 var reportGenTests = []reportGenTest{
 	{"generate html page start with project name", "htmlPageStartTag", &overview{ProjectName: "projname"}, whtmlPageStartTag},
-	{"generate report overview with tags", "reportOverviewTag", &overview{"projname", "default", "foo", 34, "00:01:53", "Jun 3, 2016 at 12:29pm", &summary{41, 2, 39, 0}, "/"},
+	{"generate report overview with tags", "reportOverviewTag", &overview{"projname", "default", "foo", 34, "00:01:53", "Jun 3, 2016 at 12:29pm", &summary{41, 2, 39, 0}, "/", []string{}, []string{}},
 		wChartDiv + wResCntDiv + wEnvLi + wTagsLi + wSuccRateLi + wExecTimeLi + wTimestampLi},
-	{"generate report overview without tags", "reportOverviewTag", &overview{"projname", "default", "", 34, "00:01:53", "Jun 3, 2016 at 12:29pm", &summary{41, 2, 39, 0}, "/"},
+	{"generate report overview without tags", "reportOverviewTag", &overview{"projname", "default", "", 34, "00:01:53", "Jun 3, 2016 at 12:29pm", &summary{41, 2, 39, 0}, "/", []string{}, []string{}},
 		wChartDiv + wResCntDiv + wEnvLi + wSuccRateLi + wExecTimeLi + wTimestampLi},
+	{"generate suite messages with before hook message", "suiteMessagesDiv", &overview{"projname", "default", "", 34, "00:01:53", "Jun 3, 2016 at 12:29pm", &summary{41, 2, 39, 0}, "/", []string{"Before Suite message"}, []string{}},
+		wBeforeSuiteMessageDiv},
+	{"generate suite messages with after hook message", "suiteMessagesDiv", &overview{"projname", "default", "", 34, "00:01:53", "Jun 3, 2016 at 12:29pm", &summary{41, 2, 39, 0}, "/", []string{}, []string{"After Suite message"}},
+		wAfterSuiteMessageDiv},
+	{"generate suite messages with before and after hook message", "suiteMessagesDiv", &overview{"projname", "default", "", 34, "00:01:53", "Jun 3, 2016 at 12:29pm", &summary{41, 2, 39, 0}, "/", []string{"Before Suite message"}, []string{"After Suite message"}},
+		wBeforeAndAfterSuiteMessageDiv},
 	{"generate sidebar with appropriate pass/fail/skip class", "sidebarDiv", &sidebar{
 		IsBeforeHookFailure: false,
 		Specs: []*specsMeta{

@@ -75,10 +75,31 @@
           <span>{{.Timestamp}}</span>
         </li>
       </ul>
+      {{template "suiteMessagesDiv" .}}
     </div>
   </div>
 {{end}}
 
+/* Prints out the messages that the user may have introduces using the Gauge.WriteMessage API in before and after suite hooks*/
+{{define "suiteMessagesDiv"}}
+  {{if or (gt (len .PreHookMessages) 0) (gt (len .PostHookMessages) 0)}}
+    <div class="suite_messages">
+      {{if gt (len .PreHookMessages) 0}}
+        <div>
+          {{range .PreHookMessages}}<div class="step-message">{{. | encodeNewLine | parseMarkdown | sanitize}} </div>{{end}}
+        </div>
+        {{if gt (len .PostHookMessages) 0}}
+          <div class="message_separator">--------</div>
+        {{end}}
+      {{end}}
+      {{if gt (len .PostHookMessages) 0}}
+        <div>
+          {{range .PostHookMessages}}<div class="step-message">{{. | encodeNewLine | parseMarkdown | sanitize}} </div>{{end}}
+        </div>
+      {{end}}
+    </div>
+  {{end}}
+{{end}}
 /* The sidebar resides on the side , and holds the list of specs that were part of the execution.
    Users may click to view individual spec's output, search for a spec by either tags or spec heading.
    Users are also given an autocomplete suggestion. */
@@ -162,13 +183,13 @@
   {{end}}
 {{end}}
 
-/* Prints out the messages that the user may have introduces using teh Gauge.WriteMessage API */
+/* Prints out the messages that the user may have introduces using the Gauge.WriteMessage API */
 {{define "messageDiv"}}
-  {{if .Messages}}
+  {{if .}}
     <div class="message-container">
       <i class="fa fa-minus-square" aria-hidden="true"></i>
       <div class="messages">
-        {{range .Messages}}<div class="step-message">{{. | encodeNewLine | parseMarkdown | sanitize}} </div>{{end}}
+        {{range .}}<div class="step-message">{{. | encodeNewLine | parseMarkdown | sanitize}} </div>{{end}}
       </div>
     </div>
   {{end}}
@@ -377,7 +398,7 @@
   {{template "stepStartDiv" .}}
   {{template "stepBodyDiv" .}}
   {{if .BeforeStepHookFailure}}
-    {{ template "hookFailureDiv" .BeforeStepHookFailure}}
+    {{ template "hookFailureDiv" .BeforeStepHookFailure }}
   {{end}}
   {{with .Result}}
     {{if and (and (eq .Status "fail") (ne .ErrorMessage "")) (ne .StackTrace "") }}
@@ -385,9 +406,9 @@
     {{end }}
   {{end}}
   {{if .AfterStepHookFailure}}
-    {{ template "hookFailureDiv" .AfterStepHookFailure}}
+    {{ template "hookFailureDiv" .AfterStepHookFailure }}
   {{end}}
-	{{template "messageDiv" .Result}}
+	{{template "messageDiv" .Result.Messages}}
 	</li></ul></div></div>
   {{with .Result}}
     {{if (and (eq .Status "skip") (ne .SkippedReason "")) }}
@@ -426,6 +447,7 @@
 	{{template "scenarioHeaderStartDiv" .}}
 	{{template "tagsDiv" .}}
 	</div>
+  {{template "messageDiv" .PreHookMessages}}
 	{{if .BeforeScenarioHookFailure}}
 		{{template "hookFailureDiv" .BeforeScenarioHookFailure}}
 	{{end}}
@@ -444,6 +466,7 @@
     </div>
   {{end}}
 
+  {{template "messageDiv" .PostHookMessages}}
 	{{if .AfterScenarioHookFailure }}
 		{{template "hookFailureDiv" .AfterScenarioHookFailure}}
 	{{end}}
@@ -461,6 +484,7 @@
 		{{template "specErrorDiv" .}}
 		</div>
 	{{else}}
+    {{template "messageDiv" .PreHookMessages}}
     {{range $index, $beforeHook := .BeforeSpecHookFailures}}
       {{template "hookFailureDiv" $beforeHook}}
     {{end}}
@@ -474,6 +498,7 @@
     </div>
     </div>
 
+    {{template "messageDiv" .PostHookMessages}}
     {{range $index, $afterHook := .AfterSpecHookFailures}}
       {{template "hookFailureDiv" $afterHook}}
     {{end}}
