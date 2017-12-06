@@ -50,8 +50,8 @@ func ToSuiteResult(pRoot string, psr *gm.ProtoSuiteResult) *SuiteResult {
 		SuccessRate:            psr.GetSuccessRate(),
 		Timestamp:              psr.GetTimestamp(),
 		ExecutionStatus:        pass,
-		PreHookMessages:        psr.GetPreHookMessage(),
-		PostHookMessages:       psr.GetPostHookMessage(),
+		PreHookMessages:        psr.GetPreHookMessages(),
+		PostHookMessages:       psr.GetPostHookMessages(),
 	}
 	if psr.GetFailed() {
 		suiteResult.ExecutionStatus = fail
@@ -269,8 +269,8 @@ func toSpec(res *gm.ProtoSpecResult) *spec {
 		IsTableDriven:          res.GetProtoSpec().GetIsTableDriven(),
 		ExecutionTime:          res.GetExecutionTime(),
 		ExecutionStatus:        pass,
-		PreHookMessages:        res.GetProtoSpec().GetPreHookMessage(),
-		PostHookMessages:       res.GetProtoSpec().GetPostHookMessage(),
+		PreHookMessages:        res.GetProtoSpec().GetPreHookMessages(),
+		PostHookMessages:       res.GetProtoSpec().GetPostHookMessages(),
 	}
 	if res.GetFailed() {
 		spec.ExecutionStatus = fail
@@ -406,8 +406,8 @@ func toScenario(scn *gm.ProtoScenario, tableRowIndex int) *scenario {
 		BeforeScenarioHookFailure: toHookFailure(scn.GetPreHookFailure(), "Before Scenario"),
 		AfterScenarioHookFailure:  toHookFailure(scn.GetPostHookFailure(), "After Scenario"),
 		TableRowIndex:             tableRowIndex,
-		PreHookMessages:           scn.GetPreHookMessage(),
-		PostHookMessages:          scn.GetPostHookMessage(),
+		PreHookMessages:           scn.GetPreHookMessages(),
+		PostHookMessages:          scn.GetPostHookMessages(),
 	}
 }
 

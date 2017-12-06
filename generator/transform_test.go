@@ -172,8 +172,8 @@ var specRes1 = &gm.ProtoSpecResult{
 			newCommentItem("Comment 2"),
 			newCommentItem("Comment 3"),
 		},
-		PreHookMessage:  []string{"Before Spec Hook Message"},
-		PostHookMessage: []string{"After Spec Hook Message"},
+		PreHookMessages:  []string{"Before Spec Hook Message"},
+		PostHookMessages: []string{"After Spec Hook Message"},
 	},
 }
 
@@ -337,8 +337,8 @@ var scn = &gm.ProtoScenario{
 		newStepItem(false, false, []*gm.Fragment{newTextFragment("Teardown Step1")}),
 		newStepItem(true, false, []*gm.Fragment{newTextFragment("Teardown Step2")}),
 	},
-	PreHookMessage:  []string{"Before Scenario Message"},
-	PostHookMessage: []string{"After Scenario Message"},
+	PreHookMessages:  []string{"Before Scenario Message"},
+	PostHookMessages: []string{"After Scenario Message"},
 }
 
 var scnWithHookFailure = &gm.ProtoScenario{
@@ -1461,7 +1461,7 @@ func TestMapPostHookFailureToSuiteResult(t *testing.T) {
 }
 
 func TestMapPreHookMessagesToSuiteResult(t *testing.T) {
-	psr := &gm.ProtoSuiteResult{PreHookMessage: []string{"Before Suite Message"}}
+	psr := &gm.ProtoSuiteResult{PreHookMessages: []string{"Before Suite Message"}}
 	res := ToSuiteResult("", psr)
 
 	if len(res.PreHookMessages) != 1 {
@@ -1474,7 +1474,7 @@ func TestMapPreHookMessagesToSuiteResult(t *testing.T) {
 }
 
 func TestMapPostHookMessagesToSuiteResult(t *testing.T) {
-	psr := &gm.ProtoSuiteResult{PostHookMessage: []string{"After Suite Message"}}
+	psr := &gm.ProtoSuiteResult{PostHookMessages: []string{"After Suite Message"}}
 	res := ToSuiteResult("", psr)
 
 	if len(res.PostHookMessages) != 1 {
