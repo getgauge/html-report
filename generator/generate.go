@@ -46,14 +46,16 @@ type summary struct {
 }
 
 type overview struct {
-	ProjectName   string
-	Env           string
-	Tags          string
-	SuccessRate   float32
-	ExecutionTime string
-	Timestamp     string
-	Summary       *summary
-	BasePath      string
+	ProjectName      string
+	Env              string
+	Tags             string
+	SuccessRate      float32
+	ExecutionTime    string
+	Timestamp        string
+	Summary          *summary
+	BasePath         string
+	PreHookMessages  []string
+	PostHookMessages []string
 }
 
 type specsMeta struct {
@@ -105,6 +107,8 @@ type SuiteResult struct {
 	FailedSpecsCount       int          `json:"FailedSpecsCount"`
 	SkippedSpecsCount      int          `json:"SkippedSpecsCount"`
 	BasePath               string       `json:"BasePath"`
+	PreHookMessages        []string     `json:"PreHookMessages"`
+	PostHookMessages       []string     `json:"PostHookMessages"`
 }
 
 type spec struct {
@@ -124,6 +128,8 @@ type spec struct {
 	FailedScenarioCount     int            `json:"FailedScenarioCount"`
 	SkippedScenarioCount    int            `json:"SkippedScenarioCount"`
 	Errors                  []buildError   `json:"Errors"`
+	PreHookMessages         []string       `json:"PreHookMessages"`
+	PostHookMessages        []string       `json:"PostHookMessages"`
 }
 
 type scenario struct {
@@ -138,6 +144,8 @@ type scenario struct {
 	AfterScenarioHookFailure  *hookFailure `json:"AfterScenarioHookFailure"`
 	SkipErrors                []string     `json:"SkipErrors"`
 	TableRowIndex             int          `json:"TableRowIndex"`
+	PreHookMessages           []string     `json:"PreHookMessages"`
+	PostHookMessages          []string     `json:"PostHookMessages"`
 }
 
 type step struct {

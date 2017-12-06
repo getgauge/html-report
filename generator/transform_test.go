@@ -172,6 +172,8 @@ var specRes1 = &gm.ProtoSpecResult{
 			newCommentItem("Comment 2"),
 			newCommentItem("Comment 3"),
 		},
+		PreHookMessages:  []string{"Before Spec Hook Message"},
+		PostHookMessages: []string{"After Spec Hook Message"},
 	},
 }
 
@@ -310,6 +312,8 @@ var suiteRes1 = &SuiteResult{
 	FailedSpecsCount:  2,
 	SkippedSpecsCount: 5,
 	PassedSpecsCount:  8,
+	PreHookMessages:   []string{"Before Suite Message"},
+	PostHookMessages:  []string{"After Suite Message"},
 }
 
 var scn = &gm.ProtoScenario{
@@ -333,6 +337,8 @@ var scn = &gm.ProtoScenario{
 		newStepItem(false, false, []*gm.Fragment{newTextFragment("Teardown Step1")}),
 		newStepItem(true, false, []*gm.Fragment{newTextFragment("Teardown Step2")}),
 	},
+	PreHookMessages:  []string{"Before Scenario Message"},
+	PostHookMessages: []string{"After Scenario Message"},
 }
 
 var scnWithHookFailure = &gm.ProtoScenario{
@@ -482,13 +488,15 @@ var failedHookFailure = &gm.ProtoHookFailure{
 
 func TestToOverview(t *testing.T) {
 	want := &overview{
-		ProjectName:   "projName",
-		Env:           "ci-java",
-		Tags:          "!unimplemented",
-		SuccessRate:   80.00,
-		ExecutionTime: "00:01:53",
-		Timestamp:     "Jun 3, 2016 at 12:29pm",
-		Summary:       &summary{Total: 15, Failed: 2, Passed: 8, Skipped: 5},
+		ProjectName:      "projName",
+		Env:              "ci-java",
+		Tags:             "!unimplemented",
+		SuccessRate:      80.00,
+		ExecutionTime:    "00:01:53",
+		Timestamp:        "Jun 3, 2016 at 12:29pm",
+		Summary:          &summary{Total: 15, Failed: 2, Passed: 8, Skipped: 5},
+		PreHookMessages:  []string{"Before Suite Message"},
+		PostHookMessages: []string{"After Suite Message"},
 	}
 
 	got := toOverview(suiteRes1, "")
@@ -541,6 +549,8 @@ func TestToSpec(t *testing.T) {
 		IsTableDriven:          true,
 		ExecutionStatus:        pass,
 		ExecutionTime:          211316,
+		PreHookMessages:        []string{"Before Spec Hook Message"},
+		PostHookMessages:       []string{"After Spec Hook Message"},
 	}
 
 	got := toSpec(specRes1)
@@ -959,10 +969,12 @@ func TestToScenarioSummary(t *testing.T) {
 
 func TestToScenario(t *testing.T) {
 	want := &scenario{
-		Heading:         "Vowel counts in single word",
-		ExecutionTime:   "00:01:53",
-		ExecutionStatus: pass,
-		Tags:            []string{"foo", "bar"},
+		Heading:          "Vowel counts in single word",
+		ExecutionTime:    "00:01:53",
+		ExecutionStatus:  pass,
+		Tags:             []string{"foo", "bar"},
+		PreHookMessages:  []string{"Before Scenario Message"},
+		PostHookMessages: []string{"After Scenario Message"},
 		Contexts: []item{
 			item{
 				Kind: stepKind,
@@ -1445,6 +1457,32 @@ func TestMapPostHookFailureToSuiteResult(t *testing.T) {
 
 	if res.AfterSuiteHookFailure.ErrMsg != "foo failure" {
 		t.Errorf("Expected AfterSuiteHookFailure.Message= 'foo failure', got %s\n", res.AfterSuiteHookFailure.ErrMsg)
+	}
+}
+
+func TestMapPreHookMessagesToSuiteResult(t *testing.T) {
+	psr := &gm.ProtoSuiteResult{PreHookMessages: []string{"Before Suite Message"}}
+	res := ToSuiteResult("", psr)
+
+	if len(res.PreHookMessages) != 1 {
+		t.Errorf("Expected PreHookMessages length to be 1\n")
+	}
+
+	if res.PreHookMessages[0] != "Before Suite Message" {
+		t.Errorf("Expected PreHookMessage[0] = 'Before Suite Message', got %s\n", res.PreHookMessages[0])
+	}
+}
+
+func TestMapPostHookMessagesToSuiteResult(t *testing.T) {
+	psr := &gm.ProtoSuiteResult{PostHookMessages: []string{"After Suite Message"}}
+	res := ToSuiteResult("", psr)
+
+	if len(res.PostHookMessages) != 1 {
+		t.Errorf("Expected PostHookMessages length to be 1\n")
+	}
+
+	if res.PostHookMessages[0] != "After Suite Message" {
+		t.Errorf("Expected PostHookMessage[0] = 'After Suite Message', got %s\n", res.PostHookMessages[0])
 	}
 }
 

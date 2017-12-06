@@ -186,12 +186,14 @@ header.top .project {
 
 .report_details {
     width: 100%;
+    margin: 10px 0 0 0;
+    padding: 10px;
 }
 
 .report_details ul {
     list-style-type: none;
-    margin: 10px 0 0 0;
-    padding: 10px;
+    margin: 0;
+    padding: 0;
     display: flex;
     flex-direction: column;
 }
@@ -199,6 +201,27 @@ header.top .project {
 .report_details ul > li {
     display: flex;
     flex-direction: row;
+}
+
+.report_details .suite_messages {
+    overflow-y: scroll;
+    max-height: 100px;
+    background-color: #ccc;
+    font-family:  Courier New;
+}
+
+.report_details .suite_messages .message_separator {
+    text-align: center;
+}
+
+.report_details .suite_messages .step-message {
+    padding: 0px 0px 0px 10px;
+}
+
+.report_details .suite_messages .step-message p:before {
+    content: "$";
+    padding-right: 5px;
+    font-weight: bold;
 }
 
 .report_details label, .report_details span {
@@ -1002,9 +1025,6 @@ footer p {
     .report_details {
         width: 30%;
         padding: 0;
-    }
-
-    .report_details ul {
         margin: 1rem;
         padding: 1rem;
     }

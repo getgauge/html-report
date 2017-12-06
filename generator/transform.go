@@ -50,6 +50,8 @@ func ToSuiteResult(pRoot string, psr *gm.ProtoSuiteResult) *SuiteResult {
 		SuccessRate:            psr.GetSuccessRate(),
 		Timestamp:              psr.GetTimestamp(),
 		ExecutionStatus:        pass,
+		PreHookMessages:        psr.GetPreHookMessages(),
+		PostHookMessages:       psr.GetPostHookMessages(),
 	}
 	if psr.GetFailed() {
 		suiteResult.ExecutionStatus = fail
@@ -123,14 +125,16 @@ func toOverview(res *SuiteResult, filePath string) *overview {
 		base = path.Join(base, "/")
 	}
 	return &overview{
-		ProjectName:   res.ProjectName,
-		Env:           res.Environment,
-		Tags:          res.Tags,
-		SuccessRate:   res.SuccessRate,
-		ExecutionTime: formatTime(res.ExecutionTime),
-		Timestamp:     res.Timestamp,
-		Summary:       &summary{Failed: res.FailedSpecsCount, Total: totalSpecs, Passed: res.PassedSpecsCount, Skipped: res.SkippedSpecsCount},
-		BasePath:      base,
+		ProjectName:      res.ProjectName,
+		Env:              res.Environment,
+		Tags:             res.Tags,
+		SuccessRate:      res.SuccessRate,
+		ExecutionTime:    formatTime(res.ExecutionTime),
+		Timestamp:        res.Timestamp,
+		Summary:          &summary{Failed: res.FailedSpecsCount, Total: totalSpecs, Passed: res.PassedSpecsCount, Skipped: res.SkippedSpecsCount},
+		BasePath:         base,
+		PreHookMessages:  res.PreHookMessages,
+		PostHookMessages: res.PostHookMessages,
 	}
 }
 
@@ -265,6 +269,8 @@ func toSpec(res *gm.ProtoSpecResult) *spec {
 		IsTableDriven:          res.GetProtoSpec().GetIsTableDriven(),
 		ExecutionTime:          res.GetExecutionTime(),
 		ExecutionStatus:        pass,
+		PreHookMessages:        res.GetProtoSpec().GetPreHookMessages(),
+		PostHookMessages:       res.GetProtoSpec().GetPostHookMessages(),
 	}
 	if res.GetFailed() {
 		spec.ExecutionStatus = fail
@@ -400,6 +406,8 @@ func toScenario(scn *gm.ProtoScenario, tableRowIndex int) *scenario {
 		BeforeScenarioHookFailure: toHookFailure(scn.GetPreHookFailure(), "Before Scenario"),
 		AfterScenarioHookFailure:  toHookFailure(scn.GetPostHookFailure(), "After Scenario"),
 		TableRowIndex:             tableRowIndex,
+		PreHookMessages:           scn.GetPreHookMessages(),
+		PostHookMessages:          scn.GetPostHookMessages(),
 	}
 }
 
