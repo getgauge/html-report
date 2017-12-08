@@ -396,10 +396,11 @@
 /* container for a Step */
 {{define "step"}}
   {{template "stepStartDiv" .}}
-  {{template "stepBodyDiv" .}}
+  {{template "messageDiv" .PreHookMessages}}
   {{if .BeforeStepHookFailure}}
     {{ template "hookFailureDiv" .BeforeStepHookFailure }}
   {{end}}
+  {{template "stepBodyDiv" .}}
   {{with .Result}}
     {{if and (and (eq .Status "fail") (ne .ErrorMessage "")) (ne .StackTrace "") }}
         {{template "stepFailureDiv" .}}
@@ -408,7 +409,7 @@
   {{if .AfterStepHookFailure}}
     {{ template "hookFailureDiv" .AfterStepHookFailure }}
   {{end}}
-	{{template "messageDiv" .Result.Messages}}
+  {{template "messageDiv" .PostHookMessages}}
 	</li></ul></div></div>
   {{with .Result}}
     {{if (and (eq .Status "skip") (ne .SkippedReason "")) }}

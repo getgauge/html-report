@@ -433,6 +433,8 @@ func toStep(protoStep *gm.ProtoStep) *step {
 		Result:                result,
 		BeforeStepHookFailure: toHookFailure(protoStep.GetStepExecutionResult().GetPreHookFailure(), "Before Step"),
 		AfterStepHookFailure:  toHookFailure(protoStep.GetStepExecutionResult().GetPostHookFailure(), "After Step"),
+		PreHookMessages:       protoStep.GetPreHookMessages(),
+		PostHookMessages:      protoStep.GetPostHookMessages(),
 	}
 }
 

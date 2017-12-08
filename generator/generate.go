@@ -156,6 +156,8 @@ type step struct {
 	BeforeStepHookFailure *hookFailure `json:"BeforeStepHookFailure"`
 	AfterStepHookFailure  *hookFailure `json:"AfterStepHookFailure"`
 	Result                *result      `json:"Result"`
+	PreHookMessages       []string     `json:"PreHookMessages"`
+	PostHookMessages      []string     `json:"PostHookMessages"`
 }
 
 func (s *step) Kind() tokenKind {
