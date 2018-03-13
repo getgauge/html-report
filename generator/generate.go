@@ -112,8 +112,8 @@ type SuiteResult struct {
 }
 
 type spec struct {
-	CommentsBeforeDatatable []string       `json:"CommentsBeforeDatatable"`
-	CommentsAfterDatatable  []string       `json:"CommentsAfterDatatable"`
+	CommentsBeforeDatatable string         `json:"CommentsBeforeDatatable"`
+	CommentsAfterDatatable  string         `json:"CommentsAfterDatatable"`
 	SpecHeading             string         `json:"SpecHeading"`
 	FileName                string         `json:"FileName"`
 	Tags                    []string       `json:"Tags"`
