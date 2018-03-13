@@ -203,11 +203,9 @@ var wTagsDiv = `<div class="tags scenario_tags contentSection">
   <span> tag2</span>
 </div>`
 
-var wSpecCommentsWithTableTag = `<span></span>
-<span><p>This is an executable specification file. This file follows markdown syntax.</p></span>
-<span></span>
-<span><p>To execute this specification, run</p></span><span><pre><code>gauge specs</code></pre></span>
-<span></span>
+var wSpecCommentsWithTableTag = `
+<span><p>This is an executable specification file. This file follows markdown syntax.</p>
+<p>To execute this specification, run</p><pre><code>gauge specs</code></pre></span>
 <table class="data-table">
   <tr>
     <th>Word</th>
@@ -228,15 +226,15 @@ var wSpecCommentsWithTableTag = `<span></span>
     </tr>
   </tbody>
 </table>
-<span><p>Comment 1</p></span>
-<span><p>Comment 2</p></span>
-<span><p>Comment 3</p></span>`
+<span><p>Comment 1</p>
+<p>Comment 2</p>
+<p>Comment 3</p></span>`
 
-var wSpecCommentsWithoutTableTag = `<span></span>
-<span><p>This is an executable specification file. This file follows markdown syntax.</p></span><span></span>
-<span><p>To execute this specification, run</p></span>
-<span><pre><code>gauge specs</code></pre></span>
-<span></span>`
+var wSpecCommentsWithoutTableTag = `
+<span><p>This is an executable specification file. This file follows markdown syntax.</p>
+<p>To execute this specification, run</p>
+<pre><code>gauge specs</code></pre></span>
+`
 
 var wSpecCommentsWithCodeBlock = `<span><pre><code>{&#34;prop&#34;:&#34;value&#34;}</code></pre></span>`
 
@@ -389,7 +387,7 @@ var stepWithBracketsInFragment = &step{
 }
 
 var stepWithCodeBlock = &spec{
-	CommentsBeforeDatatable: []string{`    {"prop":"value"}`},
+	CommentsBeforeDatatable: `    {"prop":"value"}`,
 }
 
 var stepWithFileParam = &step{
@@ -548,8 +546,8 @@ func newSpec(withTable bool) *spec {
 		},
 	}
 
-	c1 := []string{"\n", "This is an executable specification file. This file follows markdown syntax.", "\n", "To execute this specification, run", "\tgauge specs", "\n"}
-	c2 := []string{"Comment 1", "Comment 2", "Comment 3"}
+	c1 := "This is an executable specification file. This file follows markdown syntax.\n\nTo execute this specification, run\n\n\tgauge specs\n"
+	c2 := "\nComment 1\n\nComment 2\n\nComment 3"
 
 	if withTable {
 		return &spec{
