@@ -19,6 +19,7 @@ package generator
 
 import (
 	"encoding/base64"
+	"fmt"
 	"path/filepath"
 	"sort"
 	"strings"
@@ -294,9 +295,9 @@ func toSpec(res *gm.ProtoSpecResult) *spec {
 		switch item.GetItemType() {
 		case gm.ProtoItem_Comment:
 			if isTableScanned {
-				spec.CommentsAfterDatatable = append(spec.CommentsAfterDatatable, item.GetComment().GetText())
+				spec.CommentsAfterDatatable = fmt.Sprintf("%s\n%s", spec.CommentsAfterDatatable, item.GetComment().GetText())
 			} else {
-				spec.CommentsBeforeDatatable = append(spec.CommentsBeforeDatatable, item.GetComment().GetText())
+				spec.CommentsBeforeDatatable = fmt.Sprintf("%s\n%s", spec.CommentsBeforeDatatable, item.GetComment().GetText())
 			}
 		case gm.ProtoItem_Table:
 			spec.Datatable = toTable(item.GetTable())

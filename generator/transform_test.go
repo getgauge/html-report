@@ -210,19 +210,14 @@ var spec1 = &spec{
 		Rows: []*row{
 			&row{Cells: []string{"Gauge", "3"}},
 			&row{Cells: []string{"Mingle", "2"}}}},
-	CommentsBeforeDatatable: []string{
-		"\n",
-		"This is an executable specification file. This file follows markdown syntax.",
-		"\n",
-		"To execute this specification, run",
-		"\tgauge specs",
-		"\n",
-	},
-	CommentsAfterDatatable: []string{
-		"Comment 1",
-		"Comment 2",
-		"Comment 3",
-	},
+	CommentsBeforeDatatable: `
+This is an executable specification file. This file follows markdown syntax.
+To execute this specification, run
+	gauge specs
+`,
+	CommentsAfterDatatable: `Comment 1
+Comment 2
+Comment 3`,
 }
 
 var spec2 = &spec{
@@ -535,12 +530,12 @@ func TestToSpecHeader(t *testing.T) {
 
 func TestToSpec(t *testing.T) {
 	want := &spec{
-		CommentsBeforeDatatable: []string{"\n", "This is an executable specification file. This file follows markdown syntax.", "\n", "To execute this specification, run", "\tgauge specs", "\n"},
+		CommentsBeforeDatatable: "\n\n\nThis is an executable specification file. This file follows markdown syntax.\n\n\nTo execute this specification, run\n\tgauge specs\n\n",
 		Datatable: &table{
 			Headers: []string{"Word", "Count"},
 			Rows:    []*row{{Cells: []string{"Gauge", "3"}, Result: skip}, {Cells: []string{"Mingle", "2"}, Result: skip}},
 		},
-		CommentsAfterDatatable: []string{"Comment 1", "Comment 2", "Comment 3"},
+		CommentsAfterDatatable: "\nComment 1\nComment 2\nComment 3",
 		Scenarios:              make([]*scenario, 0),
 		Errors:                 make([]buildError, 0),
 		SpecHeading:            "specRes1",
@@ -736,25 +731,26 @@ func TestToSpecWithTags(t *testing.T) {
 }
 
 func TestToSpecWithDataTableMapsCommentsBeforeDatatable(t *testing.T) {
-	want := []string{
-		"\n",
-		"This is an executable specification file. This file follows markdown syntax.",
-		"\n",
-		"To execute this specification, run",
-		"\tgauge specs",
-		"\n",
-	}
+	want := `
+
+
+This is an executable specification file. This file follows markdown syntax.
+
+
+To execute this specification, run
+	gauge specs
+
+`
 	got := toSpec(specRes1).CommentsBeforeDatatable
 
 	checkEqual(t, "", want, got)
 }
 
 func TestToSpecWithDataTableMapsCommentsAfterDatatable(t *testing.T) {
-	want := []string{
-		"Comment 1",
-		"Comment 2",
-		"Comment 3",
-	}
+	want := `
+Comment 1
+Comment 2
+Comment 3`
 	got := toSpec(specRes1).CommentsAfterDatatable
 
 	checkEqual(t, "", want, got)

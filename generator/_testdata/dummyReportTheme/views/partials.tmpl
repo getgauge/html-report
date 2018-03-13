@@ -246,8 +246,8 @@
 /* renders a Table. Incase of Table-driven execution, this table appears above all scenarios.
    In case of a table parameter, this table appears as part of the Step */
 {{define "specCommentsAndTableTag"}}
-  {{range .CommentsBeforeDatatable}}
-  <span>{{. | parseMarkdown | sanitize}}</span>
+  {{if ne .CommentsBeforeDatatable ""}}
+  <span>{{.CommentsBeforeDatatable | parseMarkdown | sanitize}}</span>
   {{end}}
   {{if .Datatable}}
     <table class="data-table">
@@ -267,8 +267,8 @@
     </table>
   {{end}}
 
-  {{range .CommentsAfterDatatable}}
-    <span>{{. | parseMarkdown | sanitize}}</span>
+  {{if ne .CommentsAfterDatatable ""}}
+  <span>{{.CommentsAfterDatatable | parseMarkdown | sanitize}}</span>
   {{end}}
 {{end}}
 
