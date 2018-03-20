@@ -1001,11 +1001,7 @@ func TestToScenario(t *testing.T) {
 			},
 			item{
 				Kind:    commentKind,
-				Comment: &comment{Text: "Comment1"},
-			},
-			item{
-				Kind:    commentKind,
-				Comment: &comment{Text: "Comment2"},
+				Comment: &comment{Text: "Comment1\n\nComment2"},
 			},
 			item{
 				Kind: stepKind,

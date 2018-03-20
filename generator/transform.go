@@ -499,15 +499,21 @@ func toCsv(protoTable *gm.ProtoTable) string {
 
 func getItems(protoItems []*gm.ProtoItem) []item {
 	items := make([]item, 0)
+	var previousItem gm.ProtoItem_ItemType
 	for _, i := range protoItems {
 		switch i.GetItemType() {
 		case gm.ProtoItem_Step:
 			items = append(items, item{Kind: stepKind, Step: toStep(i.GetStep())})
 		case gm.ProtoItem_Comment:
-			items = append(items, item{Kind: commentKind, Comment: toComment(i.GetComment())})
+			if previousItem == gm.ProtoItem_Comment {
+				items[len(items)-1].Comment.Text += "\n\n" + i.GetComment().Text
+			} else {
+				items = append(items, item{Kind: commentKind, Comment: toComment(i.GetComment())})
+			}
 		case gm.ProtoItem_Concept:
 			items = append(items, item{Kind: conceptKind, Concept: toConcept(i.GetConcept())})
 		}
+		previousItem = i.GetItemType()
 	}
 	return items
 }
