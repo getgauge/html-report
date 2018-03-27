@@ -42,7 +42,7 @@ const (
 	htmlReport      = "html-report"
 	setupAction     = "setup"
 	executionAction = "execution"
-	gaugeHost       = "localhost"
+	gaugeHost       = "127.0.0.1"
 	gaugePortEnv    = "plugin_connection_port"
 	pluginActionEnv = "html-report_action"
 	timeFormat      = "2006-01-02 15.04.05"
