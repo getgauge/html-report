@@ -24,6 +24,7 @@ import (
 
 	"github.com/getgauge/common"
 	"github.com/getgauge/html-report/env"
+	"github.com/getgauge/html-report/logger"
 	"github.com/getgauge/html-report/regenerate"
 	flag "github.com/getgauge/mflag"
 )
@@ -34,6 +35,7 @@ var themePath = flag.String([]string{"-theme", "t"}, "", "Theme to use for gener
 
 func main() {
 	flag.Parse()
+	logger.Init()
 	if *inputFile != "" {
 		if *outDir == "" {
 			flag.PrintDefaults()

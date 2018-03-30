@@ -25,6 +25,7 @@ import (
 	"os"
 
 	"github.com/getgauge/html-report/gauge_messages"
+	"github.com/getgauge/html-report/logger"
 	"github.com/golang/protobuf/proto"
 )
 
@@ -72,10 +73,12 @@ func (gaugeListener *GaugeListener) processMessages(buffer *bytes.Buffer) {
 				log.Printf("Failed to read proto message: %s\n", err.Error())
 			} else {
 				if message.MessageType == gauge_messages.Message_KillProcessRequest {
+					logger.Debug("Received Kill Message, exiting...")
 					gaugeListener.connection.Close()
 					os.Exit(0)
 				}
 				if message.MessageType == gauge_messages.Message_SuiteExecutionResult {
+					logger.Debug("Received SuiteExecutionResult, processing...")
 					result := message.GetSuiteExecutionResult()
 					gaugeListener.onResultHandler(result)
 				}
