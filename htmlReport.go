@@ -34,6 +34,7 @@ import (
 	"github.com/getgauge/html-report/gauge_messages"
 	"github.com/getgauge/html-report/generator"
 	"github.com/getgauge/html-report/listener"
+	"github.com/getgauge/html-report/logger"
 	"github.com/getgauge/html-report/theme"
 )
 
@@ -82,8 +83,11 @@ func createReport(suiteResult *gauge_messages.SuiteExecutionResult) {
 	}
 	reportsDir := getReportsDirectory(getNameGen())
 	res := generator.ToSuiteResult(projectRoot, suiteResult.GetSuiteResult())
+	logger.Debug("Transformed SuiteResult to report structure")
 	go createReportExecutableFile(reportsDir, pluginsDir)
-	generator.GenerateReport(res, reportsDir, theme.GetThemePath(pluginsDir))
+	t := theme.GetThemePath(pluginsDir)
+	generator.GenerateReport(res, reportsDir, t)
+	logger.Debug("Done generating HTML report using theme from %s", t)
 }
 
 func getNameGen() nameGenerator {
@@ -136,6 +140,7 @@ func createBatFileToExecuteHtmlReport(exPath, exTarget string) {
 		log.Printf("[Warning] Failed to write to %s. Reason: %s\n", outF, err.Error())
 		return
 	}
+	logger.Debug("Generated %s", outF)
 }
 
 func createSymlinkToHtmlReport(exPath, exTarget string) {
@@ -143,6 +148,7 @@ func createSymlinkToHtmlReport(exPath, exTarget string) {
 	if err != nil {
 		log.Printf("[Warning] Unable to create symlink %s\n", exTarget)
 	}
+	logger.Debug("Generated symlink %s", exTarget)
 }
 
 func fileExists(path string) bool {
