@@ -297,18 +297,37 @@ var specResWithSpecHookFailure = &gm.ProtoSpecResult{
 }
 
 var suiteRes1 = &SuiteResult{
-	ProjectName:       "projName",
-	Environment:       "ci-java",
-	Tags:              "!unimplemented",
-	SuccessRate:       80,
-	ExecutionTime:     113163,
-	Timestamp:         "Jun 3, 2016 at 12:29pm",
-	SpecResults:       make([]*spec, 15),
-	FailedSpecsCount:  2,
-	SkippedSpecsCount: 5,
-	PassedSpecsCount:  8,
-	PreHookMessages:   []string{"Before Suite Message"},
-	PostHookMessages:  []string{"After Suite Message"},
+	ProjectName:   "projName",
+	Environment:   "ci-java",
+	Tags:          "!unimplemented",
+	SuccessRate:   80,
+	ExecutionTime: 113163,
+	Timestamp:     "Jun 3, 2016 at 12:29pm",
+	SpecResults: []*spec{
+		&spec{Scenarios: make([]*scenario, 2)},
+		&spec{Scenarios: make([]*scenario, 1)},
+		&spec{Scenarios: make([]*scenario, 2)},
+		&spec{Scenarios: make([]*scenario, 1)},
+		&spec{Scenarios: make([]*scenario, 2)},
+		&spec{Scenarios: make([]*scenario, 1)},
+		&spec{Scenarios: make([]*scenario, 2)},
+		&spec{Scenarios: make([]*scenario, 1)},
+		&spec{Scenarios: make([]*scenario, 2)},
+		&spec{Scenarios: make([]*scenario, 1)},
+		&spec{Scenarios: make([]*scenario, 2)},
+		&spec{Scenarios: make([]*scenario, 1)},
+		&spec{Scenarios: make([]*scenario, 2)},
+		&spec{Scenarios: make([]*scenario, 1)},
+		&spec{Scenarios: make([]*scenario, 2)},
+	},
+	PassedScenarioCount:  7,
+	SkippedScenarioCount: 10,
+	FailedScenarioCount:  6,
+	FailedSpecsCount:     2,
+	SkippedSpecsCount:    5,
+	PassedSpecsCount:     8,
+	PreHookMessages:      []string{"Before Suite Message"},
+	PostHookMessages:     []string{"After Suite Message"},
 }
 
 var scn = &gm.ProtoScenario{
@@ -490,6 +509,7 @@ func TestToOverview(t *testing.T) {
 		ExecutionTime:    "00:01:53",
 		Timestamp:        "Jun 3, 2016 at 12:29pm",
 		Summary:          &summary{Total: 15, Failed: 2, Passed: 8, Skipped: 5},
+		ScenarioSummary:  &summary{Total: 23, Failed: 6, Passed: 7, Skipped: 10},
 		PreHookMessages:  []string{"Before Suite Message"},
 		PostHookMessages: []string{"After Suite Message"},
 	}
@@ -1423,6 +1443,25 @@ func TestSpecsCountToSuiteResult(t *testing.T) {
 	}
 	if res.FailedSpecsCount != 2 {
 		t.Errorf("Expected FailedSpecsCount=3; got %d\n", res.FailedSpecsCount)
+	}
+}
+
+func TestScenarioCountToSuiteResult(t *testing.T) {
+	psr := &gm.ProtoSuiteResult{SpecResults: []*gm.ProtoSpecResult{
+		{ScenarioCount: 3, ScenarioFailedCount: 2},
+		{ScenarioCount: 3, ScenarioSkippedCount: 1},
+		{ScenarioCount: 3, ScenarioSkippedCount: 1, ScenarioFailedCount: 2},
+	}}
+	res := ToSuiteResult("", psr)
+
+	if res.PassedScenarioCount != 3 {
+		t.Errorf("Expected PassedSpecsCount=3; got %d\n", res.PassedScenarioCount)
+	}
+	if res.SkippedScenarioCount != 2 {
+		t.Errorf("Expected SkippedSpecsCount=3; got %d\n", res.SkippedScenarioCount)
+	}
+	if res.FailedScenarioCount != 4 {
+		t.Errorf("Expected FailedSpecsCount=3; got %d\n", res.FailedScenarioCount)
 	}
 }
 
