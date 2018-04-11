@@ -320,14 +320,14 @@ var suiteRes1 = &SuiteResult{
 		&spec{Scenarios: make([]*scenario, 1)},
 		&spec{Scenarios: make([]*scenario, 2)},
 	},
-	PassedScenarioCount: 7,
+	PassedScenarioCount:  7,
 	SkippedScenarioCount: 10,
-	FailedScenarioCount: 6,
-	FailedSpecsCount:  2,
-	SkippedSpecsCount: 5,
-	PassedSpecsCount:  8,
-	PreHookMessages:   []string{"Before Suite Message"},
-	PostHookMessages:  []string{"After Suite Message"},
+	FailedScenarioCount:  6,
+	FailedSpecsCount:     2,
+	SkippedSpecsCount:    5,
+	PassedSpecsCount:     8,
+	PreHookMessages:      []string{"Before Suite Message"},
+	PostHookMessages:     []string{"After Suite Message"},
 }
 
 var scn = &gm.ProtoScenario{
