@@ -60,7 +60,7 @@ func ToSuiteResult(pRoot string, psr *gm.ProtoSuiteResult) *SuiteResult {
 	suiteResult.SpecResults = make([]*spec, 0)
 	for _, protoSpecRes := range psr.GetSpecResults() {
 		suiteResult.SpecResults = append(suiteResult.SpecResults, toSpec(protoSpecRes))
-		suiteResult.PassedScenarioCount = suiteResult.PassedScenarioCount + int(protoSpecRes.GetScenarioCount() - protoSpecRes.GetScenarioFailedCount() - protoSpecRes.GetScenarioSkippedCount())
+		suiteResult.PassedScenarioCount = suiteResult.PassedScenarioCount + int(protoSpecRes.GetScenarioCount()-protoSpecRes.GetScenarioFailedCount()-protoSpecRes.GetScenarioSkippedCount())
 		suiteResult.FailedScenarioCount = suiteResult.FailedScenarioCount + int(protoSpecRes.GetScenarioFailedCount())
 		suiteResult.SkippedScenarioCount = suiteResult.SkippedScenarioCount + int(protoSpecRes.GetScenarioSkippedCount())
 	}
@@ -123,6 +123,14 @@ func toOverview(res *SuiteResult, filePath string) *overview {
 	if res.SpecResults != nil {
 		totalSpecs = len(res.SpecResults)
 	}
+
+	totalScenarios := 0
+	for _, s := range res.SpecResults {
+		if s.Scenarios != nil {
+			totalScenarios = totalScenarios + len(s.Scenarios)
+		}
+	}
+
 	base := ""
 	if filePath != "" {
 		base, _ = filepath.Rel(filepath.Dir(filePath), projectRoot)
@@ -139,6 +147,7 @@ func toOverview(res *SuiteResult, filePath string) *overview {
 		ExecutionTime:    formatTime(res.ExecutionTime),
 		Timestamp:        res.Timestamp,
 		Summary:          &summary{Failed: res.FailedSpecsCount, Total: totalSpecs, Passed: res.PassedSpecsCount, Skipped: res.SkippedSpecsCount},
+		ScenarioSummary:  &summary{Failed: res.FailedScenarioCount, Total: totalScenarios, Passed: res.PassedScenarioCount, Skipped: res.SkippedScenarioCount},
 		BasePath:         base,
 		PreHookMessages:  res.PreHookMessages,
 		PostHookMessages: res.PostHookMessages,

@@ -53,6 +53,7 @@ type overview struct {
 	ExecutionTime    string
 	Timestamp        string
 	Summary          *summary
+	ScenarioSummary  *summary
 	BasePath         string
 	PreHookMessages  []string
 	PostHookMessages []string
