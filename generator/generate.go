@@ -265,6 +265,13 @@ func readTemplates(themePath string) {
 		b.Write(html)
 		return b.String()
 	}
+	var sum = func(x ...int) int {
+		r := 0
+		for _, i := range x {
+			r = r + i
+		}
+		return r
+	}
 
 	var funcs = template.FuncMap{
 		"parseMarkdown":       parseMarkdown,
@@ -276,7 +283,20 @@ func readTemplates(themePath string) {
 		"toSidebar":           toSidebar,
 		"toOverview":          toOverview,
 		"toPath":              path.Join,
+		"stringContains":      strings.Contains,
+		"stringHasPrefix":     strings.HasPrefix,
+		"stringHasSuffix":     strings.HasSuffix,
+		"stringJoin":          strings.Join,
+		"stringSplit":         strings.Split,
+		"stringCompare":       strings.Compare,
+		"stringReplace":       strings.Replace,
+		"stringTrim":          strings.Trim,
+		"stringToLower":       strings.ToLower,
+		"stringToUpper":       strings.ToUpper,
+		"stringToTitle":       strings.ToTitle,
+		"sum":                 sum,
 	}
+
 	f, err := ioutil.ReadFile(filepath.Join(getAbsThemePath(themePath), "views", "partials.tmpl"))
 	if err != nil {
 		log.Fatalf(err.Error())
