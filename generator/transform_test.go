@@ -1420,7 +1420,7 @@ func TestMapExecutionTimeToSuiteResult(t *testing.T) {
 	res := ToSuiteResult("", psr)
 
 	if res.ExecutionTime != 113163 {
-		t.Errorf("Expected ExecutionTime=113163; got %s", res.ExecutionTime)
+		t.Errorf("Expected ExecutionTime=113163; got %d", res.ExecutionTime)
 	}
 }
 
@@ -1576,7 +1576,7 @@ func TestToNestedSuiteResultMapsProjectName(t *testing.T) {
 	got := toNestedSuiteResult("some/path", sr)
 
 	if got.ProjectName != want {
-		t.Fatalf("Expected ProjectName=%s, got %s", want, got)
+		t.Fatalf("Expected ProjectName=%s, got %s", want, got.ProjectName)
 	}
 }
 
@@ -1587,7 +1587,7 @@ func TestToNestedSuiteResultMapsTimeStamp(t *testing.T) {
 	got := toNestedSuiteResult("some/path", sr)
 
 	if got.Timestamp != want {
-		t.Fatalf("Expected TimeStamp=%s, got %s", want, got)
+		t.Fatalf("Expected TimeStamp=%s, got %s", want, got.Timestamp)
 	}
 }
 
@@ -1598,7 +1598,7 @@ func TestToNestedSuiteResultMapsEnvironment(t *testing.T) {
 	got := toNestedSuiteResult("some/path", sr)
 
 	if got.Environment != want {
-		t.Fatalf("Expected Environment=%s, got %s", want, got)
+		t.Fatalf("Expected Environment=%s, got %s", want, got.Environment)
 	}
 }
 
@@ -1624,7 +1624,7 @@ func TestToNestedSuiteResultMapsBeforeSuiteHookFailure(t *testing.T) {
 	}
 
 	if got.BeforeSuiteHookFailure.HookName != want {
-		t.Fatalf("expected BeforeSuiteHookFailure to have HookName = %s, got %s", want, got)
+		t.Fatalf("expected BeforeSuiteHookFailure to have HookName = %s, got %s", want, got.BeforeSuiteHookFailure.HookName)
 	}
 }
 
@@ -1639,7 +1639,7 @@ func TestToNestedSuiteResultMapsAfterSuiteHookFailure(t *testing.T) {
 	}
 
 	if got.AfterSuiteHookFailure.HookName != want {
-		t.Fatalf("expected AfterSuiteHookFailure to have HookName = %s, got %s", want, got)
+		t.Fatalf("expected AfterSuiteHookFailure to have HookName = %s, got %s", want, got.AfterSuiteHookFailure.HookName)
 	}
 }
 
