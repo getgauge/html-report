@@ -106,6 +106,9 @@ type SuiteResult struct {
 	PassedSpecsCount       int          `json:"PassedSpecsCount"`
 	FailedSpecsCount       int          `json:"FailedSpecsCount"`
 	SkippedSpecsCount      int          `json:"SkippedSpecsCount"`
+	PassedScenarioCount    int          `json:"PassedScenarioCount"`
+	FailedScenarioCount    int          `json:"FailedScenarioCount"`
+	SkippedScenarioCount   int          `json:"SkippedScenarioCount"`
 	BasePath               string       `json:"BasePath"`
 	PreHookMessages        []string     `json:"PreHookMessages"`
 	PostHookMessages       []string     `json:"PostHookMessages"`

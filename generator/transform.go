@@ -60,6 +60,9 @@ func ToSuiteResult(pRoot string, psr *gm.ProtoSuiteResult) *SuiteResult {
 	suiteResult.SpecResults = make([]*spec, 0)
 	for _, protoSpecRes := range psr.GetSpecResults() {
 		suiteResult.SpecResults = append(suiteResult.SpecResults, toSpec(protoSpecRes))
+		suiteResult.PassedScenarioCount = suiteResult.PassedScenarioCount + int(protoSpecRes.GetScenarioCount() - protoSpecRes.GetScenarioFailedCount() - protoSpecRes.GetScenarioSkippedCount())
+		suiteResult.FailedScenarioCount = suiteResult.FailedScenarioCount + int(protoSpecRes.GetScenarioFailedCount())
+		suiteResult.SkippedScenarioCount = suiteResult.SkippedScenarioCount + int(protoSpecRes.GetScenarioSkippedCount())
 	}
 	return &suiteResult
 }
@@ -89,6 +92,9 @@ func toNestedSuiteResult(basePath string, result *SuiteResult) *SuiteResult {
 			sr.PassedSpecsCount++
 		}
 		sr.ExecutionTime += spec.ExecutionTime
+		sr.PassedScenarioCount += spec.PassedScenarioCount
+		sr.FailedScenarioCount += spec.FailedScenarioCount
+		sr.SkippedScenarioCount += spec.SkippedScenarioCount
 	}
 	sr.SuccessRate = getSuccessRate(len(sr.SpecResults), sr.FailedSpecsCount+sr.SkippedSpecsCount)
 	return sr

@@ -1416,13 +1416,32 @@ func TestSpecsCountToSuiteResult(t *testing.T) {
 	res := ToSuiteResult("", psr)
 
 	if res.PassedSpecsCount != 3 {
-		t.Errorf("Expected PassedSpecsCount=3; got %s\n", res.PassedSpecsCount)
+		t.Errorf("Expected PassedSpecsCount=3; got %d\n", res.PassedSpecsCount)
 	}
 	if res.SkippedSpecsCount != 1 {
-		t.Errorf("Expected SkippedSpecsCount=3; got %s\n", res.SkippedSpecsCount)
+		t.Errorf("Expected SkippedSpecsCount=3; got %d\n", res.SkippedSpecsCount)
 	}
 	if res.FailedSpecsCount != 2 {
-		t.Errorf("Expected FailedSpecsCount=3; got %s\n", res.FailedSpecsCount)
+		t.Errorf("Expected FailedSpecsCount=3; got %d\n", res.FailedSpecsCount)
+	}
+}
+
+func TestScenarioCountToSuiteResult(t *testing.T) {
+	psr := &gm.ProtoSuiteResult{SpecResults: []*gm.ProtoSpecResult{
+		{ScenarioCount: 3, ScenarioFailedCount: 2},
+		{ScenarioCount: 3, ScenarioSkippedCount: 1},
+		{ScenarioCount: 3, ScenarioSkippedCount: 1, ScenarioFailedCount: 2},
+	}}
+	res := ToSuiteResult("", psr)
+
+	if res.PassedScenarioCount != 3 {
+		t.Errorf("Expected PassedSpecsCount=3; got %d\n", res.PassedScenarioCount)
+	}
+	if res.SkippedScenarioCount != 2 {
+		t.Errorf("Expected SkippedSpecsCount=3; got %d\n", res.SkippedScenarioCount)
+	}
+	if res.FailedScenarioCount != 4 {
+		t.Errorf("Expected FailedSpecsCount=3; got %d\n", res.FailedScenarioCount)
 	}
 }
 
