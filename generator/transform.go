@@ -60,7 +60,7 @@ func ToSuiteResult(pRoot string, psr *gm.ProtoSuiteResult) *SuiteResult {
 	suiteResult.SpecResults = make([]*spec, 0)
 	for _, protoSpecRes := range psr.GetSpecResults() {
 		suiteResult.SpecResults = append(suiteResult.SpecResults, toSpec(protoSpecRes))
-		suiteResult.PassedScenarioCount = suiteResult.PassedScenarioCount + int(protoSpecRes.GetScenarioCount()-protoSpecRes.GetScenarioFailedCount()-protoSpecRes.GetScenarioSkippedCount())
+		suiteResult.PassedScenarioCount = suiteResult.PassedScenarioCount + int(protoSpecRes.GetScenarioCount() - protoSpecRes.GetScenarioFailedCount() - protoSpecRes.GetScenarioSkippedCount())
 		suiteResult.FailedScenarioCount = suiteResult.FailedScenarioCount + int(protoSpecRes.GetScenarioFailedCount())
 		suiteResult.SkippedScenarioCount = suiteResult.SkippedScenarioCount + int(protoSpecRes.GetScenarioSkippedCount())
 	}
