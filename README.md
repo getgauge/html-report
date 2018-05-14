@@ -21,6 +21,10 @@ Features
 -  [Custom Messages](https://docs.gauge.org/language.html#custom-messages-in-reports) allows users to add messages at runtime.
 
 
+**Sample HTML Report documemt**
+
+<img src="https://github.com/getgauge/html-report/raw/master/images/sample.png" alt="Create New Project preview" style="width: 600px;"/>
+
 Installation
 ------------
 
