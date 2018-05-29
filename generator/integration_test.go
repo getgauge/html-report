@@ -799,6 +799,22 @@ var HTMLGenerationTests = []*HTMLGenerationTest{
 	{"spec error", suiteResWithSpecError, "spec_err.html"},
 }
 
+type myBuf struct {
+	buf *bytes.Buffer
+}
+
+func (b myBuf) Write(p []byte) (int, error) {
+	return b.buf.Write(p)
+}
+
+func (b myBuf) Close() error {
+	return nil
+}
+
+func (b myBuf) String() string {
+	return b.buf.String()
+}
+
 func TestHTMLGeneration(t *testing.T) {
 	for _, test := range HTMLGenerationTests {
 		content, err := ioutil.ReadFile(filepath.Join("_testdata", "integration", test.expectedFile))
@@ -806,7 +822,7 @@ func TestHTMLGeneration(t *testing.T) {
 			t.Errorf("Error reading expected HTML file: %s", err.Error())
 		}
 
-		buf := new(bytes.Buffer)
+		buf := myBuf{new(bytes.Buffer)}
 		var wg sync.WaitGroup
 		wg.Add(1)
 

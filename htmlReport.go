@@ -144,6 +144,9 @@ func createBatFileToExecuteHtmlReport(exPath, exTarget string) {
 }
 
 func createSymlinkToHtmlReport(exPath, exTarget string) {
+	if _, err := os.Lstat(exTarget); err == nil{
+		os.Remove(exTarget)
+	}
 	err := os.Symlink(exPath, exTarget)
 	if err != nil {
 		log.Printf("[Warning] Unable to create symlink %s\n", exTarget)

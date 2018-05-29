@@ -354,7 +354,6 @@ func GenerateReports(res *SuiteResult, reportsDir, themePath string) error {
 			if err != nil {
 				return err
 			}
-			defer sf.Close()
 			wg.Add(1)
 			go generateSpecPage(res, r, sf, &wg)
 		}
@@ -486,9 +485,10 @@ func generateIndexPages(suiteRes *SuiteResult, reportsDir string, wg *sync.WaitG
 	}
 }
 
-func generateSpecPage(suiteRes *SuiteResult, specRes *spec, w io.Writer, wg *sync.WaitGroup) {
+func generateSpecPage(suiteRes *SuiteResult, specRes *spec, wc io.WriteCloser, wg *sync.WaitGroup) {
+	defer wc.Close()
 	defer wg.Done()
-	execTemplate("specPage", w, struct {
+	execTemplate("specPage", wc, struct {
 		SuiteRes *SuiteResult
 		SpecRes  *spec
 	}{suiteRes, specRes})
