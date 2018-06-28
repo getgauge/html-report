@@ -171,7 +171,7 @@ func (s *step) Kind() tokenKind {
 type result struct {
 	Status        status    `json:"Status"`
 	StackTrace    string    `json:"StackTrace"`
-	Screenshot    string    `json:"Screenshot"`
+	Screenshot    []string  `json:"Screenshot"`
 	ErrorMessage  string    `json:"ErrorMessage"`
 	ExecutionTime string    `json:"ExecutionTime"`
 	SkippedReason string    `json:"SkippedReason"`

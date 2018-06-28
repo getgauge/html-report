@@ -243,7 +243,7 @@ var failedStep = &gm.ProtoItem{
 				ExecutionTime: 211316,
 				ErrorMessage:  "java.lang.RuntimeException",
 				StackTrace:    newStackTrace(),
-				ScreenShot:    []byte(newScreenshot()),
+				ScreenShot:    [][]byte{[]byte(newScreenshot())},
 			},
 		},
 		Fragments: []*gm.Fragment{newTextFragment("This is a failing step")},

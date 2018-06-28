@@ -435,12 +435,15 @@ func toStep(protoStep *gm.ProtoStep) *step {
 	res := protoStep.GetStepExecutionResult().GetExecutionResult()
 	result := &result{
 		Status:        getStepStatus(protoStep.GetStepExecutionResult()),
-		Screenshot:    base64.StdEncoding.EncodeToString(res.GetScreenShot()),
 		StackTrace:    res.GetStackTrace(),
 		ErrorMessage:  res.GetErrorMessage(),
 		ExecutionTime: formatTime(res.GetExecutionTime()),
 		Messages:      res.GetMessage(),
 	}
+	for _, s := range res.GetScreenShot() {
+		result.Screenshot = append(result.Screenshot, base64.StdEncoding.EncodeToString(s))
+	}
+
 	if protoStep.GetStepExecutionResult().GetSkipped() {
 		result.SkippedReason = protoStep.GetStepExecutionResult().GetSkippedReason()
 	}
