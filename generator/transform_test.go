@@ -407,6 +407,27 @@ var protoStep = &gm.ProtoStep{
 	},
 }
 
+var protoStepWithScreenshots = &gm.ProtoStep{
+	Fragments: []*gm.Fragment{
+		newTextFragment("Say "),
+		newParamFragment(newStaticParam("hi")),
+		newTextFragment(" to "),
+		newParamFragment(newDynamicParam("gauge")),
+		newParamFragment(newTableParam([]string{"Word", "Count"}, [][]string{
+			[]string{"Gauge", "3"},
+			[]string{"Mingle", "2"},
+		})),
+	},
+	StepExecutionResult: &gm.ProtoStepExecutionResult{
+		ExecutionResult: &gm.ProtoExecutionResult{
+			ExecutionTime: 211316,
+			ScreenShot:    [][]byte{[]byte("screenshot1"), []byte("screenshot2")},
+		},
+		SkippedReason: "Step impl not found",
+		Skipped:       true,
+	},
+}
+
 var protoConcept = &gm.ProtoConcept{
 	ConceptStep: newStepItem(false, false, []*gm.Fragment{
 		newTextFragment("Say "),
@@ -1169,6 +1190,34 @@ func TestToStep(t *testing.T) {
 	}
 
 	got := toStep(protoStep)
+	if !reflect.DeepEqual(got, want) {
+		t.Errorf("want:\n%q\ngot:\n%q\n", want, got)
+	}
+}
+
+func TestToStepCollectsScreenshot(t *testing.T) {
+	want := &step{
+		Fragments: []*fragment{
+			{FragmentKind: textFragmentKind, Text: "Say "},
+			{FragmentKind: staticFragmentKind, Text: "hi"},
+			{FragmentKind: textFragmentKind, Text: " to "},
+			{FragmentKind: dynamicFragmentKind, Text: "gauge"},
+			{FragmentKind: tableFragmentKind,
+				Table: &table{
+					Headers: []string{"Word", "Count"},
+					Rows:    []*row{{Cells: []string{"Gauge", "3"}, Result: pass}, {Cells: []string{"Mingle", "2"}, Result: pass}},
+				},
+			},
+		},
+		Result: &result{
+			Status:        skip,
+			ExecutionTime: "00:03:31",
+			SkippedReason: "Step impl not found",
+			Screenshot:    []string{"c2NyZWVuc2hvdDE=", "c2NyZWVuc2hvdDI="},
+		},
+	}
+
+	got := toStep(protoStepWithScreenshots)
 	if !reflect.DeepEqual(got, want) {
 		t.Errorf("want:\n%q\ngot:\n%q\n", want, got)
 	}
