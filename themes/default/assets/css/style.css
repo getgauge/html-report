@@ -801,11 +801,11 @@ footer p {
     width: 100%;
 }
 
-.exception-container .screenshot-container {
+.screenshot-container {
     position: relative;
 }
 
-.exception-container img {
+.screenshot-container img {
     max-width: 50%;
 }
 
@@ -1070,17 +1070,19 @@ footer p {
         padding: 0.5rem 1rem;
     }
 
-    .exception-container .screenshot-container {
-        max-width: 20rem;
+    .screenshot-container {
+        display: flex;
+        flex-wrap: wrap;
+        width: 100%;
+        padding-left: 1rem;
+    }
+
+    .scenario-container .screenshot {
+        width: 16.66%;
     }
 
     .exception-container {
         flex-direction: row;
-    }
-
-    .exception-container .screenshot-container {
-        max-width: 15rem;
-        padding-left: 1rem;
     }
 
     .exception-container img {

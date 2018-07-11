@@ -407,6 +407,27 @@ var protoStep = &gm.ProtoStep{
 	},
 }
 
+var protoStepWithScreenshots = &gm.ProtoStep{
+	Fragments: []*gm.Fragment{
+		newTextFragment("Say "),
+		newParamFragment(newStaticParam("hi")),
+		newTextFragment(" to "),
+		newParamFragment(newDynamicParam("gauge")),
+		newParamFragment(newTableParam([]string{"Word", "Count"}, [][]string{
+			[]string{"Gauge", "3"},
+			[]string{"Mingle", "2"},
+		})),
+	},
+	StepExecutionResult: &gm.ProtoStepExecutionResult{
+		ExecutionResult: &gm.ProtoExecutionResult{
+			ExecutionTime: 211316,
+			ScreenShot:    [][]byte{[]byte("screenshot1"), []byte("screenshot2")},
+		},
+		SkippedReason: "Step impl not found",
+		Skipped:       true,
+	},
+}
+
 var protoConcept = &gm.ProtoConcept{
 	ConceptStep: newStepItem(false, false, []*gm.Fragment{
 		newTextFragment("Say "),
@@ -1174,6 +1195,34 @@ func TestToStep(t *testing.T) {
 	}
 }
 
+func TestToStepCollectsScreenshot(t *testing.T) {
+	want := &step{
+		Fragments: []*fragment{
+			{FragmentKind: textFragmentKind, Text: "Say "},
+			{FragmentKind: staticFragmentKind, Text: "hi"},
+			{FragmentKind: textFragmentKind, Text: " to "},
+			{FragmentKind: dynamicFragmentKind, Text: "gauge"},
+			{FragmentKind: tableFragmentKind,
+				Table: &table{
+					Headers: []string{"Word", "Count"},
+					Rows:    []*row{{Cells: []string{"Gauge", "3"}, Result: pass}, {Cells: []string{"Mingle", "2"}, Result: pass}},
+				},
+			},
+		},
+		Result: &result{
+			Status:        skip,
+			ExecutionTime: "00:03:31",
+			SkippedReason: "Step impl not found",
+			Screenshot:    []string{"c2NyZWVuc2hvdDE=", "c2NyZWVuc2hvdDI="},
+		},
+	}
+
+	got := toStep(protoStepWithScreenshots)
+	if !reflect.DeepEqual(got, want) {
+		t.Errorf("want:\n%q\ngot:\n%q\n", want, got)
+	}
+}
+
 func TestToCSV(t *testing.T) {
 	table := newTableItem([]string{"Word", "Count"}, [][]string{
 		[]string{"Gauge", "3"},
@@ -1272,12 +1321,12 @@ type specNameGenerationTest struct {
 
 var specNameGenerationTests = []*specNameGenerationTest{
 	{filepath.Join("Users", "gauge", "foo", "simple_specification.spec"), filepath.Join("Users", "gauge", "foo"), "simple_specification.html"},
-	{filepath.Join("Users", "gauge", "foo", "simple_specification.spec"), filepath.Join("Users", "gauge"), filepath.Join("foo", "simple_specification.html")},
+	{filepath.Join("Users", "gauge", "foo", "simple_specification.spec"), filepath.Join("Users", "gauge"), filepath.ToSlash(filepath.Join("foo", "simple_specification.html"))},
 	{"simple_specification.spec", "", "simple_specification.html"},
 	{filepath.Join("Users", "gauge", "foo", "abcd1234.spec"), filepath.Join("Users", "gauge", "foo"), "abcd1234.html"},
-	{filepath.Join("Users", "gauge", "foo", "bar", "simple_specification.spec"), filepath.Join("Users", "gauge", "foo"), filepath.Join("bar", "simple_specification.html")},
-	{filepath.Join("Users", "gauge", "foo", "bar", "simple_specification.spec"), "Users", filepath.Join("gauge", "foo", "bar", "simple_specification.html")},
-	{filepath.Join("Users", "gauge12", "fo_o", "b###$ar", "simple_specification.spec"), "Users", filepath.Join("gauge12", "fo_o", "b###$ar", "simple_specification.html")},
+	{filepath.Join("Users", "gauge", "foo", "bar", "simple_specification.spec"), filepath.Join("Users", "gauge", "foo"), filepath.ToSlash(filepath.Join("bar", "simple_specification.html"))},
+	{filepath.Join("Users", "gauge", "foo", "bar", "simple_specification.spec"), "Users", filepath.ToSlash(filepath.Join("gauge", "foo", "bar", "simple_specification.html"))},
+	{filepath.Join("Users", "gauge12", "fo_o", "b###$ar", "simple_specification.spec"), "Users", filepath.ToSlash(filepath.Join("gauge12", "fo_o", "b###$ar", "simple_specification.html"))},
 }
 
 func TestToHTMLFileName(t *testing.T) {

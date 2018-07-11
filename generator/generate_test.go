@@ -49,7 +49,7 @@ var whtmlPageStartTag = `<!doctype html>
   <div class="header">
     <div class="container">
       <div class="logo">
-        <a href=""><img src="images/logo.png" alt="Report logo"></a>
+        <a href="."><img src="images/logo.png" alt="Report logo"></a>
       </div>
       <h2 class="project">Project: projname</h2>
     </div>

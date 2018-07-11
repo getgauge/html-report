@@ -171,7 +171,7 @@ func (s *step) Kind() tokenKind {
 type result struct {
 	Status        status    `json:"Status"`
 	StackTrace    string    `json:"StackTrace"`
-	Screenshot    string    `json:"Screenshot"`
+	Screenshot    []string  `json:"Screenshot"`
 	ErrorMessage  string    `json:"ErrorMessage"`
 	ExecutionTime string    `json:"ExecutionTime"`
 	SkippedReason string    `json:"SkippedReason"`
@@ -286,7 +286,7 @@ func readTemplates(themePath string) {
 		"toSpecHeader":        toSpecHeader,
 		"toSidebar":           toSidebar,
 		"toOverview":          toOverview,
-		"toPath":              path.Join,
+		"toPath":              func(elem ...string) string { return filepath.ToSlash(filepath.Clean(path.Join(elem...))) },
 		"stringContains":      strings.Contains,
 		"stringHasPrefix":     strings.HasPrefix,
 		"stringHasSuffix":     strings.HasSuffix,
