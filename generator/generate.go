@@ -286,7 +286,7 @@ func readTemplates(themePath string) {
 		"toSpecHeader":        toSpecHeader,
 		"toSidebar":           toSidebar,
 		"toOverview":          toOverview,
-		"toPath":              path.Join,
+		"toPath":              func(elem ...string) string { return filepath.ToSlash(filepath.Clean(path.Join(elem...))) },
 		"stringContains":      strings.Contains,
 		"stringHasPrefix":     strings.HasPrefix,
 		"stringHasSuffix":     strings.HasSuffix,

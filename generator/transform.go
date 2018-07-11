@@ -175,7 +175,7 @@ func toHTMLFileName(specName, basePath string) string {
 	}
 	// specPath = strings.Replace(specPath, string(filepath.Separator), "_", -1)
 	ext := filepath.Ext(specPath)
-	return strings.TrimSuffix(specPath, ext) + dothtml
+	return filepath.ToSlash(filepath.Clean(strings.TrimSuffix(specPath, ext) + dothtml))
 }
 
 func getFilePathBasedOnSpecLocation(specFilePath, path string) string {

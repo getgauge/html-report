@@ -1321,12 +1321,12 @@ type specNameGenerationTest struct {
 
 var specNameGenerationTests = []*specNameGenerationTest{
 	{filepath.Join("Users", "gauge", "foo", "simple_specification.spec"), filepath.Join("Users", "gauge", "foo"), "simple_specification.html"},
-	{filepath.Join("Users", "gauge", "foo", "simple_specification.spec"), filepath.Join("Users", "gauge"), filepath.Join("foo", "simple_specification.html")},
+	{filepath.Join("Users", "gauge", "foo", "simple_specification.spec"), filepath.Join("Users", "gauge"), filepath.ToSlash(filepath.Join("foo", "simple_specification.html"))},
 	{"simple_specification.spec", "", "simple_specification.html"},
 	{filepath.Join("Users", "gauge", "foo", "abcd1234.spec"), filepath.Join("Users", "gauge", "foo"), "abcd1234.html"},
-	{filepath.Join("Users", "gauge", "foo", "bar", "simple_specification.spec"), filepath.Join("Users", "gauge", "foo"), filepath.Join("bar", "simple_specification.html")},
-	{filepath.Join("Users", "gauge", "foo", "bar", "simple_specification.spec"), "Users", filepath.Join("gauge", "foo", "bar", "simple_specification.html")},
-	{filepath.Join("Users", "gauge12", "fo_o", "b###$ar", "simple_specification.spec"), "Users", filepath.Join("gauge12", "fo_o", "b###$ar", "simple_specification.html")},
+	{filepath.Join("Users", "gauge", "foo", "bar", "simple_specification.spec"), filepath.Join("Users", "gauge", "foo"), filepath.ToSlash(filepath.Join("bar", "simple_specification.html"))},
+	{filepath.Join("Users", "gauge", "foo", "bar", "simple_specification.spec"), "Users", filepath.ToSlash(filepath.Join("gauge", "foo", "bar", "simple_specification.html"))},
+	{filepath.Join("Users", "gauge12", "fo_o", "b###$ar", "simple_specification.spec"), "Users", filepath.ToSlash(filepath.Join("gauge12", "fo_o", "b###$ar", "simple_specification.html"))},
 }
 
 func TestToHTMLFileName(t *testing.T) {
