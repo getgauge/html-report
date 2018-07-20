@@ -224,6 +224,12 @@ header.top .project {
     font-weight: bold;
 }
 
+.report_details .suite_screenshots {
+    overflow-y: scroll;
+    max-height: 100px;
+    background-color:#ccc;
+}
+
 .report_details label, .report_details span {
     margin-bottom: 10px;
     font-size: 0.8rem;
@@ -320,7 +326,10 @@ header.top .project {
     right: 30px;
     top: 20px;
 }
-
+.spec-screenshot-container {
+    max-width: 16.66%;
+    max-height: 16.66%;
+}
 .spec-list {
     list-style-type: none;
     margin: 0;
