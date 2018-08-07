@@ -1083,7 +1083,7 @@ footer p {
         display: flex;
         flex-wrap: wrap;
         width: 100%;
-        padding-left: 1rem;
+        margin-top: 10px;
     }
 
     .scenario-container .screenshot {
