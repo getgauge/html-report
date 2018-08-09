@@ -277,6 +277,16 @@ func readTemplates(themePath string) {
 		return r
 	}
 
+	var localise = func(s string) string {
+		localFile := env.GetLocale() + ".properties"
+		config, err := ReadPropertiesFile(filepath.Join(getAbsThemePath(themePath), "localisation", localFile))
+		if err != nil {
+			log.Fatalf(err.Error())
+			return s
+		}
+		return config[s]
+	}
+
 	var funcs = template.FuncMap{
 		"parseMarkdown":       parseMarkdown,
 		"sanitize":            sanitizeHTML,
@@ -299,6 +309,7 @@ func readTemplates(themePath string) {
 		"stringToUpper":       strings.ToUpper,
 		"stringToTitle":       strings.ToTitle,
 		"sum":                 sum,
+		"localised":           localise,
 	}
 
 	f, err := ioutil.ReadFile(filepath.Join(getAbsThemePath(themePath), "views", "partials.tmpl"))
