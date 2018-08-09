@@ -277,13 +277,13 @@ func readTemplates(themePath string) {
 		return r
 	}
 
+	localFile := env.GetLocale() + ".properties"
+	config, err := ReadPropertiesFile(filepath.Join(getAbsThemePath(themePath), "localisation", localFile))
+	if err != nil {
+		log.Fatalf(err.Error())
+	}
+
 	var localise = func(s string) string {
-		localFile := env.GetLocale() + ".properties"
-		config, err := ReadPropertiesFile(filepath.Join(getAbsThemePath(themePath), "localisation", localFile))
-		if err != nil {
-			log.Fatalf(err.Error())
-			return s
-		}
 		return config[s]
 	}
 
