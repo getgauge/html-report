@@ -1,17 +1,40 @@
 package regenerate
 
 import (
+	"encoding/json"
 	"io/ioutil"
+	"log"
 	"os"
 	"path/filepath"
 	"testing"
 
+	"github.com/getgauge/html-report/gauge_messages"
 	helper "github.com/getgauge/html-report/test_helper"
+	"github.com/golang/protobuf/proto"
 )
 
 var templateBasePath, _ = filepath.Abs(filepath.Join("..", "themes", "default"))
 
+// setup converts _testdata/last_run_result.json to _testdata/last_run_result (binary serialized)
+// editing json is easy, helps in maintaining the setup data
+// but the actual regenerate requires serialized proto data, hence this conversion.
+func setup() {
+	inputFile := filepath.Join("_testdata", "last_run_result.json")
+	b, err := ioutil.ReadFile(inputFile)
+	if err != nil {
+		log.Fatal(err.Error())
+	}
+	psr := &gauge_messages.ProtoSuiteResult{}
+	err = json.Unmarshal(b, psr)
+	if err != nil {
+		log.Fatalf("Unable to read last run data from %s. Error: %s", inputFile, err.Error())
+	}
+	by, _ := proto.Marshal(psr)
+	ioutil.WriteFile(filepath.Join("_testdata", "last_run_result"), by, 0644)
+}
+
 func TestEndToEndHTMLGenerationFromSavedResult(t *testing.T) {
+	setup()
 	expectedFiles := []string{"index.html", "example.html", "js/search_index.js"}
 	reportDir := filepath.Join("_testdata", "e2e")
 	inputFile := filepath.Join("_testdata", "last_run_result")

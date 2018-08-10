@@ -224,6 +224,12 @@ header.top .project {
     font-weight: bold;
 }
 
+.report_details .suite_screenshots {
+    overflow-y: scroll;
+    max-height: 100px;
+    background-color:#ccc;
+}
+
 .report_details label, .report_details span {
     margin-bottom: 10px;
     font-size: 0.8rem;
@@ -320,7 +326,10 @@ header.top .project {
     right: 30px;
     top: 20px;
 }
-
+.spec-screenshot-container {
+    max-width: 16.66%;
+    max-height: 16.66%;
+}
 .spec-list {
     list-style-type: none;
     margin: 0;
@@ -801,11 +810,11 @@ footer p {
     width: 100%;
 }
 
-.exception-container .screenshot-container {
+.screenshot-container {
     position: relative;
 }
 
-.exception-container img {
+.screenshot-container img {
     max-width: 50%;
 }
 
@@ -1070,17 +1079,19 @@ footer p {
         padding: 0.5rem 1rem;
     }
 
-    .exception-container .screenshot-container {
-        max-width: 20rem;
+    .screenshot-container {
+        display: flex;
+        flex-wrap: wrap;
+        width: 100%;
+        margin-top: 10px;
+    }
+
+    .scenario-container .screenshot {
+        width: 16.66%;
     }
 
     .exception-container {
         flex-direction: row;
-    }
-
-    .exception-container .screenshot-container {
-        max-width: 15rem;
-        padding-left: 1rem;
     }
 
     .exception-container img {

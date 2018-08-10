@@ -54,6 +54,12 @@ func ToSuiteResult(pRoot string, psr *gm.ProtoSuiteResult) *SuiteResult {
 		PreHookMessages:        psr.GetPreHookMessages(),
 		PostHookMessages:       psr.GetPostHookMessages(),
 	}
+	for _, s := range psr.GetPreHookScreenshots() {
+		suiteResult.PreHookScreenshots = append(suiteResult.PreHookScreenshots, base64.StdEncoding.EncodeToString(s))
+	}
+	for _, s := range psr.GetPostHookScreenshots() {
+		suiteResult.PostHookScreenshots = append(suiteResult.PostHookScreenshots, base64.StdEncoding.EncodeToString(s))
+	}
 	if psr.GetFailed() {
 		suiteResult.ExecutionStatus = fail
 	}
@@ -140,17 +146,19 @@ func toOverview(res *SuiteResult, filePath string) *overview {
 		base = path.Join(base, "/")
 	}
 	return &overview{
-		ProjectName:      res.ProjectName,
-		Env:              res.Environment,
-		Tags:             res.Tags,
-		SuccessRate:      res.SuccessRate,
-		ExecutionTime:    formatTime(res.ExecutionTime),
-		Timestamp:        res.Timestamp,
-		Summary:          &summary{Failed: res.FailedSpecsCount, Total: totalSpecs, Passed: res.PassedSpecsCount, Skipped: res.SkippedSpecsCount},
-		ScenarioSummary:  &summary{Failed: res.FailedScenarioCount, Total: totalScenarios, Passed: res.PassedScenarioCount, Skipped: res.SkippedScenarioCount},
-		BasePath:         base,
-		PreHookMessages:  res.PreHookMessages,
-		PostHookMessages: res.PostHookMessages,
+		ProjectName:         res.ProjectName,
+		Env:                 res.Environment,
+		Tags:                res.Tags,
+		SuccessRate:         res.SuccessRate,
+		ExecutionTime:       formatTime(res.ExecutionTime),
+		Timestamp:           res.Timestamp,
+		Summary:             &summary{Failed: res.FailedSpecsCount, Total: totalSpecs, Passed: res.PassedSpecsCount, Skipped: res.SkippedSpecsCount},
+		ScenarioSummary:     &summary{Failed: res.FailedScenarioCount, Total: totalScenarios, Passed: res.PassedScenarioCount, Skipped: res.SkippedScenarioCount},
+		BasePath:            base,
+		PreHookMessages:     res.PreHookMessages,
+		PostHookMessages:    res.PostHookMessages,
+		PreHookScreenshots:  res.PreHookScreenshots,
+		PostHookScreenshots: res.PostHookScreenshots,
 	}
 }
 
@@ -159,13 +167,16 @@ func toHookFailure(failure *gm.ProtoHookFailure, hookName string) *hookFailure {
 		return nil
 	}
 
-	return &hookFailure{
+	result := &hookFailure{
 		ErrMsg:        failure.GetErrorMessage(),
 		HookName:      hookName,
-		Screenshot:    base64.StdEncoding.EncodeToString(failure.GetScreenShot()),
 		StackTrace:    failure.GetStackTrace(),
 		TableRowIndex: failure.TableRowIndex,
 	}
+	for _, s := range failure.GetScreenShot() {
+		result.Screenshot = append(result.Screenshot, base64.StdEncoding.EncodeToString(s))
+	}
+	return result
 }
 
 func toHTMLFileName(specName, basePath string) string {
@@ -175,7 +186,7 @@ func toHTMLFileName(specName, basePath string) string {
 	}
 	// specPath = strings.Replace(specPath, string(filepath.Separator), "_", -1)
 	ext := filepath.Ext(specPath)
-	return strings.TrimSuffix(specPath, ext) + dothtml
+	return filepath.ToSlash(filepath.Clean(strings.TrimSuffix(specPath, ext) + dothtml))
 }
 
 func getFilePathBasedOnSpecLocation(specFilePath, path string) string {
@@ -287,6 +298,12 @@ func toSpec(res *gm.ProtoSpecResult) *spec {
 		ExecutionStatus:        pass,
 		PreHookMessages:        res.GetProtoSpec().GetPreHookMessages(),
 		PostHookMessages:       res.GetProtoSpec().GetPostHookMessages(),
+	}
+	for _, s := range res.GetProtoSpec().GetPreHookScreenshots() {
+		spec.PreHookScreenshots = append(spec.PreHookScreenshots, base64.StdEncoding.EncodeToString(s))
+	}
+	for _, s := range res.GetProtoSpec().GetPostHookScreenshots() {
+		spec.PostHookScreenshots = append(spec.PostHookScreenshots, base64.StdEncoding.EncodeToString(s))
 	}
 	if res.GetFailed() {
 		spec.ExecutionStatus = fail
@@ -411,7 +428,7 @@ func toScenarioSummary(s *spec) *summary {
 }
 
 func toScenario(scn *gm.ProtoScenario, tableRowIndex int) *scenario {
-	return &scenario{
+	scenario := &scenario{
 		Heading:                   scn.GetScenarioHeading(),
 		ExecutionTime:             formatTime(scn.GetExecutionTime()),
 		Tags:                      scn.GetTags(),
@@ -425,6 +442,13 @@ func toScenario(scn *gm.ProtoScenario, tableRowIndex int) *scenario {
 		PreHookMessages:           scn.GetPreHookMessages(),
 		PostHookMessages:          scn.GetPostHookMessages(),
 	}
+	for _, s := range scn.GetPreHookScreenshots() {
+		scenario.PreHookScreenshots = append(scenario.PreHookScreenshots, base64.StdEncoding.EncodeToString(s))
+	}
+	for _, s := range scn.GetPostHookScreenshots() {
+		scenario.PostHookScreenshots = append(scenario.PostHookScreenshots, base64.StdEncoding.EncodeToString(s))
+	}
+	return scenario
 }
 
 func toComment(protoComment *gm.ProtoComment) *comment {
@@ -435,16 +459,19 @@ func toStep(protoStep *gm.ProtoStep) *step {
 	res := protoStep.GetStepExecutionResult().GetExecutionResult()
 	result := &result{
 		Status:        getStepStatus(protoStep.GetStepExecutionResult()),
-		Screenshot:    base64.StdEncoding.EncodeToString(res.GetScreenShot()),
 		StackTrace:    res.GetStackTrace(),
 		ErrorMessage:  res.GetErrorMessage(),
 		ExecutionTime: formatTime(res.GetExecutionTime()),
 		Messages:      res.GetMessage(),
 	}
+	for _, s := range res.GetScreenShot() {
+		result.Screenshot = append(result.Screenshot, base64.StdEncoding.EncodeToString(s))
+	}
+
 	if protoStep.GetStepExecutionResult().GetSkipped() {
 		result.SkippedReason = protoStep.GetStepExecutionResult().GetSkippedReason()
 	}
-	return &step{
+	step := &step{
 		Fragments:             toFragments(protoStep.GetFragments()),
 		Result:                result,
 		BeforeStepHookFailure: toHookFailure(protoStep.GetStepExecutionResult().GetPreHookFailure(), "Before Step"),
@@ -452,6 +479,13 @@ func toStep(protoStep *gm.ProtoStep) *step {
 		PreHookMessages:       protoStep.GetPreHookMessages(),
 		PostHookMessages:      protoStep.GetPostHookMessages(),
 	}
+	for _, s := range protoStep.GetPreHookScreenshots() {
+		step.PreHookScreenshots = append(step.PreHookScreenshots, base64.StdEncoding.EncodeToString(s))
+	}
+	for _, s := range protoStep.GetPostHookScreenshots() {
+		step.PostHookScreenshots = append(step.PostHookScreenshots, base64.StdEncoding.EncodeToString(s))
+	}
+	return step
 }
 
 func toConcept(protoConcept *gm.ProtoConcept) *concept {

@@ -46,17 +46,19 @@ type summary struct {
 }
 
 type overview struct {
-	ProjectName      string
-	Env              string
-	Tags             string
-	SuccessRate      float32
-	ExecutionTime    string
-	Timestamp        string
-	Summary          *summary
-	ScenarioSummary  *summary
-	BasePath         string
-	PreHookMessages  []string
-	PostHookMessages []string
+	ProjectName         string
+	Env                 string
+	Tags                string
+	SuccessRate         float32
+	ExecutionTime       string
+	Timestamp           string
+	Summary             *summary
+	ScenarioSummary     *summary
+	BasePath            string
+	PreHookMessages     []string
+	PostHookMessages    []string
+	PreHookScreenshots  []string
+	PostHookScreenshots []string
 }
 
 type specsMeta struct {
@@ -113,6 +115,8 @@ type SuiteResult struct {
 	BasePath               string       `json:"BasePath"`
 	PreHookMessages        []string     `json:"PreHookMessages"`
 	PostHookMessages       []string     `json:"PostHookMessages"`
+	PreHookScreenshots     []string     `json:"PreHookScreenshots"`
+	PostHookScreenshots    []string     `json:"PostHookScreenshots"`
 }
 
 type spec struct {
@@ -134,6 +138,8 @@ type spec struct {
 	Errors                  []buildError   `json:"Errors"`
 	PreHookMessages         []string       `json:"PreHookMessages"`
 	PostHookMessages        []string       `json:"PostHookMessages"`
+	PreHookScreenshots      []string       `json:"PreHookScreenshots"`
+	PostHookScreenshots     []string       `json:"PostHookScreenshots"`
 }
 
 type scenario struct {
@@ -150,6 +156,8 @@ type scenario struct {
 	TableRowIndex             int          `json:"TableRowIndex"`
 	PreHookMessages           []string     `json:"PreHookMessages"`
 	PostHookMessages          []string     `json:"PostHookMessages"`
+	PreHookScreenshots        []string     `json:"PreHookScreenshots"`
+	PostHookScreenshots       []string     `json:"PostHookScreenshots"`
 }
 
 type step struct {
@@ -162,6 +170,8 @@ type step struct {
 	Result                *result      `json:"Result"`
 	PreHookMessages       []string     `json:"PreHookMessages"`
 	PostHookMessages      []string     `json:"PostHookMessages"`
+	PreHookScreenshots    []string     `json:"PreHookScreenshots"`
+	PostHookScreenshots   []string     `json:"PostHookScreenshots"`
 }
 
 func (s *step) Kind() tokenKind {
@@ -171,7 +181,7 @@ func (s *step) Kind() tokenKind {
 type result struct {
 	Status        status    `json:"Status"`
 	StackTrace    string    `json:"StackTrace"`
-	Screenshot    string    `json:"Screenshot"`
+	Screenshot    []string  `json:"Screenshot"`
 	ErrorMessage  string    `json:"ErrorMessage"`
 	ExecutionTime string    `json:"ExecutionTime"`
 	SkippedReason string    `json:"SkippedReason"`
@@ -180,11 +190,11 @@ type result struct {
 }
 
 type hookFailure struct {
-	HookName      string `json:"HookName"`
-	ErrMsg        string `json:"ErrMsg"`
-	Screenshot    string `json:"Screenshot"`
-	StackTrace    string `json:"StackTrace"`
-	TableRowIndex int32  `json:"TableRowIndex"`
+	HookName      string   `json:"HookName"`
+	ErrMsg        string   `json:"ErrMsg"`
+	Screenshot    []string `json:"Screenshot"`
+	StackTrace    string   `json:"StackTrace"`
+	TableRowIndex int32    `json:"TableRowIndex"`
 }
 
 type concept struct {
@@ -296,7 +306,7 @@ func readTemplates(themePath string) {
 		"toSpecHeader":        toSpecHeader,
 		"toSidebar":           toSidebar,
 		"toOverview":          toOverview,
-		"toPath":              path.Join,
+		"toPath":              func(elem ...string) string { return filepath.ToSlash(filepath.Clean(path.Join(elem...))) },
 		"stringContains":      strings.Contains,
 		"stringHasPrefix":     strings.HasPrefix,
 		"stringHasSuffix":     strings.HasSuffix,

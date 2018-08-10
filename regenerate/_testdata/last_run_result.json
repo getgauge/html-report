@@ -1,0 +1,317 @@
+{
+  "specResults": [
+    {
+      "protoSpec": {
+        "specHeading": "Specification Heading",
+        "items": [
+          {
+            "itemType": 1,
+            "comment": {
+              "text": "\n"
+            }
+          },
+          {
+            "itemType": 1,
+            "comment": {
+              "text": "This is an executable specification file. This file follows markdown syntax."
+            }
+          },
+          {
+            "itemType": 1,
+            "comment": {
+              "text": "Every heading in this file denotes a scenario. Every bulleted point denotes a step."
+            }
+          },
+          {
+            "itemType": 1,
+            "comment": {
+              "text": "\n"
+            }
+          },
+          {
+            "itemType": 1,
+            "comment": {
+              "text": "To execute this specification, run"
+            }
+          },
+          {
+            "itemType": 1,
+            "comment": {
+              "text": "\tgauge specs"
+            }
+          },
+          {
+            "itemType": 1,
+            "comment": {
+              "text": "\n"
+            }
+          },
+          {
+            "itemType": 1,
+            "comment": {
+              "text": "\n"
+            }
+          },
+          {
+            "step": {
+              "actualText": "Vowels in English language are \"aeiou\".",
+              "parsedText": "Vowels in English language are {}.",
+              "fragments": [
+                {
+                  "text": "Vowels in English language are "
+                },
+                {
+                  "fragmentType": 1,
+                  "parameter": {
+                    "value": "aeiou"
+                  }
+                },
+                {
+                  "text": "."
+                }
+              ],
+              "stepExecutionResult": {}
+            }
+          },
+          {
+            "itemType": 3,
+            "scenario": {
+              "scenarioHeading": "Vowel counts in single word",
+              "contexts": [
+                {
+                  "step": {
+                    "actualText": "Vowels in English language are \"aeiou\".",
+                    "parsedText": "Vowels in English language are {}.",
+                    "fragments": [
+                      {
+                        "text": "Vowels in English language are "
+                      },
+                      {
+                        "fragmentType": 1,
+                        "parameter": {
+                          "value": "aeiou"
+                        }
+                      },
+                      {
+                        "text": "."
+                      }
+                    ],
+                    "stepExecutionResult": {
+                      "executionResult": {}
+                    }
+                  }
+                }
+              ],
+              "scenarioItems": [
+                {
+                  "itemType": 1,
+                  "comment": {
+                    "text": "\n"
+                  }
+                },
+                {
+                  "itemType": 6,
+                  "tags": {
+                    "tags": [
+                      "single word"
+                    ]
+                  }
+                },
+                {
+                  "itemType": 1,
+                  "comment": {
+                    "text": "\n"
+                  }
+                },
+                {
+                  "step": {
+                    "actualText": "The word \"gauge\" has \"3\" vowels.",
+                    "parsedText": "The word {} has {} vowels.",
+                    "fragments": [
+                      {
+                        "text": "The word "
+                      },
+                      {
+                        "fragmentType": 1,
+                        "parameter": {
+                          "value": "gauge"
+                        }
+                      },
+                      {
+                        "text": " has "
+                      },
+                      {
+                        "fragmentType": 1,
+                        "parameter": {
+                          "value": "3"
+                        }
+                      },
+                      {
+                        "text": " vowels."
+                      }
+                    ],
+                    "stepExecutionResult": {
+                      "executionResult": {
+                        "executionTime": 1
+                      }
+                    }
+                  }
+                }
+              ],
+              "tags": [
+                "single word"
+              ],
+              "executionTime": 1,
+              "span": {
+                "start": 13,
+                "end": 20
+              },
+              "executionStatus": 1
+            }
+          },
+          {
+            "itemType": 3,
+            "scenario": {
+              "scenarioHeading": "Vowel counts in multiple word",
+              "contexts": [
+                {
+                  "step": {
+                    "actualText": "Vowels in English language are \"aeiou\".",
+                    "parsedText": "Vowels in English language are {}.",
+                    "fragments": [
+                      {
+                        "text": "Vowels in English language are "
+                      },
+                      {
+                        "fragmentType": 1,
+                        "parameter": {
+                          "value": "aeiou"
+                        }
+                      },
+                      {
+                        "text": "."
+                      }
+                    ],
+                    "stepExecutionResult": {
+                      "executionResult": {
+                        "screenShot":[
+                          "c2NyZWVuc2hvdDE=", 
+                          "c2NyZWVuc2hvdDI="
+                        ]
+                      }
+                    }
+                  }
+                }
+              ],
+              "scenarioItems": [
+                {
+                  "itemType": 1,
+                  "comment": {
+                    "text": "\n"
+                  }
+                },
+                {
+                  "itemType": 1,
+                  "comment": {
+                    "text": "This is the second scenario in this specification"
+                  }
+                },
+                {
+                  "itemType": 1,
+                  "comment": {
+                    "text": "\n"
+                  }
+                },
+                {
+                  "itemType": 1,
+                  "comment": {
+                    "text": "Here's a step that takes a table"
+                  }
+                },
+                {
+                  "itemType": 1,
+                  "comment": {
+                    "text": "\n"
+                  }
+                },
+                {
+                  "step": {
+                    "actualText": "Almost all words have vowels",
+                    "parsedText": "Almost all words have vowels {}",
+                    "fragments": [
+                      {
+                        "text": "Almost all words have vowels "
+                      },
+                      {
+                        "fragmentType": 1,
+                        "parameter": {
+                          "parameterType": 4,
+                          "table": {
+                            "headers": {
+                              "cells": [
+                                "Word",
+                                "Vowel Count"
+                              ]
+                            },
+                            "rows": [
+                              {
+                                "cells": [
+                                  "Gauge",
+                                  "3"
+                                ]
+                              },
+                              {
+                                "cells": [
+                                  "Mingle",
+                                  "2"
+                                ]
+                              },
+                              {
+                                "cells": [
+                                  "Snap",
+                                  "1"
+                                ]
+                              },
+                              {
+                                "cells": [
+                                  "GoCD",
+                                  "1"
+                                ]
+                              },
+                              {
+                                "cells": [
+                                  "Rhythm",
+                                  "0"
+                                ]
+                              }
+                            ]
+                          }
+                        }
+                      }
+                    ],
+                    "stepExecutionResult": {
+                      "executionResult": {}
+                    }
+                  }
+                }
+              ],
+              "span": {
+                "start": 21,
+                "end": 35
+              },
+              "executionStatus": 1
+            }
+          }
+        ],
+        "fileName": "/tmp/foo/specs/example.spec"
+      },
+      "scenarioCount": 2,
+      "executionTime": 1
+    }
+  ],
+  "executionTime": 39,
+  "successRate": 100,
+  "environment": "default",
+  "projectName": "foo",
+  "timestamp": "May 23, 2017 at 6:01pm"
+}

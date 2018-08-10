@@ -16,7 +16,7 @@
     <div class="header">
       <div class="container">
         <div class="logo">
-          <a href="{{.BasePath}}"><img src="{{(toPath .BasePath "images/logo.png")}}" alt="Report logo"></a>
+          <a href="{{toPath .BasePath ""}}"><img src="{{(toPath .BasePath "images/logo.png")}}" alt="Report logo"></a>
         </div>
         <h2 class="project">Project: {{.ProjectName}}</h2>
       </div>
@@ -360,11 +360,6 @@
           </h4>
           <pre class="stacktrace">{{.StackTrace | escapeHTML | encodeNewLine}}</pre>
         </div>
-        {{if .Screenshot}}<div class="screenshot-container">
-          <a href="data:image/png;base64,{{.Screenshot}}" rel="lightbox">
-            <img src="data:image/png;base64,{{.Screenshot}}" class="screenshot-thumbnail" />
-          </a>
-        </div>{{end}}
     </div>
   </div>
 {{end}}
@@ -404,6 +399,17 @@
     {{if and (and (eq .Status "fail") (ne .ErrorMessage "")) (ne .StackTrace "") }}
         {{template "stepFailureDiv" .}}
     {{end }}
+    {{ if .Screenshot}}
+      <div class="screenshot-container">
+      {{range .Screenshot}}
+        <div class="screenshot">
+          <a href="data:image/png;base64,{{.}}" rel="lightbox">
+            <img src="data:image/png;base64,{{.}}" class="screenshot-thumbnail" />
+          </a>
+        </div>
+      {{end}}
+      </div>
+    {{end}}
   {{end}}
   {{if .AfterStepHookFailure}}
     {{ template "hookFailureDiv" .AfterStepHookFailure }}
