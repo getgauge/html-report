@@ -284,14 +284,14 @@ var specResWithSpecHookFailure = &gm.ProtoSpecResult{
 		SpecHeading: "specRes3",
 		Tags:        []string{"tag1"},
 		PreHookFailures: []*gm.ProtoHookFailure{{
-			ErrorMessage: "err",
-			StackTrace:   "Stacktrace",
-			ScreenShot:   [][]byte{[]byte("Screenshot")},
+			ErrorMessage:     "err",
+			StackTrace:       "Stacktrace",
+			FailedScreenshot: []byte("Screenshot"),
 		}},
 		PostHookFailures: []*gm.ProtoHookFailure{{
-			ErrorMessage: "err",
-			StackTrace:   "Stacktrace",
-			ScreenShot:   [][]byte{[]byte("Screenshot")},
+			ErrorMessage:     "err",
+			StackTrace:       "Stacktrace",
+			FailedScreenshot: []byte("Screenshot"),
 		}},
 	},
 }
@@ -363,14 +363,14 @@ var scnWithHookFailure = &gm.ProtoScenario{
 		newStepItem(true, false, []*gm.Fragment{newTextFragment("Step1")}),
 	},
 	PreHookFailure: &gm.ProtoHookFailure{
-		ErrorMessage: "err",
-		StackTrace:   "Stacktrace",
-		ScreenShot:   [][]byte{[]byte("Screenshot")},
+		ErrorMessage:     "err",
+		StackTrace:       "Stacktrace",
+		FailedScreenshot: []byte("Screenshot"),
 	},
 	PostHookFailure: &gm.ProtoHookFailure{
-		ErrorMessage: "err",
-		StackTrace:   "Stacktrace",
-		ScreenShot:   [][]byte{[]byte("Screenshot")},
+		ErrorMessage:     "err",
+		StackTrace:       "Stacktrace",
+		FailedScreenshot: []byte("Screenshot"),
 	},
 }
 
@@ -421,7 +421,7 @@ var protoStepWithScreenshots = &gm.ProtoStep{
 	StepExecutionResult: &gm.ProtoStepExecutionResult{
 		ExecutionResult: &gm.ProtoExecutionResult{
 			ExecutionTime: 211316,
-			ScreenShot:    [][]byte{[]byte("screenshot1"), []byte("screenshot2")},
+			Screenshots:   [][]byte{[]byte("screenshot1"), []byte("screenshot2")},
 		},
 		SkippedReason: "Step impl not found",
 		Skipped:       true,
@@ -508,17 +508,17 @@ var protoStepWithAfterHookFailure = &gm.ProtoStep{
 			ExecutionTime: 211316,
 		},
 		PostHookFailure: &gm.ProtoHookFailure{
-			ErrorMessage: "err",
-			StackTrace:   "Stacktrace",
-			ScreenShot:   [][]byte{[]byte("Screenshot")},
+			ErrorMessage:     "err",
+			StackTrace:       "Stacktrace",
+			FailedScreenshot: []byte("Screenshot"),
 		},
 	},
 }
 
 var failedHookFailure = &gm.ProtoHookFailure{
-	ErrorMessage: "java.lang.RuntimeException",
-	StackTrace:   newStackTrace(),
-	ScreenShot:   [][]byte{[]byte(newScreenshot())},
+	ErrorMessage:     "java.lang.RuntimeException",
+	StackTrace:       newStackTrace(),
+	FailedScreenshot: []byte(newScreenshot()),
 }
 
 func TestToOverview(t *testing.T) {
@@ -847,14 +847,14 @@ func TestToSpecWithDataTableExecutionStatusFail(t *testing.T) {
 }
 
 func TestToSpecWithBeforeHookFailure(t *testing.T) {
-	want := []*hookFailure{{ErrMsg: "err", HookName: "Before Spec", Screenshot: []string{"U2NyZWVuc2hvdA=="}, StackTrace: "Stacktrace"}}
+	want := []*hookFailure{{ErrMsg: "err", HookName: "Before Spec", FailedScreenshot: "U2NyZWVuc2hvdA==", StackTrace: "Stacktrace"}}
 	got := toSpec(specResWithSpecHookFailure).BeforeSpecHookFailures
 
 	checkEqual(t, "", want, got)
 }
 
 func TestToSpecWithAfterHookFailure(t *testing.T) {
-	want := []*hookFailure{{ErrMsg: "err", HookName: "After Spec", Screenshot: []string{"U2NyZWVuc2hvdA=="}, StackTrace: "Stacktrace", TableRowIndex: 0}}
+	want := []*hookFailure{{ErrMsg: "err", HookName: "After Spec", FailedScreenshot: "U2NyZWVuc2hvdA==", StackTrace: "Stacktrace", TableRowIndex: 0}}
 	got := toSpec(specResWithSpecHookFailure).AfterSpecHookFailures
 
 	checkEqual(t, "", want, got)
@@ -1213,7 +1213,7 @@ func TestToStepCollectsScreenshot(t *testing.T) {
 			Status:        skip,
 			ExecutionTime: "00:03:31",
 			SkippedReason: "Step impl not found",
-			Screenshot:    []string{"c2NyZWVuc2hvdDE=", "c2NyZWVuc2hvdDI="},
+			Screenshots:   []string{"c2NyZWVuc2hvdDE=", "c2NyZWVuc2hvdDI="},
 		},
 	}
 
