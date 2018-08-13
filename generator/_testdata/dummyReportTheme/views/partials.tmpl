@@ -76,6 +76,7 @@
         </li>
       </ul>
       {{template "suiteMessagesDiv" .}}
+      {{template "suiteScreenshotsDiv" .}}
     </div>
   </div>
 {{end}}
@@ -100,6 +101,23 @@
     </div>
   {{end}}
 {{end}}
+
+/* Show all screenshots that the user may have introduces using the Gauge.captureScreenshot API in before and after suite hooks*/
+{{define "suiteScreenshotsDiv"}}
+  {{if or (gt (len .PreHookScreenshots) 0) (gt (len .PostHookScreenshots) 0)}}
+    <div class="suite_screenshots">
+      {{if gt (len .PreHookScreenshots) 0}}
+        <div>Before Suite Screenshots</div>
+      {{template "screenshotDiv" .PreHookScreenshots}}                       
+      {{end}}
+      {{if gt (len .PostHookScreenshots) 0}}
+        <div>After Suite Screenshots</div>
+      {{template "screenshotDiv" .PostHookScreenshots}}               
+      {{end}}
+    </div>
+  {{end}}
+{{end}}
+
 /* The sidebar resides on the side , and holds the list of specs that were part of the execution.
    Users may click to view individual spec's output, search for a spec by either tags or spec heading.
    Users are also given an autocomplete suggestion. */
@@ -141,16 +159,18 @@
       [Show details]
     </div>
     <div class="exception-container hidden">
-        <div class="exception">
-          <pre class="stacktrace">{{.StackTrace | escapeHTML | encodeNewLine}}</pre>
-        </div>
-        {{if .Screenshot}}
-          <div class="screenshot-container">
-            <a href="data:image/png;base64,{{.Screenshot}}" rel="lightbox">
-              <img src="data:image/png;base64,{{.Screenshot}}" class="screenshot-thumbnail" />
+      <div class="exception">
+        <pre class="stacktrace">{{.StackTrace | escapeHTML | encodeNewLine}}</pre>
+      </div>
+      {{if .FailureScreenshot}}
+        <div class="screenshot-container">
+          <div class="screenshot">
+            <a href="data:image/png;base64,{{.FailureScreenshot}}" rel="lightbox">
+              <img src="data:image/png;base64,{{.FailureScreenshot}}" class="screenshot-thumbnail" />
             </a>
           </div>
-        {{end}}
+        </div>
+      {{end}}
     </div>
   </div>
 {{end}}
@@ -191,6 +211,23 @@
       <div class="messages">
         {{range .}}<div class="step-message">{{. | encodeNewLine | parseMarkdown | sanitize}} </div>{{end}}
       </div>
+    </div>
+  {{end}}
+{{end}}
+
+/* Show all screenshots that the user may have introduce using the Gauge.captureScreenshot API */
+{{define "screenshotDiv"}}
+  {{ if gt (len .) 0}}
+    <div class="screenshot-container">
+    {{range .}}
+      {{if .}}
+        <div class="screenshot">
+          <a href="data:image/png;base64,{{.}}" rel="lightbox">
+            <img src="data:image/png;base64,{{.}}" class="screenshot-thumbnail" />
+          </a>
+        </div>
+      {{end}}
+    {{end}}
     </div>
   {{end}}
 {{end}}
@@ -354,12 +391,21 @@
 {{define "stepFailureDiv"}}
   <div class="error-container failed">
     <div class="exception-container">
-        <div class="exception">
-          <h4 class="error-message">
-            <pre>{{.ErrorMessage | escapeHTML | encodeNewLine}}</pre>
-          </h4>
-          <pre class="stacktrace">{{.StackTrace | escapeHTML | encodeNewLine}}</pre>
+      <div class="exception">
+        <h4 class="error-message">
+          <pre>{{.ErrorMessage | escapeHTML | encodeNewLine}}</pre>
+        </h4>
+        <pre class="stacktrace">{{.StackTrace | escapeHTML | encodeNewLine}}</pre>
+      </div>
+      {{ if .FailureScreenshot}}
+        <div class="screenshot-container">
+          <div class="screenshot">
+            <a href="data:image/png;base64,{{.FailureScreenshot}}" rel="lightbox">
+              <img src="data:image/png;base64,{{.FailureScreenshot}}" class="screenshot-thumbnail" />
+            </a>
+          </div>
         </div>
+      {{end}}
     </div>
   </div>
 {{end}}
@@ -391,30 +437,24 @@
 /* container for a Step */
 {{define "step"}}
   {{template "stepStartDiv" .}}
-  {{template "stepBodyDiv" .}}
+  {{template "messageDiv" .PreHookMessages}}
+  {{template "screenshotDiv" .PreHookScreenshots}}
   {{if .BeforeStepHookFailure}}
     {{ template "hookFailureDiv" .BeforeStepHookFailure }}
   {{end}}
+  {{template "stepBodyDiv" .}}
   {{with .Result}}
     {{if and (and (eq .Status "fail") (ne .ErrorMessage "")) (ne .StackTrace "") }}
         {{template "stepFailureDiv" .}}
     {{end }}
-    {{ if .Screenshot}}
-      <div class="screenshot-container">
-      {{range .Screenshot}}
-        <div class="screenshot">
-          <a href="data:image/png;base64,{{.}}" rel="lightbox">
-            <img src="data:image/png;base64,{{.}}" class="screenshot-thumbnail" />
-          </a>
-        </div>
-      {{end}}
-      </div>
-    {{end}}
+    {{template "messageDiv" .Messages}}
+    {{template "screenshotDiv" .Screenshots}}
   {{end}}
   {{if .AfterStepHookFailure}}
     {{ template "hookFailureDiv" .AfterStepHookFailure }}
   {{end}}
-	{{template "messageDiv" .Result.Messages}}
+  {{template "messageDiv" .PostHookMessages}}
+  {{template "screenshotDiv" .PostHookScreenshots}}
 	</li></ul></div></div>
   {{with .Result}}
     {{if (and (eq .Status "skip") (ne .SkippedReason "")) }}
@@ -454,6 +494,7 @@
 	{{template "tagsDiv" .}}
 	</div>
   {{template "messageDiv" .PreHookMessages}}
+  {{template "screenshotDiv" .PreHookScreenshots}}
 	{{if .BeforeScenarioHookFailure}}
 		{{template "hookFailureDiv" .BeforeScenarioHookFailure}}
 	{{end}}
@@ -473,6 +514,7 @@
   {{end}}
 
   {{template "messageDiv" .PostHookMessages}}
+  {{template "screenshotDiv" .PostHookScreenshots}}
 	{{if .AfterScenarioHookFailure }}
 		{{template "hookFailureDiv" .AfterScenarioHookFailure}}
 	{{end}}
@@ -491,6 +533,11 @@
 		</div>
 	{{else}}
     {{template "messageDiv" .PreHookMessages}}
+    {{if gt (len .PreHookScreenshots) 0}}
+      <div class="spec-screenshot-container">
+        {{template "screenshotDiv" .PreHookScreenshots}}
+      </div>
+    {{end}}
     {{range $index, $beforeHook := .BeforeSpecHookFailures}}
       {{template "hookFailureDiv" $beforeHook}}
     {{end}}
@@ -505,6 +552,11 @@
     </div>
 
     {{template "messageDiv" .PostHookMessages}}
+    {{if gt (len .PostHookScreenshots) 0}}
+      <div class="spec-screenshot-container">
+      {{template "screenshotDiv" .PostHookScreenshots}}
+      </div>
+    {{end}}
     {{range $index, $afterHook := .AfterSpecHookFailures}}
       {{template "hookFailureDiv" $afterHook}}
     {{end}}

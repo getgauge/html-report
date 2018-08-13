@@ -170,10 +170,9 @@ var wHookFailureWithoutScreenhotDiv = `<div class="error-container failed" data-
     [Show details]
   </div>
   <div class="exception-container hidden">
-      <div class="exception">
-        <pre class="stacktrace">Stack trace</pre>
-			</div>
-		<div class="screenshot-container"></div>
+		<div class="exception">
+			<pre class="stacktrace">Stack trace</pre>
+		</div>
   </div>
 </div>`
 
@@ -541,10 +540,10 @@ func testReportGen(reportGenTests []reportGenTest, t *testing.T) {
 
 func newHookFailure(name, errMsg, screenshot, stacktrace string) *hookFailure {
 	return &hookFailure{
-		HookName:   name,
-		ErrMsg:     errMsg,
-		Screenshot: []string{screenshot},
-		StackTrace: stacktrace,
+		HookName:         name,
+		ErrMsg:           errMsg,
+		FailureScreenshot: screenshot,
+		StackTrace:       stacktrace,
 	}
 }
 

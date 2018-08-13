@@ -168,13 +168,11 @@ func toHookFailure(failure *gm.ProtoHookFailure, hookName string) *hookFailure {
 	}
 
 	result := &hookFailure{
-		ErrMsg:        failure.GetErrorMessage(),
-		HookName:      hookName,
-		StackTrace:    failure.GetStackTrace(),
-		TableRowIndex: failure.TableRowIndex,
-	}
-	for _, s := range failure.GetScreenShot() {
-		result.Screenshot = append(result.Screenshot, base64.StdEncoding.EncodeToString(s))
+		ErrMsg:           failure.GetErrorMessage(),
+		HookName:         hookName,
+		StackTrace:       failure.GetStackTrace(),
+		TableRowIndex:    failure.TableRowIndex,
+		FailureScreenshot: base64.StdEncoding.EncodeToString(failure.GetFailureScreenshot()),
 	}
 	return result
 }
@@ -458,16 +456,16 @@ func toComment(protoComment *gm.ProtoComment) *comment {
 func toStep(protoStep *gm.ProtoStep) *step {
 	res := protoStep.GetStepExecutionResult().GetExecutionResult()
 	result := &result{
-		Status:        getStepStatus(protoStep.GetStepExecutionResult()),
-		StackTrace:    res.GetStackTrace(),
-		ErrorMessage:  res.GetErrorMessage(),
-		ExecutionTime: formatTime(res.GetExecutionTime()),
-		Messages:      res.GetMessage(),
+		Status:           getStepStatus(protoStep.GetStepExecutionResult()),
+		StackTrace:       res.GetStackTrace(),
+		ErrorMessage:     res.GetErrorMessage(),
+		ExecutionTime:    formatTime(res.GetExecutionTime()),
+		Messages:         res.GetMessage(),
+		FailureScreenshot: base64.StdEncoding.EncodeToString(res.GetFailureScreenshot()),
 	}
-	for _, s := range res.GetScreenShot() {
-		result.Screenshot = append(result.Screenshot, base64.StdEncoding.EncodeToString(s))
+	for _, s := range res.GetScreenshots() {
+		result.Screenshots = append(result.Screenshots, base64.StdEncoding.EncodeToString(s))
 	}
-
 	if protoStep.GetStepExecutionResult().GetSkipped() {
 		result.SkippedReason = protoStep.GetStepExecutionResult().GetSkippedReason()
 	}

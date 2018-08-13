@@ -162,7 +162,15 @@
       <div class="exception">
         <pre class="stacktrace">{{.StackTrace | escapeHTML | encodeNewLine}}</pre>
       </div>
-      {{template "screenshotDiv" .Screenshot}}   
+      {{if .FailureScreenshot}}
+        <div class="screenshot-container">
+          <div class="screenshot">
+            <a href="data:image/png;base64,{{.FailureScreenshot}}" rel="lightbox">
+              <img src="data:image/png;base64,{{.FailureScreenshot}}" class="screenshot-thumbnail" />
+            </a>
+          </div>
+        </div>
+      {{end}}
     </div>
   </div>
 {{end}}
@@ -383,12 +391,21 @@
 {{define "stepFailureDiv"}}
   <div class="error-container failed">
     <div class="exception-container">
-        <div class="exception">
-          <h4 class="error-message">
-            <pre>{{.ErrorMessage | escapeHTML | encodeNewLine}}</pre>
-          </h4>
-          <pre class="stacktrace">{{.StackTrace | escapeHTML | encodeNewLine}}</pre>
+      <div class="exception">
+        <h4 class="error-message">
+          <pre>{{.ErrorMessage | escapeHTML | encodeNewLine}}</pre>
+        </h4>
+        <pre class="stacktrace">{{.StackTrace | escapeHTML | encodeNewLine}}</pre>
+      </div>
+      {{ if .FailureScreenshot}}
+        <div class="screenshot-container">
+          <div class="screenshot">
+            <a href="data:image/png;base64,{{.FailureScreenshot}}" rel="lightbox">
+              <img src="data:image/png;base64,{{.FailureScreenshot}}" class="screenshot-thumbnail" />
+            </a>
+          </div>
         </div>
+      {{end}}
     </div>
   </div>
 {{end}}
@@ -430,7 +447,8 @@
     {{if and (and (eq .Status "fail") (ne .ErrorMessage "")) (ne .StackTrace "") }}
         {{template "stepFailureDiv" .}}
     {{end }}
-    {{template "screenshotDiv" .Screenshot}}
+    {{template "messageDiv" .Messages}}
+    {{template "screenshotDiv" .Screenshots}}
   {{end}}
   {{if .AfterStepHookFailure}}
     {{ template "hookFailureDiv" .AfterStepHookFailure }}
