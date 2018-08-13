@@ -181,7 +181,7 @@ func (s *step) Kind() tokenKind {
 type result struct {
 	Status           status    `json:"Status"`
 	StackTrace       string    `json:"StackTrace"`
-	FailedScreenshot string    `json:"Screenshot"`
+	FailureScreenshot string    `json:"Screenshot"`
 	ErrorMessage     string    `json:"ErrorMessage"`
 	ExecutionTime    string    `json:"ExecutionTime"`
 	SkippedReason    string    `json:"SkippedReason"`
@@ -193,7 +193,7 @@ type result struct {
 type hookFailure struct {
 	HookName         string `json:"HookName"`
 	ErrMsg           string `json:"ErrMsg"`
-	FailedScreenshot string `json:"Screenshot"`
+	FailureScreenshot string `json:"Screenshot"`
 	StackTrace       string `json:"StackTrace"`
 	TableRowIndex    int32  `json:"TableRowIndex"`
 }

@@ -162,11 +162,11 @@
       <div class="exception">
         <pre class="stacktrace">{{.StackTrace | escapeHTML | encodeNewLine}}</pre>
       </div>
-      {{if .FailedScreenshot}}
+      {{if .FailureScreenshot}}
         <div class="screenshot-container">
           <div class="screenshot">
-            <a href="data:image/png;base64,{{.FailedScreenshot}}" rel="lightbox">
-              <img src="data:image/png;base64,{{.FailedScreenshot}}" class="screenshot-thumbnail" />
+            <a href="data:image/png;base64,{{.FailureScreenshot}}" rel="lightbox">
+              <img src="data:image/png;base64,{{.FailureScreenshot}}" class="screenshot-thumbnail" />
             </a>
           </div>
         </div>
@@ -397,11 +397,11 @@
         </h4>
         <pre class="stacktrace">{{.StackTrace | escapeHTML | encodeNewLine}}</pre>
       </div>
-      {{ if .FailedScreenshot}}
+      {{ if .FailureScreenshot}}
         <div class="screenshot-container">
           <div class="screenshot">
-            <a href="data:image/png;base64,{{.FailedScreenshot}}" rel="lightbox">
-              <img src="data:image/png;base64,{{.FailedScreenshot}}" class="screenshot-thumbnail" />
+            <a href="data:image/png;base64,{{.FailureScreenshot}}" rel="lightbox">
+              <img src="data:image/png;base64,{{.FailureScreenshot}}" class="screenshot-thumbnail" />
             </a>
           </div>
         </div>

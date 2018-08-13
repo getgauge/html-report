@@ -542,7 +542,7 @@ func newHookFailure(name, errMsg, screenshot, stacktrace string) *hookFailure {
 	return &hookFailure{
 		HookName:         name,
 		ErrMsg:           errMsg,
-		FailedScreenshot: screenshot,
+		FailureScreenshot: screenshot,
 		StackTrace:       stacktrace,
 	}
 }

@@ -286,12 +286,12 @@ var specResWithSpecHookFailure = &gm.ProtoSpecResult{
 		PreHookFailures: []*gm.ProtoHookFailure{{
 			ErrorMessage:     "err",
 			StackTrace:       "Stacktrace",
-			FailedScreenshot: []byte("Screenshot"),
+			FailureScreenshot: []byte("Screenshot"),
 		}},
 		PostHookFailures: []*gm.ProtoHookFailure{{
 			ErrorMessage:     "err",
 			StackTrace:       "Stacktrace",
-			FailedScreenshot: []byte("Screenshot"),
+			FailureScreenshot: []byte("Screenshot"),
 		}},
 	},
 }
@@ -365,12 +365,12 @@ var scnWithHookFailure = &gm.ProtoScenario{
 	PreHookFailure: &gm.ProtoHookFailure{
 		ErrorMessage:     "err",
 		StackTrace:       "Stacktrace",
-		FailedScreenshot: []byte("Screenshot"),
+		FailureScreenshot: []byte("Screenshot"),
 	},
 	PostHookFailure: &gm.ProtoHookFailure{
 		ErrorMessage:     "err",
 		StackTrace:       "Stacktrace",
-		FailedScreenshot: []byte("Screenshot"),
+		FailureScreenshot: []byte("Screenshot"),
 	},
 }
 
@@ -510,7 +510,7 @@ var protoStepWithAfterHookFailure = &gm.ProtoStep{
 		PostHookFailure: &gm.ProtoHookFailure{
 			ErrorMessage:     "err",
 			StackTrace:       "Stacktrace",
-			FailedScreenshot: []byte("Screenshot"),
+			FailureScreenshot: []byte("Screenshot"),
 		},
 	},
 }
@@ -518,7 +518,7 @@ var protoStepWithAfterHookFailure = &gm.ProtoStep{
 var failedHookFailure = &gm.ProtoHookFailure{
 	ErrorMessage:     "java.lang.RuntimeException",
 	StackTrace:       newStackTrace(),
-	FailedScreenshot: []byte(newScreenshot()),
+	FailureScreenshot: []byte(newScreenshot()),
 }
 
 func TestToOverview(t *testing.T) {
@@ -847,14 +847,14 @@ func TestToSpecWithDataTableExecutionStatusFail(t *testing.T) {
 }
 
 func TestToSpecWithBeforeHookFailure(t *testing.T) {
-	want := []*hookFailure{{ErrMsg: "err", HookName: "Before Spec", FailedScreenshot: "U2NyZWVuc2hvdA==", StackTrace: "Stacktrace"}}
+	want := []*hookFailure{{ErrMsg: "err", HookName: "Before Spec", FailureScreenshot: "U2NyZWVuc2hvdA==", StackTrace: "Stacktrace"}}
 	got := toSpec(specResWithSpecHookFailure).BeforeSpecHookFailures
 
 	checkEqual(t, "", want, got)
 }
 
 func TestToSpecWithAfterHookFailure(t *testing.T) {
-	want := []*hookFailure{{ErrMsg: "err", HookName: "After Spec", FailedScreenshot: "U2NyZWVuc2hvdA==", StackTrace: "Stacktrace", TableRowIndex: 0}}
+	want := []*hookFailure{{ErrMsg: "err", HookName: "After Spec", FailureScreenshot: "U2NyZWVuc2hvdA==", StackTrace: "Stacktrace", TableRowIndex: 0}}
 	got := toSpec(specResWithSpecHookFailure).AfterSpecHookFailures
 
 	checkEqual(t, "", want, got)

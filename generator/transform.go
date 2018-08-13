@@ -172,7 +172,7 @@ func toHookFailure(failure *gm.ProtoHookFailure, hookName string) *hookFailure {
 		HookName:         hookName,
 		StackTrace:       failure.GetStackTrace(),
 		TableRowIndex:    failure.TableRowIndex,
-		FailedScreenshot: base64.StdEncoding.EncodeToString(failure.GetFailedScreenshot()),
+		FailureScreenshot: base64.StdEncoding.EncodeToString(failure.GetFailureScreenshot()),
 	}
 	return result
 }
@@ -461,7 +461,7 @@ func toStep(protoStep *gm.ProtoStep) *step {
 		ErrorMessage:     res.GetErrorMessage(),
 		ExecutionTime:    formatTime(res.GetExecutionTime()),
 		Messages:         res.GetMessage(),
-		FailedScreenshot: base64.StdEncoding.EncodeToString(res.GetFailedScreenshot()),
+		FailureScreenshot: base64.StdEncoding.EncodeToString(res.GetFailureScreenshot()),
 	}
 	for _, s := range res.GetScreenshots() {
 		result.Screenshots = append(result.Screenshots, base64.StdEncoding.EncodeToString(s))
