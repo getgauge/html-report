@@ -75,10 +75,10 @@ func ToSuiteResult(pRoot string, psr *gm.ProtoSuiteResult) *SuiteResult {
 
 func toNestedSuiteResult(basePath string, result *SuiteResult) *SuiteResult {
 	sr := &SuiteResult{
-		ProjectName: result.ProjectName,
-		Timestamp:   result.Timestamp,
-		Environment: result.Environment,
-		Tags:        result.Tags,
+		ProjectName:            result.ProjectName,
+		Timestamp:              result.Timestamp,
+		Environment:            result.Environment,
+		Tags:                   result.Tags,
 		BeforeSuiteHookFailure: result.BeforeSuiteHookFailure,
 		AfterSuiteHookFailure:  result.AfterSuiteHookFailure,
 		ExecutionStatus:        pass,
@@ -168,10 +168,10 @@ func toHookFailure(failure *gm.ProtoHookFailure, hookName string) *hookFailure {
 	}
 
 	result := &hookFailure{
-		ErrMsg:           failure.GetErrorMessage(),
-		HookName:         hookName,
-		StackTrace:       failure.GetStackTrace(),
-		TableRowIndex:    failure.TableRowIndex,
+		ErrMsg:            failure.GetErrorMessage(),
+		HookName:          hookName,
+		StackTrace:        failure.GetStackTrace(),
+		TableRowIndex:     failure.TableRowIndex,
 		FailureScreenshot: base64.StdEncoding.EncodeToString(failure.GetFailureScreenshot()),
 	}
 	return result
@@ -456,11 +456,11 @@ func toComment(protoComment *gm.ProtoComment) *comment {
 func toStep(protoStep *gm.ProtoStep) *step {
 	res := protoStep.GetStepExecutionResult().GetExecutionResult()
 	result := &result{
-		Status:           getStepStatus(protoStep.GetStepExecutionResult()),
-		StackTrace:       res.GetStackTrace(),
-		ErrorMessage:     res.GetErrorMessage(),
-		ExecutionTime:    formatTime(res.GetExecutionTime()),
-		Messages:         res.GetMessage(),
+		Status:            getStepStatus(protoStep.GetStepExecutionResult()),
+		StackTrace:        res.GetStackTrace(),
+		ErrorMessage:      res.GetErrorMessage(),
+		ExecutionTime:     formatTime(res.GetExecutionTime()),
+		Messages:          res.GetMessage(),
 		FailureScreenshot: base64.StdEncoding.EncodeToString(res.GetFailureScreenshot()),
 	}
 	for _, s := range res.GetScreenshots() {

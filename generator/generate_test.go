@@ -546,8 +546,8 @@ func testReportGen(reportGenTests []reportGenTest, t *testing.T) {
 
 func newHookFailure(name, errMsg, screenshot, stacktrace string) *hookFailure {
 	return &hookFailure{
-		HookName:         name,
-		ErrMsg:           errMsg,
+		HookName:          name,
+		ErrMsg:            errMsg,
 		FailureScreenshot: screenshot,
 		StackTrace:        stacktrace,
 	}
