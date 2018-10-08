@@ -132,19 +132,21 @@ header.top .project {
     display: none;
 }
 
-.report_chart .total-specs {
+.report_test-result .total-specs {
     width: 100%;
+    height: 60px;
     border-right: none;
     border-bottom: 2px solid #f0f0f0;
     padding: 0 0 10px 0;
     cursor: pointer;
 }
 
-.report_chart .total-specs .value {
-    font-size: 2.5rem;
+.report_test-result .total-specs .value,  .report_test-result .value {
+    font-size: 1.5rem;
+    text-align: center;
 }
 
-.report_chart .total-specs span,
+.report_test-result .total-specs span,
 .report_test-results ul,
 .report_test-results .value {
     text-align: center;
@@ -167,20 +169,23 @@ header.top .project {
     padding: 0;
 }
 
-.report-overview .report_test-results ul li,
-.report_chart .total-specs {
-    display: inline-block;
+.report-overview .report_test-results ul li{
     padding: 0.75rem;
-    cursor: pointer;
     margin: 1rem 0.25rem;
+}
+
+.report-overview .report_test-results ul li,
+.report_test-result .total-specs {
+    display: inline-block;
+    cursor: pointer;
     /*background-color: #f9f9f9;*/
     transition: background-color 0.75s;
 }
 
 .report-overview .report_test-results ul li:focus,
 .report-overview    .report_test-results ul li:hover,
-.report_chart .total-specs:focus,
-.report_chart .total-specs:hover {
+.report_test-result .total-specs:focus,
+.report_test-result .total-specs:hover {
     background-color: #f0f0f0;
 }
 
@@ -990,24 +995,22 @@ footer p {
         display: block;
     }
 
-    .report_chart .total-specs {
-        width: auto;
-        margin-top: 1rem;
-        border-right: 5px solid #cccccc;
+    .report_test-result .total-specs {
+        width: 180px;
+        margin: .5rem 1rem;
         border-bottom: none;
-        padding-right: 2rem;
     }
 
     .report_test-results .active, .report_chart .active {
         background-color: #ddd;
     }
 
-    .report_chart .total-specs span {
-        text-align: right;
+    .report_test-result .total-specs span {
+        text-align: center;
     }
 
     .report_test-results {
-        width: 30%;
+        width: 50%;
     }
 
     .report_test-results ul {
@@ -1018,11 +1021,7 @@ footer p {
     .report_test-results ul li {
         padding: 10px;
     }
-
-    .report_test-results .value {
-        font-size: 2.5rem;
-    }
-
+ 
     .report_chart, .report_test-results, .report_details {
         padding: 20px 10px;
     }
@@ -1345,4 +1344,19 @@ svg#pie-chart {
 
 .is-modal-open {
     overflow: hidden;
+}
+
+.report-overview .report_test-results{
+    display: flex;
+    flex-direction: column;
+}
+.report_test-result {
+    display: flex;
+    flex-direction: row;
+}
+
+.report_test-result .spec-filter, .report_test-result .scenario-filter{
+    cursor: pointer;
+    height: 83%;
+    margin: 7px 10px;
 }
