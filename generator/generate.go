@@ -179,23 +179,23 @@ func (s *step) Kind() tokenKind {
 }
 
 type result struct {
-	Status           status    `json:"Status"`
-	StackTrace       string    `json:"StackTrace"`
+	Status            status    `json:"Status"`
+	StackTrace        string    `json:"StackTrace"`
 	FailureScreenshot string    `json:"Screenshot"`
-	ErrorMessage     string    `json:"ErrorMessage"`
-	ExecutionTime    string    `json:"ExecutionTime"`
-	SkippedReason    string    `json:"SkippedReason"`
-	Messages         []string  `json:"Messages"`
-	ErrorType        errorType `json:"ErrorType"`
-	Screenshots      []string  `json:"Screenshots"`
+	ErrorMessage      string    `json:"ErrorMessage"`
+	ExecutionTime     string    `json:"ExecutionTime"`
+	SkippedReason     string    `json:"SkippedReason"`
+	Messages          []string  `json:"Messages"`
+	ErrorType         errorType `json:"ErrorType"`
+	Screenshots       []string  `json:"Screenshots"`
 }
 
 type hookFailure struct {
-	HookName         string `json:"HookName"`
-	ErrMsg           string `json:"ErrMsg"`
+	HookName          string `json:"HookName"`
+	ErrMsg            string `json:"ErrMsg"`
 	FailureScreenshot string `json:"Screenshot"`
-	StackTrace       string `json:"StackTrace"`
-	TableRowIndex    int32  `json:"TableRowIndex"`
+	StackTrace        string `json:"StackTrace"`
+	TableRowIndex     int32  `json:"TableRowIndex"`
 }
 
 type concept struct {

@@ -121,8 +121,8 @@ func newConceptItem(heading string, steps []*gm.ProtoItem, cptRes *gm.ProtoStepE
 	return &gm.ProtoItem{
 		ItemType: gm.ProtoItem_Concept,
 		Concept: &gm.ProtoConcept{
-			ConceptStep: newStepItem(false, false, []*gm.Fragment{newTextFragment(heading)}).GetStep(),
-			Steps:       steps,
+			ConceptStep:            newStepItem(false, false, []*gm.Fragment{newTextFragment(heading)}).GetStep(),
+			Steps:                  steps,
 			ConceptExecutionResult: cptRes,
 		},
 	}
@@ -284,13 +284,13 @@ var specResWithSpecHookFailure = &gm.ProtoSpecResult{
 		SpecHeading: "specRes3",
 		Tags:        []string{"tag1"},
 		PreHookFailures: []*gm.ProtoHookFailure{{
-			ErrorMessage:     "err",
-			StackTrace:       "Stacktrace",
+			ErrorMessage:      "err",
+			StackTrace:        "Stacktrace",
 			FailureScreenshot: []byte("Screenshot"),
 		}},
 		PostHookFailures: []*gm.ProtoHookFailure{{
-			ErrorMessage:     "err",
-			StackTrace:       "Stacktrace",
+			ErrorMessage:      "err",
+			StackTrace:        "Stacktrace",
 			FailureScreenshot: []byte("Screenshot"),
 		}},
 	},
@@ -363,13 +363,13 @@ var scnWithHookFailure = &gm.ProtoScenario{
 		newStepItem(true, false, []*gm.Fragment{newTextFragment("Step1")}),
 	},
 	PreHookFailure: &gm.ProtoHookFailure{
-		ErrorMessage:     "err",
-		StackTrace:       "Stacktrace",
+		ErrorMessage:      "err",
+		StackTrace:        "Stacktrace",
 		FailureScreenshot: []byte("Screenshot"),
 	},
 	PostHookFailure: &gm.ProtoHookFailure{
-		ErrorMessage:     "err",
-		StackTrace:       "Stacktrace",
+		ErrorMessage:      "err",
+		StackTrace:        "Stacktrace",
 		FailureScreenshot: []byte("Screenshot"),
 	},
 }
@@ -508,16 +508,16 @@ var protoStepWithAfterHookFailure = &gm.ProtoStep{
 			ExecutionTime: 211316,
 		},
 		PostHookFailure: &gm.ProtoHookFailure{
-			ErrorMessage:     "err",
-			StackTrace:       "Stacktrace",
+			ErrorMessage:      "err",
+			StackTrace:        "Stacktrace",
 			FailureScreenshot: []byte("Screenshot"),
 		},
 	},
 }
 
 var failedHookFailure = &gm.ProtoHookFailure{
-	ErrorMessage:     "java.lang.RuntimeException",
-	StackTrace:       newStackTrace(),
+	ErrorMessage:      "java.lang.RuntimeException",
+	StackTrace:        newStackTrace(),
 	FailureScreenshot: []byte(newScreenshot()),
 }
 
