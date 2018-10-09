@@ -84,7 +84,7 @@ func createReport(suiteResult *gauge_messages.SuiteExecutionResult) {
 	reportsDir := getReportsDirectory(getNameGen())
 	res := generator.ToSuiteResult(projectRoot, suiteResult.GetSuiteResult())
 	logger.Debug("Transformed SuiteResult to report structure")
-	go createReportExecutableFile(reportsDir, pluginsDir)
+	go createReportExecutableFile(getExecutableAndTargetPath(reportsDir, pluginsDir))
 	t := theme.GetThemePath(pluginsDir)
 	generator.GenerateReport(res, reportsDir, t)
 	logger.Debug("Done generating HTML report using theme from %s", t)
@@ -116,10 +116,17 @@ func getReportsDirectory(nameGen nameGenerator) string {
 	return currentReportDir
 }
 
-func createReportExecutableFile(reportsDir, pluginsDir string) {
+func getExecutableAndTargetPath(reportsDir string, pluginsDir string) (exPath string, exTarget string) {
 	_, bName := env.GetCurrentExecutableDir()
-	exPath := filepath.Join(pluginsDir, "bin", bName)
-	exTarget := filepath.Join(reportsDir, bName)
+	exPath = filepath.Join(pluginsDir, "bin", bName)
+	exTarget = filepath.Join(reportsDir, bName)
+	return
+}
+
+func createReportExecutableFile(exPath, exTarget string) {
+	if isSaveExecutionResultDisabled() {
+		return
+	}
 	if fileExists(exTarget) {
 		os.Remove(exTarget)
 	}
@@ -131,9 +138,6 @@ func createReportExecutableFile(reportsDir, pluginsDir string) {
 }
 
 func createBatFileToExecuteHTMLReport(exPath, exTarget string) {
-	if isSaveExecutionResultDisabled() {
-		return
-	}
 	content := "@echo off \n" + exPath + " %*"
 	o := []byte(content)
 	exTarget = strings.TrimSuffix(exTarget, filepath.Ext(exTarget))
@@ -147,9 +151,6 @@ func createBatFileToExecuteHTMLReport(exPath, exTarget string) {
 }
 
 func createSymlinkToHTMLReport(exPath, exTarget string) {
-	if isSaveExecutionResultDisabled() {
-		return
-	}
 	if _, err := os.Lstat(exTarget); err == nil {
 		os.Remove(exTarget)
 	}
