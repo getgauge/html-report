@@ -91,3 +91,53 @@ func TestCreatingReportShouldOverwriteReportsBasedOnEnv(t *testing.T) {
 		t.Errorf("Expected nameGen to be type timeStampedNameGenerator, got %s", reflect.TypeOf(nameGen))
 	}
 }
+
+func TestCreateSymlinkToHTMLReportShouldCreateSymlink(t *testing.T) {
+	exPath := filepath.Join(os.TempDir(), "html-report")
+	exTarget := filepath.Join(os.TempDir(), "html-report-target")
+	os.Create(exPath)
+	defer os.Remove(exPath)
+	defer os.Remove(exTarget)
+	createSymlinkToHTMLReport(exPath, exTarget)
+	if !fileExists(exTarget) {
+		t.Errorf("Could not create a symlink of src: %s to  dst: %s", exPath, exTarget)
+	}
+}
+func TestCreateSymlinkToHTMLReportShouldNotCreateSymlink(t *testing.T) {
+	os.Setenv(env.SaveExecutionResult, "false")
+	exPath := filepath.Join(os.TempDir(), "html-report")
+	exTarget := filepath.Join(os.TempDir(), "html-report-target")
+	os.Create(exPath)
+	defer os.Remove(exPath)
+	defer os.Remove(exTarget)
+	defer os.Unsetenv(env.SaveExecutionResult)
+	createSymlinkToHTMLReport(exPath, exTarget)
+	if fileExists(exTarget) {
+		t.Errorf("Expected not to create a symlink of src: %s to  dst: %s", exPath, exTarget)
+	}
+}
+
+func TestCreateBatFileToExecuteHTMLReportShouldCreateBatFile(t *testing.T) {
+	exPath := filepath.Join(os.TempDir(), "html-report")
+	exTarget := filepath.Join(os.TempDir(), "html-report-target.bat")
+	os.Create(exPath)
+	defer os.Remove(exPath)
+	defer os.Remove(exTarget)
+	createBatFileToExecuteHTMLReport(exPath, exTarget)
+	if !fileExists(exTarget) {
+		t.Errorf("Could not create file: %s", exTarget)
+	}
+}
+func TestCreateBatFileToExecuteHTMLReportShouldNotCreateBatFile(t *testing.T) {
+	os.Setenv(env.SaveExecutionResult, "false")
+	exPath := filepath.Join(os.TempDir(), "html-report")
+	exTarget := filepath.Join(os.TempDir(), "html-report-target.bat")
+	os.Create(exPath)
+	defer os.Remove(exPath)
+	defer os.Remove(exTarget)
+	defer os.Unsetenv(env.SaveExecutionResult)
+	createBatFileToExecuteHTMLReport(exPath, exTarget)
+	if fileExists(exTarget) {
+		t.Errorf("Expected not to create  file : %s", exTarget)
+	}
+}

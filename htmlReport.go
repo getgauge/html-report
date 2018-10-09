@@ -124,13 +124,16 @@ func createReportExecutableFile(reportsDir, pluginsDir string) {
 		os.Remove(exTarget)
 	}
 	if runtime.GOOS == "windows" {
-		createBatFileToExecuteHtmlReport(exPath, exTarget)
+		createBatFileToExecuteHTMLReport(exPath, exTarget)
 	} else {
-		createSymlinkToHtmlReport(exPath, exTarget)
+		createSymlinkToHTMLReport(exPath, exTarget)
 	}
 }
 
-func createBatFileToExecuteHtmlReport(exPath, exTarget string) {
+func createBatFileToExecuteHTMLReport(exPath, exTarget string) {
+	if isSaveExecutionResultDisabled() {
+		return
+	}
 	content := "@echo off \n" + exPath + " %*"
 	o := []byte(content)
 	exTarget = strings.TrimSuffix(exTarget, filepath.Ext(exTarget))
@@ -143,7 +146,10 @@ func createBatFileToExecuteHtmlReport(exPath, exTarget string) {
 	logger.Debug("Generated %s", outF)
 }
 
-func createSymlinkToHtmlReport(exPath, exTarget string) {
+func createSymlinkToHTMLReport(exPath, exTarget string) {
+	if isSaveExecutionResultDisabled() {
+		return
+	}
 	if _, err := os.Lstat(exTarget); err == nil {
 		os.Remove(exTarget)
 	}
@@ -160,4 +166,8 @@ func fileExists(path string) bool {
 		return true
 	}
 	return !os.IsNotExist(err)
+}
+
+func isSaveExecutionResultDisabled() bool {
+	return os.Getenv(env.SaveExecutionResult) == "false"
 }
