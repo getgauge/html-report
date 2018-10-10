@@ -84,7 +84,7 @@ func createReport(suiteResult *gauge_messages.SuiteExecutionResult) {
 	reportsDir := getReportsDirectory(getNameGen())
 	res := generator.ToSuiteResult(projectRoot, suiteResult.GetSuiteResult())
 	logger.Debug("Transformed SuiteResult to report structure")
-	go createReportExecutableFile(reportsDir, pluginsDir)
+	go createReportExecutableFile(getExecutableAndTargetPath(reportsDir, pluginsDir))
 	t := theme.GetThemePath(pluginsDir)
 	generator.GenerateReport(res, reportsDir, t)
 	logger.Debug("Done generating HTML report using theme from %s", t)
@@ -116,21 +116,28 @@ func getReportsDirectory(nameGen nameGenerator) string {
 	return currentReportDir
 }
 
-func createReportExecutableFile(reportsDir, pluginsDir string) {
+func getExecutableAndTargetPath(reportsDir string, pluginsDir string) (exPath string, exTarget string) {
 	_, bName := env.GetCurrentExecutableDir()
-	exPath := filepath.Join(pluginsDir, "bin", bName)
-	exTarget := filepath.Join(reportsDir, bName)
+	exPath = filepath.Join(pluginsDir, "bin", bName)
+	exTarget = filepath.Join(reportsDir, bName)
+	return
+}
+
+func createReportExecutableFile(exPath, exTarget string) {
+	if isSaveExecutionResultDisabled() {
+		return
+	}
 	if fileExists(exTarget) {
 		os.Remove(exTarget)
 	}
 	if runtime.GOOS == "windows" {
-		createBatFileToExecuteHtmlReport(exPath, exTarget)
+		createBatFileToExecuteHTMLReport(exPath, exTarget)
 	} else {
-		createSymlinkToHtmlReport(exPath, exTarget)
+		createSymlinkToHTMLReport(exPath, exTarget)
 	}
 }
 
-func createBatFileToExecuteHtmlReport(exPath, exTarget string) {
+func createBatFileToExecuteHTMLReport(exPath, exTarget string) {
 	content := "@echo off \n" + exPath + " %*"
 	o := []byte(content)
 	exTarget = strings.TrimSuffix(exTarget, filepath.Ext(exTarget))
@@ -143,7 +150,7 @@ func createBatFileToExecuteHtmlReport(exPath, exTarget string) {
 	logger.Debug("Generated %s", outF)
 }
 
-func createSymlinkToHtmlReport(exPath, exTarget string) {
+func createSymlinkToHTMLReport(exPath, exTarget string) {
 	if _, err := os.Lstat(exTarget); err == nil {
 		os.Remove(exTarget)
 	}
@@ -160,4 +167,8 @@ func fileExists(path string) bool {
 		return true
 	}
 	return !os.IsNotExist(err)
+}
+
+func isSaveExecutionResultDisabled() bool {
+	return os.Getenv(env.SaveExecutionResult) == "false"
 }

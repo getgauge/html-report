@@ -91,3 +91,28 @@ func TestCreatingReportShouldOverwriteReportsBasedOnEnv(t *testing.T) {
 		t.Errorf("Expected nameGen to be type timeStampedNameGenerator, got %s", reflect.TypeOf(nameGen))
 	}
 }
+
+func TestCreateReportExecutableFileShouldCreateExecFile(t *testing.T) {
+	exPath := filepath.Join(os.TempDir(), "html-report")
+	exTarget := filepath.Join(os.TempDir(), "html-report-target")
+	os.Create(exPath)
+	defer os.Remove(exPath)
+	defer os.Remove(exTarget)
+	createReportExecutableFile(exPath, exTarget)
+	if !fileExists(exTarget) {
+		t.Errorf("Could not create a symlink of src: %s to  dst: %s", exPath, exTarget)
+	}
+}
+func TestCreateReportExecutableFileShouldNotCreateExecFile(t *testing.T) {
+	os.Setenv(env.SaveExecutionResult, "false")
+	exPath := filepath.Join(os.TempDir(), "html-report")
+	exTarget := filepath.Join(os.TempDir(), "html-report-target")
+	os.Create(exPath)
+	defer os.Remove(exPath)
+	defer os.Remove(exTarget)
+	defer os.Unsetenv(env.SaveExecutionResult)
+	createReportExecutableFile(exPath, exTarget)
+	if fileExists(exTarget) {
+		t.Errorf("Expected not to create a symlink of src: %s to  dst: %s", exPath, exTarget)
+	}
+}
