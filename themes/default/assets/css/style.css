@@ -1454,6 +1454,32 @@ svg#pie-chart {
     top: 190px;
     left: 28.3%;
 }
+.specs-sorting{
+    display: flex;
+    justify-content: space-between;
+    padding-left: 20px;
+    color: lightgray;
+}
+.specs-sorting .sort.sort-specs-name{
+    flex:2.3;
+}
+
+.specs-sorting .sort.sort-execution-time{
+    flex:1;
+}
+.specs-sorting .sort::before{
+    font-size: 14px;
+    padding-right: 5px;
+    font-family: FontAwesome;
+}
+.specs-sorting .sort{
+    font-size: 11px;
+    cursor: pointer;
+    padding: 5px;
+}
+.specs-sorting .sort:hover{
+    color:white;
+}
 
 @media screen and (max-width: 1024px){
     .report_test-results {
@@ -1472,5 +1498,8 @@ svg#pie-chart {
     .report_test-results::after{
         top: 184px;
         left: 2.15%;
+    }
+    .specs-sorting .sort.sort-specs-name{
+        flex:2.7;
     }
 }

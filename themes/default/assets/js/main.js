@@ -15,6 +15,10 @@
 // You should have received a copy of the GNU General Public License
 // along with getgauge/html-report.  If not, see <http://www.gnu.org/licenses/>.
 
+const SORTING_ORDER = {
+    DESC:'DESC',
+    ASC:'ASC',
+};
 
 function polarToCartesian(centerX, centerY, radius, angleInDegrees) {
     var angleInRadians = ((angleInDegrees - 90) * Math.PI) / 180.0;
@@ -96,6 +100,42 @@ function openModal(e) {
 function closeModal() {
     $('.modal').css('display', 'none');
     $('body').removeClass('is-modal-open');
+}
+
+function isDescendingOrder(specsSortOrder) {
+    return specsSortOrder === SORTING_ORDER.DESC;
+}
+
+function createDate(hours, minutes, seconds) {
+    var date = new Date();
+    date.setHours(hours);
+    date.setMinutes(minutes);
+    date.setSeconds(seconds);
+    return date;
+}
+
+function sortSpecsByName(sortingOrder) {
+    return $('#listOfSpecifications ul#scenarios a').sort(function (leftSpec, rightSpec) {
+        if (isDescendingOrder(sortingOrder))
+            return $(leftSpec).find('.spec-name span:nth-child(1)').text() > $(rightSpec).find('.spec-name span:nth-child(1)').text() ? -1 : 1;
+        else
+            return $(leftSpec).find('.spec-name span:nth-child(1)').text() < $(rightSpec).find('.spec-name span:nth-child(1)').text() ? -1 : 1;
+    });
+}
+
+function sortSpecsByExecutionTime(sortingOrder) {
+    return $('#listOfSpecifications ul#scenarios a').sort(function (leftSpec, rightSpec) {
+        var leftSpecTime = $(leftSpec).find('.spec-name span:nth-child(2)').text().split(':');
+        var rightSpecTime = $(rightSpec).find('.spec-name span:nth-child(2)').text().split(':');
+
+        var leftDate = createDate.apply(null, leftSpecTime.map( time => parseInt(time)));
+        var rightDate = createDate.apply(null, rightSpecTime.map( time => parseInt(time)));
+
+        if (isDescendingOrder(sortingOrder))
+            return leftDate > rightDate ? -1 : 1;
+        else
+            return leftDate < rightDate ? -1 : 1;
+    });
 }
 
 var initializers = {
@@ -255,6 +295,15 @@ var initializers = {
                 $(paths[i]).attr('stroke-width', 0);
             startAngle = coveredAngle;
         }
+    },
+    "initSpecsSorting": function () {
+        $('.specs-sorting .sort').click(function () {
+            var sortingOrder = sessionStorage.SpecsSortOrder;
+            sortingOrder = sessionStorage.SpecsSortOrder = sortingOrder === SORTING_ORDER.ASC ? SORTING_ORDER.DESC : SORTING_ORDER.ASC;
+            var sortingFunc;
+            sortingFunc = $(this).data('sort-by') === 'specs-name' ? sortSpecsByName : sortSpecsByExecutionTime;
+            $('#listOfSpecifications ul#scenarios').html(sortingFunc(sortingOrder));
+        });
     }
 };
 
