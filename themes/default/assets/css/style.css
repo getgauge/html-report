@@ -1467,18 +1467,38 @@ svg#pie-chart {
 .specs-sorting .sort.sort-execution-time{
     flex:1;
 }
-.specs-sorting .sort::before{
-    font-size: 14px;
-    padding-right: 5px;
-    font-family: FontAwesome;
-}
+
 .specs-sorting .sort{
     font-size: 11px;
     cursor: pointer;
-    padding: 5px;
+    display: flex;
+    flex-direction: row;
 }
 .specs-sorting .sort:hover{
     color:white;
+}
+
+.specs-sorting .sort .sort-icons{
+    display:flex;
+    flex-direction: column;
+    font-size: 16px;
+    padding-right: 5px;
+}
+
+.specs-sorting .sort .sort-icons .fa-caret-up{
+    position: relative;
+    top: -4px;
+    left: -1px;
+}
+
+.specs-sorting .sort .sort-icons .fa-caret-down{
+    position: relative;
+    top: -11px;
+    left: -1px;
+}
+
+.specs-sorting .sort .sort-icons .fa.active{
+    color:#11AEF4;
 }
 
 @media screen and (max-width: 1024px){

@@ -138,6 +138,14 @@ function sortSpecsByExecutionTime(sortingOrder) {
     });
 }
 
+function toggleSortIcons(element, sortingOrder) {
+    $(element).find('.sort-icons .fa').removeClass('active');
+    if (isDescendingOrder(sortingOrder))
+        $(element).find('.sort-icons .fa-caret-up').addClass('active');
+    else
+        $(element).find('.sort-icons .fa-caret-down').addClass('active');
+}
+
 var initializers = {
     "initializeFilters": function() {
         if (sessionStorage.FilterStatus) {
@@ -298,10 +306,12 @@ var initializers = {
     },
     "initSpecsSorting": function () {
         $('.specs-sorting .sort').click(function () {
-            var sortingOrder = sessionStorage.SpecsSortOrder;
-            sortingOrder = sessionStorage.SpecsSortOrder = sortingOrder === SORTING_ORDER.ASC ? SORTING_ORDER.DESC : SORTING_ORDER.ASC;
+            const sortBy = $(this).data('sort-by');
+            var sortingOrder = sessionStorage[sortBy];
+            sortingOrder = sessionStorage[sortBy] = sortingOrder === SORTING_ORDER.ASC ? SORTING_ORDER.DESC : SORTING_ORDER.ASC;
             var sortingFunc;
-            sortingFunc = $(this).data('sort-by') === 'specs-name' ? sortSpecsByName : sortSpecsByExecutionTime;
+            sortingFunc = sortBy === 'specs-name' ? sortSpecsByName : sortSpecsByExecutionTime;
+            toggleSortIcons(this, sortingOrder);
             $('#listOfSpecifications ul#scenarios').html(sortingFunc(sortingOrder));
         });
     }
