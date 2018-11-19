@@ -121,8 +121,8 @@ func newConceptItem(heading string, steps []*gm.ProtoItem, cptRes *gm.ProtoStepE
 	return &gm.ProtoItem{
 		ItemType: gm.ProtoItem_Concept,
 		Concept: &gm.ProtoConcept{
-			ConceptStep:            newStepItem(false, false, []*gm.Fragment{newTextFragment(heading)}).GetStep(),
-			Steps:                  steps,
+			ConceptStep: newStepItem(false, false, []*gm.Fragment{newTextFragment(heading)}).GetStep(),
+			Steps:       steps,
 			ConceptExecutionResult: cptRes,
 		},
 	}
@@ -1787,4 +1787,17 @@ func TestToNestedSuiteResultMapsSpecResults(t *testing.T) {
 	}
 
 	checkEqual(t, "", want, got.SpecResults)
+}
+
+func BenchmarkToSuite(b *testing.B) {
+	ps := &gm.ProtoSuiteResult{
+		Chunked:     true,
+		SpecResults: []*gm.ProtoSpecResult{},
+	}
+
+	for i := 0; i < b.N; i++ {
+		ps.SpecResults = append(ps.SpecResults, passSpecResWithScreenshots)
+	}
+
+	ToSuiteResult(".", ps)
 }

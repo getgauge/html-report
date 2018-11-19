@@ -47,5 +47,5 @@ func Report(inputFile, reportsDir, themePath, pRoot string) {
 		workingDir, _ := env.GetCurrentExecutableDir()
 		themePath = theme.GetDefaultThemePath(filepath.Dir(workingDir))
 	}
-	generator.GenerateReport(res, reportsDir, themePath)
+	generator.GenerateReport(res, reportsDir, themePath, true)
 }
