@@ -66,8 +66,15 @@ func ToSuiteResult(pRoot string, psr *gm.ProtoSuiteResult) *SuiteResult {
 	}
 	suiteResult.SpecResults = make([]*spec, 0)
 	jobs := make(chan *gm.ProtoSpecResult, 10)
-	results := make(chan *spec)
 	var wg = &sync.WaitGroup{}
+	for _, protoSpecRes := range psr.GetSpecResults() {
+		jobs <- protoSpecRes
+		wg.Add(1)
+		suiteResult.PassedScenarioCount = suiteResult.PassedScenarioCount + int(protoSpecRes.GetScenarioCount()-protoSpecRes.GetScenarioFailedCount()-protoSpecRes.GetScenarioSkippedCount())
+		suiteResult.FailedScenarioCount = suiteResult.FailedScenarioCount + int(protoSpecRes.GetScenarioFailedCount())
+		suiteResult.SkippedScenarioCount = suiteResult.SkippedScenarioCount + int(protoSpecRes.GetScenarioSkippedCount())
+	}
+	results := make(chan *spec)
 	go func(jobs <-chan *gm.ProtoSpecResult, results chan<- *spec) {
 		for job := range jobs {
 			results <- toSpec(job)
@@ -82,13 +89,6 @@ func ToSuiteResult(pRoot string, psr *gm.ProtoSuiteResult) *SuiteResult {
 			}
 		}
 	}(results)
-	for _, protoSpecRes := range psr.GetSpecResults() {
-		jobs <- protoSpecRes
-		wg.Add(1)
-		suiteResult.PassedScenarioCount = suiteResult.PassedScenarioCount + int(protoSpecRes.GetScenarioCount()-protoSpecRes.GetScenarioFailedCount()-protoSpecRes.GetScenarioSkippedCount())
-		suiteResult.FailedScenarioCount = suiteResult.FailedScenarioCount + int(protoSpecRes.GetScenarioFailedCount())
-		suiteResult.SkippedScenarioCount = suiteResult.SkippedScenarioCount + int(protoSpecRes.GetScenarioSkippedCount())
-	}
 	wg.Wait()
 	return &suiteResult
 }
