@@ -23,6 +23,7 @@ import (
 	"path/filepath"
 	"sort"
 	"strings"
+	"sync"
 	"time"
 
 	"path"
@@ -64,21 +65,40 @@ func ToSuiteResult(pRoot string, psr *gm.ProtoSuiteResult) *SuiteResult {
 		suiteResult.ExecutionStatus = fail
 	}
 	suiteResult.SpecResults = make([]*spec, 0)
+	jobs := make(chan *gm.ProtoSpecResult, 10)
+	var wg = &sync.WaitGroup{}
 	for _, protoSpecRes := range psr.GetSpecResults() {
-		suiteResult.SpecResults = append(suiteResult.SpecResults, toSpec(protoSpecRes))
+		jobs <- protoSpecRes
+		wg.Add(1)
 		suiteResult.PassedScenarioCount = suiteResult.PassedScenarioCount + int(protoSpecRes.GetScenarioCount()-protoSpecRes.GetScenarioFailedCount()-protoSpecRes.GetScenarioSkippedCount())
 		suiteResult.FailedScenarioCount = suiteResult.FailedScenarioCount + int(protoSpecRes.GetScenarioFailedCount())
 		suiteResult.SkippedScenarioCount = suiteResult.SkippedScenarioCount + int(protoSpecRes.GetScenarioSkippedCount())
 	}
+	results := make(chan *spec)
+	go func(jobs <-chan *gm.ProtoSpecResult, results chan<- *spec) {
+		for job := range jobs {
+			results <- toSpec(job)
+		}
+	}(jobs, results)
+	go func(results <-chan *spec) {
+		for {
+			select {
+			case r := <-results:
+				wg.Done()
+				suiteResult.SpecResults = append(suiteResult.SpecResults, r)
+			}
+		}
+	}(results)
+	wg.Wait()
 	return &suiteResult
 }
 
 func toNestedSuiteResult(basePath string, result *SuiteResult) *SuiteResult {
 	sr := &SuiteResult{
-		ProjectName:            result.ProjectName,
-		Timestamp:              result.Timestamp,
-		Environment:            result.Environment,
-		Tags:                   result.Tags,
+		ProjectName: result.ProjectName,
+		Timestamp:   result.Timestamp,
+		Environment: result.Environment,
+		Tags:        result.Tags,
 		BeforeSuiteHookFailure: result.BeforeSuiteHookFailure,
 		AfterSuiteHookFailure:  result.AfterSuiteHookFailure,
 		ExecutionStatus:        pass,
@@ -182,7 +202,6 @@ func toHTMLFileName(specName, basePath string) string {
 	if err != nil {
 		specPath = filepath.Join(basePath, filepath.Base(specName))
 	}
-	// specPath = strings.Replace(specPath, string(filepath.Separator), "_", -1)
 	ext := filepath.Ext(specPath)
 	return filepath.ToSlash(filepath.Clean(strings.TrimSuffix(specPath, ext) + dothtml))
 }

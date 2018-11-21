@@ -14,11 +14,11 @@
 
 // You should have received a copy of the GNU General Public License
 // along with getgauge/html-report.  If not, see <http://www.gnu.org/licenses/>.
+
 package generator
 
 import (
 	"bytes"
-	"encoding/json"
 	"fmt"
 	"io"
 	"io/ioutil"
@@ -245,7 +245,7 @@ func (c *comment) Kind() tokenKind {
 	return commentKind
 }
 
-type searchIndex struct {
+type SearchIndex struct {
 	Tags  map[string][]string `json:"Tags"`
 	Specs map[string][]string `json:"Specs"`
 }
@@ -340,7 +340,7 @@ func execTemplate(tmplName string, w io.Writer, data interface{}) {
 var projectRoot string
 
 // GenerateReports generates HTML report in the given report dir location
-func GenerateReports(res *SuiteResult, reportsDir, themePath string) error {
+func GenerateReports(res *SuiteResult, reportsDir, themePath string, searchIndex bool) error {
 	readTemplates(themePath)
 	f, err := os.Create(filepath.Join(reportsDir, "index.html"))
 	if err != nil {
@@ -357,8 +357,7 @@ func GenerateReports(res *SuiteResult, reportsDir, themePath string) error {
 		if env.ShouldUseNestedSpecs() {
 			go generateIndexPages(res, reportsDir, &wg)
 		}
-		specRes := res.SpecResults
-		for _, r := range specRes {
+		for _, r := range res.SpecResults {
 			relPath, _ := filepath.Rel(projectRoot, r.FileName)
 			env.CreateDirectory(filepath.Join(reportsDir, filepath.Dir(relPath)))
 			sf, err := os.Create(filepath.Join(reportsDir, toHTMLFileName(r.FileName, projectRoot)))
@@ -370,15 +369,14 @@ func GenerateReports(res *SuiteResult, reportsDir, themePath string) error {
 		}
 		wg.Wait()
 	}
-	err = generateSearchIndex(res, reportsDir)
-	if err != nil {
-		return err
+	if searchIndex {
+		return generateSearchIndex(res, reportsDir)
 	}
 	return nil
 }
 
-func GenerateReport(res *SuiteResult, reportDir, themePath string) {
-	err := GenerateReports(res, reportDir, themePath)
+func GenerateReport(res *SuiteResult, reportDir, themePath string, searchIndex bool) {
+	err := GenerateReports(res, reportDir, themePath, searchIndex)
 	if err != nil {
 		log.Fatalf("Failed to generate reports: %s\n", err.Error())
 	}
@@ -389,31 +387,6 @@ func GenerateReport(res *SuiteResult, reportDir, themePath string) {
 	fmt.Printf("Successfully generated html-report to => %s\n", filepath.Join(reportDir, "index.html"))
 }
 
-func newSearchIndex() *searchIndex {
-	var i searchIndex
-	i.Tags = make(map[string][]string)
-	i.Specs = make(map[string][]string)
-	return &i
-}
-
-func (i *searchIndex) hasValueForTag(tag string, spec string) bool {
-	for _, s := range i.Tags[tag] {
-		if s == spec {
-			return true
-		}
-	}
-	return false
-}
-
-func (i *searchIndex) hasSpec(specHeading string, specFileName string) bool {
-	for _, s := range i.Specs[specHeading] {
-		if s == specFileName {
-			return true
-		}
-	}
-	return false
-}
-
 func containsParseErrors(errors []buildError) bool {
 	for _, e := range errors {
 		if e.isParseError() {
@@ -421,41 +394,6 @@ func containsParseErrors(errors []buildError) bool {
 		}
 	}
 	return false
-}
-
-func generateSearchIndex(suiteRes *SuiteResult, reportsDir string) error {
-	env.CreateDirectory(filepath.Join(reportsDir, "js"))
-	f, err := os.Create(filepath.Join(reportsDir, "js", "search_index.js"))
-	if err != nil {
-		return err
-	}
-	defer f.Close()
-	index := newSearchIndex()
-	for _, r := range suiteRes.SpecResults {
-		specFileName := toHTMLFileName(r.FileName, projectRoot)
-		for _, t := range r.Tags {
-			if !index.hasValueForTag(t, specFileName) {
-				index.Tags[t] = append(index.Tags[t], specFileName)
-			}
-		}
-		for _, s := range r.Scenarios {
-			for _, t := range s.Tags {
-				if !index.hasValueForTag(t, specFileName) {
-					index.Tags[t] = append(index.Tags[t], specFileName)
-				}
-			}
-		}
-		specHeading := r.SpecHeading
-		if !index.hasSpec(specHeading, specFileName) {
-			index.Specs[specHeading] = append(index.Specs[specHeading], specFileName)
-		}
-	}
-	s, err := json.Marshal(index)
-	if err != nil {
-		return err
-	}
-	f.WriteString(fmt.Sprintf("var index = %s;", s))
-	return nil
 }
 
 func generateIndexPage(suiteRes *SuiteResult, w io.Writer, wg *sync.WaitGroup) {

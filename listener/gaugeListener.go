@@ -30,10 +30,12 @@ import (
 )
 
 type GaugeResultHandlerFn func(*gauge_messages.SuiteExecutionResult)
+type GaugeResultItemHandlerFn func(*gauge_messages.SuiteExecutionResultItem)
 
 type GaugeListener struct {
-	connection      net.Conn
-	onResultHandler GaugeResultHandlerFn
+	connection          net.Conn
+	onResultHandler     GaugeResultHandlerFn
+	onResultItemHandler GaugeResultItemHandlerFn
 }
 
 func NewGaugeListener(host string, port string) (*GaugeListener, error) {
@@ -45,8 +47,12 @@ func NewGaugeListener(host string, port string) (*GaugeListener, error) {
 	}
 }
 
-func (gaugeListener *GaugeListener) OnSuiteResult(resultHandler GaugeResultHandlerFn) {
-	gaugeListener.onResultHandler = resultHandler
+func (gaugeListener *GaugeListener) OnSuiteResult(h GaugeResultHandlerFn) {
+	gaugeListener.onResultHandler = h
+}
+
+func (gaugeListener *GaugeListener) OnSuiteResultItem(h GaugeResultItemHandlerFn) {
+	gaugeListener.onResultItemHandler = h
 }
 
 func (gaugeListener *GaugeListener) Start() {
@@ -72,15 +78,19 @@ func (gaugeListener *GaugeListener) processMessages(buffer *bytes.Buffer) {
 			if err != nil {
 				log.Printf("Failed to read proto message: %s\n", err.Error())
 			} else {
-				if message.MessageType == gauge_messages.Message_KillProcessRequest {
+				switch message.MessageType {
+				case gauge_messages.Message_KillProcessRequest:
 					logger.Debug("Received Kill Message, exiting...")
 					gaugeListener.connection.Close()
 					os.Exit(0)
-				}
-				if message.MessageType == gauge_messages.Message_SuiteExecutionResult {
+				case gauge_messages.Message_SuiteExecutionResult:
 					logger.Debug("Received SuiteExecutionResult, processing...")
 					result := message.GetSuiteExecutionResult()
 					gaugeListener.onResultHandler(result)
+				case gauge_messages.Message_SuiteExecutionResultItem:
+					result := message.GetSuiteExecutionResultItem()
+					logger.Debug(fmt.Sprintf("Received SuiteExecutionResultItem for %s, processing...", result.ResultItem.FileName))
+					gaugeListener.onResultItemHandler(result)
 				}
 				buffer.Next(messageBoundary)
 				if buffer.Len() == 0 {

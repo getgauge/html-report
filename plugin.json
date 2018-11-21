@@ -17,5 +17,8 @@
     "gaugeVersionSupport": {
         "minimum": "0.8.3",
         "maximum": ""
-    }
+    },
+    "capabilities" : [
+        "stream_result"
+    ]
 }
