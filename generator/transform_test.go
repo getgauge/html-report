@@ -1789,6 +1789,39 @@ func TestToNestedSuiteResultMapsSpecResults(t *testing.T) {
 	checkEqual(t, "", want, got.SpecResults)
 }
 
+func TestToSuiteResultMapsSpecResultsGreaterThanBufferSize(t *testing.T) {
+	psr := &gm.ProtoSuiteResult{
+		SpecResults: []*gm.ProtoSpecResult{
+			{ProtoSpec: &gm.ProtoSpec{FileName: "foo.spec", SpecHeading: "Foo Spec"}},
+			{ProtoSpec: &gm.ProtoSpec{FileName: "bar.spec", SpecHeading: "Boo Spec"}},
+			{ProtoSpec: &gm.ProtoSpec{FileName: "baz.spec", SpecHeading: "Baz Spec"}},
+			{ProtoSpec: &gm.ProtoSpec{FileName: "foo.spec", SpecHeading: "Foo Spec"}},
+			{ProtoSpec: &gm.ProtoSpec{FileName: "bar.spec", SpecHeading: "Boo Spec"}},
+			{ProtoSpec: &gm.ProtoSpec{FileName: "baz.spec", SpecHeading: "Baz Spec"}},
+			{ProtoSpec: &gm.ProtoSpec{FileName: "foo.spec", SpecHeading: "Foo Spec"}},
+			{ProtoSpec: &gm.ProtoSpec{FileName: "bar.spec", SpecHeading: "Boo Spec"}},
+			{ProtoSpec: &gm.ProtoSpec{FileName: "baz.spec", SpecHeading: "Baz Spec"}},
+			{ProtoSpec: &gm.ProtoSpec{FileName: "foo.spec", SpecHeading: "Foo Spec"}},
+			{ProtoSpec: &gm.ProtoSpec{FileName: "bar.spec", SpecHeading: "Boo Spec"}},
+			{ProtoSpec: &gm.ProtoSpec{FileName: "baz.spec", SpecHeading: "Baz Spec"}},
+		},
+	}
+
+	res := ToSuiteResult("", psr)
+
+	if len(res.SpecResults) != 12 {
+		t.Errorf("Expected 12 spec results, got %d\n", len(res.SpecResults))
+	}
+
+	for i, s := range res.SpecResults {
+		wantFileName := psr.GetSpecResults()[i].GetProtoSpec().GetFileName()
+		gotFileName := s.FileName
+		if wantFileName != gotFileName {
+			t.Errorf("Spec Filename Mismatch, want '%s', got '%s'", wantFileName, gotFileName)
+		}
+	}
+}
+
 func BenchmarkToSuite(b *testing.B) {
 	ps := &gm.ProtoSuiteResult{
 		Chunked:     true,

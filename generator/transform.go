@@ -83,8 +83,8 @@ func ToSuiteResult(pRoot string, psr *gm.ProtoSuiteResult) *SuiteResult {
 		}
 	}(results, wg)
 	for _, protoSpecRes := range psr.GetSpecResults() {
-		jobs <- protoSpecRes
 		wg.Add(1)
+		jobs <- protoSpecRes
 		suiteResult.PassedScenarioCount = suiteResult.PassedScenarioCount + int(protoSpecRes.GetScenarioCount()-protoSpecRes.GetScenarioFailedCount()-protoSpecRes.GetScenarioSkippedCount())
 		suiteResult.FailedScenarioCount = suiteResult.FailedScenarioCount + int(protoSpecRes.GetScenarioFailedCount())
 		suiteResult.SkippedScenarioCount = suiteResult.SkippedScenarioCount + int(protoSpecRes.GetScenarioSkippedCount())
