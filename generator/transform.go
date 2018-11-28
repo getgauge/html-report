@@ -23,7 +23,6 @@ import (
 	"path/filepath"
 	"sort"
 	"strings"
-	"sync"
 	"time"
 
 	"path"
@@ -65,31 +64,12 @@ func ToSuiteResult(pRoot string, psr *gm.ProtoSuiteResult) *SuiteResult {
 		suiteResult.ExecutionStatus = fail
 	}
 	suiteResult.SpecResults = make([]*spec, 0)
-	jobs := make(chan *gm.ProtoSpecResult, 10)
-	var wg = &sync.WaitGroup{}
-	results := make(chan *spec)
-	go func(jobs <-chan *gm.ProtoSpecResult, results chan<- *spec) {
-		for job := range jobs {
-			results <- toSpec(job)
-		}
-	}(jobs, results)
-	go func(results <-chan *spec, w *sync.WaitGroup) {
-		for {
-			select {
-			case r := <-results:
-				w.Done()
-				suiteResult.SpecResults = append(suiteResult.SpecResults, r)
-			}
-		}
-	}(results, wg)
 	for _, protoSpecRes := range psr.GetSpecResults() {
-		wg.Add(1)
-		jobs <- protoSpecRes
+		suiteResult.SpecResults = append(suiteResult.SpecResults, toSpec(protoSpecRes))
 		suiteResult.PassedScenarioCount = suiteResult.PassedScenarioCount + int(protoSpecRes.GetScenarioCount()-protoSpecRes.GetScenarioFailedCount()-protoSpecRes.GetScenarioSkippedCount())
 		suiteResult.FailedScenarioCount = suiteResult.FailedScenarioCount + int(protoSpecRes.GetScenarioFailedCount())
 		suiteResult.SkippedScenarioCount = suiteResult.SkippedScenarioCount + int(protoSpecRes.GetScenarioSkippedCount())
 	}
-	wg.Wait()
 	return &suiteResult
 }
 
