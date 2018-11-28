@@ -72,6 +72,7 @@ type reportAccumulator struct {
 func (r *reportAccumulator) Meta(res *gauge_messages.SuiteExecutionResult) {
 	if !res.SuiteResult.Chunked {
 		createReport(res, true)
+		return
 	}
 	r.result = res
 	r.searchIndex = generator.NewSearchIndex()
