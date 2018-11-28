@@ -67,6 +67,21 @@ func ToSuiteResult(pRoot string, psr *gm.ProtoSuiteResult) *SuiteResult {
 	suiteResult.SpecResults = make([]*spec, 0)
 	jobs := make(chan *gm.ProtoSpecResult, 10)
 	var wg = &sync.WaitGroup{}
+	results := make(chan *spec)
+	go func(jobs <-chan *gm.ProtoSpecResult, results chan<- *spec) {
+		for job := range jobs {
+			results <- toSpec(job)
+		}
+	}(jobs, results)
+	go func(results <-chan *spec, w *sync.WaitGroup) {
+		for {
+			select {
+			case r := <-results:
+				w.Done()
+				suiteResult.SpecResults = append(suiteResult.SpecResults, r)
+			}
+		}
+	}(results, wg)
 	for _, protoSpecRes := range psr.GetSpecResults() {
 		jobs <- protoSpecRes
 		wg.Add(1)
@@ -74,21 +89,6 @@ func ToSuiteResult(pRoot string, psr *gm.ProtoSuiteResult) *SuiteResult {
 		suiteResult.FailedScenarioCount = suiteResult.FailedScenarioCount + int(protoSpecRes.GetScenarioFailedCount())
 		suiteResult.SkippedScenarioCount = suiteResult.SkippedScenarioCount + int(protoSpecRes.GetScenarioSkippedCount())
 	}
-	results := make(chan *spec)
-	go func(jobs <-chan *gm.ProtoSpecResult, results chan<- *spec) {
-		for job := range jobs {
-			results <- toSpec(job)
-		}
-	}(jobs, results)
-	go func(results <-chan *spec) {
-		for {
-			select {
-			case r := <-results:
-				wg.Done()
-				suiteResult.SpecResults = append(suiteResult.SpecResults, r)
-			}
-		}
-	}(results)
 	wg.Wait()
 	return &suiteResult
 }
