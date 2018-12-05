@@ -93,18 +93,21 @@ func TestCreatingReportShouldOverwriteReportsBasedOnEnv(t *testing.T) {
 }
 
 func TestCreateReportExecutableFileShouldCreateExecFile(t *testing.T) {
+	isSaveExecutionResultDisabled = func() bool { return false }
 	exPath := filepath.Join(os.TempDir(), "html-report")
 	exTarget := filepath.Join(os.TempDir(), "html-report-target")
 	os.Create(exPath)
 	defer os.Remove(exPath)
 	defer os.Remove(exTarget)
+
 	createReportExecutableFile(exPath, exTarget)
+
 	if !fileExists(exTarget) {
 		t.Errorf("Could not create a symlink of src: %s to  dst: %s", exPath, exTarget)
 	}
 }
 func TestCreateReportExecutableFileShouldNotCreateExecFile(t *testing.T) {
-	os.Setenv(env.SaveExecutionResult, "false")
+	isSaveExecutionResultDisabled = func() bool { return true }
 	exPath := filepath.Join(os.TempDir(), "html-report")
 	exTarget := filepath.Join(os.TempDir(), "html-report-target")
 	os.Create(exPath)

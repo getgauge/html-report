@@ -208,6 +208,6 @@ func fileExists(path string) bool {
 	return !os.IsNotExist(err)
 }
 
-func isSaveExecutionResultDisabled() bool {
+var isSaveExecutionResultDisabled = func() bool {
 	return os.Getenv(env.SaveExecutionResult) == "false"
 }
