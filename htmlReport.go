@@ -81,6 +81,9 @@ func (r *reportAccumulator) Meta(res *gauge_messages.SuiteExecutionResult) {
 		r.specMap[specRes.ProtoSpec.FileName] = specRes.ProtoSpec
 		r.searchIndex.AddRawSpec(specRes.ProtoSpec)
 	}
+	if res.SuiteResult.ChunkSize == 0 {
+		r.write()
+	}
 }
 
 func (r *reportAccumulator) AddItem(i *gauge_messages.SuiteExecutionResultItem) {
@@ -93,9 +96,13 @@ func (r *reportAccumulator) AddItem(i *gauge_messages.SuiteExecutionResultItem) 
 	r.searchIndex.AddRawItem(i.ResultItem)
 	r.chunkSize++
 	if r.chunkSize == r.result.SuiteResult.ChunkSize {
-		dir := createReport(r.result, false)
-		r.searchIndex.Write(dir)
+		r.write()
 	}
+}
+
+func (r *reportAccumulator) write() {
+	dir := createReport(r.result, false)
+	r.searchIndex.Write(dir)
 }
 
 var pluginsDir string
