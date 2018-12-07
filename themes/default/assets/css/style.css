@@ -796,6 +796,7 @@ footer p {
 
 .exception-container .exception {
     flex-grow: 1;
+    min-width: 60%;
 }
 
 .stacktrace {
@@ -1071,17 +1072,20 @@ footer p {
         margin-top: 10px;
         margin-left: 10px;
     }
-
     .scenario-container .screenshot {
-        width: 16.66%;
+        margin: 15px;
+        width: 15%;
+    }
+
+    .scenario-container .screenshot img {
+        max-width: 100%;
+    }
+    .exception-container .screenshot {
+        width: auto;
     }
 
     .exception-container {
         flex-direction: row;
-    }
-
-    .exception-container img {
-        max-width: 100%;
     }
 
     .error-message {
