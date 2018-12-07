@@ -34,7 +34,7 @@ var templateBasePath, _ = filepath.Abs(filepath.Join("..", "themes", "default"))
 func TestEndToEndHTMLGenerationWhenBeforeSuiteFails(t *testing.T) {
 	reportDir := filepath.Join("_testdata", "e2e")
 	r := ToSuiteResult("", suiteResWithBeforeSuiteFailure)
-	err := GenerateReports(r, reportDir, templateBasePath)
+	err := GenerateReports(r, reportDir, templateBasePath, true)
 
 	if err != nil {
 		t.Errorf("Expected error to be nil. Got: %s", err.Error())
@@ -58,7 +58,7 @@ func TestEndToEndHTMLGeneration(t *testing.T) {
 	reportDir := filepath.Join("_testdata", "e2e")
 
 	r := ToSuiteResult("", suiteRes3)
-	err := GenerateReports(r, reportDir, templateBasePath)
+	err := GenerateReports(r, reportDir, templateBasePath, true)
 
 	if err != nil {
 		t.Errorf("Expected error to be nil. Got: %s", err.Error())
@@ -74,7 +74,7 @@ func TestEndToEndHTMLGenerationForThemeWithRelativePath(t *testing.T) {
 	defaultThemePath := filepath.Join("..", "themes", "default")
 
 	r := ToSuiteResult("", suiteRes3)
-	err := GenerateReports(r, reportDir, defaultThemePath)
+	err := GenerateReports(r, reportDir, defaultThemePath, true)
 
 	if err != nil {
 		t.Errorf("Expected error to be nil. Got: %s", err.Error())
@@ -90,7 +90,7 @@ func TestEndToEndHTMLGenerationForCustomTheme(t *testing.T) {
 	defaultThemePath := filepath.Join("_testdata", "dummyReportTheme")
 
 	r := ToSuiteResult("", suiteRes3)
-	err := GenerateReports(r, reportDir, defaultThemePath)
+	err := GenerateReports(r, reportDir, defaultThemePath, true)
 
 	if err != nil {
 		t.Errorf("Expected error to be nil. Got: %s", err.Error())
@@ -113,7 +113,7 @@ func TestEndToEndHTMLGenerationForNestedSpecs(t *testing.T) {
 	reportDir := filepath.Join("_testdata", "e2e")
 
 	r := ToSuiteResult("", suiteRes4)
-	err := GenerateReports(r, reportDir, templateBasePath)
+	err := GenerateReports(r, reportDir, templateBasePath, true)
 
 	if err != nil {
 		t.Errorf("Expected error to be nil. Got: %s", err.Error())

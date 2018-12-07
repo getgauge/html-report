@@ -62,6 +62,42 @@ func (T timeStampedNameGenerator) randomName() string {
 	return time.Now().Format(timeFormat)
 }
 
+type reportAccumulator struct {
+	result      *gauge_messages.SuiteExecutionResult
+	specMap     map[string]*gauge_messages.ProtoSpec
+	chunkSize   int64
+	searchIndex *generator.SearchIndex
+}
+
+func (r *reportAccumulator) Meta(res *gauge_messages.SuiteExecutionResult) {
+	if !res.SuiteResult.Chunked {
+		createReport(res, true)
+		return
+	}
+	r.result = res
+	r.searchIndex = generator.NewSearchIndex()
+	r.specMap = make(map[string]*gauge_messages.ProtoSpec, 0)
+	for _, specRes := range r.result.SuiteResult.SpecResults {
+		r.specMap[specRes.ProtoSpec.FileName] = specRes.ProtoSpec
+		r.searchIndex.AddRawSpec(specRes.ProtoSpec)
+	}
+}
+
+func (r *reportAccumulator) AddItem(i *gauge_messages.SuiteExecutionResultItem) {
+	pItem := r.specMap[i.ResultItem.FileName]
+	if pItem == nil {
+		logger.Debug(fmt.Sprintf("received item for %s that does not exist in Meta.", i.ResultItem.FileName))
+		return
+	}
+	pItem.Items = append(pItem.Items, i.ResultItem)
+	r.searchIndex.AddRawItem(i.ResultItem)
+	r.chunkSize++
+	if r.chunkSize == r.result.SuiteResult.ChunkSize {
+		dir := createReport(r.result, false)
+		r.searchIndex.Write(dir)
+	}
+}
+
 var pluginsDir string
 
 func createExecutionReport() {
@@ -72,11 +108,13 @@ func createExecutionReport() {
 		fmt.Println("Could not create the gauge listener")
 		os.Exit(1)
 	}
-	listener.OnSuiteResult(createReport)
+	r := &reportAccumulator{}
+	listener.OnSuiteResult(r.Meta)
+	listener.OnSuiteResultItem(r.AddItem)
 	listener.Start()
 }
 
-func createReport(suiteResult *gauge_messages.SuiteExecutionResult) {
+func createReport(suiteResult *gauge_messages.SuiteExecutionResult, searchIndex bool) string {
 	projectRoot, err := common.GetProjectRoot()
 	if err != nil {
 		log.Fatalf("%s", err.Error())
@@ -86,8 +124,9 @@ func createReport(suiteResult *gauge_messages.SuiteExecutionResult) {
 	logger.Debug("Transformed SuiteResult to report structure")
 	go createReportExecutableFile(getExecutableAndTargetPath(reportsDir, pluginsDir))
 	t := theme.GetThemePath(pluginsDir)
-	generator.GenerateReport(res, reportsDir, t)
+	generator.GenerateReport(res, reportsDir, t, searchIndex)
 	logger.Debug("Done generating HTML report using theme from %s", t)
+	return reportsDir
 }
 
 func getNameGen() nameGenerator {
@@ -169,6 +208,6 @@ func fileExists(path string) bool {
 	return !os.IsNotExist(err)
 }
 
-func isSaveExecutionResultDisabled() bool {
+var isSaveExecutionResultDisabled = func() bool {
 	return os.Getenv(env.SaveExecutionResult) == "false"
 }

@@ -19,6 +19,7 @@ package generator
 
 import (
 	"bytes"
+	"fmt"
 	"testing"
 
 	"path/filepath"
@@ -49,7 +50,7 @@ var whtmlPageStartTag = `<!doctype html>
   <div class="header">
     <div class="container">
       <div class="logo">
-        <a href="."><img src="images/logo.png" alt="Report logo"></a>
+        <a href="."><img src="images/gaugeLogo.png" alt="Report logo"></a>
       </div>
       <h2 class="project">Project: projname</h2>
     </div>
@@ -649,4 +650,18 @@ func TestGetAbsThemePathForRelPath(t *testing.T) {
 		t.Errorf("Expected theme path = %s, got %s", want, got)
 	}
 	projectRoot = oldProjectRoot
+}
+
+func BenchmarkGenerateReport(b *testing.B) {
+	ps := &SuiteResult{
+		ProjectName: "Foo",
+		SpecResults: []*spec{},
+	}
+
+	for i := 0; i < b.N; i++ {
+		s := newSpec(false)
+		s.FileName = fmt.Sprintf("example%d.spec", i)
+		ps.SpecResults = append(ps.SpecResults, s)
+	}
+	GenerateReport(ps, filepath.Join("_testdata", "benchmark"), filepath.Join("_testdata", "dummyReportTheme"), false)
 }

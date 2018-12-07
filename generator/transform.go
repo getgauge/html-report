@@ -75,10 +75,10 @@ func ToSuiteResult(pRoot string, psr *gm.ProtoSuiteResult) *SuiteResult {
 
 func toNestedSuiteResult(basePath string, result *SuiteResult) *SuiteResult {
 	sr := &SuiteResult{
-		ProjectName:            result.ProjectName,
-		Timestamp:              result.Timestamp,
-		Environment:            result.Environment,
-		Tags:                   result.Tags,
+		ProjectName: result.ProjectName,
+		Timestamp:   result.Timestamp,
+		Environment: result.Environment,
+		Tags:        result.Tags,
 		BeforeSuiteHookFailure: result.BeforeSuiteHookFailure,
 		AfterSuiteHookFailure:  result.AfterSuiteHookFailure,
 		ExecutionStatus:        pass,
@@ -182,7 +182,6 @@ func toHTMLFileName(specName, basePath string) string {
 	if err != nil {
 		specPath = filepath.Join(basePath, filepath.Base(specName))
 	}
-	// specPath = strings.Replace(specPath, string(filepath.Separator), "_", -1)
 	ext := filepath.Ext(specPath)
 	return filepath.ToSlash(filepath.Clean(strings.TrimSuffix(specPath, ext) + dothtml))
 }
