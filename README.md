@@ -3,9 +3,6 @@ html-report
 
  [ ![Download Nightly](https://api.bintray.com/packages/gauge/html-report/Nightly/images/download.svg) ](https://bintray.com/gauge/html-report/Nightly/_latestVersion) [![Build Status](https://travis-ci.org/getgauge/html-report.svg?branch=master)](https://travis-ci.org/getgauge/html-report)
 
-This is the [html-report plugin](http://getgauge.io/documentation/user/current/plugins/html_report_plugin.html) for [Gauge](http://getgauge.io).
-
-
 Features
 -------
 
