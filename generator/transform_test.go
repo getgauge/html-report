@@ -121,8 +121,8 @@ func newConceptItem(heading string, steps []*gm.ProtoItem, cptRes *gm.ProtoStepE
 	return &gm.ProtoItem{
 		ItemType: gm.ProtoItem_Concept,
 		Concept: &gm.ProtoConcept{
-			ConceptStep: newStepItem(false, false, []*gm.Fragment{newTextFragment(heading)}).GetStep(),
-			Steps:       steps,
+			ConceptStep:            newStepItem(false, false, []*gm.Fragment{newTextFragment(heading)}).GetStep(),
+			Steps:                  steps,
 			ConceptExecutionResult: cptRes,
 		},
 	}
