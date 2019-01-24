@@ -96,7 +96,7 @@ func TestSendPings(t *testing.T) {
 }
 
 func TestSendPingsStopsAfterInterrupt(t *testing.T) {
-	interval = func() time.Duration { return 100 * time.Millisecond }
+	interval = func() time.Duration { return 500 * time.Millisecond }
 
 	server, client := net.Pipe()
 	c := make(chan bool)
@@ -127,7 +127,7 @@ func TestSendPingsStopsAfterInterrupt(t *testing.T) {
 
 	time.AfterFunc(1*time.Second, func() {
 		c <- true
-		time.AfterFunc(1*time.Second, func() { exit <- true })
+		time.AfterFunc(3*time.Second, func() { exit <- true })
 	})
 	for {
 		if <-exit {
