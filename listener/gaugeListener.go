@@ -132,7 +132,7 @@ func (gaugeListener *GaugeListener) sendPings() {
 		}
 	}
 	ticker := time.NewTicker(interval())
-	defer func() { ticker.Stop() }()
+	defer ticker.Stop()
 
 	for {
 		select {
