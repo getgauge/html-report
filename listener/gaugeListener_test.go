@@ -100,6 +100,7 @@ func TestSendPingsStopsAfterInterrupt(t *testing.T) {
 
 	server, client := net.Pipe()
 	c := make(chan bool)
+	stopChan := make(chan bool)
 
 	go func(c net.Conn, stop chan bool) {
 		data := make([]byte, 8192)
@@ -120,13 +121,14 @@ func TestSendPingsStopsAfterInterrupt(t *testing.T) {
 		}
 	}(client, c)
 
-	l := &GaugeListener{connection: server, stopChan: c}
+	l := &GaugeListener{connection: server, stopChan: stopChan}
 	go l.sendPings()
 
 	exit := make(chan bool)
 
 	time.AfterFunc(1*time.Second, func() {
 		c <- true
+		stopChan <- true
 		time.AfterFunc(1*time.Second, func() { exit <- true })
 	})
 	for {
