@@ -101,7 +101,6 @@ func (r *reportAccumulator) AddItem(i *gauge_messages.SuiteExecutionResultItem) 
 	r.chunkSize++
 	if r.chunkSize == r.result.SuiteResult.ChunkSize {
 		r.write()
-		logger.Debug("Done writing")
 	}
 }
 
