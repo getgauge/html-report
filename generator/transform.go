@@ -75,10 +75,10 @@ func ToSuiteResult(pRoot string, psr *gm.ProtoSuiteResult) *SuiteResult {
 
 func toNestedSuiteResult(basePath string, result *SuiteResult) *SuiteResult {
 	sr := &SuiteResult{
-		ProjectName: result.ProjectName,
-		Timestamp:   result.Timestamp,
-		Environment: result.Environment,
-		Tags:        result.Tags,
+		ProjectName:            result.ProjectName,
+		Timestamp:              result.Timestamp,
+		Environment:            result.Environment,
+		Tags:                   result.Tags,
 		BeforeSuiteHookFailure: result.BeforeSuiteHookFailure,
 		AfterSuiteHookFailure:  result.AfterSuiteHookFailure,
 		ExecutionStatus:        pass,

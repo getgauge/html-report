@@ -23,11 +23,18 @@ import (
 	"log"
 	"net"
 	"os"
+	"time"
+
+	"github.com/getgauge/common"
+
+	"github.com/getgauge/html-report/env"
 
 	"github.com/getgauge/html-report/gauge_messages"
 	"github.com/getgauge/html-report/logger"
 	"github.com/golang/protobuf/proto"
 )
+
+const pluginID = "html-report"
 
 type GaugeResultHandlerFn func(*gauge_messages.SuiteExecutionResult)
 type GaugeResultItemHandlerFn func(*gauge_messages.SuiteExecutionResultItem)
@@ -36,12 +43,13 @@ type GaugeListener struct {
 	connection          net.Conn
 	onResultHandler     GaugeResultHandlerFn
 	onResultItemHandler GaugeResultItemHandlerFn
+	stopChan            chan bool
 }
 
-func NewGaugeListener(host string, port string) (*GaugeListener, error) {
+func NewGaugeListener(host string, port string, killChan chan bool) (*GaugeListener, error) {
 	conn, err := net.Dial("tcp", fmt.Sprintf("%s:%s", host, port))
 	if err == nil {
-		return &GaugeListener{connection: conn}, nil
+		return &GaugeListener{connection: conn, stopChan: killChan}, nil
 	} else {
 		return nil, err
 	}
@@ -85,11 +93,12 @@ func (gaugeListener *GaugeListener) processMessages(buffer *bytes.Buffer) {
 					os.Exit(0)
 				case gauge_messages.Message_SuiteExecutionResult:
 					logger.Debug("Received SuiteExecutionResult, processing...")
+					go gaugeListener.sendPings()
 					result := message.GetSuiteExecutionResult()
 					gaugeListener.onResultHandler(result)
 				case gauge_messages.Message_SuiteExecutionResultItem:
 					result := message.GetSuiteExecutionResultItem()
-					logger.Debug(fmt.Sprintf("Received SuiteExecutionResultItem for %s, processing...", result.ResultItem.FileName))
+					logger.Debug("Received SuiteExecutionResultItem for %s, processing...", result.ResultItem.FileName)
 					gaugeListener.onResultItemHandler(result)
 				}
 				buffer.Next(messageBoundary)
@@ -101,4 +110,45 @@ func (gaugeListener *GaugeListener) processMessages(buffer *bytes.Buffer) {
 			return
 		}
 	}
+}
+
+func (gaugeListener *GaugeListener) sendPings() {
+	msg := &gauge_messages.Message{
+		MessageId:   common.GetUniqueID(),
+		MessageType: gauge_messages.Message_KeepAlive,
+		KeepAlive:   &gauge_messages.KeepAlive{PluginId: pluginID},
+	}
+	m, err := proto.Marshal(msg)
+	if err != nil {
+		logger.Debug("Unable to marshal ping message, %s", err.Error())
+		return
+	}
+	ping := func(b []byte, c net.Conn) {
+		logger.Debug("html-report sending a keep-alive ping")
+		l := proto.EncodeVarint(uint64(len(b)))
+		_, err := c.Write(append(l, b...))
+		if err != nil {
+			logger.Debug("Unable to send ping message, %s", err.Error())
+		}
+	}
+	ticker := time.NewTicker(interval())
+	defer ticker.Stop()
+
+	for {
+		select {
+		case <-gaugeListener.stopChan:
+			logger.Debug("Stopping pings")
+			return
+		case <-ticker.C:
+			ping(m, gaugeListener.connection)
+		}
+	}
+}
+
+var interval = func() time.Duration {
+	v := env.PluginKillTimeout()
+	if v/2 < 2 {
+		return 2 * time.Second
+	}
+	return time.Duration(v * 1000 * 1000 * 1000 / 2)
 }

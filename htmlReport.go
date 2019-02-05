@@ -67,11 +67,15 @@ type reportAccumulator struct {
 	specMap     map[string]*gauge_messages.ProtoSpec
 	chunkSize   int64
 	searchIndex *generator.SearchIndex
+	stopChan    chan bool
 }
 
 func (r *reportAccumulator) Meta(res *gauge_messages.SuiteExecutionResult) {
 	if !res.SuiteResult.Chunked {
-		createReport(res, true)
+		_, err := createReport(res, true, r.stopChan)
+		if err != nil {
+			log.Fatalf("%s", err.Error())
+		}
 		return
 	}
 	r.result = res
@@ -101,7 +105,10 @@ func (r *reportAccumulator) AddItem(i *gauge_messages.SuiteExecutionResultItem) 
 }
 
 func (r *reportAccumulator) write() {
-	dir := createReport(r.result, false)
+	dir, err := createReport(r.result, false, r.stopChan)
+	if err != nil {
+		log.Fatalf("%s", err.Error())
+	}
 	r.searchIndex.Write(dir)
 }
 
@@ -110,21 +117,23 @@ var pluginsDir string
 func createExecutionReport() {
 	pluginsDir, _ = os.Getwd()
 	os.Chdir(env.GetProjectRoot())
-	listener, err := listener.NewGaugeListener(gaugeHost, os.Getenv(gaugePortEnv))
+	stopChan := make(chan bool)
+	listener, err := listener.NewGaugeListener(gaugeHost, os.Getenv(gaugePortEnv), stopChan)
 	if err != nil {
 		fmt.Println("Could not create the gauge listener")
 		os.Exit(1)
 	}
-	r := &reportAccumulator{}
+	r := &reportAccumulator{stopChan: stopChan}
 	listener.OnSuiteResult(r.Meta)
 	listener.OnSuiteResultItem(r.AddItem)
 	listener.Start()
 }
 
-func createReport(suiteResult *gauge_messages.SuiteExecutionResult, searchIndex bool) string {
+func createReport(suiteResult *gauge_messages.SuiteExecutionResult, searchIndex bool, stop chan bool) (string, error) {
+	defer func(s chan bool) { s <- true }(stop)
 	projectRoot, err := common.GetProjectRoot()
 	if err != nil {
-		log.Fatalf("%s", err.Error())
+		return "", err
 	}
 	reportsDir := getReportsDirectory(getNameGen())
 	res := generator.ToSuiteResult(projectRoot, suiteResult.GetSuiteResult())
@@ -133,7 +142,7 @@ func createReport(suiteResult *gauge_messages.SuiteExecutionResult, searchIndex 
 	t := theme.GetThemePath(pluginsDir)
 	generator.GenerateReport(res, reportsDir, t, searchIndex)
 	logger.Debug("Done generating HTML report using theme from %s", t)
-	return reportsDir
+	return reportsDir, nil
 }
 
 func getNameGen() nameGenerator {

@@ -25,6 +25,8 @@ import (
 	"testing"
 	"time"
 
+	"github.com/getgauge/html-report/gauge_messages"
+
 	"github.com/getgauge/html-report/env"
 	helper "github.com/getgauge/html-report/test_helper"
 )
@@ -117,5 +119,31 @@ func TestCreateReportExecutableFileShouldNotCreateExecFile(t *testing.T) {
 	createReportExecutableFile(exPath, exTarget)
 	if fileExists(exTarget) {
 		t.Errorf("Expected not to create a symlink of src: %s to  dst: %s", exPath, exTarget)
+	}
+}
+
+func TestCreateReportWritesToStopPing(t *testing.T) {
+	root, err := filepath.Abs(".")
+	if err != nil {
+		t.Error(err)
+	}
+	defer func(e string) { os.Setenv("GAUGE_PROJECT_ROOT", e) }(os.Getenv("GAUGE_PROJECT_ROOT"))
+	os.Setenv("GAUGE_PROJECT_ROOT", root)
+
+	res := &gauge_messages.SuiteExecutionResult{SuiteResult: &gauge_messages.ProtoSuiteResult{}}
+
+	c := make(chan bool)
+	go createReport(res, false, c)
+	tc := make(chan bool)
+	time.AfterFunc(100*time.Millisecond, func() { tc <- true })
+
+	for {
+		select {
+		case <-c:
+			return
+		case <-tc:
+			t.Error("timeout, expected value to be written in stop channel")
+			return
+		}
 	}
 }

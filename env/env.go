@@ -23,6 +23,7 @@ import (
 	"os"
 	"path"
 	"path/filepath"
+	"strconv"
 	"strings"
 
 	"github.com/getgauge/common"
@@ -34,6 +35,7 @@ const (
 	OverwriteReportsEnvProperty = "overwrite_reports"
 	UseNestedSpecs              = "use_nested_specs"
 	SaveExecutionResult         = "save_execution_result"
+	pluginKillTimeout           = "plugin_kill_timeout"
 )
 
 func GetCurrentExecutableDir() (string, string) {
@@ -56,7 +58,7 @@ func CreateDirectory(dir string) {
 	}
 }
 
-func GetProjectRoot() string {
+var GetProjectRoot = func() string {
 	projectRoot := os.Getenv(common.GaugeProjectRootEnv)
 	if projectRoot == "" {
 		fmt.Printf("Environment variable '%s' is not set. \n", common.GaugeProjectRootEnv)
@@ -107,4 +109,17 @@ func ShouldUseNestedSpecs() bool {
 		return true
 	}
 	return false
+}
+
+// PluginKillTimeout returns the plugin_kill_timeout in seconds
+var PluginKillTimeout = func() int {
+	e := os.Getenv(pluginKillTimeout)
+	if e == "" {
+		return 0
+	}
+	v, err := strconv.Atoi(e)
+	if err != nil {
+		return 0
+	}
+	return v / 1000
 }
