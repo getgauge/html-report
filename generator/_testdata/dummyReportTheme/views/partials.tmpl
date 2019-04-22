@@ -454,7 +454,7 @@
   {{end}}
   {{template "stepBodyDiv" .}}
   {{with .Result}}
-    {{if and (and (eq .Status "fail") (ne .ErrorMessage "")) (ne .StackTrace "") }}
+    {{if and (and (eq .Status "fail") (ne .ErrorMessage "")) }}
         {{template "stepFailureDiv" .}}
     {{end }}
     {{template "messageDiv" .Messages}}
