@@ -40,6 +40,14 @@ gauge install html-report --version 2.1.0
 gauge install html-report --file html-report-2.1.0-linux.x86_64.zip
 ```
 
+#### Nightly installation
+To install html-report nightly, download the latest nightly from [here](https://bintray.com/gauge/html-report/Nightly).
+
+Once you have the downloaded nightly html-report-version.nightly-yyyy-mm-dd.zip, install using:
+
+    gauge install html-report --file html-report-version.nightly-yyyy-mm-dd.zip
+    
+
 #### Build from Source
 
 ##### Requirements
