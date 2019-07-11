@@ -23,14 +23,13 @@ import (
 	"fmt"
 	"io"
 	"io/ioutil"
+	"log"
 	"os"
 	"os/exec"
 	"path"
 	"path/filepath"
 	"runtime"
 	"strings"
-
-	"github.com/getgauge/html-report/logger"
 )
 
 const (
@@ -83,13 +82,13 @@ func createPluginDistro(forAllPlatforms bool) {
 		for _, platformEnv := range platformEnvs {
 			setEnv(platformEnv)
 			*binDir = filepath.Join(bin, fmt.Sprintf("%s_%s", platformEnv[goOS], platformEnv[GOARCH]))
-			logger.Debugf("Creating distro for platform => OS:%s ARCH:%s \n", platformEnv[goOS], platformEnv[GOARCH])
+			fmt.Printf("Creating distro for platform => OS:%s ARCH:%s \n", platformEnv[goOS], platformEnv[GOARCH])
 			createDistro()
 		}
 	} else {
 		createDistro()
 	}
-	logger.Debugf("Distributables created in directory => %s \n", deploy)
+	fmt.Printf("Distributables created in directory => %s \n", deploy)
 }
 
 func createDistro() {
@@ -124,7 +123,7 @@ func mirrorFile(src, dst string) error {
 		return err
 	}
 	if sfi.Mode()&os.ModeType != 0 {
-		logger.Fatalf("mirrorFile can't deal with non-regular file %s", src)
+		log.Fatalf("mirrorFile can't deal with non-regular file %s", src)
 	}
 	dfi, err := os.Stat(dst)
 	if err == nil &&
@@ -169,7 +168,7 @@ func mirrorFile(src, dst string) error {
 }
 
 func mirrorDir(src, dst string) error {
-	logger.Debugf("Copying '%s' -> '%s'\n", src, dst)
+	fmt.Printf("Copying '%s' -> '%s'\n", src, dst)
 	err := filepath.Walk(src, func(path string, fi os.FileInfo, err error) error {
 		if err != nil {
 			return err
@@ -187,7 +186,7 @@ func mirrorDir(src, dst string) error {
 }
 
 func set(envName, envValue string) {
-	logger.Debugf("%s = %s\n", envName, envValue)
+	fmt.Printf("%s = %s\n", envName, envValue)
 	err := os.Setenv(envName, envValue)
 	if err != nil {
 		panic(err)
@@ -198,7 +197,7 @@ func runProcess(command string, arg ...string) {
 	cmd := exec.Command(command, arg...)
 	cmd.Stdout = os.Stdout
 	cmd.Stderr = os.Stderr
-	logger.Debugf("Execute %v\n", cmd.Args)
+	fmt.Printf("Execute %v\n", cmd.Args)
 	err := cmd.Run()
 	if err != nil {
 		panic(err)
@@ -238,7 +237,7 @@ func copyFiles(files map[string]string, installDir string) {
 	for src, dst := range files {
 		base := filepath.Base(src)
 		installDst := filepath.Join(installDir, dst)
-		logger.Debugf("Copying %s -> %s\n", src, installDst)
+		fmt.Printf("Copying %s -> %s\n", src, installDst)
 		stat, err := os.Stat(src)
 		if err != nil {
 			panic(err)
@@ -320,12 +319,12 @@ var (
 func getPluginProperties(jsonPropertiesFile string) (map[string]interface{}, error) {
 	pluginPropertiesJson, err := ioutil.ReadFile(jsonPropertiesFile)
 	if err != nil {
-		logger.Debugf("Could not read %s: %s\n", filepath.Base(jsonPropertiesFile), err)
+		fmt.Printf("Could not read %s: %s\n", filepath.Base(jsonPropertiesFile), err)
 		return nil, err
 	}
 	var pluginJson interface{}
 	if err = json.Unmarshal([]byte(pluginPropertiesJson), &pluginJson); err != nil {
-		logger.Debugf("Could not read %s: %s\n", filepath.Base(jsonPropertiesFile), err)
+		fmt.Printf("Could not read %s: %s\n", filepath.Base(jsonPropertiesFile), err)
 		return nil, err
 	}
 	return pluginJson.(map[string]interface{}), nil
@@ -334,7 +333,7 @@ func getPluginProperties(jsonPropertiesFile string) (map[string]interface{}, err
 func compileAcrossPlatforms() {
 	for _, platformEnv := range platformEnvs {
 		setEnv(platformEnv)
-		logger.Debugf("Compiling for platform => OS:%s ARCH:%s \n", platformEnv[goOS], platformEnv[GOARCH])
+		fmt.Printf("Compiling for platform => OS:%s ARCH:%s \n", platformEnv[goOS], platformEnv[GOARCH])
 		compileGoPackage(htmlReport)
 	}
 }
