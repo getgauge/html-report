@@ -18,7 +18,6 @@
 package main
 
 import (
-	"fmt"
 	"io/ioutil"
 	"os"
 	"path/filepath"
@@ -119,8 +118,7 @@ func createExecutionReport() {
 	stopChan := make(chan bool)
 	listener, err := listener.NewGaugeListener(gaugeHost, os.Getenv(gaugePortEnv), stopChan)
 	if err != nil {
-		fmt.Println("Could not create the gauge listener")
-		os.Exit(1)
+		logger.Fatal("Could not create the gauge listener")
 	}
 	r := &reportAccumulator{stopChan: stopChan}
 	listener.OnSuiteResult(r.Meta)
