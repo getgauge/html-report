@@ -18,8 +18,8 @@
 package env
 
 import (
+	"github.com/getgauge/html-report/logger"
 	"fmt"
-	"log"
 	"os"
 	"path"
 	"path/filepath"
@@ -41,7 +41,7 @@ const (
 func GetCurrentExecutableDir() (string, string) {
 	ex, err := os.Executable()
 	if err != nil {
-		log.Fatalf(err.Error())
+		logger.Fatalf(err.Error())
 	}
 	target, err := filepath.EvalSymlinks(ex)
 	if err != nil {
@@ -53,16 +53,14 @@ func GetCurrentExecutableDir() (string, string) {
 // CreateDirectory creates given directory if it doesn't exist
 func CreateDirectory(dir string) {
 	if err := os.MkdirAll(dir, common.NewDirectoryPermissions); err != nil {
-		fmt.Printf("Failed to create directory %s: %s\n", dir, err)
-		os.Exit(1)
+		logger.Fatalf("Failed to create directory %s: %s\n", dir, err)
 	}
 }
 
 var GetProjectRoot = func() string {
 	projectRoot := os.Getenv(common.GaugeProjectRootEnv)
 	if projectRoot == "" {
-		fmt.Printf("Environment variable '%s' is not set. \n", common.GaugeProjectRootEnv)
-		os.Exit(1)
+		logger.Fatalf("Environment variable '%s' is not set. \n", common.GaugeProjectRootEnv)
 	}
 	return projectRoot
 }

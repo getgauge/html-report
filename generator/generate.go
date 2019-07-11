@@ -22,7 +22,6 @@ import (
 	"fmt"
 	"io"
 	"io/ioutil"
-	"log"
 	"os"
 	"path/filepath"
 	"strings"
@@ -33,6 +32,7 @@ import (
 
 	"github.com/getgauge/common"
 	"github.com/getgauge/html-report/env"
+	"github.com/getgauge/html-report/logger"
 	"github.com/getgauge/html-report/theme"
 	"github.com/microcosm-cc/bluemonday"
 	"github.com/russross/blackfriday"
@@ -314,11 +314,11 @@ func readTemplates(themePath string) {
 
 	f, err := ioutil.ReadFile(filepath.Join(getAbsThemePath(themePath), "views", "partials.tmpl"))
 	if err != nil {
-		log.Fatalf(err.Error())
+		logger.Fatalf(err.Error())
 	}
 	parsedTemplates, err = template.New("Reports").Funcs(funcs).Parse(string(f))
 	if err != nil {
-		log.Fatalf(err.Error())
+		logger.Fatal(err.Error())
 	}
 }
 
@@ -332,7 +332,7 @@ func getAbsThemePath(themePath string) string {
 func execTemplate(tmplName string, w io.Writer, data interface{}) {
 	err := parsedTemplates.ExecuteTemplate(w, tmplName, data)
 	if err != nil {
-		log.Fatalf(err.Error())
+		logger.Fatal(err.Error())
 	}
 }
 
@@ -378,13 +378,13 @@ func GenerateReports(res *SuiteResult, reportsDir, themePath string, searchIndex
 func GenerateReport(res *SuiteResult, reportDir, themePath string, searchIndex bool) {
 	err := GenerateReports(res, reportDir, themePath, searchIndex)
 	if err != nil {
-		log.Fatalf("Failed to generate reports: %s\n", err.Error())
+		logger.Fatalf("Failed to generate reports: %s\n", err.Error())
 	}
 	err = theme.CopyReportTemplateFiles(themePath, reportDir)
 	if err != nil {
-		log.Fatalf("Error copying template directory :%s\n", err.Error())
+		logger.Fatalf("Error copying template directory :%s\n", err.Error())
 	}
-	fmt.Printf("Successfully generated html-report to => %s\n", filepath.Join(reportDir, "index.html"))
+	logger.Infof("Successfully generated html-report to => %s\n", filepath.Join(reportDir, "index.html"))
 }
 
 func containsParseErrors(errors []buildError) bool {
@@ -406,7 +406,7 @@ func generateIndexPages(suiteRes *SuiteResult, reportsDir string, wg *sync.WaitG
 	for _, s := range suiteRes.SpecResults {
 		p, err := filepath.Rel(projectRoot, filepath.Dir(s.FileName))
 		if err != nil {
-			log.Fatal(err)
+			logger.Fatal(err.Error())
 		}
 		childDirs := filepath.SplitList(p)
 		basePath := ""
@@ -425,7 +425,7 @@ func generateIndexPages(suiteRes *SuiteResult, reportsDir string, wg *sync.WaitG
 		p := filepath.Join(dirPath, "index.html")
 		f, err := os.Create(p)
 		if err != nil {
-			log.Fatal(err)
+			logger.Fatal(err.Error())
 		}
 		defer f.Close()
 		wg.Add(1)

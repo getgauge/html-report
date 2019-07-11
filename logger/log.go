@@ -1,23 +1,68 @@
 package logger
 
 import (
-	"log"
+	"encoding/json"
+	"fmt"
 	"os"
-	"strings"
 )
 
 var debug bool
 
-func Init() {
-	var env = os.Getenv("GAUGE_LOG_LEVEL")
-	if strings.ToLower(env) == "debug" {
-		debug = true
-	}
-	log.SetPrefix("[html-report] ")
+type logMessage struct {
+	Level   string `json:"logLevel"`
+	Message string `json:"message"`
 }
 
-func Debug(format string, args ...string) {
-	if debug {
-		log.Printf(format, args)
+func (message *logMessage) toJSON() (string, error) {
+	json, err := json.Marshal(message)
+	if err != nil {
+		return "", err
 	}
+	return string(json), nil
+}
+
+//Init initialize logger
+func Init() {
+}
+
+//Debug logs debug message
+func Debug(msg string) {
+	log("debug", msg)
+}
+
+//Debugf logs debug message
+func Debugf(format string, args ...interface{}) {
+	Debug(fmt.Sprintf(format, args...))
+}
+
+//Info logs debug message
+func Info(msg string) {
+	log("info", msg)
+}
+
+//Infof logs info message
+func Infof(format string, args ...interface{}) {
+	Info(fmt.Sprintf(format, args...))
+}
+
+//Fatal logs CRITICAL messages and exits
+func Fatal(msg string) {
+	log("fatal", msg)
+	os.Exit(1)
+}
+
+//Fatalf logs CRITICAL messages and exits
+func Fatalf(format string, args ...interface{}) {
+	Fatal(fmt.Sprintf(format, args...))
+}
+
+//Warnf logs warning message
+func Warnf(format string, args ...interface{}) {
+	log("warning", fmt.Sprintf(format, args...))
+}
+
+func log(logLevel string, msg string) {
+	message := logMessage{Level: logLevel, Message: msg}
+	m, _ := message.toJSON()
+	fmt.Fprintln(os.Stdout, m)
 }

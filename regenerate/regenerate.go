@@ -18,8 +18,8 @@
 package regenerate
 
 import (
+	"github.com/getgauge/html-report/logger"
 	"io/ioutil"
-	"log"
 	"path/filepath"
 
 	"github.com/getgauge/html-report/env"
@@ -33,12 +33,12 @@ import (
 func Report(inputFile, reportsDir, themePath, pRoot string) {
 	b, err := ioutil.ReadFile(inputFile)
 	if err != nil {
-		log.Fatal(err.Error())
+		logger.Fatal(err.Error())
 	}
 	psr := &gauge_messages.ProtoSuiteResult{}
 	err = proto.Unmarshal(b, psr)
 	if err != nil {
-		log.Fatalf("Unable to read last run data from %s. Error: %s", inputFile, err.Error())
+		logger.Fatalf("Unable to read last run data from %s. Error: %s", inputFile, err.Error())
 	}
 	res := generator.ToSuiteResult(pRoot, psr)
 

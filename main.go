@@ -20,8 +20,6 @@ package main
 import (
 	"os"
 
-	"log"
-
 	"github.com/getgauge/common"
 	"github.com/getgauge/html-report/env"
 	"github.com/getgauge/html-report/logger"
@@ -35,7 +33,6 @@ var themePath = flag.String([]string{"-theme", "t"}, "", "Theme to use for gener
 
 func main() {
 	flag.Parse()
-	logger.Init()
 	if *inputFile != "" {
 		if *outDir == "" {
 			flag.PrintDefaults()
@@ -43,10 +40,10 @@ func main() {
 		}
 		projectRoot, err := common.GetProjectRoot()
 		if err != nil {
-			log.Fatalf("%s", err.Error())
+			logger.Fatalf("%s", err.Error())
 		}
 		if !common.FileExists(*inputFile) {
-			log.Fatalf("Input file does not exist: %s", *inputFile)
+			logger.Fatalf("Input file does not exist: %s", *inputFile)
 		}
 		regenerate.Report(*inputFile, *outDir, *themePath, projectRoot)
 		return
