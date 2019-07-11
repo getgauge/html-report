@@ -18,13 +18,13 @@
 package env
 
 import (
-	"github.com/getgauge/html-report/logger"
-	"fmt"
 	"os"
 	"path"
 	"path/filepath"
 	"strconv"
 	"strings"
+
+	"github.com/getgauge/html-report/logger"
 
 	"github.com/getgauge/common"
 )
@@ -79,14 +79,14 @@ func AddDefaultPropertiesToProject() {
 		DefaultValue: "true"})
 
 	if !common.FileExists(defaultPropertiesFile) {
-		fmt.Printf("Failed to setup html report plugin in project. Default properties file does not exist at %s. \n", defaultPropertiesFile)
+		logger.Debugf("Failed to setup html report plugin in project. Default properties file does not exist at %s. \n", defaultPropertiesFile)
 		return
 	}
 	if err := common.AppendProperties(defaultPropertiesFile, reportsDirProperty, overwriteReportProperty); err != nil {
-		fmt.Printf("Failed to setup html report plugin in project: %s \n", err)
+		logger.Debugf("Failed to setup html report plugin in project: %s \n", err)
 		return
 	}
-	fmt.Println("Succesfully added configurations for html-report to env/default/default.properties")
+	logger.Debug("Succesfully added configurations for html-report to env/default/default.properties")
 }
 
 func getDefaultPropertiesFile() string {
