@@ -20,7 +20,6 @@ package main
 import (
 	"fmt"
 	"io/ioutil"
-	"log"
 	"os"
 	"path/filepath"
 	"time"
@@ -74,7 +73,7 @@ func (r *reportAccumulator) Meta(res *gauge_messages.SuiteExecutionResult) {
 	if !res.SuiteResult.Chunked {
 		_, err := createReport(res, true, r.stopChan)
 		if err != nil {
-			log.Fatalf("%s", err.Error())
+			logger.Fatalf("%s", err.Error())
 		}
 		return
 	}
@@ -93,7 +92,7 @@ func (r *reportAccumulator) Meta(res *gauge_messages.SuiteExecutionResult) {
 func (r *reportAccumulator) AddItem(i *gauge_messages.SuiteExecutionResultItem) {
 	pItem := r.specMap[i.ResultItem.FileName]
 	if pItem == nil {
-		logger.Debug(fmt.Sprintf("received item for %s that does not exist in Meta.", i.ResultItem.FileName))
+		logger.Debugf("received item for %s that does not exist in Meta.", i.ResultItem.FileName)
 		return
 	}
 	pItem.Items = append(pItem.Items, i.ResultItem)
@@ -107,7 +106,7 @@ func (r *reportAccumulator) AddItem(i *gauge_messages.SuiteExecutionResultItem) 
 func (r *reportAccumulator) write() {
 	dir, err := createReport(r.result, false, r.stopChan)
 	if err != nil {
-		log.Fatalf("%s", err.Error())
+		logger.Fatalf("%s", err.Error())
 	}
 	r.searchIndex.Write(dir)
 }
@@ -141,7 +140,7 @@ func createReport(suiteResult *gauge_messages.SuiteExecutionResult, searchIndex 
 	go createReportExecutableFile(getExecutableAndTargetPath(reportsDir, pluginsDir))
 	t := theme.GetThemePath(pluginsDir)
 	generator.GenerateReport(res, reportsDir, t, searchIndex)
-	logger.Debug("Done generating HTML report using theme from %s", t)
+	logger.Debugf("Done generating HTML report using theme from %s", t)
 	return reportsDir, nil
 }
 
@@ -199,10 +198,10 @@ func createBatFileToExecuteHTMLReport(exPath, exTarget string) {
 	outF := exTarget + ".bat"
 	err := ioutil.WriteFile(outF, o, common.NewFilePermissions)
 	if err != nil {
-		log.Printf("[Warning] Failed to write to %s. Reason: %s\n", outF, err.Error())
+		logger.Debugf("[Warning] Failed to write to %s. Reason: %s\n", outF, err.Error())
 		return
 	}
-	logger.Debug("Generated %s", outF)
+	logger.Debugf("Generated %s", outF)
 }
 
 func createSymlinkToHTMLReport(exPath, exTarget string) {
@@ -211,9 +210,9 @@ func createSymlinkToHTMLReport(exPath, exTarget string) {
 	}
 	err := os.Symlink(exPath, exTarget)
 	if err != nil {
-		log.Printf("[Warning] Unable to create symlink %s\n", exTarget)
+		logger.Debugf("[Warning] Unable to create symlink %s\n", exTarget)
 	}
-	logger.Debug("Generated symlink %s", exTarget)
+	logger.Debugf("Generated symlink %s", exTarget)
 }
 
 func fileExists(path string) bool {

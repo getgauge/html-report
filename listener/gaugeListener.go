@@ -20,7 +20,6 @@ package listener
 import (
 	"bytes"
 	"fmt"
-	"log"
 	"net"
 	"os"
 	"time"
@@ -84,7 +83,7 @@ func (gaugeListener *GaugeListener) processMessages(buffer *bytes.Buffer) {
 			messageBoundary := int(messageLength) + bytesRead
 			err := proto.Unmarshal(buffer.Bytes()[bytesRead:messageBoundary], message)
 			if err != nil {
-				log.Printf("Failed to read proto message: %s\n", err.Error())
+				logger.Warnf("Failed to read proto message: %s\n", err.Error())
 			} else {
 				switch message.MessageType {
 				case gauge_messages.Message_KillProcessRequest:
@@ -98,7 +97,7 @@ func (gaugeListener *GaugeListener) processMessages(buffer *bytes.Buffer) {
 					gaugeListener.onResultHandler(result)
 				case gauge_messages.Message_SuiteExecutionResultItem:
 					result := message.GetSuiteExecutionResultItem()
-					logger.Debug("Received SuiteExecutionResultItem for %s, processing...", result.ResultItem.FileName)
+					logger.Debugf("Received SuiteExecutionResultItem for %s, processing...", result.ResultItem.FileName)
 					gaugeListener.onResultItemHandler(result)
 				}
 				buffer.Next(messageBoundary)
@@ -120,7 +119,7 @@ func (gaugeListener *GaugeListener) sendPings() {
 	}
 	m, err := proto.Marshal(msg)
 	if err != nil {
-		logger.Debug("Unable to marshal ping message, %s", err.Error())
+		logger.Debugf("Unable to marshal ping message, %s", err.Error())
 		return
 	}
 	ping := func(b []byte, c net.Conn) {
@@ -128,7 +127,7 @@ func (gaugeListener *GaugeListener) sendPings() {
 		l := proto.EncodeVarint(uint64(len(b)))
 		_, err := c.Write(append(l, b...))
 		if err != nil {
-			logger.Debug("Unable to send ping message, %s", err.Error())
+			logger.Debugf("Unable to send ping message, %s", err.Error())
 		}
 	}
 	ticker := time.NewTicker(interval())
