@@ -1,0 +1,31 @@
+name: HTML Report
+
+on: [push, pull_request]
+
+jobs:
+  test:
+    name: Go ${{ matrix.go_version }} and ${{ matrix.os }}
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        go_version: 1.13.1
+        os: [ubuntu-latest, macos-latest]
+
+    steps:
+      - uses: actions/checkout@v1
+
+      - name: Setup go ${{ matrix.go_version }}
+        uses: actions/setup-go@v1
+        with:
+          go-version: ${{ matrix.go_version }}
+
+      - name: Run tests
+        run: |
+          go test ./...
+
+      - name: Build and Install
+        run: |
+          go run build/make.go
+          go run build/make.go --install
+
+
