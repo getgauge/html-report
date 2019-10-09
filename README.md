@@ -1,7 +1,7 @@
 html-report
 ==========
 
- [ ![Download Nightly](https://api.bintray.com/packages/gauge/html-report/Nightly/images/download.svg) ](https://bintray.com/gauge/html-report/Nightly/_latestVersion) [![Build Status](https://travis-ci.org/getgauge/html-report.svg?branch=master)](https://travis-ci.org/getgauge/html-report)
+ [ ![Download Nightly](https://api.bintray.com/packages/gauge/html-report/Nightly/images/download.svg) ](https://bintray.com/gauge/html-report/Nightly/_latestVersion) [![Actions Status](https://github.com/getgauge/html-report/workflows/test/badge.svg)](https://github.com/getgauge/html-report/actions)
 [![Contributor Covenant](https://img.shields.io/badge/Contributor%20Covenant-v1.4%20adopted-ff69b4.svg)](CODE_OF_CONDUCT.md)
 
 Features
