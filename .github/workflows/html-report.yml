@@ -12,19 +12,24 @@ jobs:
         os: [ubuntu-latest, macos-latest]
 
     steps:
+
+      - uses: actions/checkout@v1
+        with:
+          path: $HOME/go/github.com/getgauge/html-report
+
       - name: Setup go ${{ matrix.go_version }}
         uses: actions/setup-go@v1
         with:
           go-version: ${{ matrix.go_version }}
 
-      - name: Get HTML Report and Dependencies
+      - name: Download packages
         run: |
-          go get -d -u -t -v github.com/getgauge/html-report
+          cd $HOME/go/src/github.com/getgauge/html-report
+          go get -t -v ./...
 
       - name: Run tests
         run: |
           cd $HOME/go/src/github.com/getgauge/html-report
-          go get -t -v ./...
           go test ./...
 
       - name: Build and Install
