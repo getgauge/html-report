@@ -19,6 +19,10 @@ jobs:
         with:
           go-version: ${{ matrix.go_version }}
 
+      - name: Download packages
+        run: |
+          go get -t
+
       - name: Run tests
         run: |
           go test ./...
