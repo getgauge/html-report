@@ -16,7 +16,7 @@ Features
 -  The failure can be analyzed with the stacktrace and
    screenshot(captures unless overwritten not to).
 -  The skipped tests can be analyzed with the given reason.
--  [Custom Messages](https://docs.gauge.org/language.html#custom-messages-in-reports) allows users to add messages at runtime.
+-  [Custom Messages](https://docs.gauge.org/writing-specifications.html#custom-messages-in-reports) allows users to add messages at runtime.
 
 
 **Sample HTML Report documemt**
