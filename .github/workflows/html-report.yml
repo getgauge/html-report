@@ -24,17 +24,17 @@ jobs:
 
       - name: Download packages
         run: |
-          cd $HOME/go/src/github.com/getgauge/html-report
+          export GOPATH=`cd ../../../../ && pwd`
           go get -t -v ./...
 
       - name: Run tests
         run: |
-          cd $HOME/go/src/github.com/getgauge/html-report
+          export GOPATH=`cd ../../../../ && pwd`
           go test ./...
 
       - name: Build and Install
         run: |
-          cd $HOME/go/src/github.com/getgauge/html-report
+          export GOPATH=`cd ../../../../ && pwd`
           go run build/make.go
           go run build/make.go --install
 
