@@ -17,18 +17,19 @@ jobs:
         with:
           go-version: ${{ matrix.go_version }}
 
-      - name: Get HTML Report
+      - name: Get HTML Report and Dependencies
         run: |
           go get -d -u -t -v github.com/getgauge/html-report
 
       - name: Run tests
         run: |
-          cd $GOPATH/src/github.com/getgauge/html-report
+          cd $HOME/go/src/github.com/getgauge/html-report
+          go get -t -v ./...
           go test ./...
 
       - name: Build and Install
         run: |
-          cd $GOPATH/src/github.com/getgauge/html-report
+          cd $HOME/go/src/github.com/getgauge/html-report
           go run build/make.go
           go run build/make.go --install
 
