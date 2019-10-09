@@ -12,23 +12,23 @@ jobs:
         os: [ubuntu-latest, macos-latest]
 
     steps:
-      - uses: actions/checkout@v1
-
       - name: Setup go ${{ matrix.go_version }}
         uses: actions/setup-go@v1
         with:
           go-version: ${{ matrix.go_version }}
 
-      - name: Download packages
+      - name: Get HTML Report
         run: |
-          go get -t
+          go get -d -u -t -v github.com/getgauge/html-report
 
       - name: Run tests
         run: |
+          cd $GOPATH/src/github.com/getgauge/html-report
           go test ./...
 
       - name: Build and Install
         run: |
+          cd $GOPATH/src/github.com/getgauge/html-report
           go run build/make.go
           go run build/make.go --install
 
