@@ -22,6 +22,7 @@ import (
 	"os"
 	"path/filepath"
 	"reflect"
+	"runtime"
 	"testing"
 	"time"
 
@@ -97,7 +98,11 @@ func TestCreatingReportShouldOverwriteReportsBasedOnEnv(t *testing.T) {
 func TestCreateReportExecutableFileShouldCreateExecFile(t *testing.T) {
 	isSaveExecutionResultDisabled = func() bool { return false }
 	exPath := filepath.Join(os.TempDir(), "html-report")
-	exTarget := filepath.Join(os.TempDir(), "html-report-target")
+	exTargetFileName := "html-report-target"
+	if runtime.GOOS == "windows" {
+		exTargetFileName = "html-report-target.bat"
+	}
+	exTarget := filepath.Join(os.TempDir(), exTargetFileName)
 	os.Create(exPath)
 	defer os.Remove(exPath)
 	defer os.Remove(exTarget)
