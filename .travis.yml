@@ -3,7 +3,7 @@ os:
   - osx
 language: go
 go:
-  - 1.8
+  - 1.13.1
 script:
   - go run build/make.go
   - go test ./...
