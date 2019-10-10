@@ -1077,7 +1077,7 @@ func TestToScenario(t *testing.T) {
 
 	got := toScenario(scn, -1)
 	if !reflect.DeepEqual(got, want) {
-		t.Errorf("want:\n%q\ngot:\n%q\n", want, got)
+		t.Errorf("want:\n%v\ngot:\n%v\n", want, got)
 	}
 }
 
@@ -1168,7 +1168,7 @@ func TestToConcept(t *testing.T) {
 
 	got := toConcept(protoConcept)
 	if !reflect.DeepEqual(got, want) {
-		t.Errorf("want:\n%q\ngot:\n%q\n", want, got)
+		t.Errorf("want:\n%v\ngot:\n%v\n", want, got)
 	}
 }
 
@@ -1191,7 +1191,7 @@ func TestToStep(t *testing.T) {
 
 	got := toStep(protoStep)
 	if !reflect.DeepEqual(got, want) {
-		t.Errorf("want:\n%q\ngot:\n%q\n", want, got)
+		t.Errorf("want:\n%v\ngot:\n%v\n", want, got)
 	}
 }
 
@@ -1219,7 +1219,7 @@ func TestToStepCollectsScreenshot(t *testing.T) {
 
 	got := toStep(protoStepWithScreenshots)
 	if !reflect.DeepEqual(got, want) {
-		t.Errorf("want:\n%q\ngot:\n%q\n", want, got)
+		t.Errorf("want:\n%v\ngot:\n%v\n", want, got)
 	}
 }
 
@@ -1262,7 +1262,7 @@ Mingle,2`,
 
 	got := toStep(protoStepWithSpecialParams)
 	if !reflect.DeepEqual(got, want) {
-		t.Errorf("want:\n%q\ngot:\n%q\n", want, got)
+		t.Errorf("want:\n%v\ngot:\n%v\n", want, got)
 	}
 }
 
@@ -1281,7 +1281,7 @@ func TestToStepWithAfterHookFailure(t *testing.T) {
 
 	got := toStep(protoStepWithAfterHookFailure)
 	if !reflect.DeepEqual(got, want) {
-		t.Errorf("want:\n%q\ngot:\n%q\n", want, got)
+		t.Errorf("want:\n%v\ngot:\n%v\n", want, got)
 	}
 }
 
