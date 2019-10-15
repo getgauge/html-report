@@ -1,7 +1,7 @@
 html-report
 ==========
 
- [ ![Download Nightly](https://api.bintray.com/packages/gauge/html-report/Nightly/images/download.svg) ](https://bintray.com/gauge/html-report/Nightly/_latestVersion) [![Actions Status](https://github.com/getgauge/html-report/workflows/test/badge.svg)](https://github.com/getgauge/html-report/actions)
+[![Actions Status](https://github.com/getgauge/html-report/workflows/test/badge.svg)](https://github.com/getgauge/html-report/actions)
 [![Contributor Covenant](https://img.shields.io/badge/Contributor%20Covenant-v1.4%20adopted-ff69b4.svg)](CODE_OF_CONDUCT.md)
 
 Features
@@ -40,14 +40,6 @@ gauge install html-report --version 2.1.0
 ```
 gauge install html-report --file html-report-2.1.0-linux.x86_64.zip
 ```
-
-#### Nightly installation
-To install html-report nightly, download the latest nightly from [here](https://bintray.com/gauge/html-report/Nightly).
-
-Once you have the downloaded nightly html-report-version.nightly-yyyy-mm-dd.zip, install using:
-
-    gauge install html-report --file html-report-version.nightly-yyyy-mm-dd.zip
-    
 
 #### Build from Source
 
