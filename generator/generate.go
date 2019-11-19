@@ -24,6 +24,7 @@ import (
 	"io/ioutil"
 	"os"
 	"path/filepath"
+	"runtime"
 	"strings"
 	"sync"
 	"text/template"
@@ -357,17 +358,29 @@ func GenerateReports(res *SuiteResult, reportsDir, themePath string, searchIndex
 		if env.ShouldUseNestedSpecs() {
 			go generateIndexPages(res, reportsDir, &wg)
 		}
-		for _, r := range res.SpecResults {
-			relPath, _ := filepath.Rel(projectRoot, r.FileName)
-			env.CreateDirectory(filepath.Join(reportsDir, filepath.Dir(relPath)))
-			sf, err := os.Create(filepath.Join(reportsDir, toHTMLFileName(r.FileName, projectRoot)))
-			if err != nil {
-				return err
+		startIndex, slice := 0, runtime.NumCPU()
+		specsCount := len(res.SpecResults)
+		for {
+			if startIndex >= specsCount {
+				break
 			}
-			wg.Add(1)
-			go generateSpecPage(res, r, sf, &wg)
+			if specsCount < slice {
+				slice = specsCount
+			}
+			for _, r := range res.SpecResults[startIndex:slice] {
+				startIndex++
+				slice++
+				relPath, _ := filepath.Rel(projectRoot, r.FileName)
+				env.CreateDirectory(filepath.Join(reportsDir, filepath.Dir(relPath)))
+				sf, err := os.Create(filepath.Join(reportsDir, toHTMLFileName(r.FileName, projectRoot)))
+				if err != nil {
+					return err
+				}
+				wg.Add(1)
+				go generateSpecPage(res, r, sf, &wg)
+			}
+			wg.Wait()
 		}
-		wg.Wait()
 	}
 	if searchIndex {
 		return generateSearchIndex(res, reportsDir)
