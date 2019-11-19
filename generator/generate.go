@@ -181,21 +181,21 @@ func (s *step) Kind() tokenKind {
 type result struct {
 	Status            status    `json:"Status"`
 	StackTrace        string    `json:"StackTrace"`
-	FailureScreenshot string    `json:"Screenshot"`
+	FailureScreenshotFile string    `json:"ScreenshotFile"`
 	ErrorMessage      string    `json:"ErrorMessage"`
 	ExecutionTime     string    `json:"ExecutionTime"`
 	SkippedReason     string    `json:"SkippedReason"`
 	Messages          []string  `json:"Messages"`
 	ErrorType         errorType `json:"ErrorType"`
-	Screenshots       []string  `json:"Screenshots"`
+	ScreenshotFiles       []string  `json:"ScreenshotFiles"`
 }
 
 type hookFailure struct {
-	HookName          string `json:"HookName"`
-	ErrMsg            string `json:"ErrMsg"`
-	FailureScreenshot string `json:"Screenshot"`
-	StackTrace        string `json:"StackTrace"`
-	TableRowIndex     int32  `json:"TableRowIndex"`
+	HookName              string `json:"HookName"`
+	ErrMsg                string `json:"ErrMsg"`
+	FailureScreenshotFile string `json:"ScreenshotFile"`
+	StackTrace            string `json:"StackTrace"`
+	TableRowIndex         int32  `json:"TableRowIndex"`
 }
 
 type concept struct {
@@ -384,6 +384,7 @@ func GenerateReport(res *SuiteResult, reportDir, themePath string, searchIndex b
 	if err != nil {
 		logger.Fatalf("Error copying template directory :%s\n", err.Error())
 	}
+	copyScreenshotFiles(reportDir)
 	logger.Infof("Successfully generated html-report to => %s\n", filepath.Join(reportDir, "index.html"))
 }
 
@@ -441,4 +442,22 @@ func generateSpecPage(suiteRes *SuiteResult, specRes *spec, wc io.WriteCloser, w
 		SuiteRes *SuiteResult
 		SpecRes  *spec
 	}{suiteRes, specRes})
+}
+
+func copyScreenshotFiles(reportsDir string) {
+	src := os.Getenv(env.ScreenshotsDirName)
+	for _, fileName := range screenshotFiles {
+		srcfp := path.Join(src, fileName)
+		dstfp := path.Join(reportsDir, "images", fileName)
+		bytes, err := ioutil.ReadFile(srcfp)
+		if err == nil {
+			err = ioutil.WriteFile(dstfp, bytes, os.ModePerm)
+			if err != nil {
+				logger.Warnf("Failed to write screenhsot %s", err.Error())
+			}
+		} else {
+			logger.Warnf("Failed to read screenhsot %s", err.Error())
+		}
+	}
+
 }

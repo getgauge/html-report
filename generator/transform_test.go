@@ -18,7 +18,6 @@
 package generator
 
 import (
-	"encoding/base64"
 	"path/filepath"
 	"reflect"
 	"testing"
@@ -129,7 +128,7 @@ func newConceptItem(heading string, steps []*gm.ProtoItem, cptRes *gm.ProtoStepE
 }
 
 func newScreenshot() string {
-	return `iVBORw0KGgoAAAANSUhEUgAAAGwAAABsCAYAAACPZlfNAAAFG0lEQVR4nOyd/3HbNhTHYV0HaCeofF3AnaDyBLUmsDRBzhMknsDOBJYmiDOBmQ3s/+MzvYE3UPClAAWkRIkEH0D8eJ87VKpigoA+BAiCxNMfooV//p4u5Mv/Ms1k+tP4p1KmQqb163tZtG0fIrJOM/lyLdOVqNcJPMu0lmkl6/XhuWid2Gw24qz5oawUKnMn07RDHoVMS1nBkrRkxMg6XYhtnWYd/hyyvso6fXFZJhv2hMmKPciXRc98UEFIe6QqGCXqAES9mi3qFKjPMqTWVhNmKcsElVsNLRQlqgt8GpAFusnLUKTthKmj8BtBnsFIk3VCi3oT/VtWk2CkQdhEVeyBKM8HNVgJAZyzhsoCOP89qe9pdCbi8IhpCKNLU1/uFWGWwUiDsGsH+Y4tjfogBEFIg7CZo7zHlDZ1lO/o0iaO8x9L2n8O8x5VmmthYOzu0QWjSfMhDPiW5mMIPoo0CPN1feFT2oun/XiXBmGFr50Jf9J8TpN5lQZhax87MnAu7fW9xOxE6XIfDbxJm6hJ22fXO2rgo6XdOs6/iRdpetCxdLmTFpxKU3Oahav8W3AurRKmupDkpEnmwn/v4VTablivjsikpKkZ9kuRkLTadRhLI8WJtL0LZ5ZGCrm0gzMdLI0UUmmtU1MsjRQyaUfnElkaKSTSTk7+sjRSBkvrNFvP0kgZJK3z7RWWRoq1tF73w1gaKVbSet/AZGmk9JZmdceZpZHSS5r1IwIsjZTO0gY908HSSOkkbfBDOCyNlJPSSJ6aYmmkHJVG9pgbSyOlVRrpc4ksjZSD0sgfJGVppEDanfnB3hpnKtSXR7XurA/OFhWqox0rOi9c5H8ELCgsqgV9rvbALY2UT/qNsxam4ZZGxl8/y7cP54shuKWRUR0cXlavsDQS/AkDLG0w1fDemzDA0gZRLQvzKgywNGuqvJ2PEtvg0WM/ZJnPDgYHaxRgIRxGdGNpnUGEuWWrMIuIbjdqBUxvWFonzhEx7+BMh9wZRCHu1LRjZjOxnaRc2JSEz2knuTfDG1KE3zOZ24bh45Z2kEKW7VL/T62FqW5wMaiE26N2arNh4i1tZbH5ypSlMbvEO8tymeCI+my7carSMGAQ23qVHTbB38zVNnvoeIkLQdsdnQ8JK5ti96hRPRlCKzW7SZzvfhw7pZgBLjHIuCIsF0aN90MySFmaLeY5bEac9+DgXCl2jxRoYdSLp0nyY2n7eJ9L7AtLqxO8MMDSfhOFMMDStkQjDLC0yISB3KVFJwzkLC1KYSBXadEKAzlKi1oYyE1a9MJATtKSEAZykZaMMJCDtKSEgdSlJScMpCwtSWEgVWnJCgMpSktaGEhNWvLCQErSshAGUpGWjTCQgrSshIHYpWUnDMQsLUthIFZp2QoDMUrLWhiITVr2wkBM0liYwpD24XnXvaSxMAMlDYvogpXGwhqoxfXBStPrwzbOi8N0pXV9mtN4iYw1R1saCwuTVmksLFwOSmNhYQNptcXrLCx8auE4WFj4zMxWxsLi4Fq/YWFxwC0sMlhYZOzinrCwOCj1m0nzAyZISv1GCytGKQbTle/6jRa2HqkgTDd2IfkqYSoydjFSYZjj1GL+moOOG+H/ph1znFKmW/ODnTB1p/XGc4GYdtB45ipu8I7asH7EZxqYOqXY/irfXhj1veswdT47F3aRoJlhoKGgC/y37YcbTv2UB66wdVDhKXXpmB2Q8yLTY7MLNKmCNOM/TDzw1FRk/AoAAP//H/csAQ85/aEAAAAASUVORK5CYII=`
+	return `failure-screenshot-file.png`
 }
 
 func newStackTrace() string {
@@ -286,12 +285,12 @@ var specResWithSpecHookFailure = &gm.ProtoSpecResult{
 		PreHookFailures: []*gm.ProtoHookFailure{{
 			ErrorMessage:      "err",
 			StackTrace:        "Stacktrace",
-			FailureScreenshot: []byte("Screenshot"),
+			FailureScreenshotFile: "Screenshot.png",
 		}},
 		PostHookFailures: []*gm.ProtoHookFailure{{
 			ErrorMessage:      "err",
 			StackTrace:        "Stacktrace",
-			FailureScreenshot: []byte("Screenshot"),
+			FailureScreenshotFile: "Screenshot.png",
 		}},
 	},
 }
@@ -365,12 +364,12 @@ var scnWithHookFailure = &gm.ProtoScenario{
 	PreHookFailure: &gm.ProtoHookFailure{
 		ErrorMessage:      "err",
 		StackTrace:        "Stacktrace",
-		FailureScreenshot: []byte("Screenshot"),
+		FailureScreenshotFile: "Screenshot.png",
 	},
 	PostHookFailure: &gm.ProtoHookFailure{
 		ErrorMessage:      "err",
 		StackTrace:        "Stacktrace",
-		FailureScreenshot: []byte("Screenshot"),
+		FailureScreenshotFile: "Screenshot.png",
 	},
 }
 
@@ -421,7 +420,7 @@ var protoStepWithScreenshots = &gm.ProtoStep{
 	StepExecutionResult: &gm.ProtoStepExecutionResult{
 		ExecutionResult: &gm.ProtoExecutionResult{
 			ExecutionTime: 211316,
-			Screenshots:   [][]byte{[]byte("screenshot1"), []byte("screenshot2")},
+			ScreenshotFiles:   []string{"screenshot1.png", "screenshot2.png"},
 		},
 		SkippedReason: "Step impl not found",
 		Skipped:       true,
@@ -510,7 +509,7 @@ var protoStepWithAfterHookFailure = &gm.ProtoStep{
 		PostHookFailure: &gm.ProtoHookFailure{
 			ErrorMessage:      "err",
 			StackTrace:        "Stacktrace",
-			FailureScreenshot: []byte("Screenshot"),
+			FailureScreenshotFile: "Screenshot.png",
 		},
 	},
 }
@@ -518,7 +517,7 @@ var protoStepWithAfterHookFailure = &gm.ProtoStep{
 var failedHookFailure = &gm.ProtoHookFailure{
 	ErrorMessage:      "java.lang.RuntimeException",
 	StackTrace:        newStackTrace(),
-	FailureScreenshot: []byte(newScreenshot()),
+	FailureScreenshotFile: newScreenshot(),
 }
 
 func TestToOverview(t *testing.T) {
@@ -730,11 +729,11 @@ func TestToSpecForTableDrivenSpec(t *testing.T) {
 }
 
 func TestToSpecWithHookFailure(t *testing.T) {
-	encodedScreenShot := base64.StdEncoding.EncodeToString([]byte("Screenshot"))
+	screenShot := "Screenshot.png"
 	want := &spec{
 		Scenarios:              make([]*scenario, 0),
-		BeforeSpecHookFailures: []*hookFailure{newHookFailure("Before Spec", "err", encodedScreenShot, "Stacktrace")},
-		AfterSpecHookFailures:  []*hookFailure{newHookFailure("After Spec", "err", encodedScreenShot, "Stacktrace")},
+		BeforeSpecHookFailures: []*hookFailure{newHookFailure("Before Spec", "err", screenShot, "Stacktrace")},
+		AfterSpecHookFailures:  []*hookFailure{newHookFailure("After Spec", "err", screenShot, "Stacktrace")},
 		Errors:                 make([]buildError, 0),
 		Tags:                   []string{"tag1"},
 		SpecHeading:            "specRes3",
@@ -847,14 +846,14 @@ func TestToSpecWithDataTableExecutionStatusFail(t *testing.T) {
 }
 
 func TestToSpecWithBeforeHookFailure(t *testing.T) {
-	want := []*hookFailure{{ErrMsg: "err", HookName: "Before Spec", FailureScreenshot: "U2NyZWVuc2hvdA==", StackTrace: "Stacktrace"}}
+	want := []*hookFailure{{ErrMsg: "err", HookName: "Before Spec", FailureScreenshotFile: "Screenshot.png", StackTrace: "Stacktrace"}}
 	got := toSpec(specResWithSpecHookFailure).BeforeSpecHookFailures
 
 	checkEqual(t, "", want, got)
 }
 
 func TestToSpecWithAfterHookFailure(t *testing.T) {
-	want := []*hookFailure{{ErrMsg: "err", HookName: "After Spec", FailureScreenshot: "U2NyZWVuc2hvdA==", StackTrace: "Stacktrace", TableRowIndex: 0}}
+	want := []*hookFailure{{ErrMsg: "err", HookName: "After Spec", FailureScreenshotFile: "Screenshot.png", StackTrace: "Stacktrace", TableRowIndex: 0}}
 	got := toSpec(specResWithSpecHookFailure).AfterSpecHookFailures
 
 	checkEqual(t, "", want, got)
@@ -1082,7 +1081,7 @@ func TestToScenario(t *testing.T) {
 }
 
 func TestToScenarioWithHookFailures(t *testing.T) {
-	encodedScreenShot := base64.StdEncoding.EncodeToString([]byte("Screenshot"))
+	screenShot := "Screenshot.png"
 	want := &scenario{
 		Heading:         "Vowel counts in single word",
 		ExecutionTime:   "00:01:53",
@@ -1098,8 +1097,8 @@ func TestToScenarioWithHookFailures(t *testing.T) {
 			},
 		},
 		Teardowns:                 []item{},
-		BeforeScenarioHookFailure: newHookFailure("Before Scenario", "err", encodedScreenShot, "Stacktrace"),
-		AfterScenarioHookFailure:  newHookFailure("After Scenario", "err", encodedScreenShot, "Stacktrace"),
+		BeforeScenarioHookFailure: newHookFailure("Before Scenario", "err", screenShot, "Stacktrace"),
+		AfterScenarioHookFailure:  newHookFailure("After Scenario", "err", screenShot, "Stacktrace"),
 		TableRowIndex:             -1,
 	}
 
@@ -1213,7 +1212,7 @@ func TestToStepCollectsScreenshot(t *testing.T) {
 			Status:        skip,
 			ExecutionTime: "00:03:31",
 			SkippedReason: "Step impl not found",
-			Screenshots:   []string{"c2NyZWVuc2hvdDE=", "c2NyZWVuc2hvdDI="},
+			ScreenshotFiles:  []string{ "screenshot1.png", "screenshot2.png"},
 		},
 	}
 
@@ -1267,7 +1266,7 @@ Mingle,2`,
 }
 
 func TestToStepWithAfterHookFailure(t *testing.T) {
-	encodedScreenShot := base64.StdEncoding.EncodeToString([]byte("Screenshot"))
+	screenShot := "Screenshot.png"
 	want := &step{
 		Fragments: []*fragment{
 			{FragmentKind: textFragmentKind, Text: "Some Step"},
@@ -1276,7 +1275,7 @@ func TestToStepWithAfterHookFailure(t *testing.T) {
 			Status:        fail,
 			ExecutionTime: "00:03:31",
 		},
-		AfterStepHookFailure: newHookFailure("After Step", "err", encodedScreenShot, "Stacktrace"),
+		AfterStepHookFailure: newHookFailure("After Step", "err", screenShot, "Stacktrace"),
 	}
 
 	got := toStep(protoStepWithAfterHookFailure)
@@ -1295,8 +1294,8 @@ func TestToComment(t *testing.T) {
 }
 
 func TestToHookFailure(t *testing.T) {
-	encodedScreenShot := base64.StdEncoding.EncodeToString([]byte(newScreenshot()))
-	want := newHookFailure("Before Suite", "java.lang.RuntimeException", encodedScreenShot, newStackTrace())
+	screenShot := newScreenshot()
+	want := newHookFailure("Before Suite", "java.lang.RuntimeException", screenShot, newStackTrace())
 
 	got := toHookFailure(failedHookFailure, "Before Suite")
 	if !reflect.DeepEqual(got, want) {

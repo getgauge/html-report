@@ -18,7 +18,7 @@
 package generator
 
 import (
-	"encoding/base64"
+	// "encoding/base64"
 	"fmt"
 	"path/filepath"
 	"sort"
@@ -34,6 +34,8 @@ const (
 	execTimeFormat = "15:04:05"
 	dothtml        = ".html"
 )
+
+var screenshotFiles []string
 
 // ToSuiteResult Converts the ProtoSuiteResult to SuiteResult type.
 func ToSuiteResult(pRoot string, psr *gm.ProtoSuiteResult) *SuiteResult {
@@ -54,11 +56,13 @@ func ToSuiteResult(pRoot string, psr *gm.ProtoSuiteResult) *SuiteResult {
 		PreHookMessages:        psr.GetPreHookMessages(),
 		PostHookMessages:       psr.GetPostHookMessages(),
 	}
-	for _, s := range psr.GetPreHookScreenshots() {
-		suiteResult.PreHookScreenshots = append(suiteResult.PreHookScreenshots, base64.StdEncoding.EncodeToString(s))
+	for _, s := range psr.GetPreHookScreenshotFiles() {
+		suiteResult.PreHookScreenshots = append(suiteResult.PreHookScreenshots, s)
+		screenshotFiles = append(screenshotFiles, s)
 	}
-	for _, s := range psr.GetPostHookScreenshots() {
-		suiteResult.PostHookScreenshots = append(suiteResult.PostHookScreenshots, base64.StdEncoding.EncodeToString(s))
+	for _, s := range psr.GetPostHookScreenshotFiles() {
+		suiteResult.PostHookScreenshots = append(suiteResult.PostHookScreenshots, s)
+		screenshotFiles = append(screenshotFiles, s)
 	}
 	if psr.GetFailed() {
 		suiteResult.ExecutionStatus = fail
@@ -168,11 +172,11 @@ func toHookFailure(failure *gm.ProtoHookFailure, hookName string) *hookFailure {
 	}
 
 	result := &hookFailure{
-		ErrMsg:            failure.GetErrorMessage(),
-		HookName:          hookName,
-		StackTrace:        failure.GetStackTrace(),
-		TableRowIndex:     failure.TableRowIndex,
-		FailureScreenshot: base64.StdEncoding.EncodeToString(failure.GetFailureScreenshot()),
+		ErrMsg:                failure.GetErrorMessage(),
+		HookName:              hookName,
+		StackTrace:            failure.GetStackTrace(),
+		TableRowIndex:         failure.TableRowIndex,
+		FailureScreenshotFile: failure.GetFailureScreenshotFile(),
 	}
 	return result
 }
@@ -296,11 +300,13 @@ func toSpec(res *gm.ProtoSpecResult) *spec {
 		PreHookMessages:        res.GetProtoSpec().GetPreHookMessages(),
 		PostHookMessages:       res.GetProtoSpec().GetPostHookMessages(),
 	}
-	for _, s := range res.GetProtoSpec().GetPreHookScreenshots() {
-		spec.PreHookScreenshots = append(spec.PreHookScreenshots, base64.StdEncoding.EncodeToString(s))
+	for _, s := range res.GetProtoSpec().GetPreHookScreenshotFiles() {
+		spec.PreHookScreenshots = append(spec.PreHookScreenshots, s)
+		screenshotFiles = append(screenshotFiles, s)
 	}
-	for _, s := range res.GetProtoSpec().GetPostHookScreenshots() {
-		spec.PostHookScreenshots = append(spec.PostHookScreenshots, base64.StdEncoding.EncodeToString(s))
+	for _, s := range res.GetProtoSpec().GetPostHookScreenshotFiles() {
+		spec.PostHookScreenshots = append(spec.PostHookScreenshots, s)
+		screenshotFiles = append(screenshotFiles, s)
 	}
 	if res.GetFailed() {
 		spec.ExecutionStatus = fail
@@ -439,11 +445,13 @@ func toScenario(scn *gm.ProtoScenario, tableRowIndex int) *scenario {
 		PreHookMessages:           scn.GetPreHookMessages(),
 		PostHookMessages:          scn.GetPostHookMessages(),
 	}
-	for _, s := range scn.GetPreHookScreenshots() {
-		scenario.PreHookScreenshots = append(scenario.PreHookScreenshots, base64.StdEncoding.EncodeToString(s))
+	for _, s := range scn.GetPreHookScreenshotFiles() {
+		scenario.PreHookScreenshots = append(scenario.PreHookScreenshots, s)
+		screenshotFiles = append(screenshotFiles, s)
 	}
-	for _, s := range scn.GetPostHookScreenshots() {
-		scenario.PostHookScreenshots = append(scenario.PostHookScreenshots, base64.StdEncoding.EncodeToString(s))
+	for _, s := range scn.GetPostHookScreenshotFiles() {
+		scenario.PostHookScreenshots = append(scenario.PostHookScreenshots, s)
+		screenshotFiles = append(screenshotFiles, s)
 	}
 	return scenario
 }
@@ -454,16 +462,21 @@ func toComment(protoComment *gm.ProtoComment) *comment {
 
 func toStep(protoStep *gm.ProtoStep) *step {
 	res := protoStep.GetStepExecutionResult().GetExecutionResult()
+	failureScreenshotFile := res.GetFailureScreenshotFile()
 	result := &result{
 		Status:            getStepStatus(protoStep.GetStepExecutionResult()),
 		StackTrace:        res.GetStackTrace(),
 		ErrorMessage:      res.GetErrorMessage(),
 		ExecutionTime:     formatTime(res.GetExecutionTime()),
 		Messages:          res.GetMessage(),
-		FailureScreenshot: base64.StdEncoding.EncodeToString(res.GetFailureScreenshot()),
+		FailureScreenshotFile: failureScreenshotFile,
 	}
-	for _, s := range res.GetScreenshots() {
-		result.Screenshots = append(result.Screenshots, base64.StdEncoding.EncodeToString(s))
+	if failureScreenshotFile != "" {
+		screenshotFiles = append(screenshotFiles, failureScreenshotFile)
+	}
+	for _, s := range res.GetScreenshotFiles() {
+		result.ScreenshotFiles = append(result.ScreenshotFiles, s)
+		screenshotFiles = append(screenshotFiles, s)
 	}
 	if protoStep.GetStepExecutionResult().GetSkipped() {
 		result.SkippedReason = protoStep.GetStepExecutionResult().GetSkippedReason()
@@ -476,11 +489,13 @@ func toStep(protoStep *gm.ProtoStep) *step {
 		PreHookMessages:       protoStep.GetPreHookMessages(),
 		PostHookMessages:      protoStep.GetPostHookMessages(),
 	}
-	for _, s := range protoStep.GetPreHookScreenshots() {
-		step.PreHookScreenshots = append(step.PreHookScreenshots, base64.StdEncoding.EncodeToString(s))
+	for _, s := range protoStep.GetPreHookScreenshotFiles() {
+		step.PreHookScreenshots = append(step.PreHookScreenshots, s)
+		screenshotFiles = append(screenshotFiles, s)
 	}
-	for _, s := range protoStep.GetPostHookScreenshots() {
-		step.PostHookScreenshots = append(step.PostHookScreenshots, base64.StdEncoding.EncodeToString(s))
+	for _, s := range protoStep.GetPostHookScreenshotFiles() {
+		step.PostHookScreenshots = append(step.PostHookScreenshots, s)
+		screenshotFiles = append(screenshotFiles, s)
 	}
 	return step
 }

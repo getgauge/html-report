@@ -175,8 +175,8 @@
       {{if .FailureScreenshot}}
         <div class="screenshot-container">
           <div class="screenshot">
-            <a href="data:image/png;base64,{{.FailureScreenshot}}" rel="lightbox">
-              <img src="data:image/png;base64,{{.FailureScreenshot}}" class="screenshot-thumbnail" />
+            <a href="../images/{{.FailureScreenshotFile}}" rel="lightbox">
+              <img src="../image/{{.FailureScreenshotFile}}" class="screenshot-thumbnail" />
             </a>
           </div>
         </div>
@@ -232,8 +232,8 @@
     {{range .}}
       {{if .}}
         <div class="screenshot">
-          <a href="data:image/png;base64,{{.}}" rel="lightbox">
-            <img src="data:image/png;base64,{{.}}" class="screenshot-thumbnail" />
+          <a href="../images/{{.}}" rel="lightbox">
+            <img src="../images/{{.}}" class="screenshot-thumbnail" />
           </a>
         </div>
       {{end}}
@@ -407,11 +407,11 @@
         </h4>
         <pre class="stacktrace">{{.StackTrace | escapeHTML | encodeNewLine}}</pre>
       </div>
-      {{ if .FailureScreenshot}}
+      {{ if .FailureScreenshotFile}}
         <div class="screenshot-container">
           <div class="screenshot">
-            <a href="data:image/png;base64,{{.FailureScreenshot}}" rel="lightbox">
-              <img src="data:image/png;base64,{{.FailureScreenshot}}" class="screenshot-thumbnail" />
+            <a href="../images/{{.FailureScreenshotFile}}" rel="lightbox">
+              <img src="../images/{{.FailureScreenshotFile}}" class="screenshot-thumbnail" />
             </a>
           </div>
         </div>
@@ -458,7 +458,7 @@
         {{template "stepFailureDiv" .}}
     {{end }}
     {{template "messageDiv" .Messages}}
-    {{template "screenshotDiv" .Screenshots}}
+    {{template "screenshotDiv" .ScreenshotFiles}}
   {{end}}
   {{if .AfterStepHookFailure}}
     {{ template "hookFailureDiv" .AfterStepHookFailure }}
