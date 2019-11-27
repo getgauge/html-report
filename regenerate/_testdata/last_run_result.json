@@ -194,9 +194,9 @@
                     ],
                     "stepExecutionResult": {
                       "executionResult": {
-                        "screenshots":[
-                          "c2NyZWVuc2hvdDE=", 
-                          "c2NyZWVuc2hvdDI="
+                        "screenshotFiles":[
+                          "screenshot-file-1.png",
+                          "screenshot-file-2.png"
                         ]
                       }
                     }

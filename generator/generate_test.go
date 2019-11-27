@@ -167,8 +167,8 @@ var wHookFailureWithScreenhotDiv = `<div class="error-container failed" data-tab
 		</div>
 		<div class="screenshot-container">
 			<div class="screenshot">
-				<a href="data:image/png;base64,iVBO" rel="lightbox">
-					<img src="data:image/png;base64,iVBO" class="screenshot-thumbnail" />
+				<a href="../images/iVBO" rel="lightbox">
+					<img src="../images/iVBO" class="screenshot-thumbnail" />
 				</a>
 			</div>
 		</div>
@@ -390,8 +390,8 @@ var wBeforeSuiteScreenshotDiv = `<div class="suite_screenshots">
 	<div>Before Suite Screenshots</div>
 	<div class="screenshot-container">
 		<div class="screenshot">
-			<a href="data:image/png;base64,Before Suite Screenshot" rel="lightbox">
-				<img src="data:image/png;base64,Before Suite Screenshot" class="screenshot-thumbnail" />
+			<a href="../images/Before Suite Screenshot" rel="lightbox">
+				<img src="../images/Before Suite Screenshot" class="screenshot-thumbnail" />
 			</a>
 		</div>
 	</div>
@@ -401,8 +401,8 @@ var wAfterSuiteScreenshotDiv = `<div class="suite_screenshots">
 	<div>Before Suite Screenshots</div>
 	<div class="screenshot-container">
 		<div class="screenshot">
-			<a href="data:image/png;base64,After Suite Screenshot" rel="lightbox">
-				<img src="data:image/png;base64,After Suite Screenshot" class="screenshot-thumbnail" />
+			<a href="../images/After Suite Screenshot" rel="lightbox">
+				<img src="../images/After Suite Screenshot" class="screenshot-thumbnail" />
 			</a>
 		</div>
 	</div>
@@ -412,8 +412,8 @@ var wBeforeAndAfterSuiteScreenshotDiv = `<div class="suite_screenshots">
 	<div>Before Suite Screenshots</div>
 	<div class="screenshot-container">
 		<div class="screenshot">
-			<a href="data:image/png;base64,Before Suite Screenshot" rel="lightbox">
-				<img src="data:image/png;base64,Before Suite Screenshot" class="screenshot-thumbnail" />
+			<a href="../images/Before Suite Screenshot" rel="lightbox">
+				<img src="../images/Before Suite Screenshot" class="screenshot-thumbnail" />
 			</a>
 		</div>
 	</div>
@@ -551,10 +551,10 @@ func testReportGen(reportGenTests []reportGenTest, t *testing.T) {
 
 func newHookFailure(name, errMsg, screenshot, stacktrace string) *hookFailure {
 	return &hookFailure{
-		HookName:          name,
-		ErrMsg:            errMsg,
-		FailureScreenshot: screenshot,
-		StackTrace:        stacktrace,
+		HookName:              name,
+		ErrMsg:                errMsg,
+		FailureScreenshotFile: screenshot,
+		StackTrace:            stacktrace,
 	}
 }
 
