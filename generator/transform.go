@@ -18,7 +18,6 @@
 package generator
 
 import (
-	// "encoding/base64"
 	"fmt"
 	"path/filepath"
 	"sort"
@@ -464,11 +463,11 @@ func toStep(protoStep *gm.ProtoStep) *step {
 	res := protoStep.GetStepExecutionResult().GetExecutionResult()
 	failureScreenshotFile := res.GetFailureScreenshotFile()
 	result := &result{
-		Status:            getStepStatus(protoStep.GetStepExecutionResult()),
-		StackTrace:        res.GetStackTrace(),
-		ErrorMessage:      res.GetErrorMessage(),
-		ExecutionTime:     formatTime(res.GetExecutionTime()),
-		Messages:          res.GetMessage(),
+		Status:                getStepStatus(protoStep.GetStepExecutionResult()),
+		StackTrace:            res.GetStackTrace(),
+		ErrorMessage:          res.GetErrorMessage(),
+		ExecutionTime:         formatTime(res.GetExecutionTime()),
+		Messages:              res.GetMessage(),
 		FailureScreenshotFile: failureScreenshotFile,
 	}
 	if failureScreenshotFile != "" {
