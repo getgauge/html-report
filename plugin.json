@@ -19,5 +19,6 @@
         "maximum": ""
     },
     "capabilities" : [
+        "grpc_support"
     ]
 }

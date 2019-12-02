@@ -18,13 +18,16 @@
 package main
 
 import (
+	"net"
 	"os"
 
 	"github.com/getgauge/common"
 	"github.com/getgauge/html-report/env"
+	"github.com/getgauge/html-report/gauge_messages"
 	"github.com/getgauge/html-report/logger"
 	"github.com/getgauge/html-report/regenerate"
 	flag "github.com/getgauge/mflag"
+	"google.golang.org/grpc"
 )
 
 var inputFile = flag.String([]string{"-input", "i"}, "", "Source file to generate report from. This should be generated in <PROJECTROOT>/.gauge folder.")
@@ -53,6 +56,21 @@ func main() {
 	if action == setupAction {
 		env.AddDefaultPropertiesToProject()
 	} else if action == executionAction {
-		createExecutionReport()
+		pluginsDir, _ = os.Getwd()
+		os.Chdir(env.GetProjectRoot())
+		address, err := net.ResolveTCPAddr("tcp", "127.0.0.1:0")
+		if err != nil {
+			logger.Fatalf("failed to start server.")
+		}
+		l, err := net.ListenTCP("tcp", address)
+		if err != nil {
+			logger.Fatalf("failed to start server.")
+		}
+		server := grpc.NewServer(grpc.MaxRecvMsgSize(1024 * 1024 * 1024 * 10))
+		h := &handler{server: server}
+		gauge_messages.RegisterResultServer(server, h)
+		gauge_messages.RegisterProcessServer(server, h)
+		logger.Infof("Listening on port:%d", l.Addr().(*net.TCPAddr).Port)
+		server.Serve(l)
 	}
 }

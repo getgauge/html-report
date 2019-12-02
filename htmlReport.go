@@ -18,6 +18,7 @@
 package main
 
 import (
+	"context"
 	"io/ioutil"
 	"os"
 	"path/filepath"
@@ -31,9 +32,9 @@ import (
 	"github.com/getgauge/html-report/env"
 	"github.com/getgauge/html-report/gauge_messages"
 	"github.com/getgauge/html-report/generator"
-	"github.com/getgauge/html-report/listener"
 	"github.com/getgauge/html-report/logger"
 	"github.com/getgauge/html-report/theme"
+	"google.golang.org/grpc"
 )
 
 const (
@@ -60,74 +61,28 @@ func (T timeStampedNameGenerator) randomName() string {
 	return time.Now().Format(timeFormat)
 }
 
-type reportAccumulator struct {
-	result      *gauge_messages.SuiteExecutionResult
-	specMap     map[string]*gauge_messages.ProtoSpec
-	chunkSize   int64
-	searchIndex *generator.SearchIndex
-	stopChan    chan bool
+type handler struct {
+	server *grpc.Server
 }
 
-func (r *reportAccumulator) Meta(res *gauge_messages.SuiteExecutionResult) {
-	if !res.SuiteResult.Chunked {
-		_, err := createReport(res, true, r.stopChan)
-		if err != nil {
-			logger.Fatalf("%s", err.Error())
-		}
-		return
-	}
-	r.result = res
-	r.searchIndex = generator.NewSearchIndex()
-	r.specMap = make(map[string]*gauge_messages.ProtoSpec, 0)
-	for _, specRes := range r.result.SuiteResult.SpecResults {
-		r.specMap[specRes.ProtoSpec.FileName] = specRes.ProtoSpec
-		r.searchIndex.AddRawSpec(specRes.ProtoSpec)
-	}
-	if res.SuiteResult.ChunkSize == 0 {
-		r.write()
-	}
+func (h *handler) NotifySuiteResult(c context.Context, m *gauge_messages.SuiteExecutionResult) (*gauge_messages.Empty, error) {
+	createReport(m, true)
+	return &gauge_messages.Empty{}, nil
 }
 
-func (r *reportAccumulator) AddItem(i *gauge_messages.SuiteExecutionResultItem) {
-	pItem := r.specMap[i.ResultItem.FileName]
-	if pItem == nil {
-		logger.Debugf("received item for %s that does not exist in Meta.", i.ResultItem.FileName)
-		return
-	}
-	pItem.Items = append(pItem.Items, i.ResultItem)
-	r.searchIndex.AddRawItem(i.ResultItem)
-	r.chunkSize++
-	if r.chunkSize == r.result.SuiteResult.ChunkSize {
-		r.write()
-	}
+func (h *handler) Kill(c context.Context, m *gauge_messages.KillProcessRequest) (*gauge_messages.Empty, error) {
+	defer h.stopServer()
+	return &gauge_messages.Empty{}, nil
 }
 
-func (r *reportAccumulator) write() {
-	dir, err := createReport(r.result, false, r.stopChan)
-	if err != nil {
-		logger.Fatalf("%s", err.Error())
-	}
-	r.searchIndex.Write(dir)
+func (h *handler) stopServer() {
+	h.server.Stop()
+	os.Exit(0)
 }
 
 var pluginsDir string
 
-func createExecutionReport() {
-	pluginsDir, _ = os.Getwd()
-	os.Chdir(env.GetProjectRoot())
-	stopChan := make(chan bool)
-	listener, err := listener.NewGaugeListener(gaugeHost, os.Getenv(gaugePortEnv), stopChan)
-	if err != nil {
-		logger.Fatal("Could not create the gauge listener")
-	}
-	r := &reportAccumulator{stopChan: stopChan}
-	listener.OnSuiteResult(r.Meta)
-	listener.OnSuiteResultItem(r.AddItem)
-	listener.Start()
-}
-
-func createReport(suiteResult *gauge_messages.SuiteExecutionResult, searchIndex bool, stop chan bool) (string, error) {
-	defer func(s chan bool) { s <- true }(stop)
+func createReport(suiteResult *gauge_messages.SuiteExecutionResult, searchIndex bool) (string, error) {
 	projectRoot, err := common.GetProjectRoot()
 	if err != nil {
 		return "", err
