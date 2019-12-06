@@ -1,0 +1,66 @@
+name: deploy
+on: [deployment]
+
+jobs:
+  deploy:
+    name: deploy html report
+    runs-on: macos-latest
+    env:
+      GITHUB_TOKEN: '${{ secrets.GITHUB_TOKEN }}'
+
+    steps:
+      - uses: actions/checkout@v1
+
+      - name: Setup go 1.13.1
+        uses: actions/setup-go@v1
+        with:
+          go-version: 1.13.1
+
+      - name: build
+        run: |
+          go run build/make.go --all-platforms
+          go run build/make.go --all-platforms --distro
+      - name: Install hub
+        run: brew install hub
+      - name: update
+        run: |
+          cd deploy
+          if [ -z "$version" ]; then
+            version=$(ls html-report* | head -1 | sed "s/\.[^\.]*$//" | sed "s/html-report-//" | sed "s/-[a-z]*\.[a-z0-9_]*$//");
+          fi
+          artifacts=()
+          dir=`pwd`
+          for i in `ls`; do
+              artifacts+="$dir/$i "
+          done
+          cd ..
+          echo "---------------------------"
+          echo "Updating release v$version"
+          echo "---------------------------"
+          echo -e "HTML Report v$version\n\n" > desc.txt
+          release_description=$(ruby -e "$(curl -sSfL https://github.com/getgauge/gauge/raw/master/build/create_release_text.rb)" html-report getgauge)
+          echo "$release_description" >> desc.txt
+          echo "Creating new draft for release v$version"
+          hub release create -d -F ./desc.txt "v$version"
+          rm -rf desc.txt
+          echo "Start uploading assets..."
+          for i in `ls $artifacts`; do
+              hub release edit -m "" -a $i "v$version"
+              if [ $? -ne 0 ];then
+                  exit 1
+              fi
+          done
+      - name: 'deployment success'
+        if: success()
+        uses: 'deliverybot/status@master'
+        with:
+          state: 'success'
+          token: '${{ secrets.GITHUB_TOKEN }}'
+
+      - name: 'deployment failure'
+        if: failure()
+        uses: 'deliverybot/status@master'
+        with:
+          state: 'failure'
+          token: '${{ secrets.GITHUB_TOKEN }}'
+
