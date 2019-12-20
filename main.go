@@ -68,8 +68,7 @@ func main() {
 		}
 		server := grpc.NewServer(grpc.MaxRecvMsgSize(1024 * 1024 * 1024 * 10))
 		h := &handler{server: server}
-		gauge_messages.RegisterResultServer(server, h)
-		gauge_messages.RegisterProcessServer(server, h)
+		gauge_messages.RegisterReporterServer(server, h)
 		logger.Infof("Listening on port:%d", l.Addr().(*net.TCPAddr).Port)
 		server.Serve(l)
 	}

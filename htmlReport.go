@@ -18,7 +18,6 @@
 package main
 
 import (
-	"context"
 	"io/ioutil"
 	"os"
 	"path/filepath"
@@ -34,7 +33,6 @@ import (
 	"github.com/getgauge/html-report/generator"
 	"github.com/getgauge/html-report/logger"
 	"github.com/getgauge/html-report/theme"
-	"google.golang.org/grpc"
 )
 
 const (
@@ -59,25 +57,6 @@ type timeStampedNameGenerator struct {
 
 func (T timeStampedNameGenerator) randomName() string {
 	return time.Now().Format(timeFormat)
-}
-
-type handler struct {
-	server *grpc.Server
-}
-
-func (h *handler) NotifySuiteResult(c context.Context, m *gauge_messages.SuiteExecutionResult) (*gauge_messages.Empty, error) {
-	createReport(m, true)
-	return &gauge_messages.Empty{}, nil
-}
-
-func (h *handler) Kill(c context.Context, m *gauge_messages.KillProcessRequest) (*gauge_messages.Empty, error) {
-	defer h.stopServer()
-	return &gauge_messages.Empty{}, nil
-}
-
-func (h *handler) stopServer() {
-	h.server.Stop()
-	os.Exit(0)
 }
 
 var pluginsDir string
