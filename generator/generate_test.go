@@ -397,12 +397,34 @@ var wBeforeSuiteScreenshotDiv = `<div class="suite_screenshots">
 	</div>
 </div>`
 
+var wBeforeSuiteScreenshotBytesDiv = `<div class="suite_screenshots">
+	<div>Before Suite Screenshots</div>
+	<div class="screenshot-container">
+		<div class="screenshot">
+			<a href="data:image/png;base64,Before Suite Screenshot" rel="lightbox">
+				<img src="data:image/png;base64,Before Suite Screenshot" class="screenshot-thumbnail" />
+			</a>
+		</div>
+	</div>
+</div>`
+
 var wAfterSuiteScreenshotDiv = `<div class="suite_screenshots">
 	<div>Before Suite Screenshots</div>
 	<div class="screenshot-container">
 		<div class="screenshot">
 			<a href="../images/After Suite Screenshot" rel="lightbox">
 				<img src="../images/After Suite Screenshot" class="screenshot-thumbnail" />
+			</a>
+		</div>
+	</div>
+</div>`
+
+var wAfterSuiteScreenshotBytesDiv = `<div class="suite_screenshots">
+	<div>After Suite Screenshots</div>
+	<div class="screenshot-container">
+		<div class="screenshot">
+			<a href="data:image/png;base64,After Suite Screenshot" rel="lightbox">
+				<img src="data:image/png;base64,After Suite Screenshot" class="screenshot-thumbnail" />
 			</a>
 		</div>
 	</div>
@@ -481,21 +503,25 @@ var skippedStepRes = &result{
 
 var reportGenTests = []reportGenTest{
 	{"generate html page start with project name", "htmlPageStartTag", &overview{ProjectName: "projname"}, whtmlPageStartTag},
-	{"generate report overview with tags", "reportOverviewTag", &overview{"projname", "default", "foo", 34, "00:01:53", "Jun 3, 2016 at 12:29pm", &summary{41, 2, 39, 0}, &summary{41, 2, 39, 0}, "/", []string{}, []string{}, []string{}, []string{}},
+	{"generate report overview with tags", "reportOverviewTag", &overview{"projname", "default", "foo", 34, "00:01:53", "Jun 3, 2016 at 12:29pm", &summary{41, 2, 39, 0}, &summary{41, 2, 39, 0}, "/", []string{}, []string{}, []string{}, []string{}, []string{}, []string{}},
 		wChartDiv + wResCntDiv + wEnvLi + wTagsLi + wSuccRateLi + wExecTimeLi + wTimestampLi},
-	{"generate report overview without tags", "reportOverviewTag", &overview{"projname", "default", "", 34, "00:01:53", "Jun 3, 2016 at 12:29pm", &summary{41, 2, 39, 0}, &summary{41, 2, 39, 0}, "/", []string{}, []string{}, []string{}, []string{}},
+	{"generate report overview without tags", "reportOverviewTag", &overview{"projname", "default", "", 34, "00:01:53", "Jun 3, 2016 at 12:29pm", &summary{41, 2, 39, 0}, &summary{41, 2, 39, 0}, "/", []string{}, []string{}, []string{}, []string{}, []string{}, []string{}},
 		wChartDiv + wResCntDiv + wEnvLi + wSuccRateLi + wExecTimeLi + wTimestampLi},
-	{"generate suite messages with before hook message", "suiteMessagesDiv", &overview{"projname", "default", "", 34, "00:01:53", "Jun 3, 2016 at 12:29pm", &summary{41, 2, 39, 0}, &summary{41, 2, 39, 0}, "/", []string{"Before Suite message"}, []string{}, []string{}, []string{}},
+	{"generate suite messages with before hook message", "suiteMessagesDiv", &overview{"projname", "default", "", 34, "00:01:53", "Jun 3, 2016 at 12:29pm", &summary{41, 2, 39, 0}, &summary{41, 2, 39, 0}, "/", []string{"Before Suite message"}, []string{}, []string{}, []string{}, []string{}, []string{}},
 		wBeforeSuiteMessageDiv},
-	{"generate suite messages with after hook message", "suiteMessagesDiv", &overview{"projname", "default", "", 34, "00:01:53", "Jun 3, 2016 at 12:29pm", &summary{41, 2, 39, 0}, &summary{41, 2, 39, 0}, "/", []string{}, []string{"After Suite message"}, []string{}, []string{}},
+	{"generate suite messages with after hook message", "suiteMessagesDiv", &overview{"projname", "default", "", 34, "00:01:53", "Jun 3, 2016 at 12:29pm", &summary{41, 2, 39, 0}, &summary{41, 2, 39, 0}, "/", []string{}, []string{"After Suite message"}, []string{}, []string{}, []string{}, []string{}},
 		wAfterSuiteMessageDiv},
-	{"generate suite messages with before and after hook message", "suiteMessagesDiv", &overview{"projname", "default", "", 34, "00:01:53", "Jun 3, 2016 at 12:29pm", &summary{41, 2, 39, 0}, &summary{41, 2, 39, 0}, "/", []string{"Before Suite message"}, []string{"After Suite message"}, []string{}, []string{}},
+	{"generate suite messages with before and after hook message", "suiteMessagesDiv", &overview{"projname", "default", "", 34, "00:01:53", "Jun 3, 2016 at 12:29pm", &summary{41, 2, 39, 0}, &summary{41, 2, 39, 0}, "/", []string{"Before Suite message"}, []string{"After Suite message"}, []string{}, []string{}, []string{}, []string{}},
 		wBeforeAndAfterSuiteMessageDiv},
-	{"generate suite screenshots with before hook screenshot", "suiteScreenshotsDiv", &overview{"projname", "default", "", 34, "00:01:53", "Jun 3, 2016 at 12:29pm", &summary{41, 2, 39, 0}, &summary{41, 2, 39, 0}, "/", []string{}, []string{}, []string{"Before Suite Screenshot"}, []string{}},
+	{"generate suite screenshots with before hook screenshot", "suiteScreenshotsDiv", &overview{"projname", "default", "", 34, "00:01:53", "Jun 3, 2016 at 12:29pm", &summary{41, 2, 39, 0}, &summary{41, 2, 39, 0}, "/", []string{}, []string{}, []string{}, []string{}, []string{"Before Suite Screenshot"}, []string{}},
 		wBeforeSuiteScreenshotDiv},
-	{"generate suite screenshots with after hook screenshot", "suiteScreenshotsDiv", &overview{"projname", "default", "", 34, "00:01:53", "Jun 3, 2016 at 12:29pm", &summary{41, 2, 39, 0}, &summary{41, 2, 39, 0}, "/", []string{}, []string{}, []string{"After Suite Screenshot"}, []string{}},
+	{"generate suite screenshots with before hook screenshot bytes", "suiteScreenshotsDiv", &overview{"projname", "default", "", 34, "00:01:53", "Jun 3, 2016 at 12:29pm", &summary{41, 2, 39, 0}, &summary{41, 2, 39, 0}, "/", []string{}, []string{}, []string{"Before Suite Screenshot"}, []string{}, []string{}, []string{}},
+		wBeforeSuiteScreenshotBytesDiv},
+	{"generate suite screenshots with after hook screenshot", "suiteScreenshotsDiv", &overview{"projname", "default", "", 34, "00:01:53", "Jun 3, 2016 at 12:29pm", &summary{41, 2, 39, 0}, &summary{41, 2, 39, 0}, "/", []string{}, []string{}, []string{}, []string{}, []string{"After Suite Screenshot"}, []string{}},
 		wAfterSuiteScreenshotDiv},
-	{"generate suite screenshots with before and after hook screenshot", "suiteScreenshotsDiv", &overview{"projname", "default", "", 34, "00:01:53", "Jun 3, 2016 at 12:29pm", &summary{41, 2, 39, 0}, &summary{41, 2, 39, 0}, "/", []string{}, []string{}, []string{"Before Suite Screenshot"}, []string{}},
+	{"generate suite screenshots with after hook screenshot bytes", "suiteScreenshotsDiv", &overview{"projname", "default", "", 34, "00:01:53", "Jun 3, 2016 at 12:29pm", &summary{41, 2, 39, 0}, &summary{41, 2, 39, 0}, "/", []string{}, []string{}, []string{}, []string{"After Suite Screenshot"}, []string{}, []string{}},
+		wAfterSuiteScreenshotBytesDiv},
+	{"generate suite screenshots with before and after hook screenshot", "suiteScreenshotsDiv", &overview{"projname", "default", "", 34, "00:01:53", "Jun 3, 2016 at 12:29pm", &summary{41, 2, 39, 0}, &summary{41, 2, 39, 0}, "/", []string{}, []string{}, []string{}, []string{}, []string{"Before Suite Screenshot"}, []string{}},
 		wBeforeAndAfterSuiteScreenshotDiv},
 	{"generate sidebar with appropriate pass/fail/skip class", "sidebarDiv", &sidebar{
 		IsBeforeHookFailure: false,
