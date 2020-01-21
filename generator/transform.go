@@ -178,14 +178,17 @@ func toHookFailure(failure *gm.ProtoHookFailure, hookName string) *hookFailure {
 	if failure == nil {
 		return nil
 	}
-
+	failureScreenshotFile := failure.GetFailureScreenshotFile()
 	result := &hookFailure{
 		ErrMsg:                failure.GetErrorMessage(),
 		HookName:              hookName,
 		StackTrace:            failure.GetStackTrace(),
 		TableRowIndex:         failure.TableRowIndex,
-		FailureScreenshotFile: failure.GetFailureScreenshotFile(),
+		FailureScreenshotFile: failureScreenshotFile,
 		FailureScreenshot:     base64.StdEncoding.EncodeToString(failure.GetFailureScreenshot()),
+	}
+	if failureScreenshotFile != "" {
+		screenshotFiles = append(screenshotFiles, failureScreenshotFile)
 	}
 	return result
 }
