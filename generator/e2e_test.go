@@ -28,7 +28,7 @@ import (
 )
 
 var suiteRes3 = newProtoSuiteRes(true, 1, 1, 60, nil, nil, passSpecRes1, failSpecResWithStepFailure, skippedSpecRes)
-var suiteResWithBeforeSuiteFailure = newProtoSuiteRes(true, 0, 0, 0, newProtoHookFailure(), nil)
+var suiteResWithBeforeSuiteFailure = newProtoSuiteRes(true, 0, 0, 0, newProtoHookFailure(), newProtoHookFailure())
 var templateBasePath, _ = filepath.Abs(filepath.Join("..", "themes", "default"))
 
 func TestEndToEndHTMLGenerationWhenBeforeSuiteFails(t *testing.T) {
@@ -65,6 +65,23 @@ func TestEndToEndHTMLGeneration(t *testing.T) {
 	}
 
 	verifyExpectedFiles(t, "simpleSuiteRes", reportDir, expectedFiles)
+	cleanUp(t, reportDir)
+}
+
+func TestEndToEndHTMLGenerationWithPreAndPostHookScreenshots(t *testing.T) {
+	expectedFiles := []string{"index.html", "passing_specification_1.html", "failing_specification_1.html", "skipped_specification.html", "js/search_index.js"}
+	reportDir := filepath.Join("_testdata", "e2e")
+	suiteRes := newProtoSuiteRes(true, 1, 1, 60, nil, nil, passSpecRes1, failSpecResWithStepFailure, skippedSpecRes)
+	suiteRes.PreHookScreenshotFiles = []string{"pre-hook-screenshot-1.png", "pre-hook-screenshot-2.png"}
+	suiteRes.PostHookScreenshotFiles = []string{"post-hook-screenshot-1.png", "post-hook-screenshot-2.png"}
+	r := ToSuiteResult("", suiteRes)
+	err := GenerateReports(r, reportDir, templateBasePath, true)
+
+	if err != nil {
+		t.Errorf("Expected error to be nil. Got: %s", err.Error())
+	}
+
+	verifyExpectedFiles(t, "simpleSuiteResWithHookScreenshots", reportDir, expectedFiles)
 	cleanUp(t, reportDir)
 }
 

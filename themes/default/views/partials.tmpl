@@ -25,64 +25,86 @@
   <main class="main-container">
   <div class="container">
 {{end}}
-
+/* The pie chart section of the report.*/
+{{define "reportChart"}}
+  <div class="report_chart">
+    <div class="chart">
+      <svg id="pie-chart" data-results="{{.Failed}},{{.Passed}},{{.Skipped}}" data-total="{{.Total}}">
+        <path class="status failed" />
+        <path class="shadow failed" data-status="failed"><title>Failed: {{.Failed}}/{{.Total}}</title></path>
+        <path class="status passed" />
+        <path class="shadow passed" data-status="passed"><title>Passed: {{.Passed}}/{{.Total}}</title></path>
+        <path class="status skipped" />
+        <path class="shadow skipped" data-status="skipped"><title>Skipped: {{.Skipped}}/{{.Total}}</title></path>
+      </svg>
+    </div>
+  </div>
+{{ end}}
+/* Result section of report overview.*/
+{{define "resultOverview"}}
+  <div class="report_test-results">
+    <div class="report_test-result specs">
+        <div class="total-specs" title="Filter all specs"><span class="txt">Total specs</span><span class="value">{{.Summary.Total}}</span></div>
+        <div class="fail spec-filter" data-status="failed" title="Filter failed specs"><span class="value">{{.Summary.Failed}}</span></div>
+        <div class="pass spec-filter" data-status="passed" title="Filter passed specs"><span class="value">{{.Summary.Passed}}</span></div>
+        <div class="skip spec-filter" data-status="skipped" title="Filter skipped specs"><span class="value">{{.Summary.Skipped}}</span></div>
+    </div>
+    <div class="report_test-result scenarios">
+        <div class="total-scenarios"><span class="txt">Total scenario</span><span class="value">{{.ScenarioSummary.Total}}</span></div>
+        <div class="fail scenario-stats" data-status="failed"><span class="value">{{.ScenarioSummary.Failed}}</span></div>
+        <div class="pass scenario-stats" data-status="passed"><span class="value">{{.ScenarioSummary.Passed}}</span></div>
+        <div class="skip scenario-stats" data-status="skipped"><span class="value">{{.ScenarioSummary.Skipped}}</span></div>
+    </div>
+  </div>
+{{end}}
+/* Report details.*/
+{{define "reportDetails"}}
+  <ul>
+    <li>
+      <label>Environment </label>
+      <span>{{.Env}}</span>
+    </li>
+    {{if .Tags}}
+    <li>
+      <label>Tags </label>
+      <span>{{.Tags}}</span>
+    </li>
+    {{end}}
+    <li>
+      <label>Success Rate </label>
+      <span>{{.SuccessRate}}%</span>
+    </li>
+    <li>
+      <label>Total Time </label>
+      <span>{{.ExecutionTime}}</span>
+    </li>
+    <li>
+      <label>Generated On </label>
+      <span>{{.Timestamp}}</span>
+    </li>
+  </ul>
+{{end}}
 /* The overview section of the report. Contains execution result statistics.
    Clicking on the pie chart causes the specs in sidebar to be filtered by the status. */
 {{define "reportOverviewTag"}}
   <div class="report-overview">
-    <div class="report_chart">
-      <div class="chart">
-        <svg id="pie-chart" data-results="{{.Summary.Failed}},{{.Summary.Passed}},{{.Summary.Skipped}}" data-total="{{.Summary.Total}}">
-          <path class="status failed" />
-          <path class="shadow failed" data-status="failed"><title>Failed: {{.Summary.Failed}}/{{.Summary.Total}}</title></path>
-          <path class="status passed" />
-          <path class="shadow passed" data-status="passed"><title>Passed: {{.Summary.Passed}}/{{.Summary.Total}}</title></path>
-          <path class="status skipped" />
-          <path class="shadow skipped" data-status="skipped"><title>Skipped: {{.Summary.Skipped}}/{{.Summary.Total}}</title></path>
-        </svg>
-      </div>
-    </div>
-    <div class="report_test-results">
-      <div class="report_test-result specs">
-          <div class="total-specs" title="Filter all specs"><span class="txt">Total specs</span><span class="value">{{.Summary.Total}}</span></div>
-          <div class="fail spec-filter" data-status="failed" title="Filter failed specs"><span class="value">{{.Summary.Failed}}</span></div>
-          <div class="pass spec-filter" data-status="passed" title="Filter passed specs"><span class="value">{{.Summary.Passed}}</span></div>
-          <div class="skip spec-filter" data-status="skipped" title="Filter skipped specs"><span class="value">{{.Summary.Skipped}}</span></div>
-      </div>
-      <div class="report_test-result scenarios">
-          <div class="total-scenarios"><span class="txt">Total scenario</span><span class="value">{{.ScenarioSummary.Total}}</span></div>
-          <div class="fail scenario-stats" data-status="failed"><span class="value">{{.ScenarioSummary.Failed}}</span></div>
-          <div class="pass scenario-stats" data-status="passed"><span class="value">{{.ScenarioSummary.Passed}}</span></div>
-          <div class="skip scenario-stats" data-status="skipped"><span class="value">{{.ScenarioSummary.Skipped}}</span></div>
-      </div>
-    </div>
+   {{template "reportChart" .Summary}}
+   {{template "resultOverview" .}}
     <div class="report_details">
-      <ul>
-        <li>
-          <label>Environment </label>
-          <span>{{.Env}}</span>
-        </li>
-        {{if .Tags}}
-        <li>
-          <label>Tags </label>
-          <span>{{.Tags}}</span>
-        </li>
-        {{end}}
-        <li>
-          <label>Success Rate </label>
-          <span>{{.SuccessRate}}%</span>
-        </li>
-        <li>
-          <label>Total Time </label>
-          <span>{{.ExecutionTime}}</span>
-        </li>
-        <li>
-          <label>Generated On </label>
-          <span>{{.Timestamp}}</span>
-        </li>
-      </ul>
+      {{template "reportDetails" .}}
       {{template "suiteMessagesDiv" .}}
       {{template "suiteScreenshotsDiv" .}}
+    </div>
+  </div>
+{{end}}
+{{define "indexPageOverviewTag"}}
+  <div class="report-overview">
+   {{template "reportChart" .Summary}}
+   {{template "resultOverview" .}}
+    <div class="report_details">
+      {{template "reportDetails" .}}
+      {{template "suiteMessagesDiv" .}}
+      {{template "suiteScreenshotsIndexPageDiv" .}}
     </div>
   </div>
 {{end}}
@@ -108,7 +130,7 @@
   {{end}}
 {{end}}
 
-/* Show all screenshots that the user may have introduces using the Gauge.captureScreenshot API in before and after suite hooks*/
+/* Show all screenshots on other than index page that the user may have introduces using the Gauge.captureScreenshot API in before and after suite hooks*/
 {{define "suiteScreenshotsDiv"}}
   {{if or (gt (len .PreHookScreenshots) 0) (gt (len .PostHookScreenshots) 0)}}
     <div class="suite_screenshots">
@@ -131,6 +153,35 @@
       {{if gt (len .PostHookScreenshotFiles) 0}}
         <div>After Suite Screenshots</div>
         {{template "screenshotDiv" .PostHookScreenshotFiles}}
+      {{end}}
+    </div>
+  {{end}}
+
+{{end}}
+
+/* Show all screenshots on index page that the user may have introduces using the Gauge.captureScreenshot API in before and after suite hooks*/
+{{define "suiteScreenshotsIndexPageDiv"}}
+  {{if or (gt (len .PreHookScreenshots) 0) (gt (len .PostHookScreenshots) 0)}}
+    <div class="suite_screenshots">
+      {{if gt (len .PreHookScreenshots) 0}}
+        <div>Before Suite Screenshots</div>
+        {{template "screenshotDivForBase64Data" .PreHookScreenshots}}
+      {{end}}
+      {{if gt (len .PostHookScreenshots) 0}}
+        <div>After Suite Screenshots</div>
+        {{template "screenshotDivForBase64Data" .PostHookScreenshots}}
+      {{end}}
+    </div>
+  {{end}}
+  {{if or (gt (len .PreHookScreenshotFiles) 0) (gt (len .PostHookScreenshotFiles) 0)}}
+    <div class="suite_screenshots">
+      {{if gt (len .PreHookScreenshotFiles) 0}}
+        <div>Before Suite Screenshots</div>
+        {{template "screenshotIndexPageDiv" .PreHookScreenshotFiles}}
+      {{end}}
+      {{if gt (len .PostHookScreenshotFiles) 0}}
+        <div>After Suite Screenshots</div>
+        {{template "screenshotIndexPageDiv" .PostHookScreenshotFiles}}
       {{end}}
     </div>
   {{end}}
@@ -206,6 +257,37 @@
     </div>
   </div>
 {{end}}
+{{define "indexPageHookFailureDiv"}}
+  <div class="error-container failed{{if gt .TableRowIndex 0}} hidden{{end}}"{{if ne .TableRowIndex -1}} data-tablerow='{{.TableRowIndex}}'{{end}}>
+    <div class="error-heading">{{.HookName}} Failed:<span class="error-message"> {{.ErrMsg | escapeHTML | encodeNewLine}}</span></div>
+    <div class="toggle-show">
+      [Show details]
+    </div>
+    <div class="exception-container hidden">
+      <div class="exception">
+        <pre class="stacktrace">{{.StackTrace | escapeHTML | encodeNewLine}}</pre>
+      </div>
+      {{if .FailureScreenshotFile}}
+        <div class="screenshot-container">
+          <div class="screenshot">
+            <a href="./images/{{.FailureScreenshotFile}}" rel="lightbox">
+              <img src="./images/{{.FailureScreenshotFile}}" class="screenshot-thumbnail" />
+            </a>
+          </div>
+        </div>
+      {{end}}
+      {{if .FailureScreenshot}}
+        <div class="screenshot-container">
+          <div class="screenshot">
+            <a href="data:image/png;base64,{{.FailureScreenshot}}" rel="lightbox">
+              <img src="data:image/png;base64,{{.FailureScreenshot}}" class="screenshot-thumbnail" />
+            </a>
+          </div>
+        </div>
+      {{end}}
+    </div>
+  </div>
+{{end}}
 
 /* Lists all errors in a Spec file */
 {{define "specErrorDiv"}}
@@ -256,6 +338,21 @@
         <div class="screenshot">
           <a href="../images/{{.}}" rel="lightbox">
             <img src="../images/{{.}}" class="screenshot-thumbnail" />
+          </a>
+        </div>
+      {{end}}
+    {{end}}
+    </div>
+  {{end}}
+{{end}}
+{{define "screenshotIndexPageDiv"}}
+  {{ if gt (len .) 0}}
+    <div class="screenshot-container">
+    {{range .}}
+      {{if .}}
+        <div class="screenshot">
+          <a href="./images/{{.}}" rel="lightbox">
+            <img src="./images/{{.}}" class="screenshot-thumbnail" />
           </a>
         </div>
       {{end}}
@@ -667,9 +764,9 @@
 {{define "indexPage"}}
 	{{$overview := (toOverview . "")}}
 	{{template "htmlPageStartTag" $overview}}
-	{{template "reportOverviewTag" $overview}}
+	{{template "indexPageOverviewTag" $overview}}
 	{{if .AfterSuiteHookFailure}}
-		{{template "hookFailureDiv" .AfterSuiteHookFailure}}
+		{{template "indexPageHookFailureDiv" .AfterSuiteHookFailure}}
 	{{end}}
   <div class="specifications">
   {{template "sidebarDiv" (toSidebar . "")}}
@@ -689,10 +786,10 @@
 {{define "indexPageFailure"}}
 	{{$overview := (toOverview . "")}}
 	{{template "htmlPageStartTag" $overview}}
-	{{template "reportOverviewTag" $overview}}
-  {{template "hookFailureDiv" .BeforeSuiteHookFailure}}
+	{{template "indexPageOverviewTag" $overview}}
+  {{template "indexPageHookFailureDiv" .BeforeSuiteHookFailure}}
 	{{if .AfterSuiteHookFailure}}
-		{{template "hookFailureDiv" .AfterSuiteHookFailure}}
+		{{template "indexPageHookFailureDiv" .AfterSuiteHookFailure}}
 	{{end}}
  	</div>
 	</main>
