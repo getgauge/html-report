@@ -60,6 +60,8 @@ type overview struct {
 	PostHookMessages    []string
 	PreHookScreenshots  []string
 	PostHookScreenshots []string
+	PreHookScreenshotFiles  []string
+	PostHookScreenshotFiles []string
 }
 
 type specsMeta struct {
@@ -116,6 +118,8 @@ type SuiteResult struct {
 	BasePath               string       `json:"BasePath"`
 	PreHookMessages        []string     `json:"PreHookMessages"`
 	PostHookMessages       []string     `json:"PostHookMessages"`
+	PreHookScreenshotFiles     []string     `json:"PreHookScreenshotFiles"`
+	PostHookScreenshotFiles    []string     `json:"PostHookScreenshotFiles"`
 	PreHookScreenshots     []string     `json:"PreHookScreenshots"`
 	PostHookScreenshots    []string     `json:"PostHookScreenshots"`
 }
@@ -139,6 +143,8 @@ type spec struct {
 	Errors                  []buildError   `json:"Errors"`
 	PreHookMessages         []string       `json:"PreHookMessages"`
 	PostHookMessages        []string       `json:"PostHookMessages"`
+	PreHookScreenshotFiles     []string     `json:"PreHookScreenshotFiles"`
+	PostHookScreenshotFiles    []string     `json:"PostHookScreenshotFiles"`
 	PreHookScreenshots      []string       `json:"PreHookScreenshots"`
 	PostHookScreenshots     []string       `json:"PostHookScreenshots"`
 }
@@ -157,6 +163,8 @@ type scenario struct {
 	TableRowIndex             int          `json:"TableRowIndex"`
 	PreHookMessages           []string     `json:"PreHookMessages"`
 	PostHookMessages          []string     `json:"PostHookMessages"`
+	PreHookScreenshotFiles     []string     `json:"PreHookScreenshotFiles"`
+	PostHookScreenshotFiles    []string     `json:"PostHookScreenshotFiles"`
 	PreHookScreenshots        []string     `json:"PreHookScreenshots"`
 	PostHookScreenshots       []string     `json:"PostHookScreenshots"`
 }
@@ -171,6 +179,8 @@ type step struct {
 	Result                *result      `json:"Result"`
 	PreHookMessages       []string     `json:"PreHookMessages"`
 	PostHookMessages      []string     `json:"PostHookMessages"`
+	PreHookScreenshotFiles     []string     `json:"PreHookScreenshotFiles"`
+	PostHookScreenshotFiles    []string     `json:"PostHookScreenshotFiles"`
 	PreHookScreenshots    []string     `json:"PreHookScreenshots"`
 	PostHookScreenshots   []string     `json:"PostHookScreenshots"`
 }
@@ -183,18 +193,21 @@ type result struct {
 	Status            status    `json:"Status"`
 	StackTrace        string    `json:"StackTrace"`
 	FailureScreenshotFile string    `json:"ScreenshotFile"`
+	FailureScreenshot string    `json:"Screenshot"`
 	ErrorMessage      string    `json:"ErrorMessage"`
 	ExecutionTime     string    `json:"ExecutionTime"`
 	SkippedReason     string    `json:"SkippedReason"`
 	Messages          []string  `json:"Messages"`
 	ErrorType         errorType `json:"ErrorType"`
 	ScreenshotFiles       []string  `json:"ScreenshotFiles"`
+	Screenshots       []string  `json:"Screenshots"`
 }
 
 type hookFailure struct {
 	HookName              string `json:"HookName"`
 	ErrMsg                string `json:"ErrMsg"`
 	FailureScreenshotFile string `json:"ScreenshotFile"`
+	FailureScreenshot string    `json:"Screenshot"`
 	StackTrace            string `json:"StackTrace"`
 	TableRowIndex         int32  `json:"TableRowIndex"`
 }
