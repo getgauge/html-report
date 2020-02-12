@@ -66,7 +66,7 @@ func main() {
 		if err != nil {
 			logger.Fatalf("failed to start server.")
 		}
-		server := grpc.NewServer(grpc.MaxRecvMsgSize(1024 * 1024 * 1024 * 10))
+		server := grpc.NewServer(grpc.MaxRecvMsgSize(1024 * 1024 * 1024))
 		h := &handler{server: server}
 		gauge_messages.RegisterReporterServer(server, h)
 		logger.Infof("Listening on port:%d", l.Addr().(*net.TCPAddr).Port)
