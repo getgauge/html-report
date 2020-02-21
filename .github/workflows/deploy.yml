@@ -1,15 +1,20 @@
 name: deploy
-on: [deployment]
+on:
+  pull_request:
+    types: [closed]
 
 jobs:
   deploy:
-    name: deploy html report
-    runs-on: macos-latest
+    if: github.event_name == 'pull_request' && github.event.action == 'closed' && github.event.pull_request.merged == true && contains(github.event.pull_request.labels.*.name, 'ReleaseCandidate')
+    name: Deploy html report
+    runs-on: ubuntu-latest
     env:
       GITHUB_TOKEN: '${{ secrets.GITHUB_TOKEN }}'
 
     steps:
       - uses: actions/checkout@v1
+
+      - uses: geertvdc/setup-hub@master
 
       - name: Setup go 1.13.1
         uses: actions/setup-go@v1
@@ -20,14 +25,14 @@ jobs:
         run: |
           go run build/make.go --all-platforms
           go run build/make.go --all-platforms --distro
-      - name: Install hub
-        run: brew install hub
-      - name: update
+
+      - name: Deploy
         run: |
           cd deploy
           if [ -z "$version" ]; then
             version=$(ls html-report* | head -1 | sed "s/\.[^\.]*$//" | sed "s/html-report-//" | sed "s/-[a-z]*\.[a-z0-9_]*$//");
           fi
+          echo "::set-env name=VERSION::$version"
           artifacts=()
           dir=`pwd`
           for i in `ls`; do
@@ -41,7 +46,7 @@ jobs:
           release_description=$(ruby -e "$(curl -sSfL https://github.com/getgauge/gauge/raw/master/build/create_release_text.rb)" html-report getgauge)
           echo "$release_description" >> desc.txt
           echo "Creating new draft for release v$version"
-          hub release create -d -F ./desc.txt "v$version"
+          hub release create -F ./desc.txt "v$version"
           rm -rf desc.txt
           echo "Start uploading assets..."
           for i in `ls $artifacts`; do
@@ -50,17 +55,21 @@ jobs:
                   exit 1
               fi
           done
-      - name: 'deployment success'
-        if: success()
-        uses: 'deliverybot/status@master'
-        with:
-          state: 'success'
-          token: '${{ secrets.GITHUB_TOKEN }}'
 
-      - name: 'deployment failure'
-        if: failure()
-        uses: 'deliverybot/status@master'
-        with:
-          state: 'failure'
-          token: '${{ secrets.GITHUB_TOKEN }}'
+      - name: Update metadata in gauge-repository
+        run: |
+          git clone https://github.com/getgauge/gauge-repository.git
+          cd gauge-repository
+          python update_metadata.py js $VERSION
+          commit_message=$(echo -e "Update js to v$VERSION")
+          git commit -am "$commit_message"
+          git push "https://$GITHUB_ACTOR:$GAUGE_CI_TOKEN@github.com/getgauge/gauge-repository.git" master
 
+
+      - name: Bump up version
+        run: |
+          git clean -dfx
+          git checkout master && git checkout . && git pull --rebase
+          version=$(python update_version.py)
+          git commit -am "Bumping up -> $version"
+          git push "https://$GITHUB_ACTOR:$GAUGE_CI_TOKEN@github.com/$GITHUB_REPOSITORY.git" master
