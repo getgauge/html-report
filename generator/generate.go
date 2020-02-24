@@ -47,19 +47,19 @@ type summary struct {
 }
 
 type overview struct {
-	ProjectName         string
-	Env                 string
-	Tags                string
-	SuccessRate         float32
-	ExecutionTime       string
-	Timestamp           string
-	Summary             *summary
-	ScenarioSummary     *summary
-	BasePath            string
-	PreHookMessages     []string
-	PostHookMessages    []string
-	PreHookScreenshots  []string
-	PostHookScreenshots []string
+	ProjectName             string
+	Env                     string
+	Tags                    string
+	SuccessRate             float32
+	ExecutionTime           string
+	Timestamp               string
+	Summary                 *summary
+	ScenarioSummary         *summary
+	BasePath                string
+	PreHookMessages         []string
+	PostHookMessages        []string
+	PreHookScreenshots      []string
+	PostHookScreenshots     []string
 	PreHookScreenshotFiles  []string
 	PostHookScreenshotFiles []string
 }
@@ -99,29 +99,29 @@ type buildError struct {
 
 // SuiteResult holds the aggregated execution information for a run
 type SuiteResult struct {
-	ProjectName            string       `json:"ProjectName"`
-	Timestamp              string       `json:"Timestamp"`
-	SuccessRate            float32      `json:"SuccessRate"`
-	Environment            string       `json:"Environment"`
-	Tags                   string       `json:"Tags"`
-	ExecutionTime          int64        `json:"ExecutionTime"`
-	ExecutionStatus        status       `json:"ExecutionStatus"`
-	SpecResults            []*spec      `json:"SpecResults"`
-	BeforeSuiteHookFailure *hookFailure `json:"BeforeSuiteHookFailure"`
-	AfterSuiteHookFailure  *hookFailure `json:"AfterSuiteHookFailure"`
-	PassedSpecsCount       int          `json:"PassedSpecsCount"`
-	FailedSpecsCount       int          `json:"FailedSpecsCount"`
-	SkippedSpecsCount      int          `json:"SkippedSpecsCount"`
-	PassedScenarioCount    int          `json:"PassedScenarioCount"`
-	FailedScenarioCount    int          `json:"FailedScenarioCount"`
-	SkippedScenarioCount   int          `json:"SkippedScenarioCount"`
-	BasePath               string       `json:"BasePath"`
-	PreHookMessages        []string     `json:"PreHookMessages"`
-	PostHookMessages       []string     `json:"PostHookMessages"`
-	PreHookScreenshotFiles     []string     `json:"PreHookScreenshotFiles"`
-	PostHookScreenshotFiles    []string     `json:"PostHookScreenshotFiles"`
-	PreHookScreenshots     []string     `json:"PreHookScreenshots"`
-	PostHookScreenshots    []string     `json:"PostHookScreenshots"`
+	ProjectName             string       `json:"ProjectName"`
+	Timestamp               string       `json:"Timestamp"`
+	SuccessRate             float32      `json:"SuccessRate"`
+	Environment             string       `json:"Environment"`
+	Tags                    string       `json:"Tags"`
+	ExecutionTime           int64        `json:"ExecutionTime"`
+	ExecutionStatus         status       `json:"ExecutionStatus"`
+	SpecResults             []*spec      `json:"SpecResults"`
+	BeforeSuiteHookFailure  *hookFailure `json:"BeforeSuiteHookFailure"`
+	AfterSuiteHookFailure   *hookFailure `json:"AfterSuiteHookFailure"`
+	PassedSpecsCount        int          `json:"PassedSpecsCount"`
+	FailedSpecsCount        int          `json:"FailedSpecsCount"`
+	SkippedSpecsCount       int          `json:"SkippedSpecsCount"`
+	PassedScenarioCount     int          `json:"PassedScenarioCount"`
+	FailedScenarioCount     int          `json:"FailedScenarioCount"`
+	SkippedScenarioCount    int          `json:"SkippedScenarioCount"`
+	BasePath                string       `json:"BasePath"`
+	PreHookMessages         []string     `json:"PreHookMessages"`
+	PostHookMessages        []string     `json:"PostHookMessages"`
+	PreHookScreenshotFiles  []string     `json:"PreHookScreenshotFiles"`
+	PostHookScreenshotFiles []string     `json:"PostHookScreenshotFiles"`
+	PreHookScreenshots      []string     `json:"PreHookScreenshots"`
+	PostHookScreenshots     []string     `json:"PostHookScreenshots"`
 }
 
 type spec struct {
@@ -143,8 +143,8 @@ type spec struct {
 	Errors                  []buildError   `json:"Errors"`
 	PreHookMessages         []string       `json:"PreHookMessages"`
 	PostHookMessages        []string       `json:"PostHookMessages"`
-	PreHookScreenshotFiles     []string     `json:"PreHookScreenshotFiles"`
-	PostHookScreenshotFiles    []string     `json:"PostHookScreenshotFiles"`
+	PreHookScreenshotFiles  []string       `json:"PreHookScreenshotFiles"`
+	PostHookScreenshotFiles []string       `json:"PostHookScreenshotFiles"`
 	PreHookScreenshots      []string       `json:"PreHookScreenshots"`
 	PostHookScreenshots     []string       `json:"PostHookScreenshots"`
 }
@@ -163,26 +163,26 @@ type scenario struct {
 	TableRowIndex             int          `json:"TableRowIndex"`
 	PreHookMessages           []string     `json:"PreHookMessages"`
 	PostHookMessages          []string     `json:"PostHookMessages"`
-	PreHookScreenshotFiles     []string     `json:"PreHookScreenshotFiles"`
-	PostHookScreenshotFiles    []string     `json:"PostHookScreenshotFiles"`
+	PreHookScreenshotFiles    []string     `json:"PreHookScreenshotFiles"`
+	PostHookScreenshotFiles   []string     `json:"PostHookScreenshotFiles"`
 	PreHookScreenshots        []string     `json:"PreHookScreenshots"`
 	PostHookScreenshots       []string     `json:"PostHookScreenshots"`
 }
 
 type step struct {
-	Fragments             []*fragment  `json:"Fragments"`
-	ItemType              tokenKind    `json:"ItemType"`
-	StepText              string       `json:"StepText"`
-	Table                 *table       `json:"Table"`
-	BeforeStepHookFailure *hookFailure `json:"BeforeStepHookFailure"`
-	AfterStepHookFailure  *hookFailure `json:"AfterStepHookFailure"`
-	Result                *result      `json:"Result"`
-	PreHookMessages       []string     `json:"PreHookMessages"`
-	PostHookMessages      []string     `json:"PostHookMessages"`
-	PreHookScreenshotFiles     []string     `json:"PreHookScreenshotFiles"`
-	PostHookScreenshotFiles    []string     `json:"PostHookScreenshotFiles"`
-	PreHookScreenshots    []string     `json:"PreHookScreenshots"`
-	PostHookScreenshots   []string     `json:"PostHookScreenshots"`
+	Fragments               []*fragment  `json:"Fragments"`
+	ItemType                tokenKind    `json:"ItemType"`
+	StepText                string       `json:"StepText"`
+	Table                   *table       `json:"Table"`
+	BeforeStepHookFailure   *hookFailure `json:"BeforeStepHookFailure"`
+	AfterStepHookFailure    *hookFailure `json:"AfterStepHookFailure"`
+	Result                  *result      `json:"Result"`
+	PreHookMessages         []string     `json:"PreHookMessages"`
+	PostHookMessages        []string     `json:"PostHookMessages"`
+	PreHookScreenshotFiles  []string     `json:"PreHookScreenshotFiles"`
+	PostHookScreenshotFiles []string     `json:"PostHookScreenshotFiles"`
+	PreHookScreenshots      []string     `json:"PreHookScreenshots"`
+	PostHookScreenshots     []string     `json:"PostHookScreenshots"`
 }
 
 func (s *step) Kind() tokenKind {
@@ -190,24 +190,24 @@ func (s *step) Kind() tokenKind {
 }
 
 type result struct {
-	Status            status    `json:"Status"`
-	StackTrace        string    `json:"StackTrace"`
+	Status                status    `json:"Status"`
+	StackTrace            string    `json:"StackTrace"`
 	FailureScreenshotFile string    `json:"ScreenshotFile"`
-	FailureScreenshot string    `json:"Screenshot"`
-	ErrorMessage      string    `json:"ErrorMessage"`
-	ExecutionTime     string    `json:"ExecutionTime"`
-	SkippedReason     string    `json:"SkippedReason"`
-	Messages          []string  `json:"Messages"`
-	ErrorType         errorType `json:"ErrorType"`
+	FailureScreenshot     string    `json:"Screenshot"`
+	ErrorMessage          string    `json:"ErrorMessage"`
+	ExecutionTime         string    `json:"ExecutionTime"`
+	SkippedReason         string    `json:"SkippedReason"`
+	Messages              []string  `json:"Messages"`
+	ErrorType             errorType `json:"ErrorType"`
 	ScreenshotFiles       []string  `json:"ScreenshotFiles"`
-	Screenshots       []string  `json:"Screenshots"`
+	Screenshots           []string  `json:"Screenshots"`
 }
 
 type hookFailure struct {
 	HookName              string `json:"HookName"`
 	ErrMsg                string `json:"ErrMsg"`
 	FailureScreenshotFile string `json:"ScreenshotFile"`
-	FailureScreenshot string    `json:"Screenshot"`
+	FailureScreenshot     string `json:"Screenshot"`
 	StackTrace            string `json:"StackTrace"`
 	TableRowIndex         int32  `json:"TableRowIndex"`
 }
@@ -265,17 +265,15 @@ type SearchIndex struct {
 }
 
 const (
-	pass                  status    = "pass"
-	fail                  status    = "fail"
-	skip                  status    = "skip"
-	notExecuted           status    = "not executed"
-	stepKind              tokenKind = "step"
-	conceptKind           tokenKind = "concept"
-	commentKind           tokenKind = "comment"
-	assertionErrorType    errorType = "assertion"
-	parseErrorType        errorType = "parse"
-	verificationErrorType errorType = "verification"
-	validationErrorType   errorType = "validation"
+	pass                status    = "pass"
+	fail                status    = "fail"
+	skip                status    = "skip"
+	notExecuted         status    = "not executed"
+	stepKind            tokenKind = "step"
+	conceptKind         tokenKind = "concept"
+	commentKind         tokenKind = "comment"
+	parseErrorType      errorType = "parse"
+	validationErrorType errorType = "validation"
 )
 
 var parsedTemplates *template.Template
@@ -436,19 +434,19 @@ func generateIndexPages(suiteRes *SuiteResult, reportsDir string, wg *sync.WaitG
 			logger.Fatal(err.Error())
 		}
 		childDirs := filepath.SplitList(p)
-		basePath := ""
 		for _, d := range childDirs {
 			if _, ok := dirs[d]; !ok {
 				dirs[d] = 1
 			}
-			basePath = filepath.Join(basePath, d)
 		}
-
 	}
 	delete(dirs, ".")
 	for d := range dirs {
 		dirPath := filepath.Join(reportsDir, d)
-		os.MkdirAll(dirPath, common.NewDirectoryPermissions)
+		err := os.MkdirAll(dirPath, common.NewDirectoryPermissions)
+		if err != nil {
+			logger.Fatal(err.Error())
+		}
 		p := filepath.Join(dirPath, "index.html")
 		f, err := os.Create(p)
 		if err != nil {

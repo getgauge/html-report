@@ -283,13 +283,13 @@ var specResWithSpecHookFailure = &gm.ProtoSpecResult{
 		SpecHeading: "specRes3",
 		Tags:        []string{"tag1"},
 		PreHookFailures: []*gm.ProtoHookFailure{{
-			ErrorMessage:      "err",
-			StackTrace:        "Stacktrace",
+			ErrorMessage:          "err",
+			StackTrace:            "Stacktrace",
 			FailureScreenshotFile: "Screenshot.png",
 		}},
 		PostHookFailures: []*gm.ProtoHookFailure{{
-			ErrorMessage:      "err",
-			StackTrace:        "Stacktrace",
+			ErrorMessage:          "err",
+			StackTrace:            "Stacktrace",
 			FailureScreenshotFile: "Screenshot.png",
 		}},
 	},
@@ -362,13 +362,13 @@ var scnWithHookFailure = &gm.ProtoScenario{
 		newStepItem(true, false, []*gm.Fragment{newTextFragment("Step1")}),
 	},
 	PreHookFailure: &gm.ProtoHookFailure{
-		ErrorMessage:      "err",
-		StackTrace:        "Stacktrace",
+		ErrorMessage:          "err",
+		StackTrace:            "Stacktrace",
 		FailureScreenshotFile: "Screenshot.png",
 	},
 	PostHookFailure: &gm.ProtoHookFailure{
-		ErrorMessage:      "err",
-		StackTrace:        "Stacktrace",
+		ErrorMessage:          "err",
+		StackTrace:            "Stacktrace",
 		FailureScreenshotFile: "Screenshot.png",
 	},
 }
@@ -419,8 +419,8 @@ var protoStepWithScreenshots = &gm.ProtoStep{
 	},
 	StepExecutionResult: &gm.ProtoStepExecutionResult{
 		ExecutionResult: &gm.ProtoExecutionResult{
-			ExecutionTime: 211316,
-			ScreenshotFiles:   []string{"screenshot1.png", "screenshot2.png"},
+			ExecutionTime:   211316,
+			ScreenshotFiles: []string{"screenshot1.png", "screenshot2.png"},
 		},
 		SkippedReason: "Step impl not found",
 		Skipped:       true,
@@ -507,16 +507,16 @@ var protoStepWithAfterHookFailure = &gm.ProtoStep{
 			ExecutionTime: 211316,
 		},
 		PostHookFailure: &gm.ProtoHookFailure{
-			ErrorMessage:      "err",
-			StackTrace:        "Stacktrace",
+			ErrorMessage:          "err",
+			StackTrace:            "Stacktrace",
 			FailureScreenshotFile: "Screenshot.png",
 		},
 	},
 }
 
 var failedHookFailure = &gm.ProtoHookFailure{
-	ErrorMessage:      "java.lang.RuntimeException",
-	StackTrace:        newStackTrace(),
+	ErrorMessage:          "java.lang.RuntimeException",
+	StackTrace:            newStackTrace(),
 	FailureScreenshotFile: newScreenshot(),
 }
 
@@ -1209,10 +1209,10 @@ func TestToStepCollectsScreenshot(t *testing.T) {
 			},
 		},
 		Result: &result{
-			Status:        skip,
-			ExecutionTime: "00:03:31",
-			SkippedReason: "Step impl not found",
-			ScreenshotFiles:  []string{ "screenshot1.png", "screenshot2.png"},
+			Status:          skip,
+			ExecutionTime:   "00:03:31",
+			SkippedReason:   "Step impl not found",
+			ScreenshotFiles: []string{"screenshot1.png", "screenshot2.png"},
 		},
 	}
 
