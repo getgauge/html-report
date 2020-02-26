@@ -20,6 +20,7 @@ package generator
 import (
 	"bytes"
 	"io/ioutil"
+	"path"
 	"path/filepath"
 	"sync"
 	"testing"
@@ -143,8 +144,8 @@ var scenarioWithAfterHookFail = &gm.ProtoScenario{
 		newStepItem(false, false, []*gm.Fragment{newTextFragment("Some step")}),
 	},
 	PostHookFailure: &gm.ProtoHookFailure{
-		ErrorMessage:      "java.lang.RuntimeException",
-		StackTrace:        newStackTrace(),
+		ErrorMessage:          "java.lang.RuntimeException",
+		StackTrace:            newStackTrace(),
 		FailureScreenshotFile: newScreenshot(),
 	},
 }
@@ -157,8 +158,8 @@ var scenarioWithBeforeHookFail = &gm.ProtoScenario{
 		newStepItem(false, true, []*gm.Fragment{newTextFragment("Some step")}),
 	},
 	PreHookFailure: &gm.ProtoHookFailure{
-		ErrorMessage:      "java.lang.RuntimeException",
-		StackTrace:        newStackTrace(),
+		ErrorMessage:          "java.lang.RuntimeException",
+		StackTrace:            newStackTrace(),
 		FailureScreenshotFile: newScreenshot(),
 	},
 }
@@ -171,13 +172,13 @@ var scenarioWithBeforeAndAfterHookFail = &gm.ProtoScenario{
 		newStepItem(false, true, []*gm.Fragment{newTextFragment("Some step")}),
 	},
 	PreHookFailure: &gm.ProtoHookFailure{
-		ErrorMessage:      "java.lang.RuntimeException",
-		StackTrace:        newStackTrace(),
+		ErrorMessage:          "java.lang.RuntimeException",
+		StackTrace:            newStackTrace(),
 		FailureScreenshotFile: newScreenshot(),
 	},
 	PostHookFailure: &gm.ProtoHookFailure{
-		ErrorMessage:      "java.lang.RuntimeException",
-		StackTrace:        newStackTrace(),
+		ErrorMessage:          "java.lang.RuntimeException",
+		StackTrace:            newStackTrace(),
 		FailureScreenshotFile: newScreenshot(),
 	},
 }
@@ -187,9 +188,9 @@ var stepWithCustomScreenshot = &gm.ProtoItem{
 	Step: &gm.ProtoStep{
 		StepExecutionResult: &gm.ProtoStepExecutionResult{
 			ExecutionResult: &gm.ProtoExecutionResult{
-				Failed:        false,
-				ExecutionTime: 211316,
-				ScreenshotFiles:   []string{newScreenshot(), newScreenshot()},
+				Failed:          false,
+				ExecutionTime:   211316,
+				ScreenshotFiles: []string{newScreenshot(), newScreenshot()},
 			},
 		},
 		Fragments: []*gm.Fragment{newTextFragment("This is a step with custom screenshot")},
@@ -205,8 +206,8 @@ var stepWithBeforeHookFail = &gm.ProtoItem{
 				ExecutionTime: 211316,
 			},
 			PreHookFailure: &gm.ProtoHookFailure{
-				ErrorMessage:      "java.lang.RuntimeException",
-				StackTrace:        newStackTrace(),
+				ErrorMessage:          "java.lang.RuntimeException",
+				StackTrace:            newStackTrace(),
 				FailureScreenshotFile: newScreenshot(),
 			},
 		},
@@ -223,8 +224,8 @@ var stepWithAfterHookFail = &gm.ProtoItem{
 				ExecutionTime: 211316,
 			},
 			PostHookFailure: &gm.ProtoHookFailure{
-				ErrorMessage:      "java.lang.RuntimeException",
-				StackTrace:        newStackTrace(),
+				ErrorMessage:          "java.lang.RuntimeException",
+				StackTrace:            newStackTrace(),
 				FailureScreenshotFile: newScreenshot(),
 			},
 		},
@@ -241,13 +242,13 @@ var stepWithBeforeAndAfterHookFail = &gm.ProtoItem{
 				ExecutionTime: 211316,
 			},
 			PreHookFailure: &gm.ProtoHookFailure{
-				ErrorMessage:      "java.lang.RuntimeException",
-				StackTrace:        newStackTrace(),
+				ErrorMessage:          "java.lang.RuntimeException",
+				StackTrace:            newStackTrace(),
 				FailureScreenshotFile: newScreenshot(),
 			},
 			PostHookFailure: &gm.ProtoHookFailure{
-				ErrorMessage:      "java.lang.RuntimeException",
-				StackTrace:        newStackTrace(),
+				ErrorMessage:          "java.lang.RuntimeException",
+				StackTrace:            newStackTrace(),
 				FailureScreenshotFile: newScreenshot(),
 			},
 		},
@@ -260,10 +261,26 @@ var failedStep = &gm.ProtoItem{
 	Step: &gm.ProtoStep{
 		StepExecutionResult: &gm.ProtoStepExecutionResult{
 			ExecutionResult: &gm.ProtoExecutionResult{
-				Failed:            true,
-				ExecutionTime:     211316,
-				ErrorMessage:      "java.lang.RuntimeException",
-				StackTrace:        newStackTrace(),
+				Failed:                true,
+				ExecutionTime:         211316,
+				ErrorMessage:          "java.lang.RuntimeException",
+				StackTrace:            newStackTrace(),
+				FailureScreenshotFile: newScreenshot(),
+			},
+		},
+		Fragments: []*gm.Fragment{newTextFragment("This is a failing step")},
+	},
+}
+
+var nestedFailedStep = &gm.ProtoItem{
+	ItemType: gm.ProtoItem_Step,
+	Step: &gm.ProtoStep{
+		StepExecutionResult: &gm.ProtoStepExecutionResult{
+			ExecutionResult: &gm.ProtoExecutionResult{
+				Failed:                true,
+				ExecutionTime:         211316,
+				ErrorMessage:          "java.lang.RuntimeException",
+				StackTrace:            newStackTrace(),
 				FailureScreenshotFile: newScreenshot(),
 			},
 		},
@@ -494,6 +511,20 @@ var failSpecResWithStepFailure = &gm.ProtoSpecResult{
 	},
 }
 
+var nestedFailSpecResWithStepFailure = &gm.ProtoSpecResult{
+	Failed:        true,
+	Skipped:       false,
+	ExecutionTime: 211316,
+	ProtoSpec: &gm.ProtoSpec{
+		SpecHeading: "Failing Specification 1",
+		Tags:        []string{},
+		FileName:    path.Join("nested1", "nested11", "failing_specification_1.spec"),
+		Items: []*gm.ProtoItem{
+			newScenarioItem(scenarioWithStepFail),
+		},
+	},
+}
+
 var failSpecResWithConceptFailure = &gm.ProtoSpecResult{
 	Failed:        true,
 	Skipped:       false,
@@ -566,8 +597,8 @@ var failSpecResWithAfterSpecFailure = &gm.ProtoSpecResult{
 			newScenarioItem(scenario2),
 		},
 		PostHookFailures: []*gm.ProtoHookFailure{{
-			ErrorMessage:      "java.lang.RuntimeException",
-			StackTrace:        newStackTrace(),
+			ErrorMessage:          "java.lang.RuntimeException",
+			StackTrace:            newStackTrace(),
 			FailureScreenshotFile: newScreenshot(),
 		}},
 	},
@@ -600,8 +631,8 @@ var failSpecResWithBeforeSpecFailure = &gm.ProtoSpecResult{
 			newScenarioItem(scenario2),
 		},
 		PreHookFailures: []*gm.ProtoHookFailure{{
-			ErrorMessage:      "java.lang.RuntimeException",
-			StackTrace:        newStackTrace(),
+			ErrorMessage:          "java.lang.RuntimeException",
+			StackTrace:            newStackTrace(),
 			FailureScreenshotFile: newScreenshot(),
 		}},
 	},
@@ -647,9 +678,9 @@ var failSpecResWithBeforeSpecFailureWithTableDriven = &gm.ProtoSpecResult{
 		},
 		PreHookFailures: []*gm.ProtoHookFailure{
 			{ErrorMessage: "java.lang.RuntimeException",
-				StackTrace:        newStackTrace(),
+				StackTrace:            newStackTrace(),
 				FailureScreenshotFile: newScreenshot(),
-				TableRowIndex:     int32(1)},
+				TableRowIndex:         int32(1)},
 		},
 	},
 }
@@ -724,13 +755,13 @@ var failSpecResWithBeforeAfterSpecFailure = &gm.ProtoSpecResult{
 			newScenarioItem(scenario2),
 		},
 		PreHookFailures: []*gm.ProtoHookFailure{{
-			ErrorMessage:      "java.lang.RuntimeException",
-			StackTrace:        newStackTrace(),
+			ErrorMessage:          "java.lang.RuntimeException",
+			StackTrace:            newStackTrace(),
 			FailureScreenshotFile: newScreenshot(),
 		}},
 		PostHookFailures: []*gm.ProtoHookFailure{{
-			ErrorMessage:      "java.lang.RuntimeException",
-			StackTrace:        newStackTrace(),
+			ErrorMessage:          "java.lang.RuntimeException",
+			StackTrace:            newStackTrace(),
 			FailureScreenshotFile: newScreenshot(),
 		}},
 	},
@@ -771,6 +802,7 @@ var suiteResWithBeforeStepFailure = newSuiteResult(true, 1, 0, 0, nil, nil, fail
 var suiteResWithAfterStepFailure = newSuiteResult(true, 1, 0, 0, nil, nil, failSpecResWithAfterStepFailure)
 var suiteResWithBeforeAndAfterStepFailure = newSuiteResult(true, 1, 0, 0, nil, nil, failSpecResWithBeforeAndAfterStepFailure)
 var suiteResWithStepFailure = newSuiteResult(true, 1, 0, 0, nil, nil, failSpecResWithStepFailure)
+var nestedSuiteResWithStepFailure = toNestedSuiteResult(path.Join("nested1", "nested11"), newSuiteResult(true, 1, 0, 0, nil, nil, nestedFailSpecResWithStepFailure))
 var suiteResWithBeforeSpecFailure = newSuiteResult(true, 1, 0, 0, nil, nil, failSpecResWithBeforeSpecFailure)
 var suiteResWithBeforeSpecFailureWithTableDriven = newSuiteResult(true, 1, 0, 0, nil, nil, failSpecResWithBeforeSpecFailureWithTableDriven)
 var suiteResWithAfterSpecFailureWithTableDriven = newSuiteResult(true, 1, 0, 0, nil, nil, failSpecResWithAfterSpecFailureWithTableDriven)
@@ -784,8 +816,8 @@ var suiteResWithCustomScreenshots = newSuiteResult(false, 0, 0, 100, nil, nil, p
 
 func newProtoHookFailure() *gm.ProtoHookFailure {
 	return &gm.ProtoHookFailure{
-		ErrorMessage:      "java.lang.RuntimeException",
-		StackTrace:        newStackTrace(),
+		ErrorMessage:          "java.lang.RuntimeException",
+		StackTrace:            newStackTrace(),
 		FailureScreenshotFile: newScreenshot(),
 	}
 }
@@ -834,6 +866,7 @@ var HTMLGenerationTests = []*HTMLGenerationTest{
 	{"after step failure", suiteResWithAfterStepFailure, "after_step_fail.html"},
 	{"both before after step failure", suiteResWithBeforeAndAfterStepFailure, "before_after_step_fail.html"},
 	{"step failure", suiteResWithStepFailure, "step_fail.html"},
+	{"nested step failure", nestedSuiteResWithStepFailure, "nested_step_fail.html"},
 	{"concept failure", suiteResWithConceptFailure, "concept_fail.html"},
 	{"spec error", suiteResWithSpecError, "spec_err.html"},
 	{"custom screenshots ", suiteResWithCustomScreenshots, "custom_screenshots.html"},
@@ -866,6 +899,7 @@ func TestHTMLGeneration(t *testing.T) {
 		var wg sync.WaitGroup
 		wg.Add(1)
 
+		propogateBasePath(test.res.SpecResults[0])
 		generateSpecPage(test.res, test.res.SpecResults[0], buf, &wg)
 		wg.Wait()
 

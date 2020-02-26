@@ -125,6 +125,7 @@ type SuiteResult struct {
 }
 
 type spec struct {
+	BasePath                string         `json:"BasePath"`
 	CommentsBeforeDatatable string         `json:"CommentsBeforeDatatable"`
 	CommentsAfterDatatable  string         `json:"CommentsAfterDatatable"`
 	SpecHeading             string         `json:"SpecHeading"`
@@ -150,6 +151,7 @@ type spec struct {
 }
 
 type scenario struct {
+	BasePath                  string       `json:"BasePath"`
 	Heading                   string       `json:"Heading"`
 	Tags                      []string     `json:"Tags"`
 	ExecutionTime             string       `json:"ExecutionTime"`
@@ -170,6 +172,7 @@ type scenario struct {
 }
 
 type step struct {
+	BasePath                string       `json:"BasePath"`
 	Fragments               []*fragment  `json:"Fragments"`
 	ItemType                tokenKind    `json:"ItemType"`
 	StepText                string       `json:"StepText"`
@@ -190,6 +193,7 @@ func (s *step) Kind() tokenKind {
 }
 
 type result struct {
+	BasePath              string    `json:"BasePath"`
 	Status                status    `json:"Status"`
 	StackTrace            string    `json:"StackTrace"`
 	FailureScreenshotFile string    `json:"ScreenshotFile"`
@@ -204,6 +208,7 @@ type result struct {
 }
 
 type hookFailure struct {
+	BasePath              string `json:"BasePath"`
 	HookName              string `json:"HookName"`
 	ErrMsg                string `json:"ErrMsg"`
 	FailureScreenshotFile string `json:"ScreenshotFile"`
@@ -388,6 +393,7 @@ func GenerateReports(res *SuiteResult, reportsDir, themePath string, searchIndex
 					return err
 				}
 				wg.Add(1)
+				propogateBasePath(r)
 				go generateSpecPage(res, r, sf, &wg)
 			}
 			wg.Wait()
@@ -397,6 +403,35 @@ func GenerateReports(res *SuiteResult, reportsDir, themePath string, searchIndex
 		return generateSearchIndex(res, reportsDir)
 	}
 	return nil
+}
+
+func propogateBasePath(r *spec) {
+	basePath, _ := filepath.Rel(filepath.Dir(r.FileName), projectRoot)
+	var setHookFailureBasePath = func(f *hookFailure) {
+		if f != nil {
+			f.BasePath = basePath
+		}
+	}
+	r.BasePath = basePath
+	for _, f := range r.AfterSpecHookFailures {
+		setHookFailureBasePath(f)
+	}
+	for _, f := range r.BeforeSpecHookFailures {
+		setHookFailureBasePath(f)
+	}
+	for _, scn := range r.Scenarios {
+		scn.BasePath = basePath
+		setHookFailureBasePath(scn.AfterScenarioHookFailure)
+		setHookFailureBasePath(scn.BeforeScenarioHookFailure)
+		for _, item := range append(append(scn.Items, scn.Contexts...), scn.Teardowns...) {
+			if item.Kind == stepKind {
+				item.Step.BasePath = basePath
+				item.Step.Result.BasePath = basePath
+				setHookFailureBasePath(item.Step.AfterStepHookFailure)
+				setHookFailureBasePath(item.Step.BeforeStepHookFailure)
+			}
+		}
+	}
 }
 
 func GenerateReport(res *SuiteResult, reportDir, themePath string, searchIndex bool) {
@@ -462,10 +497,20 @@ func generateIndexPages(suiteRes *SuiteResult, reportsDir string, wg *sync.WaitG
 func generateSpecPage(suiteRes *SuiteResult, specRes *spec, wc io.WriteCloser, wg *sync.WaitGroup) {
 	defer wc.Close()
 	defer wg.Done()
+	res := *suiteRes
+	if res.BasePath != "" {
+		res.BasePath = specRes.BasePath
+	}
+	if res.BeforeSuiteHookFailure != nil && res.BeforeSuiteHookFailure.BasePath == "" {
+		res.BeforeSuiteHookFailure.BasePath = specRes.BasePath
+	}
+	if res.AfterSuiteHookFailure != nil && res.AfterSuiteHookFailure.BasePath == "" {
+		res.AfterSuiteHookFailure.BasePath = specRes.BasePath
+	}
 	execTemplate("specPage", wc, struct {
 		SuiteRes *SuiteResult
 		SpecRes  *spec
-	}{suiteRes, specRes})
+	}{&res, specRes})
 }
 
 func copyScreenshotFiles(reportsDir string) {

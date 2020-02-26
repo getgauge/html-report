@@ -732,8 +732,8 @@ func TestToSpecWithHookFailure(t *testing.T) {
 	screenShot := "Screenshot.png"
 	want := &spec{
 		Scenarios:              make([]*scenario, 0),
-		BeforeSpecHookFailures: []*hookFailure{newHookFailure("Before Spec", "err", screenShot, "Stacktrace")},
-		AfterSpecHookFailures:  []*hookFailure{newHookFailure("After Spec", "err", screenShot, "Stacktrace")},
+		BeforeSpecHookFailures: []*hookFailure{newHookFailure("", "Before Spec", "err", screenShot, "Stacktrace")},
+		AfterSpecHookFailures:  []*hookFailure{newHookFailure("", "After Spec", "err", screenShot, "Stacktrace")},
 		Errors:                 make([]buildError, 0),
 		Tags:                   []string{"tag1"},
 		SpecHeading:            "specRes3",
@@ -1097,8 +1097,8 @@ func TestToScenarioWithHookFailures(t *testing.T) {
 			},
 		},
 		Teardowns:                 []item{},
-		BeforeScenarioHookFailure: newHookFailure("Before Scenario", "err", screenShot, "Stacktrace"),
-		AfterScenarioHookFailure:  newHookFailure("After Scenario", "err", screenShot, "Stacktrace"),
+		BeforeScenarioHookFailure: newHookFailure("", "Before Scenario", "err", screenShot, "Stacktrace"),
+		AfterScenarioHookFailure:  newHookFailure("", "After Scenario", "err", screenShot, "Stacktrace"),
 		TableRowIndex:             -1,
 	}
 
@@ -1275,7 +1275,7 @@ func TestToStepWithAfterHookFailure(t *testing.T) {
 			Status:        fail,
 			ExecutionTime: "00:03:31",
 		},
-		AfterStepHookFailure: newHookFailure("After Step", "err", screenShot, "Stacktrace"),
+		AfterStepHookFailure: newHookFailure("", "After Step", "err", screenShot, "Stacktrace"),
 	}
 
 	got := toStep(protoStepWithAfterHookFailure)
@@ -1295,7 +1295,7 @@ func TestToComment(t *testing.T) {
 
 func TestToHookFailure(t *testing.T) {
 	screenShot := newScreenshot()
-	want := newHookFailure("Before Suite", "java.lang.RuntimeException", screenShot, newStackTrace())
+	want := newHookFailure("", "Before Suite", "java.lang.RuntimeException", screenShot, newStackTrace())
 
 	got := toHookFailure(failedHookFailure, "Before Suite")
 	if !reflect.DeepEqual(got, want) {
