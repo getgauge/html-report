@@ -20,8 +20,8 @@ package generator
 import (
 	"bytes"
 	"io/ioutil"
-	"path"
 	"path/filepath"
+	"strings"
 	"sync"
 	"testing"
 
@@ -518,7 +518,7 @@ var nestedFailSpecResWithStepFailure = &gm.ProtoSpecResult{
 	ProtoSpec: &gm.ProtoSpec{
 		SpecHeading: "Failing Specification 1",
 		Tags:        []string{},
-		FileName:    path.Join("nested1", "nested11", "failing_specification_1.spec"),
+		FileName:    filepath.Join("nested1", "nested11", "failing_specification_1.spec"),
 		Items: []*gm.ProtoItem{
 			newScenarioItem(scenarioWithStepFail),
 		},
@@ -802,7 +802,7 @@ var suiteResWithBeforeStepFailure = newSuiteResult(true, 1, 0, 0, nil, nil, fail
 var suiteResWithAfterStepFailure = newSuiteResult(true, 1, 0, 0, nil, nil, failSpecResWithAfterStepFailure)
 var suiteResWithBeforeAndAfterStepFailure = newSuiteResult(true, 1, 0, 0, nil, nil, failSpecResWithBeforeAndAfterStepFailure)
 var suiteResWithStepFailure = newSuiteResult(true, 1, 0, 0, nil, nil, failSpecResWithStepFailure)
-var nestedSuiteResWithStepFailure = toNestedSuiteResult(path.Join("nested1", "nested11"), newSuiteResult(true, 1, 0, 0, nil, nil, nestedFailSpecResWithStepFailure))
+var nestedSuiteResWithStepFailure = toNestedSuiteResult(filepath.Join("nested1", "nested11"), newSuiteResult(true, 1, 0, 0, nil, nil, nestedFailSpecResWithStepFailure))
 var suiteResWithBeforeSpecFailure = newSuiteResult(true, 1, 0, 0, nil, nil, failSpecResWithBeforeSpecFailure)
 var suiteResWithBeforeSpecFailureWithTableDriven = newSuiteResult(true, 1, 0, 0, nil, nil, failSpecResWithBeforeSpecFailureWithTableDriven)
 var suiteResWithAfterSpecFailureWithTableDriven = newSuiteResult(true, 1, 0, 0, nil, nil, failSpecResWithAfterSpecFailureWithTableDriven)
@@ -899,12 +899,14 @@ func TestHTMLGeneration(t *testing.T) {
 		var wg sync.WaitGroup
 		wg.Add(1)
 
-		propogateBasePath(test.res.SpecResults[0])
-		generateSpecPage(test.res, test.res.SpecResults[0], buf, &wg)
+		r := test.res.SpecResults[0]
+		propogateBasePath(r)
+		generateSpecPage(test.res, r, buf, &wg)
 		wg.Wait()
 
 		want := helper.RemoveNewline(string(content))
-		got := helper.RemoveNewline(buf.String())
+		fp := r.FileName
+		got := strings.ReplaceAll(helper.RemoveNewline(buf.String()), fp, filepath.ToSlash(fp))
 		helper.AssertEqual(want, got, test.name, t)
 	}
 }
