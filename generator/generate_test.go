@@ -692,3 +692,107 @@ func BenchmarkGenerateReport(b *testing.B) {
 	}
 	GenerateReport(ps, filepath.Join("_testdata", "benchmark"), filepath.Join("_testdata", "dummyReportTheme"), false)
 }
+
+func newStepWithHookFailures() *step {
+	s := newStep(fail)
+	s.AfterStepHookFailure = &hookFailure{}
+	s.BeforeStepHookFailure = &hookFailure{}
+	return s
+}
+
+var stepItem = item{Kind: stepKind, Step: newStepWithHookFailures()}
+var basePathSeedSpec = func() *spec {
+	return &spec{
+		FileName:               filepath.Join("some", "base", "path", "example.spec"),
+		BeforeSpecHookFailures: []*hookFailure{&hookFailure{}},
+		AfterSpecHookFailures:  []*hookFailure{&hookFailure{}},
+		Scenarios: []*scenario{
+			&scenario{
+				AfterScenarioHookFailure:  &hookFailure{},
+				BeforeScenarioHookFailure: &hookFailure{},
+				Contexts: []item{
+					stepItem,
+					item{Kind: conceptKind, Concept: &concept{
+						Items:       []item{stepItem},
+						ConceptStep: newStepWithHookFailures()},
+					},
+				},
+				Teardowns: []item{
+					stepItem,
+					item{Kind: conceptKind, Concept: &concept{
+						Items:       []item{stepItem},
+						ConceptStep: newStepWithHookFailures()},
+					},
+				},
+				Items: []item{
+					stepItem,
+					item{Kind: conceptKind, Concept: &concept{
+						Items:       []item{stepItem},
+						ConceptStep: newStepWithHookFailures()},
+					},
+				},
+			},
+		},
+	}
+}
+
+type basePathPropogationTest struct {
+	name     string
+	expected string
+	spec     *spec
+	actual   func(s *spec) string
+}
+
+func (b basePathPropogationTest) getActual() string {
+	return b.actual(b.spec)
+}
+
+func TestSpecBasepathPropogation(t *testing.T) {
+	bp := filepath.Join("..", "..", "..")
+	var basePathPropogationTests = []basePathPropogationTest{
+		basePathPropogationTest{name: "spec.basepath", expected: bp, spec: basePathSeedSpec(), actual: func(s *spec) string { return s.BasePath }},
+		basePathPropogationTest{name: "spec.beforehookfailure.basepath", expected: bp, spec: basePathSeedSpec(), actual: func(s *spec) string { return s.BeforeSpecHookFailures[0].BasePath }},
+		basePathPropogationTest{name: "spec.afterhookfailure.basepath", expected: bp, spec: basePathSeedSpec(), actual: func(s *spec) string { return s.AfterSpecHookFailures[0].BasePath }},
+		basePathPropogationTest{name: "spec.scenario.basepath", expected: bp, spec: basePathSeedSpec(), actual: func(s *spec) string { return s.Scenarios[0].BasePath }},
+		basePathPropogationTest{name: "spec.scenario.beforehookfailure.basepath", expected: bp, spec: basePathSeedSpec(), actual: func(s *spec) string { return s.Scenarios[0].BeforeScenarioHookFailure.BasePath }},
+		basePathPropogationTest{name: "spec.scenario.afterhookfailure.basepath", expected: bp, spec: basePathSeedSpec(), actual: func(s *spec) string { return s.Scenarios[0].AfterScenarioHookFailure.BasePath }},
+		basePathPropogationTest{name: "spec.scenario.context.basepath", expected: bp, spec: basePathSeedSpec(), actual: func(s *spec) string { return s.Scenarios[0].Contexts[0].Step.BasePath }},
+		basePathPropogationTest{name: "spec.scenario.context.beforehookfailure.basepath", expected: bp, spec: basePathSeedSpec(), actual: func(s *spec) string { return s.Scenarios[0].Contexts[0].Step.BeforeStepHookFailure.BasePath }},
+		basePathPropogationTest{name: "spec.scenario.context.afterhookfailure.basepath", expected: bp, spec: basePathSeedSpec(), actual: func(s *spec) string { return s.Scenarios[0].Contexts[0].Step.AfterStepHookFailure.BasePath }},
+		basePathPropogationTest{name: "spec.scenario.context.concept.basepath", expected: bp, spec: basePathSeedSpec(), actual: func(s *spec) string { return s.Scenarios[0].Contexts[1].Concept.ConceptStep.BasePath }},
+		basePathPropogationTest{name: "spec.scenario.context.concept.beforehookfailure.basepath", expected: bp, spec: basePathSeedSpec(), actual: func(s *spec) string {
+			return s.Scenarios[0].Contexts[1].Concept.ConceptStep.BeforeStepHookFailure.BasePath
+		}},
+		basePathPropogationTest{name: "spec.scenario.context.concept.afterhookfailure.basepath", expected: bp, spec: basePathSeedSpec(), actual: func(s *spec) string {
+			return s.Scenarios[0].Contexts[1].Concept.ConceptStep.AfterStepHookFailure.BasePath
+		}},
+		basePathPropogationTest{name: "spec.scenario.teardown.basepath", expected: bp, spec: basePathSeedSpec(), actual: func(s *spec) string { return s.Scenarios[0].Teardowns[0].Step.BasePath }},
+		basePathPropogationTest{name: "spec.scenario.teardown.beforehookfailure.basepath", expected: bp, spec: basePathSeedSpec(), actual: func(s *spec) string { return s.Scenarios[0].Teardowns[0].Step.BeforeStepHookFailure.BasePath }},
+		basePathPropogationTest{name: "spec.scenario.teardown.afterhookfailure.basepath", expected: bp, spec: basePathSeedSpec(), actual: func(s *spec) string { return s.Scenarios[0].Teardowns[0].Step.BeforeStepHookFailure.BasePath }},
+		basePathPropogationTest{name: "spec.scenario.teardown.concept.basepath", expected: bp, spec: basePathSeedSpec(), actual: func(s *spec) string { return s.Scenarios[0].Teardowns[1].Concept.ConceptStep.BasePath }},
+		basePathPropogationTest{name: "spec.scenario.teardown.concept.beforehookfailure.basepath", expected: bp, spec: basePathSeedSpec(), actual: func(s *spec) string {
+			return s.Scenarios[0].Teardowns[1].Concept.ConceptStep.BeforeStepHookFailure.BasePath
+		}},
+		basePathPropogationTest{name: "spec.scenario.teardown.concept.afterhookfailure.basepath", expected: bp, spec: basePathSeedSpec(), actual: func(s *spec) string {
+			return s.Scenarios[0].Teardowns[1].Concept.ConceptStep.BeforeStepHookFailure.BasePath
+		}},
+		basePathPropogationTest{name: "spec.scenario.step.basepath", expected: bp, spec: basePathSeedSpec(), actual: func(s *spec) string { return s.Scenarios[0].Items[0].Step.BasePath }},
+		basePathPropogationTest{name: "spec.scenario.step.beforehookfailure.basepath", expected: bp, spec: basePathSeedSpec(), actual: func(s *spec) string { return s.Scenarios[0].AfterScenarioHookFailure.BasePath }},
+		basePathPropogationTest{name: "spec.scenario.step.afterhookfailure.basepath", expected: bp, spec: basePathSeedSpec(), actual: func(s *spec) string { return s.Scenarios[0].AfterScenarioHookFailure.BasePath }},
+		basePathPropogationTest{name: "spec.scenario.concept.step.basepath", expected: bp, spec: basePathSeedSpec(), actual: func(s *spec) string { return s.Scenarios[0].Items[1].Concept.ConceptStep.BasePath }},
+		basePathPropogationTest{name: "spec.scenario.concept.step.beforehookfailure.basepath", expected: bp, spec: basePathSeedSpec(), actual: func(s *spec) string {
+			return s.Scenarios[0].Items[1].Concept.ConceptStep.BeforeStepHookFailure.BasePath
+		}},
+		basePathPropogationTest{name: "spec.scenario.concept.step.afterhookfailure.basepath", expected: bp, spec: basePathSeedSpec(), actual: func(s *spec) string { return s.Scenarios[0].Items[1].Concept.ConceptStep.AfterStepHookFailure.BasePath }},
+	}
+
+	for _, tt := range basePathPropogationTests {
+		t.Run(tt.name, func(t *testing.T) {
+			propogateBasePath(tt.spec)
+			a := tt.getActual()
+			if filepath.Clean(a) != filepath.Clean(tt.expected) {
+				t.Errorf("expected %s, got %s", tt.expected, a)
+			}
+		})
+	}
+}
