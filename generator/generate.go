@@ -407,30 +407,45 @@ func GenerateReports(res *SuiteResult, reportsDir, themePath string, searchIndex
 
 func propogateBasePath(r *spec) {
 	basePath, _ := filepath.Rel(filepath.Dir(r.FileName), projectRoot)
-	var setHookFailureBasePath = func(f *hookFailure) {
-		if f != nil {
-			f.BasePath = basePath
-		}
-	}
 	r.BasePath = basePath
 	for _, f := range r.AfterSpecHookFailures {
-		setHookFailureBasePath(f)
+		setHookFailureBasePath(f, basePath)
 	}
 	for _, f := range r.BeforeSpecHookFailures {
-		setHookFailureBasePath(f)
+		setHookFailureBasePath(f, basePath)
 	}
 	for _, scn := range r.Scenarios {
 		scn.BasePath = basePath
-		setHookFailureBasePath(scn.AfterScenarioHookFailure)
-		setHookFailureBasePath(scn.BeforeScenarioHookFailure)
-		for _, item := range append(append(scn.Items, scn.Contexts...), scn.Teardowns...) {
-			if item.Kind == stepKind {
-				item.Step.BasePath = basePath
-				item.Step.Result.BasePath = basePath
-				setHookFailureBasePath(item.Step.AfterStepHookFailure)
-				setHookFailureBasePath(item.Step.BeforeStepHookFailure)
-			}
+		setHookFailureBasePath(scn.AfterScenarioHookFailure, basePath)
+		setHookFailureBasePath(scn.BeforeScenarioHookFailure, basePath)
+		for _, i := range append(append(scn.Items, scn.Contexts...), scn.Teardowns...) {
+			propogateBasepathToItem(i, basePath)
 		}
+	}
+}
+
+func setHookFailureBasePath(f *hookFailure, basePath string) {
+	if f != nil {
+		f.BasePath = basePath
+	}
+}
+
+func propogateBasepathToItem(i item, basePath string) {
+	var st *step
+	switch i.Kind {
+	case stepKind:
+		st = i.Step
+	case conceptKind:
+		st = i.Concept.ConceptStep
+		for _, it := range i.Concept.Items {
+			propogateBasepathToItem(it, basePath)
+		}
+	}
+	if st != nil {
+		st.BasePath = basePath
+		st.Result.BasePath = basePath
+		setHookFailureBasePath(st.AfterStepHookFailure, basePath)
+		setHookFailureBasePath(st.BeforeStepHookFailure, basePath)
 	}
 }
 
