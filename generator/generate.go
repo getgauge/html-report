@@ -47,19 +47,19 @@ type summary struct {
 }
 
 type overview struct {
-	ProjectName         string
-	Env                 string
-	Tags                string
-	SuccessRate         float32
-	ExecutionTime       string
-	Timestamp           string
-	Summary             *summary
-	ScenarioSummary     *summary
-	BasePath            string
-	PreHookMessages     []string
-	PostHookMessages    []string
-	PreHookScreenshots  []string
-	PostHookScreenshots []string
+	ProjectName             string
+	Env                     string
+	Tags                    string
+	SuccessRate             float32
+	ExecutionTime           string
+	Timestamp               string
+	Summary                 *summary
+	ScenarioSummary         *summary
+	BasePath                string
+	PreHookMessages         []string
+	PostHookMessages        []string
+	PreHookScreenshots      []string
+	PostHookScreenshots     []string
 	PreHookScreenshotFiles  []string
 	PostHookScreenshotFiles []string
 }
@@ -99,32 +99,33 @@ type buildError struct {
 
 // SuiteResult holds the aggregated execution information for a run
 type SuiteResult struct {
-	ProjectName            string       `json:"ProjectName"`
-	Timestamp              string       `json:"Timestamp"`
-	SuccessRate            float32      `json:"SuccessRate"`
-	Environment            string       `json:"Environment"`
-	Tags                   string       `json:"Tags"`
-	ExecutionTime          int64        `json:"ExecutionTime"`
-	ExecutionStatus        status       `json:"ExecutionStatus"`
-	SpecResults            []*spec      `json:"SpecResults"`
-	BeforeSuiteHookFailure *hookFailure `json:"BeforeSuiteHookFailure"`
-	AfterSuiteHookFailure  *hookFailure `json:"AfterSuiteHookFailure"`
-	PassedSpecsCount       int          `json:"PassedSpecsCount"`
-	FailedSpecsCount       int          `json:"FailedSpecsCount"`
-	SkippedSpecsCount      int          `json:"SkippedSpecsCount"`
-	PassedScenarioCount    int          `json:"PassedScenarioCount"`
-	FailedScenarioCount    int          `json:"FailedScenarioCount"`
-	SkippedScenarioCount   int          `json:"SkippedScenarioCount"`
-	BasePath               string       `json:"BasePath"`
-	PreHookMessages        []string     `json:"PreHookMessages"`
-	PostHookMessages       []string     `json:"PostHookMessages"`
-	PreHookScreenshotFiles     []string     `json:"PreHookScreenshotFiles"`
-	PostHookScreenshotFiles    []string     `json:"PostHookScreenshotFiles"`
-	PreHookScreenshots     []string     `json:"PreHookScreenshots"`
-	PostHookScreenshots    []string     `json:"PostHookScreenshots"`
+	ProjectName             string       `json:"ProjectName"`
+	Timestamp               string       `json:"Timestamp"`
+	SuccessRate             float32      `json:"SuccessRate"`
+	Environment             string       `json:"Environment"`
+	Tags                    string       `json:"Tags"`
+	ExecutionTime           int64        `json:"ExecutionTime"`
+	ExecutionStatus         status       `json:"ExecutionStatus"`
+	SpecResults             []*spec      `json:"SpecResults"`
+	BeforeSuiteHookFailure  *hookFailure `json:"BeforeSuiteHookFailure"`
+	AfterSuiteHookFailure   *hookFailure `json:"AfterSuiteHookFailure"`
+	PassedSpecsCount        int          `json:"PassedSpecsCount"`
+	FailedSpecsCount        int          `json:"FailedSpecsCount"`
+	SkippedSpecsCount       int          `json:"SkippedSpecsCount"`
+	PassedScenarioCount     int          `json:"PassedScenarioCount"`
+	FailedScenarioCount     int          `json:"FailedScenarioCount"`
+	SkippedScenarioCount    int          `json:"SkippedScenarioCount"`
+	BasePath                string       `json:"BasePath"`
+	PreHookMessages         []string     `json:"PreHookMessages"`
+	PostHookMessages        []string     `json:"PostHookMessages"`
+	PreHookScreenshotFiles  []string     `json:"PreHookScreenshotFiles"`
+	PostHookScreenshotFiles []string     `json:"PostHookScreenshotFiles"`
+	PreHookScreenshots      []string     `json:"PreHookScreenshots"`
+	PostHookScreenshots     []string     `json:"PostHookScreenshots"`
 }
 
 type spec struct {
+	BasePath                string         `json:"BasePath"`
 	CommentsBeforeDatatable string         `json:"CommentsBeforeDatatable"`
 	CommentsAfterDatatable  string         `json:"CommentsAfterDatatable"`
 	SpecHeading             string         `json:"SpecHeading"`
@@ -143,13 +144,14 @@ type spec struct {
 	Errors                  []buildError   `json:"Errors"`
 	PreHookMessages         []string       `json:"PreHookMessages"`
 	PostHookMessages        []string       `json:"PostHookMessages"`
-	PreHookScreenshotFiles     []string     `json:"PreHookScreenshotFiles"`
-	PostHookScreenshotFiles    []string     `json:"PostHookScreenshotFiles"`
+	PreHookScreenshotFiles  []string       `json:"PreHookScreenshotFiles"`
+	PostHookScreenshotFiles []string       `json:"PostHookScreenshotFiles"`
 	PreHookScreenshots      []string       `json:"PreHookScreenshots"`
 	PostHookScreenshots     []string       `json:"PostHookScreenshots"`
 }
 
 type scenario struct {
+	BasePath                  string       `json:"BasePath"`
 	Heading                   string       `json:"Heading"`
 	Tags                      []string     `json:"Tags"`
 	ExecutionTime             string       `json:"ExecutionTime"`
@@ -163,26 +165,27 @@ type scenario struct {
 	TableRowIndex             int          `json:"TableRowIndex"`
 	PreHookMessages           []string     `json:"PreHookMessages"`
 	PostHookMessages          []string     `json:"PostHookMessages"`
-	PreHookScreenshotFiles     []string     `json:"PreHookScreenshotFiles"`
-	PostHookScreenshotFiles    []string     `json:"PostHookScreenshotFiles"`
+	PreHookScreenshotFiles    []string     `json:"PreHookScreenshotFiles"`
+	PostHookScreenshotFiles   []string     `json:"PostHookScreenshotFiles"`
 	PreHookScreenshots        []string     `json:"PreHookScreenshots"`
 	PostHookScreenshots       []string     `json:"PostHookScreenshots"`
 }
 
 type step struct {
-	Fragments             []*fragment  `json:"Fragments"`
-	ItemType              tokenKind    `json:"ItemType"`
-	StepText              string       `json:"StepText"`
-	Table                 *table       `json:"Table"`
-	BeforeStepHookFailure *hookFailure `json:"BeforeStepHookFailure"`
-	AfterStepHookFailure  *hookFailure `json:"AfterStepHookFailure"`
-	Result                *result      `json:"Result"`
-	PreHookMessages       []string     `json:"PreHookMessages"`
-	PostHookMessages      []string     `json:"PostHookMessages"`
-	PreHookScreenshotFiles     []string     `json:"PreHookScreenshotFiles"`
-	PostHookScreenshotFiles    []string     `json:"PostHookScreenshotFiles"`
-	PreHookScreenshots    []string     `json:"PreHookScreenshots"`
-	PostHookScreenshots   []string     `json:"PostHookScreenshots"`
+	BasePath                string       `json:"BasePath"`
+	Fragments               []*fragment  `json:"Fragments"`
+	ItemType                tokenKind    `json:"ItemType"`
+	StepText                string       `json:"StepText"`
+	Table                   *table       `json:"Table"`
+	BeforeStepHookFailure   *hookFailure `json:"BeforeStepHookFailure"`
+	AfterStepHookFailure    *hookFailure `json:"AfterStepHookFailure"`
+	Result                  *result      `json:"Result"`
+	PreHookMessages         []string     `json:"PreHookMessages"`
+	PostHookMessages        []string     `json:"PostHookMessages"`
+	PreHookScreenshotFiles  []string     `json:"PreHookScreenshotFiles"`
+	PostHookScreenshotFiles []string     `json:"PostHookScreenshotFiles"`
+	PreHookScreenshots      []string     `json:"PreHookScreenshots"`
+	PostHookScreenshots     []string     `json:"PostHookScreenshots"`
 }
 
 func (s *step) Kind() tokenKind {
@@ -190,24 +193,26 @@ func (s *step) Kind() tokenKind {
 }
 
 type result struct {
-	Status            status    `json:"Status"`
-	StackTrace        string    `json:"StackTrace"`
+	BasePath              string    `json:"BasePath"`
+	Status                status    `json:"Status"`
+	StackTrace            string    `json:"StackTrace"`
 	FailureScreenshotFile string    `json:"ScreenshotFile"`
-	FailureScreenshot string    `json:"Screenshot"`
-	ErrorMessage      string    `json:"ErrorMessage"`
-	ExecutionTime     string    `json:"ExecutionTime"`
-	SkippedReason     string    `json:"SkippedReason"`
-	Messages          []string  `json:"Messages"`
-	ErrorType         errorType `json:"ErrorType"`
+	FailureScreenshot     string    `json:"Screenshot"`
+	ErrorMessage          string    `json:"ErrorMessage"`
+	ExecutionTime         string    `json:"ExecutionTime"`
+	SkippedReason         string    `json:"SkippedReason"`
+	Messages              []string  `json:"Messages"`
+	ErrorType             errorType `json:"ErrorType"`
 	ScreenshotFiles       []string  `json:"ScreenshotFiles"`
-	Screenshots       []string  `json:"Screenshots"`
+	Screenshots           []string  `json:"Screenshots"`
 }
 
 type hookFailure struct {
+	BasePath              string `json:"BasePath"`
 	HookName              string `json:"HookName"`
 	ErrMsg                string `json:"ErrMsg"`
 	FailureScreenshotFile string `json:"ScreenshotFile"`
-	FailureScreenshot string    `json:"Screenshot"`
+	FailureScreenshot     string `json:"Screenshot"`
 	StackTrace            string `json:"StackTrace"`
 	TableRowIndex         int32  `json:"TableRowIndex"`
 }
@@ -265,17 +270,15 @@ type SearchIndex struct {
 }
 
 const (
-	pass                  status    = "pass"
-	fail                  status    = "fail"
-	skip                  status    = "skip"
-	notExecuted           status    = "not executed"
-	stepKind              tokenKind = "step"
-	conceptKind           tokenKind = "concept"
-	commentKind           tokenKind = "comment"
-	assertionErrorType    errorType = "assertion"
-	parseErrorType        errorType = "parse"
-	verificationErrorType errorType = "verification"
-	validationErrorType   errorType = "validation"
+	pass                status    = "pass"
+	fail                status    = "fail"
+	skip                status    = "skip"
+	notExecuted         status    = "not executed"
+	stepKind            tokenKind = "step"
+	conceptKind         tokenKind = "concept"
+	commentKind         tokenKind = "comment"
+	parseErrorType      errorType = "parse"
+	validationErrorType errorType = "validation"
 )
 
 var parsedTemplates *template.Template
@@ -390,6 +393,7 @@ func GenerateReports(res *SuiteResult, reportsDir, themePath string, searchIndex
 					return err
 				}
 				wg.Add(1)
+				propogateBasePath(r)
 				go generateSpecPage(res, r, sf, &wg)
 			}
 			wg.Wait()
@@ -399,6 +403,50 @@ func GenerateReports(res *SuiteResult, reportsDir, themePath string, searchIndex
 		return generateSearchIndex(res, reportsDir)
 	}
 	return nil
+}
+
+func propogateBasePath(r *spec) {
+	basePath, _ := filepath.Rel(filepath.Dir(r.FileName), projectRoot)
+	r.BasePath = basePath
+	for _, f := range r.AfterSpecHookFailures {
+		setHookFailureBasePath(f, basePath)
+	}
+	for _, f := range r.BeforeSpecHookFailures {
+		setHookFailureBasePath(f, basePath)
+	}
+	for _, scn := range r.Scenarios {
+		scn.BasePath = basePath
+		setHookFailureBasePath(scn.AfterScenarioHookFailure, basePath)
+		setHookFailureBasePath(scn.BeforeScenarioHookFailure, basePath)
+		for _, i := range append(append(scn.Items, scn.Contexts...), scn.Teardowns...) {
+			propogateBasepathToItem(i, basePath)
+		}
+	}
+}
+
+func setHookFailureBasePath(f *hookFailure, basePath string) {
+	if f != nil {
+		f.BasePath = basePath
+	}
+}
+
+func propogateBasepathToItem(i item, basePath string) {
+	var st *step
+	switch i.Kind {
+	case stepKind:
+		st = i.Step
+	case conceptKind:
+		st = i.Concept.ConceptStep
+		for _, it := range i.Concept.Items {
+			propogateBasepathToItem(it, basePath)
+		}
+	}
+	if st != nil {
+		st.BasePath = basePath
+		st.Result.BasePath = basePath
+		setHookFailureBasePath(st.AfterStepHookFailure, basePath)
+		setHookFailureBasePath(st.BeforeStepHookFailure, basePath)
+	}
 }
 
 func GenerateReport(res *SuiteResult, reportDir, themePath string, searchIndex bool) {
@@ -436,19 +484,19 @@ func generateIndexPages(suiteRes *SuiteResult, reportsDir string, wg *sync.WaitG
 			logger.Fatal(err.Error())
 		}
 		childDirs := filepath.SplitList(p)
-		basePath := ""
 		for _, d := range childDirs {
 			if _, ok := dirs[d]; !ok {
 				dirs[d] = 1
 			}
-			basePath = filepath.Join(basePath, d)
 		}
-
 	}
 	delete(dirs, ".")
 	for d := range dirs {
 		dirPath := filepath.Join(reportsDir, d)
-		os.MkdirAll(dirPath, common.NewDirectoryPermissions)
+		err := os.MkdirAll(dirPath, common.NewDirectoryPermissions)
+		if err != nil {
+			logger.Fatal(err.Error())
+		}
 		p := filepath.Join(dirPath, "index.html")
 		f, err := os.Create(p)
 		if err != nil {
@@ -464,10 +512,20 @@ func generateIndexPages(suiteRes *SuiteResult, reportsDir string, wg *sync.WaitG
 func generateSpecPage(suiteRes *SuiteResult, specRes *spec, wc io.WriteCloser, wg *sync.WaitGroup) {
 	defer wc.Close()
 	defer wg.Done()
+	res := *suiteRes
+	if res.BasePath != "" {
+		res.BasePath = specRes.BasePath
+	}
+	if res.BeforeSuiteHookFailure != nil && res.BeforeSuiteHookFailure.BasePath == "" {
+		res.BeforeSuiteHookFailure.BasePath = specRes.BasePath
+	}
+	if res.AfterSuiteHookFailure != nil && res.AfterSuiteHookFailure.BasePath == "" {
+		res.AfterSuiteHookFailure.BasePath = specRes.BasePath
+	}
 	execTemplate("specPage", wc, struct {
 		SuiteRes *SuiteResult
 		SpecRes  *spec
-	}{suiteRes, specRes})
+	}{&res, specRes})
 }
 
 func copyScreenshotFiles(reportsDir string) {

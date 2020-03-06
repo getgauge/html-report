@@ -148,11 +148,27 @@
     <div class="suite_screenshots">
       {{if gt (len .PreHookScreenshotFiles) 0}}
         <div>Before Suite Screenshots</div>
-        {{template "screenshotDiv" .PreHookScreenshotFiles}}
+          <div class="screenshot-container">
+            {{range .PreHookScreenshotFiles}}
+              <div class="screenshot">
+                <a href="{{toPath $.BasePath (print "images/" .)}}" rel="lightbox">
+                  <img src="{{toPath $.BasePath (print "images/" .)}}" class="screenshot-thumbnail" />
+                </a>
+              </div>
+            {{end}}
+          </div>
       {{end}}
       {{if gt (len .PostHookScreenshotFiles) 0}}
         <div>After Suite Screenshots</div>
-        {{template "screenshotDiv" .PostHookScreenshotFiles}}
+          <div class="screenshot-container">
+            {{range .PostHookScreenshotFiles}}
+              <div class="screenshot">
+                <a href="{{toPath $.BasePath (print "images/" .)}}" rel="lightbox">
+                  <img src="{{toPath $.BasePath (print "images/" .)}}" class="screenshot-thumbnail" />
+                </a>
+              </div>
+            {{end}}
+          </div>
       {{end}}
     </div>
   {{end}}
@@ -177,11 +193,31 @@
     <div class="suite_screenshots">
       {{if gt (len .PreHookScreenshotFiles) 0}}
         <div>Before Suite Screenshots</div>
-        {{template "screenshotIndexPageDiv" .PreHookScreenshotFiles}}
+          <div class="screenshot-container">
+          {{range .PreHookScreenshotFiles}}
+            {{if .}}
+              <div class="screenshot">
+                <a href="{{toPath $.BasePath (print "images/" .)}}" rel="lightbox">
+                  <img src="{{toPath $.BasePath (print "images/" .)}}" class="screenshot-thumbnail" />
+                </a>
+              </div>
+            {{end}}
+          {{end}}
+          </div>
       {{end}}
       {{if gt (len .PostHookScreenshotFiles) 0}}
         <div>After Suite Screenshots</div>
-        {{template "screenshotIndexPageDiv" .PostHookScreenshotFiles}}
+          <div class="screenshot-container">
+          {{range .PostHookScreenshotFiles}}
+            {{if .}}
+              <div class="screenshot">
+                <a href="{{toPath $.BasePath (print "images/" .)}}" rel="lightbox">
+                  <img src="{{toPath $.BasePath (print "images/" .)}}" class="screenshot-thumbnail" />
+                </a>
+              </div>
+            {{end}}
+          {{end}}
+          </div>
       {{end}}
     </div>
   {{end}}
@@ -239,8 +275,8 @@
       {{if .FailureScreenshotFile}}
         <div class="screenshot-container">
           <div class="screenshot">
-            <a href="../images/{{.FailureScreenshotFile}}" rel="lightbox">
-              <img src="../images/{{.FailureScreenshotFile}}" class="screenshot-thumbnail" />
+            <a href="{{toPath .BasePath (print "images/" .FailureScreenshotFile)}}" rel="lightbox">
+              <img src="{{toPath .BasePath (print "images/" .FailureScreenshotFile)}}" class="screenshot-thumbnail" />
             </a>
           </div>
         </div>
@@ -270,8 +306,8 @@
       {{if .FailureScreenshotFile}}
         <div class="screenshot-container">
           <div class="screenshot">
-            <a href="./images/{{.FailureScreenshotFile}}" rel="lightbox">
-              <img src="./images/{{.FailureScreenshotFile}}" class="screenshot-thumbnail" />
+            <a href="{{toPath .BasePath (print "images/" .FailureScreenshotFile)}}" rel="lightbox">
+              <img src="{{toPath .BasePath (print "images/" .FailureScreenshotFile)}}" class="screenshot-thumbnail" />
             </a>
           </div>
         </div>
@@ -330,21 +366,6 @@
 {{end}}
 
 /* Show all screenshots that the user may have introduce using the Gauge.captureScreenshot API */
-{{define "screenshotDiv"}}
-  {{ if gt (len .) 0}}
-    <div class="screenshot-container">
-    {{range .}}
-      {{if .}}
-        <div class="screenshot">
-          <a href="../images/{{.}}" rel="lightbox">
-            <img src="../images/{{.}}" class="screenshot-thumbnail" />
-          </a>
-        </div>
-      {{end}}
-    {{end}}
-    </div>
-  {{end}}
-{{end}}
 {{define "screenshotIndexPageDiv"}}
   {{ if gt (len .) 0}}
     <div class="screenshot-container">
@@ -544,8 +565,8 @@
       {{ if .FailureScreenshotFile}}
         <div class="screenshot-container">
           <div class="screenshot">
-            <a href="../images/{{.FailureScreenshotFile}}" rel="lightbox">
-              <img src="../images/{{.FailureScreenshotFile}}" class="screenshot-thumbnail" />
+            <a href="{{toPath .BasePath (print "images/" .FailureScreenshotFile)}}" rel="lightbox">
+              <img src="{{toPath .BasePath (print "images/" .FailureScreenshotFile)}}" class="screenshot-thumbnail" />
             </a>
           </div>
         </div>
@@ -592,8 +613,19 @@
   {{template "stepStartDiv" .}}
   {{template "messageDiv" .PreHookMessages}}
   {{template "screenshotDivForBase64Data" .PreHookScreenshots}}
-  {{template "screenshotDiv" .PreHookScreenshotFiles}}
-
+  {{ if gt (len .PreHookScreenshotFiles) 0}}
+    <div class="screenshot-container">
+      {{range .PreHookScreenshotFiles}}
+        <span>{{$.BasePath}}</span>
+        <div class="screenshot">
+          <a href="{{toPath $.BasePath (print "images/" .)}}" rel="lightbox">
+            <img src="{{toPath $.BasePath (print "images/" .)}}" class="screenshot-thumbnail" />
+          </a>
+        </div>
+      {{end}}
+    </div>
+  {{end}}
+  
   {{if .BeforeStepHookFailure}}
     {{ template "hookFailureDiv" .BeforeStepHookFailure }}
   {{end}}
@@ -603,7 +635,17 @@
         {{template "stepFailureDiv" .}}
     {{end }}
     {{template "messageDiv" .Messages}}
-    {{template "screenshotDiv" .ScreenshotFiles}}
+    {{ if gt (len .ScreenshotFiles) 0}}
+      <div class="screenshot-container">
+        {{range .ScreenshotFiles}}
+          <div class="screenshot">
+            <a href="{{toPath $.BasePath (print "images/" .)}}" rel="lightbox">
+              <img src="{{toPath $.BasePath (print "images/" .)}}" class="screenshot-thumbnail" />
+            </a>
+          </div>
+        {{end}}
+      </div>
+    {{end}}
     {{template "screenshotDivForBase64Data" .Screenshots}}
   {{end}}
   {{if .AfterStepHookFailure}}
@@ -611,7 +653,17 @@
   {{end}}
   {{template "messageDiv" .PostHookMessages}}
   {{template "screenshotDivForBase64Data" .PostHookScreenshots}}
-  {{template "screenshotDiv" .PostHookScreenshotFiles}}
+  {{ if gt (len .PostHookScreenshotFiles) 0}}
+    <div class="screenshot-container">
+      {{range .PostHookScreenshotFiles}}
+        <div class="screenshot">
+          <a href="{{toPath $.BasePath (print "images/" .)}}" rel="lightbox">
+            <img src="{{toPath $.BasePath (print "images/" .)}}" class="screenshot-thumbnail" />
+          </a>
+        </div>
+      {{end}}
+    </div>
+  {{end}}
 	</li></ul></div></div>
   {{with .Result}}
     {{if (and (eq .Status "skip") (ne .SkippedReason "")) }}
@@ -652,7 +704,17 @@
 	</div>
   {{template "messageDiv" .PreHookMessages}}
   {{template "screenshotDivForBase64Data" .PreHookScreenshots}}
-  {{template "screenshotDiv" .PreHookScreenshotFiles}}
+  {{ if gt (len .PreHookScreenshotFiles) 0}}
+    <div class="screenshot-container">
+      {{range .PreHookScreenshotFiles}}
+        <div class="screenshot">
+          <a href="{{toPath $.BasePath (print "images/" .)}}" rel="lightbox">
+            <img src="{{toPath $.BasePath (print "images/" .)}}" class="screenshot-thumbnail" />
+          </a>
+        </div>
+      {{end}}
+    </div>
+  {{end}}
 	{{if .BeforeScenarioHookFailure}}
 		{{template "hookFailureDiv" .BeforeScenarioHookFailure}}
 	{{end}}
@@ -673,7 +735,17 @@
 
   {{template "messageDiv" .PostHookMessages}}
   {{template "screenshotDivForBase64Data" .PostHookScreenshots}}
-  {{template "screenshotDiv" .PostHookScreenshotFiles}}
+  {{ if gt (len .PostHookScreenshotFiles) 0}}
+    <div class="screenshot-container">
+      {{range .PostHookScreenshotFiles}}
+        <div class="screenshot">
+          <a href="{{toPath $.BasePath (print "images/" .)}}" rel="lightbox">
+            <img src="{{toPath $.BasePath (print "images/" .)}}" class="screenshot-thumbnail" />
+          </a>
+        </div>
+      {{end}}
+    </div>
+  {{end}}
 	{{if .AfterScenarioHookFailure }}
 		{{template "hookFailureDiv" .AfterScenarioHookFailure}}
 	{{end}}
@@ -699,7 +771,15 @@
     {{end}}
     {{if gt (len .PreHookScreenshotFiles) 0}}
       <div class="spec-screenshot-container">
-        {{template "screenshotDiv" .PreHookScreenshotFiles}}
+        <div class="screenshot-container">
+          {{range .PreHookScreenshotFiles}}
+            <div class="screenshot">
+              <a href="{{toPath $.BasePath (print "images/" .)}}" rel="lightbox">
+                <img src="{{toPath $.BasePath (print "images/" .)}}" class="screenshot-thumbnail" />
+              </a>
+            </div>
+          {{end}}
+        </div>
       </div>
     {{end}}
     {{range $index, $beforeHook := .BeforeSpecHookFailures}}
@@ -723,7 +803,15 @@
     {{end}}
     {{if gt (len .PostHookScreenshotFiles) 0}}
       <div class="spec-screenshot-container">
-      {{template "screenshotDiv" .PostHookScreenshotFiles}}
+        <div class="screenshot-container">
+          {{range .PostHookScreenshotFiles}}
+            <div class="screenshot">
+              <a href="{{toPath $.BasePath (print "images/" .)}}" rel="lightbox">
+                <img src="{{toPath $.BasePath (print "images/" .)}}" class="screenshot-thumbnail" />
+              </a>
+            </div>
+          {{end}}
+        </div>
       </div>
     {{end}}
     {{range $index, $afterHook := .AfterSpecHookFailures}}

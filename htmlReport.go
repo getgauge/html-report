@@ -36,16 +36,11 @@ import (
 )
 
 const (
-	resultJsFile    = "result.js"
 	htmlReport      = "html-report"
 	setupAction     = "setup"
 	executionAction = "execution"
-	gaugeHost       = "127.0.0.1"
-	gaugePortEnv    = "plugin_connection_port"
 	pluginActionEnv = "html-report_action"
 	timeFormat      = "2006-01-02 15.04.05"
-	defaultTheme    = "default"
-	resultFile      = "last_run_result.json"
 )
 
 type nameGenerator interface {

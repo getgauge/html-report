@@ -283,13 +283,13 @@ var specResWithSpecHookFailure = &gm.ProtoSpecResult{
 		SpecHeading: "specRes3",
 		Tags:        []string{"tag1"},
 		PreHookFailures: []*gm.ProtoHookFailure{{
-			ErrorMessage:      "err",
-			StackTrace:        "Stacktrace",
+			ErrorMessage:          "err",
+			StackTrace:            "Stacktrace",
 			FailureScreenshotFile: "Screenshot.png",
 		}},
 		PostHookFailures: []*gm.ProtoHookFailure{{
-			ErrorMessage:      "err",
-			StackTrace:        "Stacktrace",
+			ErrorMessage:          "err",
+			StackTrace:            "Stacktrace",
 			FailureScreenshotFile: "Screenshot.png",
 		}},
 	},
@@ -362,13 +362,13 @@ var scnWithHookFailure = &gm.ProtoScenario{
 		newStepItem(true, false, []*gm.Fragment{newTextFragment("Step1")}),
 	},
 	PreHookFailure: &gm.ProtoHookFailure{
-		ErrorMessage:      "err",
-		StackTrace:        "Stacktrace",
+		ErrorMessage:          "err",
+		StackTrace:            "Stacktrace",
 		FailureScreenshotFile: "Screenshot.png",
 	},
 	PostHookFailure: &gm.ProtoHookFailure{
-		ErrorMessage:      "err",
-		StackTrace:        "Stacktrace",
+		ErrorMessage:          "err",
+		StackTrace:            "Stacktrace",
 		FailureScreenshotFile: "Screenshot.png",
 	},
 }
@@ -419,8 +419,8 @@ var protoStepWithScreenshots = &gm.ProtoStep{
 	},
 	StepExecutionResult: &gm.ProtoStepExecutionResult{
 		ExecutionResult: &gm.ProtoExecutionResult{
-			ExecutionTime: 211316,
-			ScreenshotFiles:   []string{"screenshot1.png", "screenshot2.png"},
+			ExecutionTime:   211316,
+			ScreenshotFiles: []string{"screenshot1.png", "screenshot2.png"},
 		},
 		SkippedReason: "Step impl not found",
 		Skipped:       true,
@@ -507,16 +507,16 @@ var protoStepWithAfterHookFailure = &gm.ProtoStep{
 			ExecutionTime: 211316,
 		},
 		PostHookFailure: &gm.ProtoHookFailure{
-			ErrorMessage:      "err",
-			StackTrace:        "Stacktrace",
+			ErrorMessage:          "err",
+			StackTrace:            "Stacktrace",
 			FailureScreenshotFile: "Screenshot.png",
 		},
 	},
 }
 
 var failedHookFailure = &gm.ProtoHookFailure{
-	ErrorMessage:      "java.lang.RuntimeException",
-	StackTrace:        newStackTrace(),
+	ErrorMessage:          "java.lang.RuntimeException",
+	StackTrace:            newStackTrace(),
 	FailureScreenshotFile: newScreenshot(),
 }
 
@@ -732,8 +732,8 @@ func TestToSpecWithHookFailure(t *testing.T) {
 	screenShot := "Screenshot.png"
 	want := &spec{
 		Scenarios:              make([]*scenario, 0),
-		BeforeSpecHookFailures: []*hookFailure{newHookFailure("Before Spec", "err", screenShot, "Stacktrace")},
-		AfterSpecHookFailures:  []*hookFailure{newHookFailure("After Spec", "err", screenShot, "Stacktrace")},
+		BeforeSpecHookFailures: []*hookFailure{newHookFailure("", "Before Spec", "err", screenShot, "Stacktrace")},
+		AfterSpecHookFailures:  []*hookFailure{newHookFailure("", "After Spec", "err", screenShot, "Stacktrace")},
 		Errors:                 make([]buildError, 0),
 		Tags:                   []string{"tag1"},
 		SpecHeading:            "specRes3",
@@ -1097,8 +1097,8 @@ func TestToScenarioWithHookFailures(t *testing.T) {
 			},
 		},
 		Teardowns:                 []item{},
-		BeforeScenarioHookFailure: newHookFailure("Before Scenario", "err", screenShot, "Stacktrace"),
-		AfterScenarioHookFailure:  newHookFailure("After Scenario", "err", screenShot, "Stacktrace"),
+		BeforeScenarioHookFailure: newHookFailure("", "Before Scenario", "err", screenShot, "Stacktrace"),
+		AfterScenarioHookFailure:  newHookFailure("", "After Scenario", "err", screenShot, "Stacktrace"),
 		TableRowIndex:             -1,
 	}
 
@@ -1209,10 +1209,10 @@ func TestToStepCollectsScreenshot(t *testing.T) {
 			},
 		},
 		Result: &result{
-			Status:        skip,
-			ExecutionTime: "00:03:31",
-			SkippedReason: "Step impl not found",
-			ScreenshotFiles:  []string{ "screenshot1.png", "screenshot2.png"},
+			Status:          skip,
+			ExecutionTime:   "00:03:31",
+			SkippedReason:   "Step impl not found",
+			ScreenshotFiles: []string{"screenshot1.png", "screenshot2.png"},
 		},
 	}
 
@@ -1275,7 +1275,7 @@ func TestToStepWithAfterHookFailure(t *testing.T) {
 			Status:        fail,
 			ExecutionTime: "00:03:31",
 		},
-		AfterStepHookFailure: newHookFailure("After Step", "err", screenShot, "Stacktrace"),
+		AfterStepHookFailure: newHookFailure("", "After Step", "err", screenShot, "Stacktrace"),
 	}
 
 	got := toStep(protoStepWithAfterHookFailure)
@@ -1295,7 +1295,7 @@ func TestToComment(t *testing.T) {
 
 func TestToHookFailure(t *testing.T) {
 	screenShot := newScreenshot()
-	want := newHookFailure("Before Suite", "java.lang.RuntimeException", screenShot, newStackTrace())
+	want := newHookFailure("", "Before Suite", "java.lang.RuntimeException", screenShot, newStackTrace())
 
 	got := toHookFailure(failedHookFailure, "Before Suite")
 	if !reflect.DeepEqual(got, want) {

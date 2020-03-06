@@ -503,25 +503,25 @@ var skippedStepRes = &result{
 
 var reportGenTests = []reportGenTest{
 	{"generate html page start with project name", "htmlPageStartTag", &overview{ProjectName: "projname"}, whtmlPageStartTag},
-	{"generate report overview with tags", "reportOverviewTag", &overview{"projname", "default", "foo", 34, "00:01:53", "Jun 3, 2016 at 12:29pm", &summary{41, 2, 39, 0}, &summary{41, 2, 39, 0}, "/", []string{}, []string{}, []string{}, []string{}, []string{}, []string{}},
+	{"generate report overview with tags", "reportOverviewTag", &overview{"projname", "default", "foo", 34, "00:01:53", "Jun 3, 2016 at 12:29pm", &summary{41, 2, 39, 0}, &summary{41, 2, 39, 0}, "../", []string{}, []string{}, []string{}, []string{}, []string{}, []string{}},
 		wChartDiv + wResCntDiv + wEnvLi + wTagsLi + wSuccRateLi + wExecTimeLi + wTimestampLi},
-	{"generate report overview without tags", "reportOverviewTag", &overview{"projname", "default", "", 34, "00:01:53", "Jun 3, 2016 at 12:29pm", &summary{41, 2, 39, 0}, &summary{41, 2, 39, 0}, "/", []string{}, []string{}, []string{}, []string{}, []string{}, []string{}},
+	{"generate report overview without tags", "reportOverviewTag", &overview{"projname", "default", "", 34, "00:01:53", "Jun 3, 2016 at 12:29pm", &summary{41, 2, 39, 0}, &summary{41, 2, 39, 0}, "../", []string{}, []string{}, []string{}, []string{}, []string{}, []string{}},
 		wChartDiv + wResCntDiv + wEnvLi + wSuccRateLi + wExecTimeLi + wTimestampLi},
-	{"generate suite messages with before hook message", "suiteMessagesDiv", &overview{"projname", "default", "", 34, "00:01:53", "Jun 3, 2016 at 12:29pm", &summary{41, 2, 39, 0}, &summary{41, 2, 39, 0}, "/", []string{"Before Suite message"}, []string{}, []string{}, []string{}, []string{}, []string{}},
+	{"generate suite messages with before hook message", "suiteMessagesDiv", &overview{"projname", "default", "", 34, "00:01:53", "Jun 3, 2016 at 12:29pm", &summary{41, 2, 39, 0}, &summary{41, 2, 39, 0}, "../", []string{"Before Suite message"}, []string{}, []string{}, []string{}, []string{}, []string{}},
 		wBeforeSuiteMessageDiv},
-	{"generate suite messages with after hook message", "suiteMessagesDiv", &overview{"projname", "default", "", 34, "00:01:53", "Jun 3, 2016 at 12:29pm", &summary{41, 2, 39, 0}, &summary{41, 2, 39, 0}, "/", []string{}, []string{"After Suite message"}, []string{}, []string{}, []string{}, []string{}},
+	{"generate suite messages with after hook message", "suiteMessagesDiv", &overview{"projname", "default", "", 34, "00:01:53", "Jun 3, 2016 at 12:29pm", &summary{41, 2, 39, 0}, &summary{41, 2, 39, 0}, "../", []string{}, []string{"After Suite message"}, []string{}, []string{}, []string{}, []string{}},
 		wAfterSuiteMessageDiv},
-	{"generate suite messages with before and after hook message", "suiteMessagesDiv", &overview{"projname", "default", "", 34, "00:01:53", "Jun 3, 2016 at 12:29pm", &summary{41, 2, 39, 0}, &summary{41, 2, 39, 0}, "/", []string{"Before Suite message"}, []string{"After Suite message"}, []string{}, []string{}, []string{}, []string{}},
+	{"generate suite messages with before and after hook message", "suiteMessagesDiv", &overview{"projname", "default", "", 34, "00:01:53", "Jun 3, 2016 at 12:29pm", &summary{41, 2, 39, 0}, &summary{41, 2, 39, 0}, "../", []string{"Before Suite message"}, []string{"After Suite message"}, []string{}, []string{}, []string{}, []string{}},
 		wBeforeAndAfterSuiteMessageDiv},
-	{"generate suite screenshots with before hook screenshot", "suiteScreenshotsDiv", &overview{"projname", "default", "", 34, "00:01:53", "Jun 3, 2016 at 12:29pm", &summary{41, 2, 39, 0}, &summary{41, 2, 39, 0}, "/", []string{}, []string{}, []string{}, []string{}, []string{"Before Suite Screenshot"}, []string{}},
+	{"generate suite screenshots with before hook screenshot", "suiteScreenshotsDiv", &overview{"projname", "default", "", 34, "00:01:53", "Jun 3, 2016 at 12:29pm", &summary{41, 2, 39, 0}, &summary{41, 2, 39, 0}, "../", []string{}, []string{}, []string{}, []string{}, []string{"Before Suite Screenshot"}, []string{}},
 		wBeforeSuiteScreenshotDiv},
-	{"generate suite screenshots with before hook screenshot bytes", "suiteScreenshotsDiv", &overview{"projname", "default", "", 34, "00:01:53", "Jun 3, 2016 at 12:29pm", &summary{41, 2, 39, 0}, &summary{41, 2, 39, 0}, "/", []string{}, []string{}, []string{"Before Suite Screenshot"}, []string{}, []string{}, []string{}},
+	{"generate suite screenshots with before hook screenshot bytes", "suiteScreenshotsDiv", &overview{"projname", "default", "", 34, "00:01:53", "Jun 3, 2016 at 12:29pm", &summary{41, 2, 39, 0}, &summary{41, 2, 39, 0}, "../", []string{}, []string{}, []string{"Before Suite Screenshot"}, []string{}, []string{}, []string{}},
 		wBeforeSuiteScreenshotBytesDiv},
-	{"generate suite screenshots with after hook screenshot", "suiteScreenshotsDiv", &overview{"projname", "default", "", 34, "00:01:53", "Jun 3, 2016 at 12:29pm", &summary{41, 2, 39, 0}, &summary{41, 2, 39, 0}, "/", []string{}, []string{}, []string{}, []string{}, []string{"After Suite Screenshot"}, []string{}},
+	{"generate suite screenshots with after hook screenshot", "suiteScreenshotsDiv", &overview{"projname", "default", "", 34, "00:01:53", "Jun 3, 2016 at 12:29pm", &summary{41, 2, 39, 0}, &summary{41, 2, 39, 0}, "../", []string{}, []string{}, []string{}, []string{}, []string{"After Suite Screenshot"}, []string{}},
 		wAfterSuiteScreenshotDiv},
-	{"generate suite screenshots with after hook screenshot bytes", "suiteScreenshotsDiv", &overview{"projname", "default", "", 34, "00:01:53", "Jun 3, 2016 at 12:29pm", &summary{41, 2, 39, 0}, &summary{41, 2, 39, 0}, "/", []string{}, []string{}, []string{}, []string{"After Suite Screenshot"}, []string{}, []string{}},
+	{"generate suite screenshots with after hook screenshot bytes", "suiteScreenshotsDiv", &overview{"projname", "default", "", 34, "00:01:53", "Jun 3, 2016 at 12:29pm", &summary{41, 2, 39, 0}, &summary{41, 2, 39, 0}, "../", []string{}, []string{}, []string{}, []string{"After Suite Screenshot"}, []string{}, []string{}},
 		wAfterSuiteScreenshotBytesDiv},
-	{"generate suite screenshots with before and after hook screenshot", "suiteScreenshotsDiv", &overview{"projname", "default", "", 34, "00:01:53", "Jun 3, 2016 at 12:29pm", &summary{41, 2, 39, 0}, &summary{41, 2, 39, 0}, "/", []string{}, []string{}, []string{}, []string{}, []string{"Before Suite Screenshot"}, []string{}},
+	{"generate suite screenshots with before and after hook screenshot", "suiteScreenshotsDiv", &overview{"projname", "default", "", 34, "00:01:53", "Jun 3, 2016 at 12:29pm", &summary{41, 2, 39, 0}, &summary{41, 2, 39, 0}, "../", []string{}, []string{}, []string{}, []string{}, []string{"Before Suite Screenshot"}, []string{}},
 		wBeforeAndAfterSuiteScreenshotDiv},
 	{"generate sidebar with appropriate pass/fail/skip class", "sidebarDiv", &sidebar{
 		IsBeforeHookFailure: false,
@@ -534,8 +534,8 @@ var reportGenTests = []reportGenTest{
 		IsBeforeHookFailure: true,
 		Specs:               []*specsMeta{},
 	}, ""},
-	{"generate hook failure div with screenshot", "hookFailureDiv", newHookFailure("BeforeSuite", "SomeError", "iVBO", "Stack trace"), wHookFailureWithScreenhotDiv},
-	{"generate hook failure div without screenshot", "hookFailureDiv", newHookFailure("BeforeSuite", "SomeError", "", "Stack trace"), wHookFailureWithoutScreenhotDiv},
+	{"generate hook failure div with screenshot", "hookFailureDiv", newHookFailure("../", "BeforeSuite", "SomeError", "iVBO", "Stack trace"), wHookFailureWithScreenhotDiv},
+	{"generate hook failure div without screenshot", "hookFailureDiv", newHookFailure("../", "BeforeSuite", "SomeError", "", "Stack trace"), wHookFailureWithoutScreenhotDiv},
 	{"generate spec header with tags", "specHeaderStartTag", &specHeader{"Spec heading", "00:01:01", "/tmp/gauge/specs/foobar.spec", []string{"foo", "bar"}, &summary{0, 0, 0, 0}}, wSpecHeaderStartWithTags},
 	{"generate div for tags", "tagsDiv", &specHeader{Tags: []string{"tag1", "tag2"}}, wTagsDiv},
 	{"generate spec comments with data table (if present)", "specCommentsAndTableTag", newSpec(true), wSpecCommentsWithTableTag},
@@ -575,8 +575,9 @@ func testReportGen(reportGenTests []reportGenTest, t *testing.T) {
 	}
 }
 
-func newHookFailure(name, errMsg, screenshot, stacktrace string) *hookFailure {
+func newHookFailure(basePath, name, errMsg, screenshot, stacktrace string) *hookFailure {
 	return &hookFailure{
+		BasePath:              basePath,
 		HookName:              name,
 		ErrMsg:                errMsg,
 		FailureScreenshotFile: screenshot,
@@ -690,4 +691,108 @@ func BenchmarkGenerateReport(b *testing.B) {
 		ps.SpecResults = append(ps.SpecResults, s)
 	}
 	GenerateReport(ps, filepath.Join("_testdata", "benchmark"), filepath.Join("_testdata", "dummyReportTheme"), false)
+}
+
+func newStepWithHookFailures() *step {
+	s := newStep(fail)
+	s.AfterStepHookFailure = &hookFailure{}
+	s.BeforeStepHookFailure = &hookFailure{}
+	return s
+}
+
+var stepItem = item{Kind: stepKind, Step: newStepWithHookFailures()}
+var basePathSeedSpec = func() *spec {
+	return &spec{
+		FileName:               filepath.Join("some", "base", "path", "example.spec"),
+		BeforeSpecHookFailures: []*hookFailure{&hookFailure{}},
+		AfterSpecHookFailures:  []*hookFailure{&hookFailure{}},
+		Scenarios: []*scenario{
+			&scenario{
+				AfterScenarioHookFailure:  &hookFailure{},
+				BeforeScenarioHookFailure: &hookFailure{},
+				Contexts: []item{
+					stepItem,
+					item{Kind: conceptKind, Concept: &concept{
+						Items:       []item{stepItem},
+						ConceptStep: newStepWithHookFailures()},
+					},
+				},
+				Teardowns: []item{
+					stepItem,
+					item{Kind: conceptKind, Concept: &concept{
+						Items:       []item{stepItem},
+						ConceptStep: newStepWithHookFailures()},
+					},
+				},
+				Items: []item{
+					stepItem,
+					item{Kind: conceptKind, Concept: &concept{
+						Items:       []item{stepItem},
+						ConceptStep: newStepWithHookFailures()},
+					},
+				},
+			},
+		},
+	}
+}
+
+type basePathPropogationTest struct {
+	name     string
+	expected string
+	spec     *spec
+	actual   func(s *spec) string
+}
+
+func (b basePathPropogationTest) getActual() string {
+	return b.actual(b.spec)
+}
+
+func TestSpecBasepathPropogation(t *testing.T) {
+	bp := filepath.Join("..", "..", "..")
+	var basePathPropogationTests = []basePathPropogationTest{
+		basePathPropogationTest{name: "spec.basepath", expected: bp, spec: basePathSeedSpec(), actual: func(s *spec) string { return s.BasePath }},
+		basePathPropogationTest{name: "spec.beforehookfailure.basepath", expected: bp, spec: basePathSeedSpec(), actual: func(s *spec) string { return s.BeforeSpecHookFailures[0].BasePath }},
+		basePathPropogationTest{name: "spec.afterhookfailure.basepath", expected: bp, spec: basePathSeedSpec(), actual: func(s *spec) string { return s.AfterSpecHookFailures[0].BasePath }},
+		basePathPropogationTest{name: "spec.scenario.basepath", expected: bp, spec: basePathSeedSpec(), actual: func(s *spec) string { return s.Scenarios[0].BasePath }},
+		basePathPropogationTest{name: "spec.scenario.beforehookfailure.basepath", expected: bp, spec: basePathSeedSpec(), actual: func(s *spec) string { return s.Scenarios[0].BeforeScenarioHookFailure.BasePath }},
+		basePathPropogationTest{name: "spec.scenario.afterhookfailure.basepath", expected: bp, spec: basePathSeedSpec(), actual: func(s *spec) string { return s.Scenarios[0].AfterScenarioHookFailure.BasePath }},
+		basePathPropogationTest{name: "spec.scenario.context.basepath", expected: bp, spec: basePathSeedSpec(), actual: func(s *spec) string { return s.Scenarios[0].Contexts[0].Step.BasePath }},
+		basePathPropogationTest{name: "spec.scenario.context.beforehookfailure.basepath", expected: bp, spec: basePathSeedSpec(), actual: func(s *spec) string { return s.Scenarios[0].Contexts[0].Step.BeforeStepHookFailure.BasePath }},
+		basePathPropogationTest{name: "spec.scenario.context.afterhookfailure.basepath", expected: bp, spec: basePathSeedSpec(), actual: func(s *spec) string { return s.Scenarios[0].Contexts[0].Step.AfterStepHookFailure.BasePath }},
+		basePathPropogationTest{name: "spec.scenario.context.concept.basepath", expected: bp, spec: basePathSeedSpec(), actual: func(s *spec) string { return s.Scenarios[0].Contexts[1].Concept.ConceptStep.BasePath }},
+		basePathPropogationTest{name: "spec.scenario.context.concept.beforehookfailure.basepath", expected: bp, spec: basePathSeedSpec(), actual: func(s *spec) string {
+			return s.Scenarios[0].Contexts[1].Concept.ConceptStep.BeforeStepHookFailure.BasePath
+		}},
+		basePathPropogationTest{name: "spec.scenario.context.concept.afterhookfailure.basepath", expected: bp, spec: basePathSeedSpec(), actual: func(s *spec) string {
+			return s.Scenarios[0].Contexts[1].Concept.ConceptStep.AfterStepHookFailure.BasePath
+		}},
+		basePathPropogationTest{name: "spec.scenario.teardown.basepath", expected: bp, spec: basePathSeedSpec(), actual: func(s *spec) string { return s.Scenarios[0].Teardowns[0].Step.BasePath }},
+		basePathPropogationTest{name: "spec.scenario.teardown.beforehookfailure.basepath", expected: bp, spec: basePathSeedSpec(), actual: func(s *spec) string { return s.Scenarios[0].Teardowns[0].Step.BeforeStepHookFailure.BasePath }},
+		basePathPropogationTest{name: "spec.scenario.teardown.afterhookfailure.basepath", expected: bp, spec: basePathSeedSpec(), actual: func(s *spec) string { return s.Scenarios[0].Teardowns[0].Step.BeforeStepHookFailure.BasePath }},
+		basePathPropogationTest{name: "spec.scenario.teardown.concept.basepath", expected: bp, spec: basePathSeedSpec(), actual: func(s *spec) string { return s.Scenarios[0].Teardowns[1].Concept.ConceptStep.BasePath }},
+		basePathPropogationTest{name: "spec.scenario.teardown.concept.beforehookfailure.basepath", expected: bp, spec: basePathSeedSpec(), actual: func(s *spec) string {
+			return s.Scenarios[0].Teardowns[1].Concept.ConceptStep.BeforeStepHookFailure.BasePath
+		}},
+		basePathPropogationTest{name: "spec.scenario.teardown.concept.afterhookfailure.basepath", expected: bp, spec: basePathSeedSpec(), actual: func(s *spec) string {
+			return s.Scenarios[0].Teardowns[1].Concept.ConceptStep.BeforeStepHookFailure.BasePath
+		}},
+		basePathPropogationTest{name: "spec.scenario.step.basepath", expected: bp, spec: basePathSeedSpec(), actual: func(s *spec) string { return s.Scenarios[0].Items[0].Step.BasePath }},
+		basePathPropogationTest{name: "spec.scenario.step.beforehookfailure.basepath", expected: bp, spec: basePathSeedSpec(), actual: func(s *spec) string { return s.Scenarios[0].AfterScenarioHookFailure.BasePath }},
+		basePathPropogationTest{name: "spec.scenario.step.afterhookfailure.basepath", expected: bp, spec: basePathSeedSpec(), actual: func(s *spec) string { return s.Scenarios[0].AfterScenarioHookFailure.BasePath }},
+		basePathPropogationTest{name: "spec.scenario.concept.step.basepath", expected: bp, spec: basePathSeedSpec(), actual: func(s *spec) string { return s.Scenarios[0].Items[1].Concept.ConceptStep.BasePath }},
+		basePathPropogationTest{name: "spec.scenario.concept.step.beforehookfailure.basepath", expected: bp, spec: basePathSeedSpec(), actual: func(s *spec) string {
+			return s.Scenarios[0].Items[1].Concept.ConceptStep.BeforeStepHookFailure.BasePath
+		}},
+		basePathPropogationTest{name: "spec.scenario.concept.step.afterhookfailure.basepath", expected: bp, spec: basePathSeedSpec(), actual: func(s *spec) string { return s.Scenarios[0].Items[1].Concept.ConceptStep.AfterStepHookFailure.BasePath }},
+	}
+
+	for _, tt := range basePathPropogationTests {
+		t.Run(tt.name, func(t *testing.T) {
+			propogateBasePath(tt.spec)
+			a := tt.getActual()
+			if filepath.Clean(a) != filepath.Clean(tt.expected) {
+				t.Errorf("expected %s, got %s", tt.expected, a)
+			}
+		})
+	}
 }
