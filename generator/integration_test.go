@@ -921,7 +921,7 @@ func TestIndexPageGeneration(t *testing.T) {
 	var wg sync.WaitGroup
 	wg.Add(1)
 
-	generateIndexPage(suiteResWithAllPass, buf, &wg)
+	generateIndexPage(suiteResWithAllPass, buf, "", &wg)
 	wg.Wait()
 
 	want := helper.RemoveNewline(string(content))

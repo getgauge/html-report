@@ -37,6 +37,8 @@ import (
 	"github.com/getgauge/html-report/theme"
 	"github.com/microcosm-cc/bluemonday"
 	"github.com/russross/blackfriday"
+	"github.com/tdewolff/minify/v2"
+	"github.com/tdewolff/minify/v2/html"
 )
 
 type summary struct {
@@ -269,6 +271,24 @@ type SearchIndex struct {
 	Specs map[string][]string `json:"Specs"`
 }
 
+func minifyHTML(htmlFileName string) {
+	if !env.ShouldMinifyReports() {
+		return
+	}
+	bytes, _ := ioutil.ReadFile(htmlFileName)
+	m := minify.New()
+	m.Add("text/html", &html.Minifier{
+		KeepDocumentTags: true,
+		KeepEndTags:      true,
+		KeepQuotes:       true,
+	})
+	bytes, err := m.Bytes("text/html", bytes)
+	if err != nil {
+		logger.Warnf("Error while minifying %s\n", err.Error())
+	}
+	ioutil.WriteFile(htmlFileName, bytes, os.ModePerm)
+}
+
 const (
 	pass                status    = "pass"
 	fail                status    = "fail"
@@ -359,7 +379,8 @@ var projectRoot string
 // GenerateReports generates HTML report in the given report dir location
 func GenerateReports(res *SuiteResult, reportsDir, themePath string, searchIndex bool) error {
 	readTemplates(themePath)
-	f, err := os.Create(filepath.Join(reportsDir, "index.html"))
+	indexFilepath := filepath.Join(reportsDir, "index.html")
+	f, err := os.Create(indexFilepath)
 	if err != nil {
 		return err
 	}
@@ -370,7 +391,7 @@ func GenerateReports(res *SuiteResult, reportsDir, themePath string, searchIndex
 		var wg sync.WaitGroup
 		wg.Add(1)
 		res.BasePath = ""
-		go generateIndexPage(res, f, &wg)
+		go generateIndexPage(res, f, indexFilepath, &wg)
 		if env.ShouldUseNestedSpecs() {
 			go generateIndexPages(res, reportsDir, &wg)
 		}
@@ -388,13 +409,18 @@ func GenerateReports(res *SuiteResult, reportsDir, themePath string, searchIndex
 				slice++
 				relPath, _ := filepath.Rel(projectRoot, r.FileName)
 				env.CreateDirectory(filepath.Join(reportsDir, filepath.Dir(relPath)))
-				sf, err := os.Create(filepath.Join(reportsDir, toHTMLFileName(r.FileName, projectRoot)))
+				htmlFileName := filepath.Join(reportsDir, toHTMLFileName(r.FileName, projectRoot))
+				sf, err := os.Create(htmlFileName)
 				if err != nil {
 					return err
 				}
 				wg.Add(1)
 				propogateBasePath(r)
-				go generateSpecPage(res, r, sf, &wg)
+				go func(suiteRes *SuiteResult, specRes *spec, wc io.WriteCloser, htmlFileName string, wg *sync.WaitGroup) {
+					generateSpecPage(suiteRes, specRes, wc, wg)
+					minifyHTML(htmlFileName)
+				}(res, r, sf, htmlFileName, &wg)
+
 			}
 			wg.Wait()
 		}
@@ -471,9 +497,10 @@ func containsParseErrors(errors []buildError) bool {
 	return false
 }
 
-func generateIndexPage(suiteRes *SuiteResult, w io.Writer, wg *sync.WaitGroup) {
+func generateIndexPage(suiteRes *SuiteResult, w io.Writer, fileName string, wg *sync.WaitGroup) {
 	defer wg.Done()
 	execTemplate("indexPage", w, suiteRes)
+	minifyHTML(fileName)
 }
 
 func generateIndexPages(suiteRes *SuiteResult, reportsDir string, wg *sync.WaitGroup) {
@@ -505,7 +532,7 @@ func generateIndexPages(suiteRes *SuiteResult, reportsDir string, wg *sync.WaitG
 		defer f.Close()
 		wg.Add(1)
 		res := toNestedSuiteResult(d, suiteRes)
-		generateIndexPage(res, f, wg)
+		generateIndexPage(res, f, p, wg)
 	}
 }
 

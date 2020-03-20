@@ -68,6 +68,22 @@ func TestEndToEndHTMLGeneration(t *testing.T) {
 	cleanUp(t, reportDir)
 }
 
+func TestEndToEndMinifiedHTMLGeneration(t *testing.T) {
+	expectedFiles := []string{"index.html", "passing_specification_1.html", "failing_specification_1.html", "skipped_specification.html", "js/search_index.js"}
+	reportDir := filepath.Join("_testdata", "e2e")
+	os.Setenv("gauge_minify_reports", "true")
+	r := ToSuiteResult("", suiteRes3)
+	err := GenerateReports(r, reportDir, templateBasePath, true)
+
+	if err != nil {
+		t.Errorf("Expected error to be nil. Got: %s", err.Error())
+	}
+
+	verifyExpectedFiles(t, "minifiedSimpleSuiteRes", reportDir, expectedFiles)
+	os.Unsetenv("gauge_minify_reports")
+	cleanUp(t, reportDir)
+}
+
 func TestEndToEndHTMLGenerationWithPreAndPostHookScreenshots(t *testing.T) {
 	expectedFiles := []string{"index.html", "passing_specification_1.html", "failing_specification_1.html", "skipped_specification.html", "js/search_index.js"}
 	reportDir := filepath.Join("_testdata", "e2e")
