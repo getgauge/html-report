@@ -96,27 +96,20 @@ func getDefaultPropertiesFile() string {
 }
 
 func ShouldOverwriteReports() bool {
-	envValue := os.Getenv(OverwriteReportsEnvProperty)
-	if strings.ToLower(envValue) == "true" {
-		return true
-	}
-	return false
+	return isEnvSet(OverwriteReportsEnvProperty)
 }
 
 func ShouldUseNestedSpecs() bool {
-	envValue := os.Getenv(UseNestedSpecs)
-	if strings.ToLower(envValue) == "true" {
-		return true
-	}
-	return false
+	return isEnvSet(UseNestedSpecs)
 }
 
 func ShouldMinifyReports() bool {
-	envValue := os.Getenv(gaugeMinifyReports)
-	if strings.ToLower(envValue) == "true" {
-		return true
-	}
-	return false
+	return isEnvSet(gaugeMinifyReports)
+}
+
+func isEnvSet(envName string) bool {
+	envValue := os.Getenv(envName)
+	return strings.ToLower(envValue) == "true"
 }
 
 // PluginKillTimeout returns the plugin_kill_timeout in seconds

@@ -275,16 +275,21 @@ func minifyHTML(htmlFileName string) {
 	if !env.ShouldMinifyReports() {
 		return
 	}
-	bytes, _ := ioutil.ReadFile(htmlFileName)
+	bytes, err := ioutil.ReadFile(htmlFileName)
+	if err != nil {
+		logger.Warnf("Error while reading %s.\n%s\n", htmlFileName, err.Error())
+		return
+	}
 	m := minify.New()
 	m.Add("text/html", &html.Minifier{
 		KeepDocumentTags: true,
 		KeepEndTags:      true,
 		KeepQuotes:       true,
 	})
-	bytes, err := m.Bytes("text/html", bytes)
+	bytes, err = m.Bytes("text/html", bytes)
 	if err != nil {
 		logger.Warnf("Error while minifying %s\n", err.Error())
+		return
 	}
 	ioutil.WriteFile(htmlFileName, bytes, os.ModePerm)
 }
