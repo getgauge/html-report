@@ -128,26 +128,26 @@ var wSidebarAside = `<aside class="sidebar">
     <input id="searchSpecifications" placeholder="Type specification or tag name" type="text" />
     <i class="fa fa-search"></i>
   </div>
-  <div class='specs-sorting'>
-			<div class="sort sort-specs-name" data-sort-by="specs-name"><span class='sort-icons'><i class="fa fa-caret-up"></i><i class="fa fa-caret-down"></i></span><span>Name</span></div>
-			<div class="sort sort-execution-time" data-sort-by="execution-time"><span class='sort-icons'><i class="fa fa-caret-up"></i><i class="fa fa-caret-down"></i></span><span>Execution time</span></div>
+  <div class="specs-sorting">
+			<div class="sort sort-specs-name" data-sort-by="specs-name"><span class="sort-icons"><i class="fa fa-caret-up"></i><i class="fa fa-caret-down"></i></span><span>Name</span></div>
+			<div class="sort sort-execution-time" data-sort-by="execution-time"><span class="sort-icons"><i class="fa fa-caret-up"></i><i class="fa fa-caret-down"></i></span><span>Execution time</span></div>
 	</div>
   <div id="listOfSpecifications">
     <ul id="scenarios" class="spec-list">
 		<a href="passing_spec.html">
-    	<li class='passed spec-name'>
+    	<li class="passed spec-name">
 	      <span id="scenarioName" class="scenarioname">Passing Spec</span>
 	      <span id="time" class="time">00:01:04</span>
     	</li>
 		</a>
 		<a href="failing_spec.html">
-    	<li class='failed spec-name'>
+    	<li class="failed spec-name">
 	      <span id="scenarioName" class="scenarioname">Failing Spec</span>
 	      <span id="time" class="time">00:00:30</span>
     	</li>
 		</a>
 		<a href="skipped_spec.html">
-    	<li class='skipped spec-name'>
+    	<li class="skipped spec-name">
 	      <span id="scenarioName" class="scenarioname">Skipped Spec</span>
 	      <span id="time" class="time">00:00:00</span>
     	</li>
@@ -225,15 +225,15 @@ var wSpecCommentsWithTableTag = `
     <th>Count</th>
   </tr>
   <tbody data-rowCount=3>
-    <tr class='row-selector passed selected' data-rowIndex='0'>
+    <tr class="row-selector passed selected" data-rowIndex='0'>
       <td>Gauge</td>
       <td>3</td>
     </tr>
-    <tr class='row-selector failed' data-rowIndex='1'>
+    <tr class="row-selector failed" data-rowIndex='1'>
       <td>Mingle</td>
       <td>2</td>
     </tr>
-    <tr class='row-selector skipped' data-rowIndex='2'>
+    <tr class="row-selector skipped" data-rowIndex='2'>
       <td>foobar</td>
       <td>1</td>
     </tr>
@@ -251,36 +251,36 @@ var wSpecCommentsWithoutTableTag = `
 
 var wSpecCommentsWithCodeBlock = `<span><pre><code>{&#34;prop&#34;:&#34;value&#34;}</code></pre></span>`
 
-var wScenarioContainerStartPassDiv = `<div class='scenario-container passed'>`
-var wScenarioContainerStartFailDiv = `<div class='scenario-container failed'>`
-var wScenarioContainerStartSkipDiv = `<div class='scenario-container skipped'>`
+var wScenarioContainerStartPassDiv = `<div class="scenario-container passed">`
+var wScenarioContainerStartFailDiv = `<div class="scenario-container failed">`
+var wScenarioContainerStartSkipDiv = `<div class="scenario-container skipped">`
 
 var wscenarioHeaderStartDiv = `<div class="scenario-head">
   <h3 class="head borderBottom">Scenario Heading</h3>
   <span class="time">00:01:01</span>`
 
-var wPassStepStartDiv = `<div class='step'>
-  <h5 class='execution-time'><span class='time'>Execution Time : 00:03:31</span></h5>
-  <div class='step-info passed'>
+var wPassStepStartDiv = `<div class="step">
+  <h5 class="execution-time"><span class="time">Execution Time : 00:03:31</span></h5>
+  <div class="step-info passed">
     <ul>
-      <li class='step'>
-        <div class='step-txt'>`
+      <li class="step">
+        <div class="step-txt">`
 
-var wFailStepStartDiv = `<div class='step'>
-  <h5 class='execution-time'><span class='time'>Execution Time : 00:03:31</span></h5>
-  <div class='step-info failed'>
+var wFailStepStartDiv = `<div class="step">
+  <h5 class="execution-time"><span class="time">Execution Time : 00:03:31</span></h5>
+  <div class="step-info failed">
     <ul>
-      <li class='step'>
-        <div class='step-txt'>`
+      <li class="step">
+        <div class="step-txt">`
 
-var wSkipStepStartDiv = `<div class='step'>
-  <div class='step-info skipped'>
+var wSkipStepStartDiv = `<div class="step">
+  <div class="step-info skipped">
     <ul>
-      <li class='step'>
-        <div class='step-txt'>`
+      <li class="step">
+        <div class="step-txt">`
 
-var wStepEndDiv = `<span>Say</span><span class='parameter'>"hi"</span><span>to</span><span class='parameter'>"gauge"</span>
-          <div class='inline-table'>
+var wStepEndDiv = `<span>Say</span><span class="parameter">"hi"</span><span>to</span><span class="parameter">"gauge"</span>
+          <div class="inline-table">
             <div>
               <table>
                 <tr>
@@ -309,9 +309,9 @@ var wStepEndDiv = `<span>Say</span><span class='parameter'>"hi"</span><span>to</
 
 var wPassStepBodyDivWithBracketsInFragment = `
 	<span>Say</span>
-	<span class='parameter'>"good &lt;a&gt; morning"</span>
+	<span class="parameter">"good &lt;a&gt; morning"</span>
 	<span>to</span>
-	<span class='parameter'>"gauge"</span>
+	<span class="parameter">"gauge"</span>
 </div>`
 
 var wSkippedStepWithSkippedReason = `<div class="message-container">
