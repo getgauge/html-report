@@ -271,27 +271,51 @@ type SearchIndex struct {
 	Specs map[string][]string `json:"Specs"`
 }
 
-func minifyHTML(htmlFileName string) {
-	if !env.ShouldMinifyReports() {
-		return
-	}
-	bytes, err := ioutil.ReadFile(htmlFileName)
-	if err != nil {
-		logger.Warnf("Error while reading %s.\n%s\n", htmlFileName, err.Error())
-		return
-	}
+var htmlFiles = make([]string, 0)
+
+func minifyHTMLFiles(htmlFilePaths []string, reportsDir string) {
 	m := minify.New()
 	m.Add("text/html", &html.Minifier{
 		KeepDocumentTags: true,
 		KeepEndTags:      true,
 		KeepQuotes:       true,
 	})
-	bytes, err = m.Bytes("text/html", bytes)
-	if err != nil {
-		logger.Warnf("Error while minifying %s\n", err.Error())
-		return
+	tmpDir := os.TempDir()
+	srcToDest := make(map[string]string)
+	for _, htmlFilePath := range htmlFilePaths {
+		htmlBytes, err := ioutil.ReadFile(htmlFilePath)
+		if err != nil {
+			logger.Warnf("Error while minifying %s", err.Error())
+			return
+		}
+		htmlBytes, err = m.Bytes("text/html", htmlBytes)
+		if err != nil {
+			logger.Warnf("Error while minifying %s", err.Error())
+			return
+		}
+		tmpHTMLFile, _ := ioutil.TempFile(tmpDir, "")
+		tmpHTMLFile.Close()
+		tmpHTMLFilePath := tmpHTMLFile.Name()
+
+		ioutil.WriteFile(tmpHTMLFilePath, htmlBytes, os.ModePerm)
+		if err != nil {
+			logger.Warnf("Error while minifying %s", err.Error())
+			return
+		}
+		srcToDest[tmpHTMLFilePath] = htmlFilePath
 	}
-	ioutil.WriteFile(htmlFileName, bytes, os.ModePerm)
+	for src, dest := range srcToDest {
+		minifiedBytes, err := ioutil.ReadFile(src)
+		if err != nil {
+			logger.Warnf("Error while minifying %s", err.Error())
+			return
+		}
+		err = ioutil.WriteFile(dest, minifiedBytes, os.ModePerm)
+		if err != nil {
+			logger.Warnf("Error while minifying %s", err.Error())
+			return
+		}
+	}
 }
 
 const (
@@ -423,7 +447,7 @@ func GenerateReports(res *SuiteResult, reportsDir, themePath string, searchIndex
 				propogateBasePath(r)
 				go func(suiteRes *SuiteResult, specRes *spec, wc io.WriteCloser, htmlFileName string, wg *sync.WaitGroup) {
 					generateSpecPage(suiteRes, specRes, wc, wg)
-					minifyHTML(htmlFileName)
+					htmlFiles = append(htmlFiles, htmlFileName)
 				}(res, r, sf, htmlFileName, &wg)
 
 			}
@@ -490,6 +514,9 @@ func GenerateReport(res *SuiteResult, reportDir, themePath string, searchIndex b
 		logger.Fatalf("Error copying template directory :%s\n", err.Error())
 	}
 	copyScreenshotFiles(reportDir)
+	if env.ShouldMinifyReports() {
+		minifyHTMLFiles(htmlFiles, reportDir)
+	}
 	logger.Infof("Successfully generated html-report to => %s\n", filepath.Join(reportDir, "index.html"))
 }
 
@@ -505,7 +532,7 @@ func containsParseErrors(errors []buildError) bool {
 func generateIndexPage(suiteRes *SuiteResult, w io.Writer, fileName string, wg *sync.WaitGroup) {
 	defer wg.Done()
 	execTemplate("indexPage", w, suiteRes)
-	minifyHTML(fileName)
+	htmlFiles = append(htmlFiles, fileName)
 }
 
 func generateIndexPages(suiteRes *SuiteResult, reportsDir string, wg *sync.WaitGroup) {
