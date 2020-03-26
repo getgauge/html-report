@@ -37,6 +37,7 @@ const (
 	UseNestedSpecs              = "use_nested_specs"
 	SaveExecutionResult         = "save_execution_result"
 	pluginKillTimeout           = "plugin_kill_timeout"
+	gaugeMinifyReports          = "gauge_minify_reports"
 )
 
 func GetCurrentExecutableDir() (string, string) {
@@ -95,19 +96,20 @@ func getDefaultPropertiesFile() string {
 }
 
 func ShouldOverwriteReports() bool {
-	envValue := os.Getenv(OverwriteReportsEnvProperty)
-	if strings.ToLower(envValue) == "true" {
-		return true
-	}
-	return false
+	return isEnvSet(OverwriteReportsEnvProperty)
 }
 
 func ShouldUseNestedSpecs() bool {
-	envValue := os.Getenv(UseNestedSpecs)
-	if strings.ToLower(envValue) == "true" {
-		return true
-	}
-	return false
+	return isEnvSet(UseNestedSpecs)
+}
+
+func ShouldMinifyReports() bool {
+	return isEnvSet(gaugeMinifyReports)
+}
+
+func isEnvSet(envName string) bool {
+	envValue := os.Getenv(envName)
+	return strings.ToLower(envValue) == "true"
 }
 
 // PluginKillTimeout returns the plugin_kill_timeout in seconds

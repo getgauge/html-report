@@ -37,6 +37,8 @@ import (
 	"github.com/getgauge/html-report/theme"
 	"github.com/microcosm-cc/bluemonday"
 	"github.com/russross/blackfriday"
+	"github.com/tdewolff/minify/v2"
+	"github.com/tdewolff/minify/v2/html"
 )
 
 type summary struct {
@@ -269,6 +271,53 @@ type SearchIndex struct {
 	Specs map[string][]string `json:"Specs"`
 }
 
+var htmlFiles = make([]string, 0)
+
+func minifyHTMLFiles(htmlFilePaths []string, reportsDir string) {
+	m := minify.New()
+	m.Add("text/html", &html.Minifier{
+		KeepDocumentTags: true,
+		KeepEndTags:      true,
+		KeepQuotes:       true,
+	})
+	tmpDir := os.TempDir()
+	srcToDest := make(map[string]string)
+	for _, htmlFilePath := range htmlFilePaths {
+		htmlBytes, err := ioutil.ReadFile(htmlFilePath)
+		if err != nil {
+			logger.Warnf("Error while minifying %s", err.Error())
+			return
+		}
+		htmlBytes, err = m.Bytes("text/html", htmlBytes)
+		if err != nil {
+			logger.Warnf("Error while minifying %s", err.Error())
+			return
+		}
+		tmpHTMLFile, _ := ioutil.TempFile(tmpDir, "")
+		tmpHTMLFile.Close()
+		tmpHTMLFilePath := tmpHTMLFile.Name()
+
+		ioutil.WriteFile(tmpHTMLFilePath, htmlBytes, os.ModePerm)
+		if err != nil {
+			logger.Warnf("Error while minifying %s", err.Error())
+			return
+		}
+		srcToDest[tmpHTMLFilePath] = htmlFilePath
+	}
+	for src, dest := range srcToDest {
+		minifiedBytes, err := ioutil.ReadFile(src)
+		if err != nil {
+			logger.Warnf("Error while minifying %s", err.Error())
+			return
+		}
+		err = ioutil.WriteFile(dest, minifiedBytes, os.ModePerm)
+		if err != nil {
+			logger.Warnf("Error while minifying %s", err.Error())
+			return
+		}
+	}
+}
+
 const (
 	pass                status    = "pass"
 	fail                status    = "fail"
@@ -359,7 +408,8 @@ var projectRoot string
 // GenerateReports generates HTML report in the given report dir location
 func GenerateReports(res *SuiteResult, reportsDir, themePath string, searchIndex bool) error {
 	readTemplates(themePath)
-	f, err := os.Create(filepath.Join(reportsDir, "index.html"))
+	indexFilepath := filepath.Join(reportsDir, "index.html")
+	f, err := os.Create(indexFilepath)
 	if err != nil {
 		return err
 	}
@@ -370,7 +420,7 @@ func GenerateReports(res *SuiteResult, reportsDir, themePath string, searchIndex
 		var wg sync.WaitGroup
 		wg.Add(1)
 		res.BasePath = ""
-		go generateIndexPage(res, f, &wg)
+		go generateIndexPage(res, f, indexFilepath, &wg)
 		if env.ShouldUseNestedSpecs() {
 			go generateIndexPages(res, reportsDir, &wg)
 		}
@@ -388,13 +438,18 @@ func GenerateReports(res *SuiteResult, reportsDir, themePath string, searchIndex
 				slice++
 				relPath, _ := filepath.Rel(projectRoot, r.FileName)
 				env.CreateDirectory(filepath.Join(reportsDir, filepath.Dir(relPath)))
-				sf, err := os.Create(filepath.Join(reportsDir, toHTMLFileName(r.FileName, projectRoot)))
+				htmlFileName := filepath.Join(reportsDir, toHTMLFileName(r.FileName, projectRoot))
+				sf, err := os.Create(htmlFileName)
 				if err != nil {
 					return err
 				}
 				wg.Add(1)
 				propogateBasePath(r)
-				go generateSpecPage(res, r, sf, &wg)
+				go func(suiteRes *SuiteResult, specRes *spec, wc io.WriteCloser, htmlFileName string, wg *sync.WaitGroup) {
+					generateSpecPage(suiteRes, specRes, wc, wg)
+					htmlFiles = append(htmlFiles, htmlFileName)
+				}(res, r, sf, htmlFileName, &wg)
+
 			}
 			wg.Wait()
 		}
@@ -459,6 +514,9 @@ func GenerateReport(res *SuiteResult, reportDir, themePath string, searchIndex b
 		logger.Fatalf("Error copying template directory :%s\n", err.Error())
 	}
 	copyScreenshotFiles(reportDir)
+	if env.ShouldMinifyReports() {
+		minifyHTMLFiles(htmlFiles, reportDir)
+	}
 	logger.Infof("Successfully generated html-report to => %s\n", filepath.Join(reportDir, "index.html"))
 }
 
@@ -471,9 +529,10 @@ func containsParseErrors(errors []buildError) bool {
 	return false
 }
 
-func generateIndexPage(suiteRes *SuiteResult, w io.Writer, wg *sync.WaitGroup) {
+func generateIndexPage(suiteRes *SuiteResult, w io.Writer, fileName string, wg *sync.WaitGroup) {
 	defer wg.Done()
 	execTemplate("indexPage", w, suiteRes)
+	htmlFiles = append(htmlFiles, fileName)
 }
 
 func generateIndexPages(suiteRes *SuiteResult, reportsDir string, wg *sync.WaitGroup) {
@@ -505,7 +564,7 @@ func generateIndexPages(suiteRes *SuiteResult, reportsDir string, wg *sync.WaitG
 		defer f.Close()
 		wg.Add(1)
 		res := toNestedSuiteResult(d, suiteRes)
-		generateIndexPage(res, f, wg)
+		generateIndexPage(res, f, p, wg)
 	}
 }
 

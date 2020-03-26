@@ -235,20 +235,20 @@
         <input id="searchSpecifications" placeholder="Type specification or tag name" type="text" />
         <i class="fa fa-search"></i>
       </div>
-      <div class='specs-sorting'>
-        <div class="sort sort-specs-name" data-sort-by="specs-name"><span class='sort-icons'><i class="fa fa-caret-up"></i><i class="fa fa-caret-down"></i></span><span>Name</span></div>
-        <div class="sort sort-execution-time" data-sort-by="execution-time"><span class='sort-icons'><i class="fa fa-caret-up"></i><i class="fa fa-caret-down"></i></span><span>Execution time</span></div>
+      <div class="specs-sorting">
+        <div class="sort sort-specs-name" data-sort-by="specs-name"><span class="sort-icons"><i class="fa fa-caret-up"></i><i class="fa fa-caret-down"></i></span><span>Name</span></div>
+        <div class="sort sort-execution-time" data-sort-by="execution-time"><span class="sort-icons"><i class="fa fa-caret-up"></i><i class="fa fa-caret-down"></i></span><span>Execution time</span></div>
       </div>
       <div id="listOfSpecifications">
         <ul id="scenarios" class="spec-list">
         {{range $index, $specMeta := .Specs}}
           <a href="{{.ReportFile}}">
             {{if $specMeta.Failed}}
-              <li class='failed spec-name'>
+              <li class="failed spec-name">
             {{else if $specMeta.Skipped}} 
-              <li class='skipped spec-name'>
+              <li class="skipped spec-name">
             {{else}} 
-              <li class='passed spec-name'>
+              <li class="passed spec-name">
             {{end}}
               <span id="scenarioName" class="scenarioname">{{$specMeta.SpecName | escapeHTML }}</span>
               <span id="time" class="time">{{$specMeta.ExecutionTime}}</span>
@@ -433,9 +433,9 @@
 
 /* Begin rendering Scenario. Holds Execution Status and also the table-row when rendering Table Driven Scenarios */
 {{define "scenarioContainerStartDiv"}}
-  <div class='scenario-container {{if eq .ExecutionStatus "pass"}}passed{{if gt .TableRowIndex 0}} hidden{{end}}'{{if ne .TableRowIndex -1}} data-tablerow='{{.TableRowIndex}}'{{end}}>
-    {{else if eq .ExecutionStatus "fail"}}failed{{if gt .TableRowIndex 0}} hidden{{end}}'{{if ne .TableRowIndex -1}}  data-tablerow='{{.TableRowIndex}}'{{end}}>
-    {{else}}skipped{{if gt .TableRowIndex 0}} hidden{{end}}'{{if ne .TableRowIndex -1}}  data-tablerow='{{.TableRowIndex}}'{{end}}>{{end}}
+  <div class="scenario-container {{if eq .ExecutionStatus "pass"}}passed{{if gt .TableRowIndex 0}} hidden{{end}}"{{if ne .TableRowIndex -1}} data-tablerow='{{.TableRowIndex}}'{{end}}>
+    {{else if eq .ExecutionStatus "fail"}}failed{{if gt .TableRowIndex 0}} hidden{{end}}"{{if ne .TableRowIndex -1}}  data-tablerow='{{.TableRowIndex}}'{{end}}>
+    {{else}}skipped{{if gt .TableRowIndex 0}} hidden{{end}}"{{if ne .TableRowIndex -1}}  data-tablerow='{{.TableRowIndex}}'{{end}}>{{end}}
 {{end}}
 
 /* Container for Scenario Header, holds the execution time of scenario */
@@ -458,9 +458,9 @@
       </tr>
       <tbody data-rowCount={{len .Datatable.Rows}}>
         {{range $index, $row := .Datatable.Rows}}
-          {{if eq $row.Result "pass"}}<tr class='row-selector passed{{if eq $index 0}} selected{{end}}' data-rowIndex='{{$index}}'>
-          {{else if eq $row.Result "fail"}}<tr class='row-selector failed{{if eq $index 0}} selected{{end}}' data-rowIndex='{{$index}}'>
-          {{else}}<tr class='row-selector skipped{{if eq $index 0}} selected{{end}}' data-rowIndex='{{$index}}'>
+          {{if eq $row.Result "pass"}}<tr class="row-selector passed{{if eq $index 0}} selected{{end}}" data-rowIndex='{{$index}}'>
+          {{else if eq $row.Result "fail"}}<tr class="row-selector failed{{if eq $index 0}} selected{{end}}" data-rowIndex='{{$index}}'>
+          {{else}}<tr class="row-selector skipped{{if eq $index 0}} selected{{end}}" data-rowIndex='{{$index}}'>
           {{end}}
             {{range $row.Cells}}<td>{{. | escapeHTML }}</td>{{end}}
         </tr>
@@ -476,31 +476,31 @@
 
 /* start of Concept */
 {{define "conceptStartDiv"}}
-  <div class='step concept'>
+  <div class="step concept">
   {{template "stepMetaDiv" .}}
 {{end}}
 
 /* start of Step */
 {{define "stepStartDiv"}}
-  <div class='step'>
+  <div class="step">
   {{template "stepMetaDiv" .}}
 {{end}}
 
 /* Meta information about Step/Concept. Contains ExecutionTime and Status */
 {{define "stepMetaDiv"}}
   {{if ne .Result.Status "skip"}}
-    <h5 class='execution-time'>
-      <span class='time'>Execution Time : {{.Result.ExecutionTime}}</span>
+    <h5 class="execution-time">
+      <span class="time">Execution Time : {{.Result.ExecutionTime}}</span>
     </h5>
   {{end}}
-  {{if eq .Result.Status "pass"}}<div class='step-info passed'>
-  {{else if eq .Result.Status "fail"}}<div class='step-info failed'>
-  {{else if eq .Result.Status "skip"}}<div class='step-info skipped'>
-  {{else if eq .Result.Status "not executed"}}<div class='step-info not-executed'>
+  {{if eq .Result.Status "pass"}}<div class="step-info passed">
+  {{else if eq .Result.Status "fail"}}<div class="step-info failed">
+  {{else if eq .Result.Status "skip"}}<div class="step-info skipped">
+  {{else if eq .Result.Status "not executed"}}<div class="step-info not-executed">
   {{end}}
   <ul>
-    <li class='step'>
-      <div class='step-txt'>
+    <li class="step">
+      <div class="step-txt">
 {{end}}
 
 /* renders a table */
@@ -536,13 +536,13 @@
         {{.Text | escapeHTML }}
       </span>
     {{else if eq .FragmentKind 1 2}}
-      <span class='parameter'>"{{.Text | escapeHTML }}"</span>
+      <span class="parameter">"{{.Text | escapeHTML }}"</span>
     {{else if eq .FragmentKind 3}}
       {{template "Modal" .}}
     {{else if eq .FragmentKind 4}}
       {{template "Modal" .}}
     {{else if eq .FragmentKind 5}}
-      <div class='inline-table'>
+      <div class="inline-table">
         <div>
           {{template "Table" .}}
         </div>
@@ -678,7 +678,7 @@
   <i class="fa fa-plus-square" aria-hidden="true"></i>
   {{template "stepBodyDiv" .ConceptStep}}
   </li></ul></div></div>
-  <div class='concept-steps'>
+  <div class="concept-steps">
   {{range $index, $item := .Items}}
     {{template "item" $item}}
   {{end}}
@@ -720,7 +720,7 @@
 	{{end}}
 
   {{range $i, $c := .Contexts}}
-    <div class='context-step'>
+    <div class="context-step">
       {{template "item" $c}}
     </div>
   {{end}}
@@ -728,7 +728,7 @@
     {{template "item" $item}}
   {{end}}
   {{range $i, $t := .Teardowns}}
-    <div class='context-step'>
+    <div class="context-step">
       {{template "item" $t}}
     </div>
   {{end}}

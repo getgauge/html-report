@@ -13,7 +13,10 @@ require (
 	github.com/kylelemons/godebug v1.1.0
 	github.com/mb0/diff v0.0.0-20131118162322-d8d9a906c24d // indirect
 	github.com/microcosm-cc/bluemonday v1.0.2
+	github.com/niemeyer/pretty v0.0.0-20200227124842-a10e7caefd8e // indirect
 	github.com/russross/blackfriday v1.5.2
 	github.com/shurcooL/sanitized_anchor_name v1.0.0 // indirect
+	github.com/tdewolff/minify/v2 v2.7.3
 	google.golang.org/grpc v1.25.1
+	gopkg.in/check.v1 v1.0.0-20200227125254-8fa46927fb4f // indirect
 )
