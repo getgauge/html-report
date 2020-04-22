@@ -171,6 +171,7 @@ type scenario struct {
 	PostHookScreenshotFiles   []string     `json:"PostHookScreenshotFiles"`
 	PreHookScreenshots        []string     `json:"PreHookScreenshots"`
 	PostHookScreenshots       []string     `json:"PostHookScreenshots"`
+	RetriesCount              int          `json:"RetriesCount"`
 }
 
 type step struct {

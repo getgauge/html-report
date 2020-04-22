@@ -352,6 +352,7 @@ var scn = &gm.ProtoScenario{
 	},
 	PreHookMessages:  []string{"Before Scenario Message"},
 	PostHookMessages: []string{"After Scenario Message"},
+	RetriesCount:     4,
 }
 
 var scnWithHookFailure = &gm.ProtoScenario{
@@ -1072,6 +1073,7 @@ func TestToScenario(t *testing.T) {
 			},
 		},
 		TableRowIndex: -1,
+		RetriesCount:  4,
 	}
 
 	got := toScenario(scn, -1)

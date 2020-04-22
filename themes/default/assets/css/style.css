@@ -665,6 +665,11 @@ header.top .project {
     margin: 0 0 10px 0;
 }
 
+.scenario-retry-count {
+    padding: 5px;
+    background-color: yellow
+}
+
 .step {
     list-style-type: none;
     margin: 0;
