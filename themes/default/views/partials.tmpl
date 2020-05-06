@@ -442,6 +442,9 @@
 {{define "scenarioHeaderStartDiv"}}
   <div class="scenario-head">
     <h3 class="head borderBottom">{{.Heading | escapeHTML }}</h3>
+    {{ if gt .RetriesCount 1}}
+      <span class="scenario-retry-count">Retried {{ .RetriesCount }} times</span>
+    {{end}}
     <span class="time">{{.ExecutionTime}}</span>
 {{end}}
 

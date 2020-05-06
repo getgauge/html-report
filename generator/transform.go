@@ -463,6 +463,7 @@ func toScenario(scn *gm.ProtoScenario, tableRowIndex int) *scenario {
 		TableRowIndex:             tableRowIndex,
 		PreHookMessages:           scn.GetPreHookMessages(),
 		PostHookMessages:          scn.GetPostHookMessages(),
+		RetriesCount:              int(scn.RetriesCount),
 	}
 	for _, s := range scn.GetPreHookScreenshotFiles() {
 		scenario.PreHookScreenshotFiles = append(scenario.PreHookScreenshotFiles, s)
