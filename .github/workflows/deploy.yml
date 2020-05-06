@@ -63,8 +63,8 @@ jobs:
         run: |
           git clone https://github.com/getgauge/gauge-repository.git
           cd gauge-repository
-          python update_metadata.py js $VERSION
-          commit_message=$(echo -e "Update js to v$VERSION")
+          python update_metadata.py html-report $VERSION
+          commit_message=$(echo -e "Update html-report to v$VERSION")
           git commit -am "$commit_message"
           git push "https://$GITHUB_ACTOR:$GITHUB_TOKEN@github.com/getgauge/gauge-repository.git" master
 
