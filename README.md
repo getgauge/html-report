@@ -145,8 +145,9 @@ While regenerating a report, the default theme is used. A custom can be used if 
 License
 -------
 
-![GNU Public License version 3.0](http://www.gnu.org/graphics/gplv3-127x51.png)
-`html-report` is released under [GNU Public License version 3.0](http://www.gnu.org/licenses/gpl-3.0.txt)
+This program is licensed under:
+
+[Apache License, Version 2.0](https://www.apache.org/licenses/LICENSE-2.0.txt)
 
 Copyright
 ---------
