@@ -6,6 +6,7 @@
 package generator
 
 import (
+	"os"
 	"path/filepath"
 	"reflect"
 	"testing"
@@ -142,7 +143,7 @@ var specRes1 = &gm.ProtoSpecResult{
 	ProtoSpec: &gm.ProtoSpec{
 		SpecHeading:   "specRes1",
 		Tags:          []string{"tag1", "tag2"},
-		FileName:      "/tmp/gauge/specs/foobar.spec",
+		FileName:      filepath.Join(string(os.PathSeparator), "tmp", "gauge", "specs", "foobar.spec"),
 		IsTableDriven: true,
 		Items: []*gm.ProtoItem{
 			newCommentItem("\n"),
@@ -571,8 +572,8 @@ func TestToSpec(t *testing.T) {
 		Errors:                 make([]buildError, 0),
 		SpecHeading:            "specRes1",
 		Tags:                   []string{"tag1", "tag2"},
-		FileName:               "/tmp/gauge/specs/foobar.spec",
-		SpecFileName:           "/tmp/gauge/specs/foobar.spec",
+		FileName:               filepath.Join(string(os.PathSeparator), "tmp", "gauge", "specs", "foobar.spec"),
+		SpecFileName:           filepath.Join(string(os.PathSeparator), "tmp", "gauge", "specs", "foobar.spec"),
 		IsTableDriven:          true,
 		ExecutionStatus:        pass,
 		ExecutionTime:          211316,
@@ -666,7 +667,7 @@ func TestToSpecForTableDrivenSpec(t *testing.T) {
 			Rows:    []*row{{Cells: []string{"Gauge", "3"}, Result: fail}, {Cells: []string{"Mingle", "2"}, Result: pass}},
 		},
 		SpecHeading:     "specRes1",
-		FileName:        "/tmp/gauge/specs/foobar.spec",
+		FileName:        filepath.Join(string(os.PathSeparator), "tmp", "gauge", "specs", "foobar.spec"),
 		SpecFileName:    "/tmp/gauge/specs/foobar.spec",
 		IsTableDriven:   true,
 		ExecutionStatus: pass,
@@ -1513,11 +1514,12 @@ func TestScenarioCountToSuiteResult(t *testing.T) {
 }
 
 func TestToSuiteResultShouldNormalizeSpecFilepath(t *testing.T) {
+	projectRoot := filepath.Join(string(os.PathSeparator), "user", "user-name", "work", "gauge-project")
 	psr := &gm.ProtoSuiteResult{SpecsFailedCount: 2, SpecsSkippedCount: 1, SpecResults: []*gm.ProtoSpecResult{
 		{ProtoSpec: &gm.ProtoSpec{FileName: "/user/user-name/work/common-specs/specs/spec-file-1.spec"}},
 	}}
-	res := ToSuiteResult("/user/user-name/work/gauge-project", psr)
-	ecpectedFilePath := "/user/user-name/work/gauge-project/common-specs/specs/spec-file-1.spec"
+	res := ToSuiteResult(projectRoot, psr)
+	ecpectedFilePath := filepath.Join(projectRoot, "common-specs", "specs", "spec-file-1.spec")
 	if res.SpecResults[0].FileName != ecpectedFilePath {
 		t.Errorf("Expected normalized spec file path to be : %s; got %s\n", ecpectedFilePath, res.SpecResults[0].FileName)
 	}
