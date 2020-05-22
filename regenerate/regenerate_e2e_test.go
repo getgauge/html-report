@@ -35,11 +35,11 @@ func setup() {
 
 func TestEndToEndHTMLGenerationFromSavedResult(t *testing.T) {
 	setup()
-	expectedFiles := []string{"index.html", "example.html", "js/search_index.js"}
+	expectedFiles := []string{"index.html", "specs/example.html", "js/search_index.js"}
 	reportDir := filepath.Join("_testdata", "e2e")
 	inputFile := filepath.Join("_testdata", "last_run_result")
 
-	Report(inputFile, reportDir, templateBasePath, "")
+	Report(inputFile, reportDir, templateBasePath, "/tmp/foo/")
 	for _, expectedFile := range expectedFiles {
 		gotContent, err := ioutil.ReadFile(filepath.Join(reportDir, expectedFile))
 		if err != nil {

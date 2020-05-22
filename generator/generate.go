@@ -120,6 +120,7 @@ type spec struct {
 	CommentsAfterDatatable  string         `json:"CommentsAfterDatatable"`
 	SpecHeading             string         `json:"SpecHeading"`
 	FileName                string         `json:"FileName"`
+	SpecFileName            string         `json:"SpecFileName"`
 	Tags                    []string       `json:"Tags"`
 	ExecutionTime           int64          `json:"ExecutionTime"`
 	ExecutionStatus         status         `json:"ExecutionStatus"`
