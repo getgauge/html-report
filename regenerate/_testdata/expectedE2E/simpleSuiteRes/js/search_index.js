@@ -1,1 +1,1 @@
-var index = {"Tags":{"single word":["example.html"]},"Specs":{"Specification Heading":["example.html"]}};
+var index = {"Tags":{"single word":["specs/example.html"]},"Specs":{"Specification Heading":["specs/example.html"]}};

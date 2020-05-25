@@ -8,6 +8,7 @@ package generator
 import (
 	"encoding/base64"
 	"fmt"
+	"os"
 	"path/filepath"
 	"sort"
 	"strings"
@@ -63,7 +64,7 @@ func ToSuiteResult(pRoot string, psr *gm.ProtoSuiteResult) *SuiteResult {
 	}
 	suiteResult.SpecResults = make([]*spec, 0)
 	for _, protoSpecRes := range psr.GetSpecResults() {
-		suiteResult.SpecResults = append(suiteResult.SpecResults, toSpec(protoSpecRes))
+		suiteResult.SpecResults = append(suiteResult.SpecResults, toSpec(protoSpecRes, projectRoot))
 		suiteResult.PassedScenarioCount = suiteResult.PassedScenarioCount + int(protoSpecRes.GetScenarioCount()-protoSpecRes.GetScenarioFailedCount()-protoSpecRes.GetScenarioSkippedCount())
 		suiteResult.FailedScenarioCount = suiteResult.FailedScenarioCount + int(protoSpecRes.GetScenarioFailedCount())
 		suiteResult.SkippedScenarioCount = suiteResult.SkippedScenarioCount + int(protoSpecRes.GetScenarioSkippedCount())
@@ -280,19 +281,22 @@ func toSpecHeader(res *spec) *specHeader {
 	return &specHeader{
 		SpecName:      res.SpecHeading,
 		ExecutionTime: formatTime(res.ExecutionTime),
-		FileName:      res.FileName,
+		FileName:      res.SpecFileName,
 		Tags:          res.Tags,
 		Summary:       toScenarioSummary(res),
 	}
 }
 
-func toSpec(res *gm.ProtoSpecResult) *spec {
+func toSpec(res *gm.ProtoSpecResult, projectRoot string) *spec {
+	relSpecPath, _ := filepath.Rel(projectRoot, res.ProtoSpec.FileName)
+	normalizedSpecPath := strings.ReplaceAll(relSpecPath, fmt.Sprintf("..%c", os.PathSeparator), "")
 	spec := &spec{
 		Scenarios:              make([]*scenario, 0),
 		BeforeSpecHookFailures: make([]*hookFailure, 0),
 		AfterSpecHookFailures:  make([]*hookFailure, 0),
 		Errors:                 make([]buildError, 0),
-		FileName:               res.GetProtoSpec().GetFileName(),
+		FileName:               filepath.Join(projectRoot, normalizedSpecPath),
+		SpecFileName:           res.GetProtoSpec().GetFileName(),
 		SpecHeading:            res.GetProtoSpec().GetSpecHeading(),
 		IsTableDriven:          res.GetProtoSpec().GetIsTableDriven(),
 		ExecutionTime:          res.GetExecutionTime(),

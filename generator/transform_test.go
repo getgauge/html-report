@@ -6,6 +6,7 @@
 package generator
 
 import (
+	"os"
 	"path/filepath"
 	"reflect"
 	"testing"
@@ -142,7 +143,7 @@ var specRes1 = &gm.ProtoSpecResult{
 	ProtoSpec: &gm.ProtoSpec{
 		SpecHeading:   "specRes1",
 		Tags:          []string{"tag1", "tag2"},
-		FileName:      "/tmp/gauge/specs/foobar.spec",
+		FileName:      filepath.Join(string(os.PathSeparator), "tmp", "gauge", "specs", "foobar.spec"),
 		IsTableDriven: true,
 		Items: []*gm.ProtoItem{
 			newCommentItem("\n"),
@@ -190,6 +191,7 @@ var spec1 = &spec{
 	SpecHeading:   "specRes1",
 	Tags:          []string{"tag1", "tag2"},
 	FileName:      "/tmp/gauge/specs/foobar.spec",
+	SpecFileName:  "/tmp/gauge/specs/foobar.spec",
 	ExecutionTime: 211316,
 	IsTableDriven: true,
 	Datatable: &table{
@@ -268,6 +270,7 @@ var specResWithSpecHookFailure = &gm.ProtoSpecResult{
 	Skipped:       true,
 	ExecutionTime: 211316,
 	ProtoSpec: &gm.ProtoSpec{
+		FileName:    "specfile-1.spec",
 		SpecHeading: "specRes3",
 		Tags:        []string{"tag1"},
 		PreHookFailures: []*gm.ProtoHookFailure{{
@@ -569,7 +572,8 @@ func TestToSpec(t *testing.T) {
 		Errors:                 make([]buildError, 0),
 		SpecHeading:            "specRes1",
 		Tags:                   []string{"tag1", "tag2"},
-		FileName:               "/tmp/gauge/specs/foobar.spec",
+		FileName:               filepath.Join(string(os.PathSeparator), "tmp", "gauge", "specs", "foobar.spec"),
+		SpecFileName:           filepath.Join(string(os.PathSeparator), "tmp", "gauge", "specs", "foobar.spec"),
 		IsTableDriven:          true,
 		ExecutionStatus:        pass,
 		ExecutionTime:          211316,
@@ -577,7 +581,7 @@ func TestToSpec(t *testing.T) {
 		PostHookMessages:       []string{"After Spec Hook Message"},
 	}
 
-	got := toSpec(specRes1)
+	got := toSpec(specRes1, "/tmp/gauge/")
 	checkEqual(t, "", want, got)
 }
 
@@ -599,7 +603,7 @@ func TestToSpecWithScenariosInOrder(t *testing.T) {
 		},
 	}
 
-	got := toSpec(specRes)
+	got := toSpec(specRes, "")
 	if len(got.Scenarios) != 5 {
 		t.Errorf("want:%q\ngot:%q\n", 5, len(got.Scenarios))
 	}
@@ -622,7 +626,8 @@ func TestToSpecWithScenariosInOrder(t *testing.T) {
 
 func TestToSpecWithErrors(t *testing.T) {
 	specRes := &gm.ProtoSpecResult{
-		Failed: true,
+		Failed:    true,
+		ProtoSpec: &gm.ProtoSpec{FileName: "spec-file-1.spec"},
 		Errors: []*gm.Error{
 			{
 				Filename:   "fileName",
@@ -645,10 +650,12 @@ func TestToSpecWithErrors(t *testing.T) {
 			{FileName: "fileName1", LineNumber: 4, Message: "message1", ErrorType: validationErrorType},
 		},
 		Scenarios:       make([]*scenario, 0),
+		FileName:        "spec-file-1.spec",
+		SpecFileName:    "spec-file-1.spec",
 		ExecutionStatus: fail,
 	}
 
-	got := toSpec(specRes)
+	got := toSpec(specRes, "")
 
 	checkEqual(t, "", want, got)
 }
@@ -660,7 +667,8 @@ func TestToSpecForTableDrivenSpec(t *testing.T) {
 			Rows:    []*row{{Cells: []string{"Gauge", "3"}, Result: fail}, {Cells: []string{"Mingle", "2"}, Result: pass}},
 		},
 		SpecHeading:     "specRes1",
-		FileName:        "/tmp/gauge/specs/foobar.spec",
+		FileName:        filepath.Join(string(os.PathSeparator), "tmp", "gauge", "specs", "foobar.spec"),
+		SpecFileName:    "/tmp/gauge/specs/foobar.spec",
 		IsTableDriven:   true,
 		ExecutionStatus: pass,
 		ExecutionTime:   211316,
@@ -712,7 +720,7 @@ func TestToSpecForTableDrivenSpec(t *testing.T) {
 		SkippedScenarioCount:   0,
 	}
 
-	got := toSpec(datatableDrivenSpec)
+	got := toSpec(datatableDrivenSpec, "/tmp/gauge/")
 
 	checkEqual(t, "", want, got)
 }
@@ -726,17 +734,19 @@ func TestToSpecWithHookFailure(t *testing.T) {
 		Errors:                 make([]buildError, 0),
 		Tags:                   []string{"tag1"},
 		SpecHeading:            "specRes3",
+		SpecFileName:           "specfile-1.spec",
+		FileName:               "specfile-1.spec",
 		ExecutionStatus:        skip,
 		ExecutionTime:          211316,
 	}
 
-	got := toSpec(specResWithSpecHookFailure)
+	got := toSpec(specResWithSpecHookFailure, "")
 	checkEqual(t, "", want, got)
 }
 
 func TestToSpecWithFileName(t *testing.T) {
 	want := specRes1.GetProtoSpec().GetFileName()
-	got := toSpec(specRes1).FileName
+	got := toSpec(specRes1, "/tmp/gauge").FileName
 
 	if got != want {
 		t.Errorf("Expecting spec.FileName=%s, got %s\n", want, got)
@@ -745,7 +755,7 @@ func TestToSpecWithFileName(t *testing.T) {
 
 func TestToSpecWithSpecHeading(t *testing.T) {
 	want := specRes1.GetProtoSpec().GetSpecHeading()
-	got := toSpec(specRes1).SpecHeading
+	got := toSpec(specRes1, "").SpecHeading
 
 	if got != want {
 		t.Errorf("Expecting spec.SpecHeading=%s, got %s\n", want, got)
@@ -754,7 +764,7 @@ func TestToSpecWithSpecHeading(t *testing.T) {
 
 func TestToSpecWithTags(t *testing.T) {
 	want := specRes1.GetProtoSpec().GetTags()
-	got := toSpec(specRes1).Tags
+	got := toSpec(specRes1, "").Tags
 
 	checkEqual(t, "", want, got)
 }
@@ -770,7 +780,7 @@ To execute this specification, run
 	gauge specs
 
 `
-	got := toSpec(specRes1).CommentsBeforeDatatable
+	got := toSpec(specRes1, "").CommentsBeforeDatatable
 
 	checkEqual(t, "", want, got)
 }
@@ -780,13 +790,13 @@ func TestToSpecWithDataTableMapsCommentsAfterDatatable(t *testing.T) {
 Comment 1
 Comment 2
 Comment 3`
-	got := toSpec(specRes1).CommentsAfterDatatable
+	got := toSpec(specRes1, "").CommentsAfterDatatable
 
 	checkEqual(t, "", want, got)
 }
 
 func TestToSpecWithDataTableIsTableDriven(t *testing.T) {
-	got := toSpec(specRes1).IsTableDriven
+	got := toSpec(specRes1, "").IsTableDriven
 
 	if !got {
 		t.Errorf("Expecting spec.IsTableDriven=true\n")
@@ -801,49 +811,49 @@ func TestToSpecWithDataTableHasDatatable(t *testing.T) {
 			&row{Cells: []string{"Mingle", "2"}, Result: skip},
 		},
 	}
-	got := toSpec(specRes1).Datatable
+	got := toSpec(specRes1, "").Datatable
 
 	checkEqual(t, "", want, got)
 }
 
 func TestToSpecWithDataTableExecutionTime(t *testing.T) {
 	want := 211316
-	got := toSpec(specRes1).ExecutionTime
+	got := toSpec(specRes1, "").ExecutionTime
 
 	checkEqual(t, "", want, got)
 }
 
 func TestToSpecWithDataTableExecutionStatusPass(t *testing.T) {
 	want := pass
-	got := toSpec(specRes1).ExecutionStatus
+	got := toSpec(specRes1, "").ExecutionStatus
 
 	checkEqual(t, "", want, got)
 }
 
 func TestToSpecWithDataTableExecutionStatusSkip(t *testing.T) {
 	want := skip
-	got := toSpec(&gm.ProtoSpecResult{Skipped: true, Failed: false}).ExecutionStatus
+	got := toSpec(&gm.ProtoSpecResult{Skipped: true, Failed: false, ProtoSpec: &gm.ProtoSpec{FileName: "spec-file.spec"}}, "").ExecutionStatus
 
 	checkEqual(t, "", want, got)
 }
 
 func TestToSpecWithDataTableExecutionStatusFail(t *testing.T) {
 	want := fail
-	got := toSpec(&gm.ProtoSpecResult{Skipped: false, Failed: true}).ExecutionStatus
+	got := toSpec(&gm.ProtoSpecResult{Skipped: false, Failed: true, ProtoSpec: &gm.ProtoSpec{FileName: "spec-file.spec"}}, "").ExecutionStatus
 
 	checkEqual(t, "", want, got)
 }
 
 func TestToSpecWithBeforeHookFailure(t *testing.T) {
 	want := []*hookFailure{{ErrMsg: "err", HookName: "Before Spec", FailureScreenshotFile: "Screenshot.png", StackTrace: "Stacktrace"}}
-	got := toSpec(specResWithSpecHookFailure).BeforeSpecHookFailures
+	got := toSpec(specResWithSpecHookFailure, "").BeforeSpecHookFailures
 
 	checkEqual(t, "", want, got)
 }
 
 func TestToSpecWithAfterHookFailure(t *testing.T) {
 	want := []*hookFailure{{ErrMsg: "err", HookName: "After Spec", FailureScreenshotFile: "Screenshot.png", StackTrace: "Stacktrace", TableRowIndex: 0}}
-	got := toSpec(specResWithSpecHookFailure).AfterSpecHookFailures
+	got := toSpec(specResWithSpecHookFailure, "").AfterSpecHookFailures
 
 	checkEqual(t, "", want, got)
 }
@@ -876,7 +886,7 @@ func TestToSpecWithScenarios(t *testing.T) {
 				},
 			},
 		},
-	}).Scenarios
+	}, "").Scenarios
 
 	if len(got) != 2 {
 		t.Errorf("Expected 2 scenarios, got %d\n", len(got))
@@ -884,7 +894,7 @@ func TestToSpecWithScenarios(t *testing.T) {
 }
 
 func TestToSpecWithScenariosTableDriven(t *testing.T) {
-	got := toSpec(datatableDrivenSpec).Scenarios
+	got := toSpec(datatableDrivenSpec, "").Scenarios
 
 	if len(got) != 2 {
 		t.Errorf("Expected 2 scenarios, got %d\n", len(got))
@@ -930,7 +940,7 @@ func TestToSpecWithScenarioStatusCounts(t *testing.T) {
 				},
 			},
 		},
-	})
+	}, "")
 
 	if got.PassedScenarioCount != 1 {
 		t.Errorf("Expected spec.PassedScenarioCount=1, got %d\n", got.PassedScenarioCount)
@@ -1464,12 +1474,12 @@ func TestMapExecutionTimeToSuiteResult(t *testing.T) {
 
 func TestSpecsCountToSuiteResult(t *testing.T) {
 	psr := &gm.ProtoSuiteResult{SpecsFailedCount: 2, SpecsSkippedCount: 1, SpecResults: []*gm.ProtoSpecResult{
-		{Skipped: false, Failed: false},
-		{Skipped: false, Failed: true},
-		{Skipped: true, Failed: false},
-		{Skipped: false, Failed: true},
-		{Skipped: false, Failed: false},
-		{Skipped: false, Failed: false},
+		{Skipped: false, Failed: false, ProtoSpec: &gm.ProtoSpec{FileName: "spec-file-1.spec"}},
+		{Skipped: false, Failed: true, ProtoSpec: &gm.ProtoSpec{FileName: "spec-file-2.spec"}},
+		{Skipped: true, Failed: false, ProtoSpec: &gm.ProtoSpec{FileName: "spec-file-3.spec"}},
+		{Skipped: false, Failed: true, ProtoSpec: &gm.ProtoSpec{FileName: "spec-file-4.spec"}},
+		{Skipped: false, Failed: false, ProtoSpec: &gm.ProtoSpec{FileName: "spec-file-5.spec"}},
+		{Skipped: false, Failed: false, ProtoSpec: &gm.ProtoSpec{FileName: "spec-file-6.spec"}},
 	}}
 	res := ToSuiteResult("", psr)
 
@@ -1486,9 +1496,9 @@ func TestSpecsCountToSuiteResult(t *testing.T) {
 
 func TestScenarioCountToSuiteResult(t *testing.T) {
 	psr := &gm.ProtoSuiteResult{SpecResults: []*gm.ProtoSpecResult{
-		{ScenarioCount: 3, ScenarioFailedCount: 2},
-		{ScenarioCount: 3, ScenarioSkippedCount: 1},
-		{ScenarioCount: 3, ScenarioSkippedCount: 1, ScenarioFailedCount: 2},
+		{ScenarioCount: 3, ScenarioFailedCount: 2, ProtoSpec: &gm.ProtoSpec{FileName: "spec-file-1.spec"}},
+		{ScenarioCount: 3, ScenarioSkippedCount: 1, ProtoSpec: &gm.ProtoSpec{FileName: "spec-file-2.spec"}},
+		{ScenarioCount: 3, ScenarioSkippedCount: 1, ScenarioFailedCount: 2, ProtoSpec: &gm.ProtoSpec{FileName: "spec-file-3.spec"}},
 	}}
 	res := ToSuiteResult("", psr)
 
@@ -1500,6 +1510,18 @@ func TestScenarioCountToSuiteResult(t *testing.T) {
 	}
 	if res.FailedScenarioCount != 4 {
 		t.Errorf("Expected FailedSpecsCount=3; got %d\n", res.FailedScenarioCount)
+	}
+}
+
+func TestToSuiteResultShouldNormalizeSpecFilepath(t *testing.T) {
+	projectRoot := filepath.Join(string(os.PathSeparator), "user", "user-name", "work", "gauge-project")
+	psr := &gm.ProtoSuiteResult{SpecsFailedCount: 2, SpecsSkippedCount: 1, SpecResults: []*gm.ProtoSpecResult{
+		{ProtoSpec: &gm.ProtoSpec{FileName: "/user/user-name/work/common-specs/specs/spec-file-1.spec"}},
+	}}
+	res := ToSuiteResult(projectRoot, psr)
+	ecpectedFilePath := filepath.Join(projectRoot, "common-specs", "specs", "spec-file-1.spec")
+	if res.SpecResults[0].FileName != ecpectedFilePath {
+		t.Errorf("Expected normalized spec file path to be : %s; got %s\n", ecpectedFilePath, res.SpecResults[0].FileName)
 	}
 }
 
