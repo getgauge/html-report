@@ -332,17 +332,14 @@ class DataStore {
     }
 
     insertItem(key, value) {
-        console.log(`Inserting ${key} : ${value} into data store.`);
         this.data[key.toLowerCase()] = value;
     }
 
     removeItem(key) {
-        console.log(`Removing ${key} from data store.`);
         delete this.data[key.toLowerCase()]
     }
 
     get(key) {
-        console.log(`Reteriving ${key} from data store.`);
         return this.data[key.toLowerCase()];
     }
 
