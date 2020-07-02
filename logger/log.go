@@ -6,8 +6,6 @@ import (
 	"os"
 )
 
-var debug bool
-
 type logMessage struct {
 	Level   string `json:"logLevel"`
 	Message string `json:"message"`

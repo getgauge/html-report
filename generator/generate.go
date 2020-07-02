@@ -287,9 +287,9 @@ func minifyHTMLFiles(htmlFilePaths []string, reportsDir string) {
 		tmpHTMLFile.Close()
 		tmpHTMLFilePath := tmpHTMLFile.Name()
 
-		ioutil.WriteFile(tmpHTMLFilePath, htmlBytes, os.ModePerm)
+		err = ioutil.WriteFile(tmpHTMLFilePath, htmlBytes, os.ModePerm)
 		if err != nil {
-			logger.Warnf("Error while minifying %s", err.Error())
+			logger.Warnf("Error while writing minified file %s: %s", tmpHTMLFilePath, err.Error())
 			return
 		}
 		srcToDest[tmpHTMLFilePath] = htmlFilePath
@@ -302,7 +302,7 @@ func minifyHTMLFiles(htmlFilePaths []string, reportsDir string) {
 		}
 		err = ioutil.WriteFile(dest, minifiedBytes, os.ModePerm)
 		if err != nil {
-			logger.Warnf("Error while minifying %s", err.Error())
+			logger.Warnf("Error while writing minified file %s: %s", dest, err.Error())
 			return
 		}
 	}

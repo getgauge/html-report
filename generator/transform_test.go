@@ -15,12 +15,6 @@ import (
 	"github.com/kylelemons/godebug/pretty"
 )
 
-type transformTest struct {
-	name   string
-	input  *gm.ProtoSuiteResult
-	output interface{}
-}
-
 func checkEqual(t *testing.T, test string, want, got interface{}) {
 	if diff := pretty.Compare(got, want); diff != "" {
 		t.Errorf("Test:%s\n diff: (-got +want)\n%s", test, diff)
@@ -153,8 +147,8 @@ var specRes1 = &gm.ProtoSpecResult{
 			newCommentItem("\tgauge specs"),
 			newCommentItem("\n"),
 			newTableItem([]string{"Word", "Count"}, [][]string{
-				[]string{"Gauge", "3"},
-				[]string{"Mingle", "2"},
+				{"Gauge", "3"},
+				{"Mingle", "2"},
 			}),
 			newCommentItem("Comment 1"),
 			newCommentItem("Comment 2"),
@@ -162,28 +156,6 @@ var specRes1 = &gm.ProtoSpecResult{
 		},
 		PreHookMessages:  []string{"Before Spec Hook Message"},
 		PostHookMessages: []string{"After Spec Hook Message"},
-	},
-}
-
-var specRes2 = &gm.ProtoSpecResult{
-	Failed:        true,
-	Skipped:       false,
-	ExecutionTime: 211316,
-	ProtoSpec: &gm.ProtoSpec{
-		FileName:    "specRes2.spec",
-		SpecHeading: "specRes2",
-		Tags:        []string{"tag1", "tag2", "tag3"},
-	},
-}
-
-var specRes3 = &gm.ProtoSpecResult{
-	Failed:        false,
-	Skipped:       true,
-	ExecutionTime: 211316,
-	ProtoSpec: &gm.ProtoSpec{
-		FileName:    "specRes3.spec",
-		SpecHeading: "specRes3",
-		Tags:        []string{"tag1"},
 	},
 }
 
@@ -197,8 +169,8 @@ var spec1 = &spec{
 	Datatable: &table{
 		Headers: []string{"Word", "Count"},
 		Rows: []*row{
-			&row{Cells: []string{"Gauge", "3"}},
-			&row{Cells: []string{"Mingle", "2"}}}},
+			{Cells: []string{"Gauge", "3"}},
+			{Cells: []string{"Mingle", "2"}}}},
 	CommentsBeforeDatatable: `
 This is an executable specification file. This file follows markdown syntax.
 To execute this specification, run
@@ -236,10 +208,10 @@ var datatableDrivenSpec = &gm.ProtoSpecResult{
 		Items: []*gm.ProtoItem{
 			newTableItem(
 				[]string{"Word", "Count"}, [][]string{
-					[]string{"Gauge", "3"},
-					[]string{"Mingle", "2"},
+					{"Gauge", "3"},
+					{"Mingle", "2"},
 				}),
-			&gm.ProtoItem{
+			{
 				ItemType: gm.ProtoItem_TableDrivenScenario,
 				TableDrivenScenario: &gm.ProtoTableDrivenScenario{
 					Scenario: &gm.ProtoScenario{
@@ -250,7 +222,7 @@ var datatableDrivenSpec = &gm.ProtoSpecResult{
 					TableRowIndex: int32(0),
 				},
 			},
-			&gm.ProtoItem{
+			{
 				ItemType: gm.ProtoItem_TableDrivenScenario,
 				TableDrivenScenario: &gm.ProtoTableDrivenScenario{
 					Scenario: &gm.ProtoScenario{
@@ -294,21 +266,21 @@ var suiteRes1 = &SuiteResult{
 	ExecutionTime: 113163,
 	Timestamp:     "Jun 3, 2016 at 12:29pm",
 	SpecResults: []*spec{
-		&spec{Scenarios: make([]*scenario, 2)},
-		&spec{Scenarios: make([]*scenario, 1)},
-		&spec{Scenarios: make([]*scenario, 2)},
-		&spec{Scenarios: make([]*scenario, 1)},
-		&spec{Scenarios: make([]*scenario, 2)},
-		&spec{Scenarios: make([]*scenario, 1)},
-		&spec{Scenarios: make([]*scenario, 2)},
-		&spec{Scenarios: make([]*scenario, 1)},
-		&spec{Scenarios: make([]*scenario, 2)},
-		&spec{Scenarios: make([]*scenario, 1)},
-		&spec{Scenarios: make([]*scenario, 2)},
-		&spec{Scenarios: make([]*scenario, 1)},
-		&spec{Scenarios: make([]*scenario, 2)},
-		&spec{Scenarios: make([]*scenario, 1)},
-		&spec{Scenarios: make([]*scenario, 2)},
+		{Scenarios: make([]*scenario, 2)},
+		{Scenarios: make([]*scenario, 1)},
+		{Scenarios: make([]*scenario, 2)},
+		{Scenarios: make([]*scenario, 1)},
+		{Scenarios: make([]*scenario, 2)},
+		{Scenarios: make([]*scenario, 1)},
+		{Scenarios: make([]*scenario, 2)},
+		{Scenarios: make([]*scenario, 1)},
+		{Scenarios: make([]*scenario, 2)},
+		{Scenarios: make([]*scenario, 1)},
+		{Scenarios: make([]*scenario, 2)},
+		{Scenarios: make([]*scenario, 1)},
+		{Scenarios: make([]*scenario, 2)},
+		{Scenarios: make([]*scenario, 1)},
+		{Scenarios: make([]*scenario, 2)},
 	},
 	PassedScenarioCount:  7,
 	SkippedScenarioCount: 10,
@@ -385,8 +357,8 @@ var protoStep = &gm.ProtoStep{
 		newTextFragment(" to "),
 		newParamFragment(newDynamicParam("gauge")),
 		newParamFragment(newTableParam([]string{"Word", "Count"}, [][]string{
-			[]string{"Gauge", "3"},
-			[]string{"Mingle", "2"},
+			{"Gauge", "3"},
+			{"Mingle", "2"},
 		})),
 	},
 	StepExecutionResult: &gm.ProtoStepExecutionResult{
@@ -405,8 +377,8 @@ var protoStepWithScreenshots = &gm.ProtoStep{
 		newTextFragment(" to "),
 		newParamFragment(newDynamicParam("gauge")),
 		newParamFragment(newTableParam([]string{"Word", "Count"}, [][]string{
-			[]string{"Gauge", "3"},
-			[]string{"Mingle", "2"},
+			{"Gauge", "3"},
+			{"Mingle", "2"},
 		})),
 	},
 	StepExecutionResult: &gm.ProtoStepExecutionResult{
@@ -425,8 +397,8 @@ var protoConcept = &gm.ProtoConcept{
 		newParamFragment(newDynamicParam("hello")),
 		newTextFragment(" to "),
 		newParamFragment(newTableParam([]string{"Word", "Count"}, [][]string{
-			[]string{"Gauge", "3"},
-			[]string{"Mingle", "2"},
+			{"Gauge", "3"},
+			{"Mingle", "2"},
 		})),
 	}).GetStep(),
 	Steps: []*gm.ProtoItem{
@@ -449,8 +421,8 @@ var protoConcept = &gm.ProtoConcept{
 			newTextFragment(" to "),
 			newParamFragment(newDynamicParam("gauge")),
 			newParamFragment(newTableParam([]string{"Word", "Count"}, [][]string{
-				[]string{"Gauge", "3"},
-				[]string{"Mingle", "2"},
+				{"Gauge", "3"},
+				{"Mingle", "2"},
 			})),
 		}),
 	},
@@ -477,8 +449,8 @@ var protoStepWithSpecialParams = &gm.ProtoStep{
 				ParameterType: gm.Parameter_Special_Table,
 				Name:          "table:myTable.csv",
 				Table: newTableItem([]string{"Word", "Count"}, [][]string{
-					[]string{"Gauge", "3"},
-					[]string{"Mingle", "2"},
+					{"Gauge", "3"},
+					{"Mingle", "2"},
 				}).GetTable(),
 			},
 		},
@@ -673,11 +645,11 @@ func TestToSpecForTableDrivenSpec(t *testing.T) {
 		ExecutionStatus: pass,
 		ExecutionTime:   211316,
 		Scenarios: []*scenario{
-			&scenario{
+			{
 				Heading:       "Scenario 1",
 				ExecutionTime: "00:00:00",
 				Items: []item{
-					item{
+					{
 						Kind: stepKind,
 						Step: &step{
 							Fragments: []*fragment{{FragmentKind: textFragmentKind, Text: "Step1"}},
@@ -692,11 +664,11 @@ func TestToSpecForTableDrivenSpec(t *testing.T) {
 				BeforeScenarioHookFailure: nil,
 				AfterScenarioHookFailure:  nil,
 			},
-			&scenario{
+			{
 				Heading:       "Scenario 1",
 				ExecutionTime: "00:00:00",
 				Items: []item{
-					item{
+					{
 						Kind: stepKind,
 						Step: &step{
 							Fragments: []*fragment{{FragmentKind: textFragmentKind, Text: "Step1"}},
@@ -807,8 +779,8 @@ func TestToSpecWithDataTableHasDatatable(t *testing.T) {
 	want := &table{
 		Headers: []string{"Word", "Count"},
 		Rows: []*row{
-			&row{Cells: []string{"Gauge", "3"}, Result: skip},
-			&row{Cells: []string{"Mingle", "2"}, Result: skip},
+			{Cells: []string{"Gauge", "3"}, Result: skip},
+			{Cells: []string{"Mingle", "2"}, Result: skip},
 		},
 	}
 	got := toSpec(specRes1, "").Datatable
@@ -862,7 +834,7 @@ func TestToSpecWithScenarios(t *testing.T) {
 	got := toSpec(&gm.ProtoSpecResult{
 		ProtoSpec: &gm.ProtoSpec{
 			Items: []*gm.ProtoItem{
-				&gm.ProtoItem{
+				{
 					ItemType: gm.ProtoItem_TableDrivenScenario,
 					TableDrivenScenario: &gm.ProtoTableDrivenScenario{
 						Scenario: &gm.ProtoScenario{
@@ -873,7 +845,7 @@ func TestToSpecWithScenarios(t *testing.T) {
 						TableRowIndex: int32(0),
 					},
 				},
-				&gm.ProtoItem{
+				{
 					ItemType: gm.ProtoItem_TableDrivenScenario,
 					TableDrivenScenario: &gm.ProtoTableDrivenScenario{
 						Scenario: &gm.ProtoScenario{
@@ -905,7 +877,7 @@ func TestToSpecWithScenarioStatusCounts(t *testing.T) {
 	got := toSpec(&gm.ProtoSpecResult{
 		ProtoSpec: &gm.ProtoSpec{
 			Items: []*gm.ProtoItem{
-				&gm.ProtoItem{
+				{
 					ItemType: gm.ProtoItem_TableDrivenScenario,
 					TableDrivenScenario: &gm.ProtoTableDrivenScenario{
 						Scenario: &gm.ProtoScenario{
@@ -916,7 +888,7 @@ func TestToSpecWithScenarioStatusCounts(t *testing.T) {
 						TableRowIndex: int32(0),
 					},
 				},
-				&gm.ProtoItem{
+				{
 					ItemType: gm.ProtoItem_TableDrivenScenario,
 					TableDrivenScenario: &gm.ProtoTableDrivenScenario{
 						Scenario: &gm.ProtoScenario{
@@ -927,7 +899,7 @@ func TestToSpecWithScenarioStatusCounts(t *testing.T) {
 						TableRowIndex: int32(0),
 					},
 				},
-				&gm.ProtoItem{
+				{
 					ItemType: gm.ProtoItem_TableDrivenScenario,
 					TableDrivenScenario: &gm.ProtoTableDrivenScenario{
 						Scenario: &gm.ProtoScenario{
@@ -1011,14 +983,14 @@ func TestToScenario(t *testing.T) {
 		PreHookMessages:  []string{"Before Scenario Message"},
 		PostHookMessages: []string{"After Scenario Message"},
 		Contexts: []item{
-			item{
+			{
 				Kind: stepKind,
 				Step: &step{
 					Fragments: []*fragment{{FragmentKind: textFragmentKind, Text: "Context Step1"}},
 					Result:    &result{Status: pass, ExecutionTime: "00:03:31"},
 				},
 			},
-			item{
+			{
 				Kind: stepKind,
 				Step: &step{
 					Fragments: []*fragment{{FragmentKind: textFragmentKind, Text: "Context Step2"}},
@@ -1027,42 +999,42 @@ func TestToScenario(t *testing.T) {
 			},
 		},
 		Items: []item{
-			item{
+			{
 				Kind:    commentKind,
 				Comment: &comment{Text: "Comment0"},
 			},
-			item{
+			{
 				Kind: stepKind,
 				Step: &step{
 					Fragments: []*fragment{{FragmentKind: textFragmentKind, Text: "Step1"}},
 					Result:    &result{Status: fail, ExecutionTime: "00:03:31"},
 				},
 			},
-			item{
+			{
 				Kind:    commentKind,
 				Comment: &comment{Text: "Comment1\n\nComment2"},
 			},
-			item{
+			{
 				Kind: stepKind,
 				Step: &step{
 					Fragments: []*fragment{{FragmentKind: textFragmentKind, Text: "Step2"}},
 					Result:    &result{Status: pass, ExecutionTime: "00:03:31"},
 				},
 			},
-			item{
+			{
 				Kind:    commentKind,
 				Comment: &comment{Text: "Comment3"},
 			},
 		},
 		Teardowns: []item{
-			item{
+			{
 				Kind: stepKind,
 				Step: &step{
 					Fragments: []*fragment{{FragmentKind: textFragmentKind, Text: "Teardown Step1"}},
 					Result:    &result{Status: pass, ExecutionTime: "00:03:31"},
 				},
 			},
-			item{
+			{
 				Kind: stepKind,
 				Step: &step{
 					Fragments: []*fragment{{FragmentKind: textFragmentKind, Text: "Teardown Step2"}},
@@ -1088,7 +1060,7 @@ func TestToScenarioWithHookFailures(t *testing.T) {
 		ExecutionStatus: fail,
 		Contexts:        []item{},
 		Items: []item{
-			item{
+			{
 				Kind: stepKind,
 				Step: &step{
 					Fragments: []*fragment{{FragmentKind: textFragmentKind, Text: "Step1"}},
@@ -1123,7 +1095,7 @@ func TestToConcept(t *testing.T) {
 			Result: &result{Status: pass, ExecutionTime: "00:03:31"},
 		},
 		Items: []item{
-			item{
+			{
 				Kind: conceptKind,
 				Concept: &concept{
 					ConceptStep: &step{
@@ -1134,7 +1106,7 @@ func TestToConcept(t *testing.T) {
 						Result: &result{Status: pass, ExecutionTime: "00:03:31"},
 					},
 					Items: []item{
-						item{
+						{
 							Kind: stepKind,
 							Step: &step{
 								Fragments: []*fragment{{FragmentKind: textFragmentKind, Text: "Say Hi"}},
@@ -1144,7 +1116,7 @@ func TestToConcept(t *testing.T) {
 					},
 				},
 			},
-			item{
+			{
 				Kind: stepKind,
 				Step: &step{
 					Fragments: []*fragment{
@@ -1224,8 +1196,8 @@ func TestToStepCollectsScreenshot(t *testing.T) {
 
 func TestToCSV(t *testing.T) {
 	table := newTableItem([]string{"Word", "Count"}, [][]string{
-		[]string{"Gauge", "3"},
-		[]string{"Mingle", "2"},
+		{"Gauge", "3"},
+		{"Mingle", "2"},
 	}).GetTable()
 
 	want := "Word,Count\n" +

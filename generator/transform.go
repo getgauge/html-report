@@ -53,9 +53,11 @@ func ToSuiteResult(pRoot string, psr *gm.ProtoSuiteResult) *SuiteResult {
 		suiteResult.PostHookScreenshotFiles = append(suiteResult.PostHookScreenshotFiles, s)
 		screenshotFiles = append(screenshotFiles, s)
 	}
+	//nolint - deprecated, but read here for backward compatibility
 	for _, s := range psr.GetPreHookScreenshots() {
 		suiteResult.PreHookScreenshots = append(suiteResult.PreHookScreenshots, base64.StdEncoding.EncodeToString(s))
 	}
+	//nolint - deprecated, but read here for backward compatibility
 	for _, s := range psr.GetPostHookScreenshots() {
 		suiteResult.PostHookScreenshots = append(suiteResult.PostHookScreenshots, base64.StdEncoding.EncodeToString(s))
 	}
@@ -174,7 +176,7 @@ func toHookFailure(failure *gm.ProtoHookFailure, hookName string) *hookFailure {
 		StackTrace:            failure.GetStackTrace(),
 		TableRowIndex:         failure.TableRowIndex,
 		FailureScreenshotFile: failureScreenshotFile,
-		FailureScreenshot:     base64.StdEncoding.EncodeToString(failure.GetFailureScreenshot()),
+		FailureScreenshot:     base64.StdEncoding.EncodeToString(failure.GetFailureScreenshot()), //nolint - deprecated, but read here for backward compatibility
 	}
 	if failureScreenshotFile != "" {
 		screenshotFiles = append(screenshotFiles, failureScreenshotFile)
@@ -313,9 +315,12 @@ func toSpec(res *gm.ProtoSpecResult, projectRoot string) *spec {
 		screenshotFiles = append(screenshotFiles, s)
 	}
 
+	//nolint - deprecated, but read here for backward compatibility
 	for _, s := range res.GetProtoSpec().GetPreHookScreenshots() {
 		spec.PreHookScreenshots = append(spec.PreHookScreenshots, base64.StdEncoding.EncodeToString(s))
 	}
+
+	//nolint - deprecated, but read here for backward compatibility
 	for _, s := range res.GetProtoSpec().GetPostHookScreenshots() {
 		spec.PostHookScreenshots = append(spec.PostHookScreenshots, base64.StdEncoding.EncodeToString(s))
 	}
@@ -328,9 +333,7 @@ func toSpec(res *gm.ProtoSpecResult, projectRoot string) *spec {
 	sourceTags := res.GetProtoSpec().GetTags()
 	if sourceTags != nil {
 		spec.Tags = make([]string, 0)
-		for _, t := range sourceTags {
-			spec.Tags = append(spec.Tags, t)
-		}
+		spec.Tags = append(spec.Tags, sourceTags...)
 	}
 	if hasParseErrors(res.Errors) {
 		spec.Errors = toErrors(res.Errors)
@@ -465,9 +468,11 @@ func toScenario(scn *gm.ProtoScenario, tableRowIndex int) *scenario {
 		scenario.PostHookScreenshotFiles = append(scenario.PostHookScreenshotFiles, s)
 		screenshotFiles = append(screenshotFiles, s)
 	}
+	//nolint - deprecated, but read here for backward compatibility
 	for _, s := range scn.GetPreHookScreenshots() {
 		scenario.PreHookScreenshots = append(scenario.PreHookScreenshots, base64.StdEncoding.EncodeToString(s))
 	}
+	//nolint - deprecated, but read here for backward compatibility
 	for _, s := range scn.GetPostHookScreenshots() {
 		scenario.PostHookScreenshots = append(scenario.PostHookScreenshots, base64.StdEncoding.EncodeToString(s))
 	}
@@ -488,7 +493,7 @@ func toStep(protoStep *gm.ProtoStep) *step {
 		ExecutionTime:         formatTime(res.GetExecutionTime()),
 		Messages:              res.GetMessage(),
 		FailureScreenshotFile: failureScreenshotFile,
-		FailureScreenshot:     base64.StdEncoding.EncodeToString(res.GetFailureScreenshot()),
+		FailureScreenshot:     base64.StdEncoding.EncodeToString(res.GetFailureScreenshot()), //nolint - deprecated, but read here for backward compatibility
 	}
 	if failureScreenshotFile != "" {
 		screenshotFiles = append(screenshotFiles, failureScreenshotFile)
@@ -498,6 +503,7 @@ func toStep(protoStep *gm.ProtoStep) *step {
 		screenshotFiles = append(screenshotFiles, s)
 	}
 
+	//nolint - deprecated, but read here for backward compatibility
 	for _, s := range res.GetScreenshots() {
 		result.Screenshots = append(result.Screenshots, base64.StdEncoding.EncodeToString(s))
 	}
@@ -520,9 +526,11 @@ func toStep(protoStep *gm.ProtoStep) *step {
 		step.PostHookScreenshotFiles = append(step.PostHookScreenshotFiles, s)
 		screenshotFiles = append(screenshotFiles, s)
 	}
+	//nolint - deprecated, but read here for backward compatibility
 	for _, s := range protoStep.GetPreHookScreenshots() {
 		step.PreHookScreenshots = append(step.PreHookScreenshots, base64.StdEncoding.EncodeToString(s))
 	}
+	//nolint - deprecated, but read here for backward compatibility
 	for _, s := range protoStep.GetPostHookScreenshots() {
 		step.PostHookScreenshots = append(step.PostHookScreenshots, base64.StdEncoding.EncodeToString(s))
 	}

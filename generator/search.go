@@ -96,8 +96,8 @@ func (i *SearchIndex) Write(dir string) error {
 	if err != nil {
 		return err
 	}
-	f.WriteString(fmt.Sprintf("var index = %s;", s))
-	return nil
+	_, err = f.WriteString(fmt.Sprintf("var index = %s;", s))
+	return err
 }
 
 func generateSearchIndex(suiteRes *SuiteResult, reportsDir string) error {

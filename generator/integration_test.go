@@ -92,8 +92,8 @@ var scenario2 = &gm.ProtoScenario{
 		newStepItem(false, false, []*gm.Fragment{
 			newTextFragment("Almost all words have vowels"),
 			newParamFragment(newTableParam([]string{"Word", "Count"}, [][]string{
-				[]string{"Gauge", "3"},
-				[]string{"Mingle", "2"},
+				{"Gauge", "3"},
+				{"Mingle", "2"},
 			})),
 		}),
 	},
@@ -260,22 +260,6 @@ var failedStep = &gm.ProtoItem{
 	},
 }
 
-var nestedFailedStep = &gm.ProtoItem{
-	ItemType: gm.ProtoItem_Step,
-	Step: &gm.ProtoStep{
-		StepExecutionResult: &gm.ProtoStepExecutionResult{
-			ExecutionResult: &gm.ProtoExecutionResult{
-				Failed:                true,
-				ExecutionTime:         211316,
-				ErrorMessage:          "java.lang.RuntimeException",
-				StackTrace:            newStackTrace(),
-				FailureScreenshotFile: newScreenshot(),
-			},
-		},
-		Fragments: []*gm.Fragment{newTextFragment("This is a failing step")},
-	},
-}
-
 var stepNotExecuted = &gm.ProtoItem{
 	ItemType: gm.ProtoItem_Step,
 	Step: &gm.ProtoStep{
@@ -334,8 +318,8 @@ var passSpecRes1 = &gm.ProtoSpecResult{
 			newCommentItem("\tgauge specs"),
 			newCommentItem("\n"),
 			newTableItem([]string{"Word", "Count"}, [][]string{
-				[]string{"Gauge", "3"},
-				[]string{"Mingle", "2"},
+				{"Gauge", "3"},
+				{"Mingle", "2"},
 			}),
 			newCommentItem("\n"),
 			newCommentItem("Comment 1"),
@@ -572,8 +556,8 @@ var failSpecResWithAfterSpecFailure = &gm.ProtoSpecResult{
 			newCommentItem("\tgauge specs"),
 			newCommentItem("\n"),
 			newTableItem([]string{"Word", "Count"}, [][]string{
-				[]string{"Gauge", "3"},
-				[]string{"Mingle", "2"},
+				{"Gauge", "3"},
+				{"Mingle", "2"},
 			}),
 			newCommentItem("\n"),
 			newCommentItem("Comment 1"),
@@ -638,10 +622,10 @@ var failSpecResWithBeforeSpecFailureWithTableDriven = &gm.ProtoSpecResult{
 		Items: []*gm.ProtoItem{
 			newTableItem(
 				[]string{"Word", "Count"}, [][]string{
-					[]string{"Gauge", "3"},
-					[]string{"Mingle", "2"},
+					{"Gauge", "3"},
+					{"Mingle", "2"},
 				}),
-			&gm.ProtoItem{
+			{
 				ItemType: gm.ProtoItem_TableDrivenScenario,
 				TableDrivenScenario: &gm.ProtoTableDrivenScenario{
 					Scenario: &gm.ProtoScenario{
@@ -652,7 +636,7 @@ var failSpecResWithBeforeSpecFailureWithTableDriven = &gm.ProtoSpecResult{
 					TableRowIndex: int32(0),
 				},
 			},
-			&gm.ProtoItem{
+			{
 				ItemType: gm.ProtoItem_TableDrivenScenario,
 				TableDrivenScenario: &gm.ProtoTableDrivenScenario{
 					Scenario: &gm.ProtoScenario{
@@ -685,10 +669,10 @@ var failSpecResWithAfterSpecFailureWithTableDriven = &gm.ProtoSpecResult{
 		Items: []*gm.ProtoItem{
 			newTableItem(
 				[]string{"Word", "Count"}, [][]string{
-					[]string{"Gauge", "3"},
-					[]string{"Mingle", "2"},
+					{"Gauge", "3"},
+					{"Mingle", "2"},
 				}),
-			&gm.ProtoItem{
+			{
 				ItemType: gm.ProtoItem_TableDrivenScenario,
 				TableDrivenScenario: &gm.ProtoTableDrivenScenario{
 					Scenario: &gm.ProtoScenario{
@@ -699,7 +683,7 @@ var failSpecResWithAfterSpecFailureWithTableDriven = &gm.ProtoSpecResult{
 					TableRowIndex: int32(0),
 				},
 			},
-			&gm.ProtoItem{
+			{
 				ItemType: gm.ProtoItem_TableDrivenScenario,
 				TableDrivenScenario: &gm.ProtoTableDrivenScenario{
 					Scenario: &gm.ProtoScenario{

@@ -45,7 +45,11 @@ func main() {
 		env.AddDefaultPropertiesToProject()
 	} else if action == executionAction {
 		pluginsDir, _ = os.Getwd()
-		os.Chdir(env.GetProjectRoot())
+		err := os.Chdir(env.GetProjectRoot())
+		if err != nil {
+			logger.Fatalf("failed to chdir to %s. %s", pluginsDir, err.Error())
+		}
+
 		address, err := net.ResolveTCPAddr("tcp", "127.0.0.1:0")
 		if err != nil {
 			logger.Fatalf("failed to start server.")
@@ -58,6 +62,9 @@ func main() {
 		h := &handler{server: server}
 		gauge_messages.RegisterReporterServer(server, h)
 		logger.Infof("Listening on port:%d", l.Addr().(*net.TCPAddr).Port)
-		server.Serve(l)
+		err = server.Serve(l)
+		if err != nil {
+			logger.Fatalf("failed to start server. %s", err.Error())
+		}
 	}
 }

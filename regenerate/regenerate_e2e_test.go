@@ -30,7 +30,11 @@ func setup() {
 		log.Fatalf("Unable to read last run data from %s. Error: %s", inputFile, err.Error())
 	}
 	by, _ := proto.Marshal(psr)
-	ioutil.WriteFile(filepath.Join("_testdata", "last_run_result"), by, 0644)
+	f := filepath.Join("_testdata", "last_run_result")
+	err = ioutil.WriteFile(f, by, 0644)
+	if err != nil {
+		log.Fatalf("Unable to write file %s. Error: %s", f, err.Error())
+	}
 }
 
 func TestEndToEndHTMLGenerationFromSavedResult(t *testing.T) {

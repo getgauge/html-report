@@ -89,7 +89,10 @@ func TestCreateReportExecutableFileShouldCreateExecFile(t *testing.T) {
 		exTargetFileName = "html-report-target.bat"
 	}
 	exTarget := filepath.Join(os.TempDir(), exTargetFileName)
-	os.Create(exPath)
+	_, err := os.Create(exPath)
+	if err != nil {
+		t.Errorf("could not create %s. %s", exPath, err.Error())
+	}
 	defer os.Remove(exPath)
 	defer os.Remove(exTarget)
 
@@ -103,7 +106,11 @@ func TestCreateReportExecutableFileShouldNotCreateExecFile(t *testing.T) {
 	isSaveExecutionResultDisabled = func() bool { return true }
 	exPath := filepath.Join(os.TempDir(), "html-report")
 	exTarget := filepath.Join(os.TempDir(), "html-report-target")
-	os.Create(exPath)
+	_, err := os.Create(exPath)
+	if err != nil {
+		t.Errorf("could not create %s. %s", exPath, err.Error())
+	}
+
 	defer os.Remove(exPath)
 	defer os.Remove(exTarget)
 	defer os.Unsetenv(env.SaveExecutionResult)
