@@ -33,7 +33,7 @@ func TestCopyingReportTemplates(t *testing.T) {
 
 func verifyReportTemplateFilesAreCopied(dest string, t *testing.T) {
 	reportDir := filepath.Join(GetThemePath(""), "assets")
-	filepath.Walk(reportDir, func(path string, info os.FileInfo, err error) error {
+	err := filepath.Walk(reportDir, func(path string, info os.FileInfo, err error) error {
 		path = strings.Replace(path, reportDir, "", 1)
 		destFilePath := filepath.Join(dest, path)
 		if !helper.FileExists(destFilePath) {
@@ -41,6 +41,9 @@ func verifyReportTemplateFilesAreCopied(dest string, t *testing.T) {
 		}
 		return nil
 	})
+	if err != nil {
+		t.Errorf("unable to walk %s. %s", reportDir, err.Error())
+	}
 }
 
 func randomName() string {

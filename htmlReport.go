@@ -44,10 +44,11 @@ func (T timeStampedNameGenerator) randomName() string {
 
 var pluginsDir string
 
-func createReport(suiteResult *gauge_messages.SuiteExecutionResult, searchIndex bool) (string, error) {
+func createReport(suiteResult *gauge_messages.SuiteExecutionResult, searchIndex bool) {
 	projectRoot, err := common.GetProjectRoot()
 	if err != nil {
-		return "", err
+		logger.Debugf("Failed to generate report. %s", err.Error())
+		return
 	}
 	reportsDir := getReportsDirectory(getNameGen())
 	res := generator.ToSuiteResult(projectRoot, suiteResult.GetSuiteResult())
@@ -56,7 +57,6 @@ func createReport(suiteResult *gauge_messages.SuiteExecutionResult, searchIndex 
 	t := theme.GetThemePath(pluginsDir)
 	generator.GenerateReport(res, reportsDir, t, searchIndex)
 	logger.Debugf("Done generating HTML report using theme from %s", t)
-	return reportsDir, nil
 }
 
 func getNameGen() nameGenerator {

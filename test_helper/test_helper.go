@@ -30,7 +30,11 @@ func AssertEqual(expected, actual, testName string, t *testing.T) {
 			t.Errorf("Unable to dump to tmp file. Raw content:\n%s\n", diffHTML)
 		}
 		fileName := fmt.Sprintf("%s.html", tmpFile.Name())
-		ioutil.WriteFile(fileName, []byte(diffHTML), 0644)
+		err = ioutil.WriteFile(fileName, []byte(diffHTML), 0644)
+		if err != nil {
+			t.Errorf("Unable to write file %s. Error: %s", fileName, err.Error())
+		}
+
 		tmpFile.Close()
 		t.Errorf("%s -  View Diff Output : %s\n", testName, fileName)
 	}
