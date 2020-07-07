@@ -1510,3 +1510,13 @@ svg#pie-chart {
         margin-top: 20px;
     }
 }
+
+.custom-screenshot-message{
+    border: solid;
+    border-width: 1px;
+}
+
+.custom-message{
+    font-style: italic;
+    font-size: medium;
+}
