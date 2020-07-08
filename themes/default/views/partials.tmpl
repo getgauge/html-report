@@ -565,20 +565,27 @@
         </h4>
         <pre class="stacktrace">{{.StackTrace | escapeHTML | encodeNewLine}}</pre>
       </div>
-      {{ if .FailureScreenshotFile}}
-        <div class="screenshot-container">
-          <div class="screenshot">
-            <a href="{{toPath .BasePath (print "images/" .FailureScreenshotFile)}}" rel="lightbox">
-              <img src="{{toPath .BasePath (print "images/" .FailureScreenshotFile)}}" class="screenshot-thumbnail" />
-            </a>
-          </div>
-        </div>
-      {{end}}
-      {{if .FailureScreenshot}}
+      {{ if not .FailureScreenshotFile}}
+        {{if .FailureScreenshot}}
         <div class="screenshot-container">
           <div class="screenshot">
             <a href="data:image/png;base64,{{.FailureScreenshot}}" rel="lightbox">
               <img src="data:image/png;base64,{{.FailureScreenshot}}" class="screenshot-thumbnail" />
+            </a>
+          </div>
+        </div>
+        {{else}}
+          <div class="screenshot-container custom-screenshot-message">
+            <div class="screenshot">
+            <p class="custom-message">To view a screenshot of this failed step, Please set up a <a href="https://docs.gauge.org/writing-specifications/#taking-custom-screenshots">custom screenshot handler.</a></p>
+            </div>
+          </div>
+        {{end}}
+      {{else}}
+         <div class="screenshot-container">
+          <div class="screenshot">
+            <a href="{{toPath .BasePath (print "images/" .FailureScreenshotFile)}}" rel="lightbox">
+              <img src="{{toPath .BasePath (print "images/" .FailureScreenshotFile)}}" class="screenshot-thumbnail" />
             </a>
           </div>
         </div>

@@ -311,7 +311,13 @@ var wStepFailDiv = `<div class="error-container failed">
           <pre>expected:&lt;foo [foo] foo&gt; but was:&lt;foo [bar] foo&gt;</pre>
         </h4>
         <pre class="stacktrace">stacktrace</pre>
-      </div>
+	  </div>
+	  <div class="screenshot-container custom-screenshot-message">
+		<div class="screenshot">
+		 <p class="custom-message">To view a screenshot of this failed step, Please set up a <a href="https://docs.gauge.org/writing-specifications/#taking-custom-screenshots">custom screenshot handler.</a>
+		 </p>
+		</div>
+	  </div>		
   </div>
 </div>`
 
