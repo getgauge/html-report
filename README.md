@@ -114,7 +114,7 @@ The configurable properties are:
 -  Set to ``true`` if the reports **must be overwritten** on each
    execution maintaining only the latest execution report.
 
--  If set to `false` then a _**new report**_ will be generated on each execution in the reports directory in a nested time-stamped directory. By sdefault it is set to `true`.
+-  If set to `false` then a _**new report**_ will be generated on each execution in the reports directory in a nested time-stamped directory. By default it is set to `true`.
 
 
 **GAUGE_HTML_REPORT_THEME_PATH**
@@ -124,6 +124,9 @@ The configurable properties are:
 -  Should be either relative to the project directory or an absolute
    path. By default, `default` theme shipped with gauge is used.
 
+**gauge_minify_reports**
+
+-  Set to ``true`` if the generated HTML files needs to be minified. This helps avoid creating huge reports if the project suite is huge.
 
 Report re-generation
 -------------------
