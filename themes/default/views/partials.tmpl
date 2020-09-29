@@ -575,11 +575,13 @@
           </div>
         </div>
         {{else}}
-          <div class="screenshot-container custom-screenshot-message">
-            <div class="screenshot">
-            <p class="custom-message">To view a screenshot of this failed step, Please set up a <a href="https://docs.gauge.org/writing-specifications/#taking-custom-screenshots">custom screenshot handler.</a></p>
+          {{ if screenshotOfFailureEnabled }}
+            <div class="screenshot-container custom-screenshot-message">
+              <div class="screenshot">
+              <p class="custom-message">To view a screenshot of this failed step, Please set up a <a href="https://docs.gauge.org/writing-specifications/#taking-custom-screenshots">custom screenshot handler.</a></p>
+              </div>
             </div>
-          </div>
+          {{end}}
         {{end}}
       {{else}}
          <div class="screenshot-container">
