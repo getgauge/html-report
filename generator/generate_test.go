@@ -8,6 +8,7 @@ package generator
 import (
 	"bytes"
 	"fmt"
+	"os"
 	"testing"
 
 	"path/filepath"
@@ -523,6 +524,7 @@ var reportGenTests = []reportGenTest{
 }
 
 func TestExecute(t *testing.T) {
+	os.Setenv("screenshot_on_failure", "true")
 	testReportGen(reportGenTests, t)
 }
 
@@ -535,7 +537,7 @@ func testReportGen(reportGenTests []reportGenTest, t *testing.T) {
 		want := helper.RemoveNewline(test.output)
 
 		if got != want {
-			t.Errorf("%s:\nwant:\n%q\ngot:\n%q\n", test.name, want, got)
+			t.Errorf("%s:\nwant:\n% q\ngot:\n%q\n", test.name, want, got)
 		}
 		buf.Reset()
 	}
