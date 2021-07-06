@@ -193,7 +193,7 @@ func runProcess(command string, arg ...string) {
 func executeCommand(command string, arg ...string) (string, error) {
 	cmd := exec.Command(command, arg...)
 	bytes, err := cmd.Output()
-	return strings.TrimSpace(fmt.Sprintf("%s", bytes)), err
+	return strings.TrimSpace(string(bytes)), err
 }
 
 func compileGoPackage(packageName string) {
