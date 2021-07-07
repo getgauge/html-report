@@ -30,6 +30,7 @@ const (
 	goOS              = "GOOS"
 	x86               = "386"
 	x86_64            = "amd64"
+	ARM64             = "arm64"
 	DARWIN            = "darwin"
 	LINUX             = "linux"
 	WINDOWS           = "windows"
@@ -277,6 +278,7 @@ var (
 		{GOARCH: x86_64, goOS: DARWIN, CGO_ENABLED: "0"},
 		{GOARCH: x86, goOS: LINUX, CGO_ENABLED: "0"},
 		{GOARCH: x86_64, goOS: LINUX, CGO_ENABLED: "0"},
+		{GOARCH: ARM64, goOS: LINUX, CGO_ENABLED: "0"},
 		{GOARCH: x86, goOS: WINDOWS, CGO_ENABLED: "0"},
 		{GOARCH: x86_64, goOS: WINDOWS, CGO_ENABLED: "0"},
 	}
@@ -339,6 +341,8 @@ func getArch() string {
 	arch := getGOARCH()
 	if arch == x86 {
 		return "x86"
+	} else if arch == ARM64 {
+		return "arm64"
 	}
 	return "x86_64"
 }
