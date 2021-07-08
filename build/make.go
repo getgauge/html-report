@@ -26,7 +26,7 @@ const (
 const (
 	dotGauge          = ".gauge"
 	plugins           = "plugins"
-	GOARCH            = "GOARCH"
+	goARCH            = "GOARCH"
 	goOS              = "GOOS"
 	x86               = "386"
 	x86_64            = "amd64"
@@ -69,8 +69,8 @@ func createPluginDistro(forAllPlatforms bool) {
 	if forAllPlatforms {
 		for _, platformEnv := range platformEnvs {
 			setEnv(platformEnv)
-			*binDir = filepath.Join(bin, fmt.Sprintf("%s_%s", platformEnv[goOS], platformEnv[GOARCH]))
-			fmt.Printf("Creating distro for platform => OS:%s ARCH:%s \n", platformEnv[goOS], platformEnv[GOARCH])
+			*binDir = filepath.Join(bin, fmt.Sprintf("%s_%s", platformEnv[goOS], platformEnv[goARCH]))
+			fmt.Printf("Creating distro for platform => OS:%s ARCH:%s \n", platformEnv[goOS], platformEnv[goARCH])
 			createDistro()
 		}
 	} else {
@@ -274,13 +274,13 @@ var binDir = flag.String("bin-dir", "", "Specifies OS_PLATFORM specific binaries
 
 var (
 	platformEnvs = []map[string]string{
-		{GOARCH: x86, goOS: DARWIN, CGO_ENABLED: "0"},
-		{GOARCH: x86_64, goOS: DARWIN, CGO_ENABLED: "0"},
-		{GOARCH: x86, goOS: LINUX, CGO_ENABLED: "0"},
-		{GOARCH: x86_64, goOS: LINUX, CGO_ENABLED: "0"},
-		{GOARCH: ARM64, goOS: LINUX, CGO_ENABLED: "0"},
-		{GOARCH: x86, goOS: WINDOWS, CGO_ENABLED: "0"},
-		{GOARCH: x86_64, goOS: WINDOWS, CGO_ENABLED: "0"},
+		{goARCH: ARM64, goOS: DARWIN, CGO_ENABLED: "0"},
+		{goARCH: x86_64, goOS: DARWIN, CGO_ENABLED: "0"},
+		{goARCH: x86, goOS: LINUX, CGO_ENABLED: "0"},
+		{goARCH: x86_64, goOS: LINUX, CGO_ENABLED: "0"},
+		{goARCH: ARM64, goOS: LINUX, CGO_ENABLED: "0"},
+		{goARCH: x86, goOS: WINDOWS, CGO_ENABLED: "0"},
+		{goARCH: x86_64, goOS: WINDOWS, CGO_ENABLED: "0"},
 	}
 )
 
@@ -301,7 +301,7 @@ func getPluginProperties(jsonPropertiesFile string) (map[string]interface{}, err
 func compileAcrossPlatforms() {
 	for _, platformEnv := range platformEnvs {
 		setEnv(platformEnv)
-		fmt.Printf("Compiling for platform => OS:%s ARCH:%s \n", platformEnv[goOS], platformEnv[GOARCH])
+		fmt.Printf("Compiling for platform => OS:%s ARCH:%s \n", platformEnv[goOS], platformEnv[goARCH])
 		compileGoPackage(htmlReport)
 	}
 }
@@ -348,7 +348,7 @@ func getArch() string {
 }
 
 func getGOARCH() string {
-	goArch := os.Getenv(GOARCH)
+	goArch := os.Getenv(goARCH)
 	if goArch == "" {
 		return runtime.GOARCH
 
