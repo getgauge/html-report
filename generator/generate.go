@@ -591,10 +591,10 @@ func copyScreenshotFiles(reportsDir string) {
 		if err == nil {
 			err = ioutil.WriteFile(dstfp, bytes, os.ModePerm)
 			if err != nil {
-				logger.Warnf("Failed to write screenhsot %s", err.Error())
+				logger.Warnf("Failed to write screenshot %s", err.Error())
 			}
 		} else {
-			logger.Warnf("Failed to read screenhsot %s", err.Error())
+			logger.Warnf("Failed to read screenshot %s", err.Error())
 		}
 	}
 
