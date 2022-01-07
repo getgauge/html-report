@@ -28,7 +28,7 @@ const (
 	setupAction     = "setup"
 	executionAction = "execution"
 	pluginActionEnv = "html-report_action"
-	timeFormat      = "2006-01-02 15.04.05"
+	timeFormat      = "2006-01-02_15.04.05"
 )
 
 type nameGenerator interface {
