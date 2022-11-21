@@ -26,6 +26,7 @@ const (
 	SaveExecutionResult         = "save_execution_result"
 	pluginKillTimeout           = "plugin_kill_timeout"
 	gaugeMinifyReports          = "gauge_minify_reports"
+	gaugeMaxMessageSize         = "gauge_max_message_size"
 )
 
 func GetCurrentExecutableDir() (string, string) {
@@ -98,6 +99,15 @@ func ShouldMinifyReports() bool {
 func isEnvSet(envName string) bool {
 	envValue := os.Getenv(envName)
 	return strings.ToLower(envValue) == "true"
+}
+
+func GetMaxMessageSize() int {
+	m := os.Getenv(gaugeMaxMessageSize)
+	r, err := strconv.Atoi(m)
+	if err != nil {
+		return 1024
+	}
+	return r
 }
 
 // PluginKillTimeout returns the plugin_kill_timeout in seconds
