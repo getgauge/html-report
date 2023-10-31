@@ -133,15 +133,16 @@ Report re-generation
 
 If report generation fails due to some reason, we don't have to re-run the tests again.
 
-Gauge now generates a last_run_result file in the `.gauge` folder under the Project Root. There is also a symlink to the html-report executable in the same location.
+Gauge now generates a last_run_result file in the `.gauge` folder under the Project Root. There is also a symlink to the html-report executable available in <gauge_reports_dir>/html-report.
 
 **To regenerate the report**
 
 - Navigate to the reports directory
-- run ./html-report --input=last_run_result --output="/some/path"
+- move the `html-report` file to `.gauge` directory
+- Navigate to the `.gauge` directory
+- run `./html-report --input=last_run_result --output="/some/path"`
 
-**Note:** The output directory is created. Take care not to overwrite an existing directory
-
+**Note:** The output directory is created. Take care not to overwrite an existing directory. The `html-report` executable and `last_run_result` will be generated only if the property `save_execution_result` is set to `true`.
 While regenerating a report, the default theme is used. A custom can be used if ``--theme`` flag is specified with the path to the custom theme.
 
 
