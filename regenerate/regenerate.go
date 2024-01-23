@@ -15,7 +15,7 @@ import (
 	"github.com/getgauge/html-report/env"
 	"github.com/getgauge/html-report/generator"
 	"github.com/getgauge/html-report/theme"
-	"github.com/golang/protobuf/proto"
+	"google.golang.org/protobuf/proto"
 )
 
 // Report generates html report from saved result.
