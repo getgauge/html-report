@@ -13,7 +13,7 @@ import (
 	"sync"
 	"testing"
 
-	gm "github.com/getgauge/html-report/gauge_messages"
+	gm "github.com/getgauge/gauge-proto/go/gauge_messages"
 	helper "github.com/getgauge/html-report/test_helper"
 )
 

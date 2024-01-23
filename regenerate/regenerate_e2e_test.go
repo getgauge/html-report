@@ -8,9 +8,9 @@ import (
 	"path/filepath"
 	"testing"
 
-	"github.com/getgauge/html-report/gauge_messages"
+	"github.com/getgauge/gauge-proto/go/gauge_messages"
 	helper "github.com/getgauge/html-report/test_helper"
-	"github.com/golang/protobuf/proto"
+	"google.golang.org/protobuf/proto"
 )
 
 var templateBasePath, _ = filepath.Abs(filepath.Join("..", "themes", "default"))

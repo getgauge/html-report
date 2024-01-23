@@ -6,26 +6,41 @@
 package main
 
 import (
+	"flag"
+	"fmt"
 	"net"
 	"os"
 
 	"github.com/getgauge/common"
+	"github.com/getgauge/gauge-proto/go/gauge_messages"
 	"github.com/getgauge/html-report/env"
-	"github.com/getgauge/html-report/gauge_messages"
 	"github.com/getgauge/html-report/logger"
 	"github.com/getgauge/html-report/regenerate"
-	flag "github.com/getgauge/mflag"
 	"google.golang.org/grpc"
 )
 
-var inputFile = flag.String([]string{"-input", "i"}, "", "Source file to generate report from. This should be generated in <PROJECTROOT>/.gauge folder.")
-var outDir = flag.String([]string{"-output", "o"}, "", "Output location for generating report. Will create directory if it doesn't exist.")
-var themePath = flag.String([]string{"-theme", "t"}, "", "Theme to use for generating html report. 'default' theme will be used if not specified.")
+const usage = `Usage of using_flag:
+  -i, --input Source file to generate report from. This should be generated in <PROJECTROOT>/.gauge folder.
+  -o, --output Output location for generating report. Will create directory if it doesn't exist.
+  -t, --theme Theme to use for generating html report. 'default' theme will be used if not specified.
+  -h, --help prints help information 
+`
 
 func main() {
+	var inputFile string
+	flag.StringVar(&inputFile, "input", "", "Source file to generate report from. This should be generated in <PROJECTROOT>/.gauge folder.")
+	flag.StringVar(&inputFile, "i", "", "Source file to generate report from. This should be generated in <PROJECTROOT>/.gauge folder.")
+	var outDir string
+	flag.StringVar(&outDir, "output", "", "Output location for generating report. Will create directory if it doesn't exist.")
+	flag.StringVar(&outDir, "o", "", "Output location for generating report. Will create directory if it doesn't exist.")
+	var themePath string
+	flag.StringVar(&themePath, "theme", "", "Theme to use for generating html report. 'default' theme will be used if not specified.")
+	flag.StringVar(&themePath, "t", "", "Theme to use for generating html report. 'default' theme will be used if not specified.")
+
+	flag.Usage = func() { fmt.Print(usage) }
 	flag.Parse()
-	if *inputFile != "" {
-		if *outDir == "" {
+	if inputFile != "" {
+		if outDir == "" {
 			flag.PrintDefaults()
 			os.Exit(1)
 		}
@@ -33,10 +48,10 @@ func main() {
 		if err != nil {
 			logger.Fatalf("%s", err.Error())
 		}
-		if !common.FileExists(*inputFile) {
-			logger.Fatalf("Input file does not exist: %s", *inputFile)
+		if !common.FileExists(inputFile) {
+			logger.Fatalf("Input file does not exist: %s", inputFile)
 		}
-		regenerate.Report(*inputFile, *outDir, *themePath, projectRoot)
+		regenerate.Report(inputFile, outDir, themePath, projectRoot)
 		return
 	}
 

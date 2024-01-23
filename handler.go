@@ -10,12 +10,23 @@ import (
 	"context"
 	"os"
 
-	"github.com/getgauge/html-report/gauge_messages"
+	"github.com/getgauge/gauge-proto/go/gauge_messages"
 	"google.golang.org/grpc"
 )
 
 type handler struct {
+	gauge_messages.UnimplementedReporterServer
 	server *grpc.Server
+}
+
+// NotifyConceptExecutionEnding implements gauge_messages.ReporterServer.
+func (*handler) NotifyConceptExecutionEnding(context.Context, *gauge_messages.ConceptExecutionEndingRequest) (*gauge_messages.Empty, error) {
+	return &gauge_messages.Empty{}, nil
+}
+
+// NotifyConceptExecutionStarting implements gauge_messages.ReporterServer.
+func (*handler) NotifyConceptExecutionStarting(context.Context, *gauge_messages.ConceptExecutionStartingRequest) (*gauge_messages.Empty, error) {
+	return &gauge_messages.Empty{}, nil
 }
 
 func (h *handler) NotifyExecutionStarting(c context.Context, m *gauge_messages.ExecutionStartingRequest) (*gauge_messages.Empty, error) {
