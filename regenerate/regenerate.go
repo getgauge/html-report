@@ -6,12 +6,13 @@
 package regenerate
 
 import (
-	"github.com/getgauge/html-report/logger"
 	"io/ioutil"
 	"path/filepath"
 
+	"github.com/getgauge/html-report/logger"
+
+	"github.com/getgauge/gauge-proto/go/gauge_messages"
 	"github.com/getgauge/html-report/env"
-	"github.com/getgauge/html-report/gauge_messages"
 	"github.com/getgauge/html-report/generator"
 	"github.com/getgauge/html-report/theme"
 	"github.com/golang/protobuf/proto"

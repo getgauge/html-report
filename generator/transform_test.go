@@ -11,7 +11,7 @@ import (
 	"reflect"
 	"testing"
 
-	gm "github.com/getgauge/html-report/gauge_messages"
+	gm "github.com/getgauge/gauge-proto/go/gauge_messages"
 	"github.com/kylelemons/godebug/pretty"
 )
 

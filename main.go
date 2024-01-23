@@ -10,8 +10,8 @@ import (
 	"os"
 
 	"github.com/getgauge/common"
+	"github.com/getgauge/gauge-proto/go/gauge_messages"
 	"github.com/getgauge/html-report/env"
-	"github.com/getgauge/html-report/gauge_messages"
 	"github.com/getgauge/html-report/logger"
 	"github.com/getgauge/html-report/regenerate"
 	flag "github.com/getgauge/mflag"

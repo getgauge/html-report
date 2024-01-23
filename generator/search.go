@@ -11,7 +11,7 @@ import (
 	"os"
 	"path/filepath"
 
-	"github.com/getgauge/html-report/gauge_messages"
+	"github.com/getgauge/gauge-proto/go/gauge_messages"
 
 	"github.com/getgauge/html-report/env"
 )
