@@ -2,8 +2,6 @@ module github.com/getgauge/html-report
 
 go 1.21
 
-toolchain go1.21.6
-
 require (
 	github.com/documize/html-diff v0.0.0-20160503140253-f61c192c7796
 	github.com/getgauge/common v0.0.0-20190514095629-619e107433ce
