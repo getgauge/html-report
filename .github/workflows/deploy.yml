@@ -47,7 +47,7 @@ jobs:
           release_description=$(ruby -e "$(curl -sSfL https://github.com/getgauge/gauge/raw/master/build/create_release_text.rb)" getgauge html-report)
           echo "$release_description" >> desc.txt
           echo "Creating new draft for release v$version"
-          gh release create "v$version" -F ./desc.txt $artifacts/**
+          gh release create "v$version" -F ./desc.txt $artifacts
 
       - name: Update metadata in gauge-repository
         run: |
