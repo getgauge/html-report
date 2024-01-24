@@ -8,7 +8,6 @@ package testHelper
 import (
 	"fmt"
 	"html"
-	"io/ioutil"
 	"os"
 	"regexp"
 	"testing"
@@ -25,12 +24,12 @@ func RemoveNewline(s string) string {
 func AssertEqual(expected, actual, testName string, t *testing.T) {
 	if expected != actual {
 		diffHTML := compare(expected, actual)
-		tmpFile, err := ioutil.TempFile("", "")
+		tmpFile, err := os.CreateTemp("", "")
 		if err != nil {
 			t.Errorf("Unable to dump to tmp file. Raw content:\n%s\n", diffHTML)
 		}
 		fileName := fmt.Sprintf("%s.html", tmpFile.Name())
-		err = ioutil.WriteFile(fileName, []byte(diffHTML), 0644)
+		err = os.WriteFile(fileName, []byte(diffHTML), 0644)
 		if err != nil {
 			t.Errorf("Unable to write file %s. Error: %s", fileName, err.Error())
 		}
