@@ -9,7 +9,6 @@ import (
 	"bytes"
 	"fmt"
 	"io"
-	"io/ioutil"
 	"os"
 	"path/filepath"
 	"runtime"
@@ -273,7 +272,7 @@ func minifyHTMLFiles(htmlFilePaths []string, reportsDir string) {
 	tmpDir := os.TempDir()
 	srcToDest := make(map[string]string)
 	for _, htmlFilePath := range htmlFilePaths {
-		htmlBytes, err := ioutil.ReadFile(htmlFilePath)
+		htmlBytes, err := os.ReadFile(htmlFilePath)
 		if err != nil {
 			logger.Warnf("Error while minifying %s", err.Error())
 			return
@@ -283,11 +282,11 @@ func minifyHTMLFiles(htmlFilePaths []string, reportsDir string) {
 			logger.Warnf("Error while minifying %s", err.Error())
 			return
 		}
-		tmpHTMLFile, _ := ioutil.TempFile(tmpDir, "")
+		tmpHTMLFile, _ := os.CreateTemp(tmpDir, "")
 		tmpHTMLFile.Close()
 		tmpHTMLFilePath := tmpHTMLFile.Name()
 
-		err = ioutil.WriteFile(tmpHTMLFilePath, htmlBytes, os.ModePerm)
+		err = os.WriteFile(tmpHTMLFilePath, htmlBytes, os.ModePerm)
 		if err != nil {
 			logger.Warnf("Error while writing minified file %s: %s", tmpHTMLFilePath, err.Error())
 			return
@@ -295,12 +294,12 @@ func minifyHTMLFiles(htmlFilePaths []string, reportsDir string) {
 		srcToDest[tmpHTMLFilePath] = htmlFilePath
 	}
 	for src, dest := range srcToDest {
-		minifiedBytes, err := ioutil.ReadFile(src)
+		minifiedBytes, err := os.ReadFile(src)
 		if err != nil {
 			logger.Warnf("Error while minifying %s", err.Error())
 			return
 		}
-		err = ioutil.WriteFile(dest, minifiedBytes, os.ModePerm)
+		err = os.WriteFile(dest, minifiedBytes, os.ModePerm)
 		if err != nil {
 			logger.Warnf("Error while writing minified file %s: %s", dest, err.Error())
 			return
@@ -373,7 +372,7 @@ func readTemplates(themePath string) {
 		"screenshotOfFailureEnabled": screenshotOfFailureEnabled,
 	}
 
-	f, err := ioutil.ReadFile(filepath.Join(getAbsThemePath(themePath), "views", "partials.tmpl"))
+	f, err := os.ReadFile(filepath.Join(getAbsThemePath(themePath), "views", "partials.tmpl"))
 	if err != nil {
 		logger.Fatalf(err.Error())
 	}
@@ -587,9 +586,9 @@ func copyScreenshotFiles(reportsDir string) {
 	for _, fileName := range screenshotFiles {
 		srcfp := path.Join(src, fileName)
 		dstfp := path.Join(reportsDir, "images", fileName)
-		bytes, err := ioutil.ReadFile(srcfp)
+		bytes, err := os.ReadFile(srcfp)
 		if err == nil {
-			err = ioutil.WriteFile(dstfp, bytes, os.ModePerm)
+			err = os.WriteFile(dstfp, bytes, os.ModePerm)
 			if err != nil {
 				logger.Warnf("Failed to write screenshot %s", err.Error())
 			}

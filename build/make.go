@@ -10,7 +10,6 @@ import (
 	"flag"
 	"fmt"
 	"io"
-	"io/ioutil"
 	"log"
 	"os"
 	"os/exec"
@@ -285,7 +284,7 @@ var (
 )
 
 func getPluginProperties(jsonPropertiesFile string) (map[string]interface{}, error) {
-	pluginPropertiesJson, err := ioutil.ReadFile(jsonPropertiesFile)
+	pluginPropertiesJson, err := os.ReadFile(jsonPropertiesFile)
 	if err != nil {
 		fmt.Printf("Could not read %s: %s\n", filepath.Base(jsonPropertiesFile), err.Error())
 		return nil, err

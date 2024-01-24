@@ -6,7 +6,7 @@
 package regenerate
 
 import (
-	"io/ioutil"
+	"os"
 	"path/filepath"
 
 	"github.com/getgauge/html-report/logger"
@@ -20,7 +20,7 @@ import (
 
 // Report generates html report from saved result.
 func Report(inputFile, reportsDir, themePath, pRoot string) {
-	b, err := ioutil.ReadFile(inputFile)
+	b, err := os.ReadFile(inputFile)
 	if err != nil {
 		logger.Fatal(err.Error())
 	}

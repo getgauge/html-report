@@ -6,7 +6,6 @@
 package main
 
 import (
-	"io/ioutil"
 	"os"
 	"path/filepath"
 	"time"
@@ -111,7 +110,7 @@ func createBatFileToExecuteHTMLReport(exPath, exTarget string) {
 	o := []byte(content)
 	exTarget = strings.TrimSuffix(exTarget, filepath.Ext(exTarget))
 	outF := exTarget + ".bat"
-	err := ioutil.WriteFile(outF, o, common.NewFilePermissions)
+	err := os.WriteFile(outF, o, common.NewFilePermissions)
 	if err != nil {
 		logger.Debugf("[Warning] Failed to write to %s. Reason: %s\n", outF, err.Error())
 		return

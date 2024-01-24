@@ -1,7 +1,6 @@
 package logger
 
 import (
-	"io/ioutil"
 	"os"
 	"path/filepath"
 	"testing"
@@ -15,7 +14,7 @@ func TestDebugShoudWiteLogInJsonFormat(t *testing.T) {
 	defer temp.Close()
 
 	Debug("log debug message")
-	got, _ := ioutil.ReadFile(fname)
+	got, _ := os.ReadFile(fname)
 	want := "{\"logLevel\":\"debug\",\"message\":\"log debug message\"}\n"
 
 	if want != string(got) {
@@ -29,7 +28,7 @@ func TestDebugfShoudWiteLogInJsonFormat(t *testing.T) {
 	defer temp.Close()
 
 	Debugf("log %s debug message", "formatted")
-	got, _ := ioutil.ReadFile(fname)
+	got, _ := os.ReadFile(fname)
 	want := "{\"logLevel\":\"debug\",\"message\":\"log formatted debug message\"}\n"
 
 	if want != string(got) {
@@ -43,7 +42,7 @@ func TestInfoShoudWiteLogInJsonFormat(t *testing.T) {
 	defer temp.Close()
 
 	Info("log info message")
-	got, _ := ioutil.ReadFile(fname)
+	got, _ := os.ReadFile(fname)
 	want := "{\"logLevel\":\"info\",\"message\":\"log info message\"}\n"
 
 	if want != string(got) {
@@ -57,7 +56,7 @@ func TestInfofShoudWiteLogInJsonFormat(t *testing.T) {
 	defer temp.Close()
 
 	Infof("log %s info message", "formatted")
-	got, _ := ioutil.ReadFile(fname)
+	got, _ := os.ReadFile(fname)
 	want := "{\"logLevel\":\"info\",\"message\":\"log formatted info message\"}\n"
 
 	if want != string(got) {
@@ -71,7 +70,7 @@ func TestWarnfShoudWiteLogInJsonFormat(t *testing.T) {
 	defer temp.Close()
 
 	Warnf("log %s warning message", "formatted")
-	got, _ := ioutil.ReadFile(fname)
+	got, _ := os.ReadFile(fname)
 	want := "{\"logLevel\":\"warning\",\"message\":\"log formatted warning message\"}\n"
 
 	if want != string(got) {

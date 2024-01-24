@@ -6,7 +6,6 @@
 package generator
 
 import (
-	"io/ioutil"
 	"os"
 	"path/filepath"
 	"testing"
@@ -27,11 +26,11 @@ func TestEndToEndHTMLGenerationWhenBeforeSuiteFails(t *testing.T) {
 	if err != nil {
 		t.Errorf("Expected error to be nil. Got: %s", err.Error())
 	}
-	gotContent, err := ioutil.ReadFile(filepath.Join(reportDir, "index.html"))
+	gotContent, err := os.ReadFile(filepath.Join(reportDir, "index.html"))
 	if err != nil {
 		t.Errorf("Error reading generated HTML file: %s", err.Error())
 	}
-	wantContent, err := ioutil.ReadFile(filepath.Join("_testdata", "expectedE2E", "before_suite_fail.html"))
+	wantContent, err := os.ReadFile(filepath.Join("_testdata", "expectedE2E", "before_suite_fail.html"))
 	if err != nil {
 		t.Errorf("Error reading expected HTML file: %s", err.Error())
 	}
@@ -157,11 +156,11 @@ func cleanUp(t *testing.T, reportDir string) {
 
 func verifyExpectedFiles(t *testing.T, suiteRes, reportDir string, expectedFiles []string) {
 	for _, expectedFile := range expectedFiles {
-		gotContent, err := ioutil.ReadFile(filepath.Join(reportDir, expectedFile))
+		gotContent, err := os.ReadFile(filepath.Join(reportDir, expectedFile))
 		if err != nil {
 			t.Errorf("Error reading generated HTML file: %s", err.Error())
 		}
-		wantContent, err := ioutil.ReadFile(filepath.Join("_testdata", "expectedE2E", suiteRes, expectedFile))
+		wantContent, err := os.ReadFile(filepath.Join("_testdata", "expectedE2E", suiteRes, expectedFile))
 		if err != nil {
 			t.Errorf("Error reading expected HTML file: %s", err.Error())
 		}

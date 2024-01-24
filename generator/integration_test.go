@@ -7,7 +7,7 @@ package generator
 
 import (
 	"bytes"
-	"io/ioutil"
+	"os"
 	"path/filepath"
 	"strings"
 	"sync"
@@ -862,7 +862,7 @@ func (b myBuf) String() string {
 
 func TestHTMLGeneration(t *testing.T) {
 	for _, test := range HTMLGenerationTests {
-		content, err := ioutil.ReadFile(filepath.Join("_testdata", "integration", test.expectedFile))
+		content, err := os.ReadFile(filepath.Join("_testdata", "integration", test.expectedFile))
 		if err != nil {
 			t.Errorf("Error reading expected HTML file: %s", err.Error())
 		}
@@ -884,7 +884,7 @@ func TestHTMLGeneration(t *testing.T) {
 }
 
 func TestIndexPageGeneration(t *testing.T) {
-	content, err := ioutil.ReadFile(filepath.Join("_testdata", "integration", "pass_index.html"))
+	content, err := os.ReadFile(filepath.Join("_testdata", "integration", "pass_index.html"))
 	if err != nil {
 		t.Errorf("Error reading expected HTML file: %s", err.Error())
 	}

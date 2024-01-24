@@ -2,7 +2,6 @@ package regenerate
 
 import (
 	"encoding/json"
-	"io/ioutil"
 	"log"
 	"os"
 	"path/filepath"
@@ -20,7 +19,7 @@ var templateBasePath, _ = filepath.Abs(filepath.Join("..", "themes", "default"))
 // but the actual regenerate requires serialized proto data, hence this conversion.
 func setup() {
 	inputFile := filepath.Join("_testdata", "last_run_result.json")
-	b, err := ioutil.ReadFile(inputFile)
+	b, err := os.ReadFile(inputFile)
 	if err != nil {
 		log.Fatal(err.Error())
 	}
@@ -31,7 +30,7 @@ func setup() {
 	}
 	by, _ := proto.Marshal(psr)
 	f := filepath.Join("_testdata", "last_run_result")
-	err = ioutil.WriteFile(f, by, 0644)
+	err = os.WriteFile(f, by, 0644)
 	if err != nil {
 		log.Fatalf("Unable to write file %s. Error: %s", f, err.Error())
 	}
@@ -45,11 +44,11 @@ func TestEndToEndHTMLGenerationFromSavedResult(t *testing.T) {
 
 	Report(inputFile, reportDir, templateBasePath, "/tmp/foo/")
 	for _, expectedFile := range expectedFiles {
-		gotContent, err := ioutil.ReadFile(filepath.Join(reportDir, expectedFile))
+		gotContent, err := os.ReadFile(filepath.Join(reportDir, expectedFile))
 		if err != nil {
 			t.Errorf("Error reading generated HTML file: %s", err.Error())
 		}
-		wantContent, err := ioutil.ReadFile(filepath.Join("_testdata", "expectedE2E", "simpleSuiteRes", expectedFile))
+		wantContent, err := os.ReadFile(filepath.Join("_testdata", "expectedE2E", "simpleSuiteRes", expectedFile))
 		if err != nil {
 			t.Errorf("Error reading expected HTML file: %s", err.Error())
 		}
