@@ -273,13 +273,12 @@ var binDir = flag.String("bin-dir", "", "Specifies OS_PLATFORM specific binaries
 
 var (
 	platformEnvs = []map[string]string{
-		{goARCH: ARM64, goOS: DARWIN, CGO_ENABLED: "0"},
 		{goARCH: x86_64, goOS: DARWIN, CGO_ENABLED: "0"},
-		{goARCH: x86, goOS: LINUX, CGO_ENABLED: "0"},
+		{goARCH: ARM64, goOS: DARWIN, CGO_ENABLED: "0"},
 		{goARCH: x86_64, goOS: LINUX, CGO_ENABLED: "0"},
 		{goARCH: ARM64, goOS: LINUX, CGO_ENABLED: "0"},
-		{goARCH: x86, goOS: WINDOWS, CGO_ENABLED: "0"},
 		{goARCH: x86_64, goOS: WINDOWS, CGO_ENABLED: "0"},
+		{goARCH: ARM64, goOS: WINDOWS, CGO_ENABLED: "0"},
 	}
 )
 
