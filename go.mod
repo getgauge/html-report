@@ -10,14 +10,13 @@ require (
 	github.com/microcosm-cc/bluemonday v1.0.26
 	github.com/russross/blackfriday v1.6.0
 	github.com/tdewolff/minify/v2 v2.20.19
-	google.golang.org/grpc v1.62.1
+	google.golang.org/grpc v1.63.0
 	google.golang.org/protobuf v1.33.0
 )
 
 require (
 	github.com/aymerick/douceur v0.2.0 // indirect
 	github.com/dmotylev/goproperties v0.0.0-20140630191356-7cbffbaada47 // indirect
-	github.com/golang/protobuf v1.5.4 // indirect
 	github.com/gorilla/css v1.0.1 // indirect
 	github.com/mb0/diff v0.0.0-20131118162322-d8d9a906c24d // indirect
 	github.com/tdewolff/parse/v2 v2.7.12 // indirect
