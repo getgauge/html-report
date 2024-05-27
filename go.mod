@@ -9,7 +9,7 @@ require (
 	github.com/kylelemons/godebug v1.1.0
 	github.com/microcosm-cc/bluemonday v1.0.26
 	github.com/russross/blackfriday v1.6.0
-	github.com/tdewolff/minify/v2 v2.20.24
+	github.com/tdewolff/minify/v2 v2.20.32
 	google.golang.org/grpc v1.64.0
 	google.golang.org/protobuf v1.34.1
 )
