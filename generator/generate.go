@@ -374,7 +374,7 @@ func readTemplates(themePath string) {
 
 	f, err := os.ReadFile(filepath.Join(getAbsThemePath(themePath), "views", "partials.tmpl"))
 	if err != nil {
-		logger.Fatalf(err.Error())
+		logger.Fatal(err.Error())
 	}
 	parsedTemplates, err = template.New("Reports").Funcs(funcs).Parse(string(f))
 	if err != nil {
