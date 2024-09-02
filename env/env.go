@@ -32,7 +32,7 @@ const (
 func GetCurrentExecutableDir() (string, string) {
 	ex, err := os.Executable()
 	if err != nil {
-		logger.Fatalf(err.Error())
+		logger.Fatal(err.Error())
 	}
 	target, err := filepath.EvalSymlinks(ex)
 	if err != nil {
