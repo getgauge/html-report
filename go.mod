@@ -19,7 +19,7 @@ require (
 	github.com/dmotylev/goproperties v0.0.0-20140630191356-7cbffbaada47 // indirect
 	github.com/gorilla/css v1.0.1 // indirect
 	github.com/mb0/diff v0.0.0-20131118162322-d8d9a906c24d // indirect
-	github.com/tdewolff/parse/v2 v2.7.16 // indirect
+	github.com/tdewolff/parse/v2 v2.7.15 // indirect
 	golang.org/x/net v0.29.0 // indirect
 	golang.org/x/sys v0.25.0 // indirect
 	golang.org/x/text v0.18.0 // indirect
