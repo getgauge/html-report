@@ -10,7 +10,7 @@ require (
 	github.com/microcosm-cc/bluemonday v1.0.27
 	github.com/russross/blackfriday v1.6.0
 	github.com/tdewolff/minify/v2 v2.21.1
-	google.golang.org/grpc v1.67.1
+	google.golang.org/grpc v1.68.0
 	google.golang.org/protobuf v1.35.1
 )
 
