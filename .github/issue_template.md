@@ -1,7 +1,7 @@
 <!--
 Thanks a lot for reporting issues to Html Report plugin! This is the issue tracker for reporting bugs or for requesting new feature and enhancements.
 
-If you have any support related questions, please refer our documentation at http://getgauge.io/documentation/user/current/plugins/html_report_plugin.html. You can even ask questions on Google groups (http://groups.google.com/forum/#!forum/getgauge) or on gitter (https://gitter.im/getgauge/chat).
+If you have any support related questions, please refer our documentation at https://github.com/getgauge/html-report?tab=readme-ov-file#configuration. You can even ask questions on Google groups (http://groups.google.com/forum/#!forum/getgauge) or on gitter (https://gitter.im/getgauge/chat).
 
 This is the issue tracker for Html report.
 
