@@ -34,7 +34,7 @@ func AssertEqual(expected, actual, testName string, t *testing.T) {
 			t.Errorf("Unable to write file %s. Error: %s", fileName, err.Error())
 		}
 
-		tmpFile.Close()
+		_ = tmpFile.Close()
 		t.Errorf("%s -  View Diff Output : %s\n", testName, fileName)
 	}
 }
@@ -57,4 +57,22 @@ func FileExists(path string) bool {
 		return true
 	}
 	return !os.IsNotExist(err)
+}
+
+func SetEnvOrFail(t *testing.T, key, value string) {
+	if err := os.Setenv(key, value); err != nil {
+		t.Logf("Failed to set env %s: %v", key, err)
+	}
+}
+
+func UnsetEnvOrFail(t *testing.T, key string) {
+	if err := os.Unsetenv(key); err != nil {
+		t.Logf("Failed to unset env %s: %v", key, err)
+	}
+}
+
+func RemoveOrFail(t *testing.T, key string) {
+	if err := os.Remove(key); err != nil {
+		t.Logf("Failed to set env %s: %v", key, err)
+	}
 }

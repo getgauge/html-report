@@ -393,9 +393,10 @@ func toErrors(errors []*gm.Error) []buildError {
 	var buildErrors []buildError
 	for _, e := range errors {
 		err := buildError{FileName: e.Filename, LineNumber: int(e.LineNumber), Message: e.Message}
-		if e.Type == gm.Error_PARSE_ERROR {
+		switch e.Type {
+		case gm.Error_PARSE_ERROR:
 			err.ErrorType = parseErrorType
-		} else if e.Type == gm.Error_VALIDATION_ERROR {
+		case gm.Error_VALIDATION_ERROR:
 			err.ErrorType = validationErrorType
 		}
 		buildErrors = append(buildErrors, err)

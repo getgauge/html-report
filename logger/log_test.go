@@ -9,74 +9,40 @@ import (
 var old = os.Stdout
 var fname = filepath.Join(os.TempDir(), "stdout")
 
-func TestDebugShoudWiteLogInJsonFormat(t *testing.T) {
+func runLogTest(t *testing.T, logFunc func(), expected string) {
 	temp := setStdout()
-	defer temp.Close()
+	defer func() {
+		if err := temp.Close(); err != nil {
+			t.Errorf("failed to close temp file: %v", err)
+		}
+		os.Stdout = old
+	}()
 
-	Debug("log debug message")
+	logFunc()
 	got, _ := os.ReadFile(fname)
-	want := "{\"logLevel\":\"debug\",\"message\":\"log debug message\"}\n"
-
-	if want != string(got) {
-		t.Errorf("Expected %s to be => %s", want, got)
+	if expected != string(got) {
+		t.Errorf("Expected %s to be => %s", expected, got)
 	}
-	os.Stdout = old
 }
 
-func TestDebugfShoudWiteLogInJsonFormat(t *testing.T) {
-	temp := setStdout()
-	defer temp.Close()
-
-	Debugf("log %s debug message", "formatted")
-	got, _ := os.ReadFile(fname)
-	want := "{\"logLevel\":\"debug\",\"message\":\"log formatted debug message\"}\n"
-
-	if want != string(got) {
-		t.Errorf("Expected %s to be => %s", want, got)
-	}
-	os.Stdout = old
+func TestDebugShouldWriteLogInJsonFormat(t *testing.T) {
+	runLogTest(t, func() { Debug("log debug message") }, "{\"logLevel\":\"debug\",\"message\":\"log debug message\"}\n")
 }
 
-func TestInfoShoudWiteLogInJsonFormat(t *testing.T) {
-	temp := setStdout()
-	defer temp.Close()
-
-	Info("log info message")
-	got, _ := os.ReadFile(fname)
-	want := "{\"logLevel\":\"info\",\"message\":\"log info message\"}\n"
-
-	if want != string(got) {
-		t.Errorf("Expected %s to be => %s", want, got)
-	}
-	os.Stdout = old
+func TestDebugfShouldWriteLogInJsonFormat(t *testing.T) {
+	runLogTest(t, func() { Debugf("log %s debug message", "formatted") }, "{\"logLevel\":\"debug\",\"message\":\"log formatted debug message\"}\n")
 }
 
-func TestInfofShoudWiteLogInJsonFormat(t *testing.T) {
-	temp := setStdout()
-	defer temp.Close()
-
-	Infof("log %s info message", "formatted")
-	got, _ := os.ReadFile(fname)
-	want := "{\"logLevel\":\"info\",\"message\":\"log formatted info message\"}\n"
-
-	if want != string(got) {
-		t.Errorf("Expected %s to be => %s", want, got)
-	}
-	os.Stdout = old
+func TestInfoShouldWriteLogInJsonFormat(t *testing.T) {
+	runLogTest(t, func() { Info("log info message") }, "{\"logLevel\":\"info\",\"message\":\"log info message\"}\n")
 }
 
-func TestWarnfShoudWiteLogInJsonFormat(t *testing.T) {
-	temp := setStdout()
-	defer temp.Close()
+func TestInfofShouldWriteLogInJsonFormat(t *testing.T) {
+	runLogTest(t, func() { Infof("log %s info message", "formatted") }, "{\"logLevel\":\"info\",\"message\":\"log formatted info message\"}\n")
+}
 
-	Warnf("log %s warning message", "formatted")
-	got, _ := os.ReadFile(fname)
-	want := "{\"logLevel\":\"warning\",\"message\":\"log formatted warning message\"}\n"
-
-	if want != string(got) {
-		t.Errorf("Expected %s to be => %s", want, got)
-	}
-	os.Stdout = old
+func TestWarnfShouldWriteLogInJsonFormat(t *testing.T) {
+	runLogTest(t, func() { Warnf("log %s warning message", "formatted") }, "{\"logLevel\":\"warning\",\"message\":\"log formatted warning message\"}\n")
 }
 
 func setStdout() *os.File {

@@ -55,10 +55,10 @@ func main() {
 		return
 	}
 
-	action := os.Getenv(pluginActionEnv)
-	if action == setupAction {
+	switch action := os.Getenv(pluginActionEnv); action {
+	case setupAction:
 		env.AddDefaultPropertiesToProject()
-	} else if action == executionAction {
+	case executionAction:
 		pluginsDir, _ = os.Getwd()
 		err := os.Chdir(env.GetProjectRoot())
 		if err != nil {

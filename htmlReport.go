@@ -96,7 +96,10 @@ func createReportExecutableFile(exPath, exTarget string) {
 		return
 	}
 	if fileExists(exTarget) {
-		os.Remove(exTarget)
+		if err := os.Remove(exTarget); err != nil {
+			logger.Debugf("[Warning] Unable to remove existing file %s. Reason: %s\n", exTarget, err.Error())
+			return
+		}
 	}
 	if runtime.GOOS == "windows" {
 		createBatFileToExecuteHTMLReport(exPath, exTarget)
@@ -120,10 +123,12 @@ func createBatFileToExecuteHTMLReport(exPath, exTarget string) {
 
 func createSymlinkToHTMLReport(exPath, exTarget string) {
 	if _, err := os.Lstat(exTarget); err == nil {
-		os.Remove(exTarget)
+		if err := os.Remove(exTarget); err != nil {
+			logger.Debugf("[Warning] Unable to remove existing symlink %s\n", exTarget)
+			return
+		}
 	}
-	err := os.Symlink(exPath, exTarget)
-	if err != nil {
+	if err := os.Symlink(exPath, exTarget); err != nil {
 		logger.Debugf("[Warning] Unable to create symlink %s\n", exTarget)
 	}
 	logger.Debugf("Generated symlink %s", exTarget)
