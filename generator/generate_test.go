@@ -8,7 +8,6 @@ package generator
 import (
 	"bytes"
 	"fmt"
-	"os"
 	"testing"
 
 	"path/filepath"
@@ -524,7 +523,7 @@ var reportGenTests = []reportGenTest{
 }
 
 func TestExecute(t *testing.T) {
-	os.Setenv("screenshot_on_failure", "true")
+	helper.SetEnvOrFail(t, "screenshot_on_failure", "true")
 	testReportGen(reportGenTests, t)
 }
 

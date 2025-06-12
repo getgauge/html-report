@@ -19,10 +19,6 @@ import (
 )
 
 const (
-	CGO_ENABLED = "CGO_ENABLED"
-)
-
-const (
 	dotGauge          = ".gauge"
 	plugins           = "plugins"
 	goARCH            = "GOARCH"
@@ -40,6 +36,7 @@ const (
 	deploy            = "deploy"
 	pluginJSONFile    = "plugin.json"
 	themesDir         = "themes"
+	CgoEnabled        = "CGO_ENABLED"
 )
 
 var deployDir = filepath.Join(deploy, htmlReport)
@@ -83,7 +80,9 @@ func createDistro() {
 	distroDir := filepath.Join(deploy, packageName)
 	copyPluginFiles(distroDir)
 	createZipFromUtil(deploy, packageName)
-	os.RemoveAll(distroDir)
+	if err := os.RemoveAll(distroDir); err != nil {
+		panic(fmt.Sprintf("Failed to remove directory %s: %s", distroDir, err.Error()))
+	}
 }
 
 func createZipFromUtil(dir, name string) {
@@ -142,7 +141,9 @@ func mirrorFile(src, dst string) error {
 	if err != nil {
 		return err
 	}
-	defer sf.Close()
+	defer func(sf *os.File) {
+		_ = sf.Close()
+	}(sf)
 
 	n, err := io.Copy(df, sf)
 	if err == nil && n != sfi.Size() {
@@ -172,7 +173,7 @@ func mirrorDir(src, dst string) error {
 		}
 		suffix, err := filepath.Rel(src, path)
 		if err != nil {
-			return fmt.Errorf("Failed to find Rel(%q, %q): %v", src, path, err.Error())
+			return fmt.Errorf("failed to find Rel(%q, %q): %v", src, path, err.Error())
 		}
 		return mirrorFile(path, filepath.Join(dst, suffix))
 	})
@@ -261,7 +262,9 @@ func getPluginVersion() string {
 
 func setEnv(envVariables map[string]string) {
 	for k, v := range envVariables {
-		os.Setenv(k, v)
+		if err := os.Setenv(k, v); err != nil {
+			log.Fatalf("Failed to set environment variable %s: %v", k, err)
+		}
 	}
 }
 
@@ -273,12 +276,12 @@ var binDir = flag.String("bin-dir", "", "Specifies OS_PLATFORM specific binaries
 
 var (
 	platformEnvs = []map[string]string{
-		{goARCH: x86_64, goOS: DARWIN, CGO_ENABLED: "0"},
-		{goARCH: ARM64, goOS: DARWIN, CGO_ENABLED: "0"},
-		{goARCH: x86_64, goOS: LINUX, CGO_ENABLED: "0"},
-		{goARCH: ARM64, goOS: LINUX, CGO_ENABLED: "0"},
-		{goARCH: x86_64, goOS: WINDOWS, CGO_ENABLED: "0"},
-		{goARCH: ARM64, goOS: WINDOWS, CGO_ENABLED: "0"},
+		{goARCH: x86_64, goOS: DARWIN, CgoEnabled: "0"},
+		{goARCH: ARM64, goOS: DARWIN, CgoEnabled: "0"},
+		{goARCH: x86_64, goOS: LINUX, CgoEnabled: "0"},
+		{goARCH: ARM64, goOS: LINUX, CgoEnabled: "0"},
+		{goARCH: x86_64, goOS: WINDOWS, CgoEnabled: "0"},
+		{goARCH: ARM64, goOS: WINDOWS, CgoEnabled: "0"},
 	}
 )
 
@@ -318,13 +321,13 @@ func updatePluginInstallPrefix() {
 		if runtime.GOOS == "windows" {
 			*pluginInstallPrefix = os.Getenv("APPDATA")
 			if *pluginInstallPrefix == "" {
-				panic(fmt.Errorf("Failed to find AppData directory"))
+				panic(fmt.Errorf("failed to find AppData directory"))
 			}
 			*pluginInstallPrefix = filepath.Join(*pluginInstallPrefix, gauge, plugins)
 		} else {
 			userHome := getUserHome()
 			if userHome == "" {
-				panic(fmt.Errorf("Failed to find User Home directory"))
+				panic(fmt.Errorf("failed to find User Home directory"))
 			}
 			*pluginInstallPrefix = filepath.Join(userHome, dotGauge, plugins)
 		}
@@ -336,13 +339,14 @@ func getUserHome() string {
 }
 
 func getArch() string {
-	arch := getGOARCH()
-	if arch == x86 {
+	switch arch := getGOARCH(); arch {
+	case x86:
 		return "x86"
-	} else if arch == ARM64 {
+	case ARM64:
 		return "arm64"
+	default:
+		return "x86_64"
 	}
-	return "x86_64"
 }
 
 func getGOARCH() string {

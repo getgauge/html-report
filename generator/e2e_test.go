@@ -58,7 +58,7 @@ func TestEndToEndHTMLGeneration(t *testing.T) {
 func TestEndToEndMinifiedHTMLGeneration(t *testing.T) {
 	expectedFiles := []string{"index.html", "passing_specification_1.html", "failing_specification_1.html", "skipped_specification.html", "js/search_index.js"}
 	reportDir := filepath.Join("_testdata", "e2e")
-	os.Setenv("gauge_minify_reports", "true")
+	helper.SetEnvOrFail(t, "gauge_minify_reports", "true")
 	r := ToSuiteResult("", suiteRes3)
 	err := GenerateReports(r, reportDir, templateBasePath, true)
 
@@ -67,7 +67,7 @@ func TestEndToEndMinifiedHTMLGeneration(t *testing.T) {
 	}
 
 	verifyExpectedFiles(t, "minifiedSimpleSuiteRes", reportDir, expectedFiles)
-	os.Unsetenv("gauge_minify_reports")
+	helper.UnsetEnvOrFail(t, "gauge_minify_reports")
 	cleanUp(t, reportDir)
 }
 
@@ -121,7 +121,7 @@ func TestEndToEndHTMLGenerationForCustomTheme(t *testing.T) {
 }
 
 func TestEndToEndHTMLGenerationForNestedSpecs(t *testing.T) {
-	os.Setenv(env.UseNestedSpecs, "true")
+	helper.SetEnvOrFail(t, env.UseNestedSpecs, "true")
 	var suiteRes4 = newProtoSuiteRes(false, 0, 0, 100, nil, nil, passSpecRes1, nestedSpecRes)
 	expectedFiles := []string{
 		"index.html",
@@ -149,7 +149,9 @@ func cleanUp(t *testing.T, reportDir string) {
 	}
 	for _, f := range s {
 		if f != filepath.Join(reportDir, ".gitkeep") {
-			os.RemoveAll(f)
+			if err := os.RemoveAll(f); err != nil {
+				t.Errorf("Failed to remove file %s: %v", f, err)
+			}
 		}
 	}
 }

@@ -32,13 +32,13 @@ gauge install html-report
 
 * Installing specific version
 ```
-gauge install html-report --version 4.3.2
+gauge install html-report --version 4.3.3
 ```
 
 #### Offline installation
 * Download the plugin from [Releases](https://github.com/getgauge/html-report/releases)
 ```
-gauge install html-report --file html-report-4.3.2-linux.x86_64.zip
+gauge install html-report --file html-report-4.3.3-linux.x86_64.zip
 ```
 
 #### Build from Source

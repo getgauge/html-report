@@ -91,12 +91,16 @@ func (i *SearchIndex) Write(dir string) error {
 	if err != nil {
 		return err
 	}
-	defer f.Close()
+	defer func() {
+		if err := f.Close(); err != nil {
+			return
+		}
+	}()
 	s, err := json.Marshal(i)
 	if err != nil {
 		return err
 	}
-	_, err = f.WriteString(fmt.Sprintf("var index = %s;", s))
+	_, err = fmt.Fprintf(f, "var index = %s;", s)
 	return err
 }
 

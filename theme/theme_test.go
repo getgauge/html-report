@@ -22,7 +22,11 @@ func init() {
 
 func TestCopyingReportTemplates(t *testing.T) {
 	dirToCopy := filepath.Join(os.TempDir(), randomName())
-	defer os.RemoveAll(dirToCopy)
+	defer func(path string) {
+		if err := os.RemoveAll(path); err != nil {
+			t.Errorf("Failed to remove directory %s: %v", path, err)
+		}
+	}(dirToCopy)
 
 	err := CopyReportTemplateFiles(GetThemePath(""), dirToCopy)
 	if err != nil {

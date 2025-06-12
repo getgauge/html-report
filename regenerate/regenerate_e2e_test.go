@@ -66,7 +66,9 @@ func cleanUp(t *testing.T, reportDir string) {
 	}
 	for _, f := range s {
 		if f != filepath.Join(reportDir, ".gitkeep") {
-			os.RemoveAll(f)
+			if err := os.RemoveAll(f); err != nil {
+				return // error removing file
+			}
 		}
 	}
 }

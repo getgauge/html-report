@@ -283,7 +283,10 @@ func minifyHTMLFiles(htmlFilePaths []string, reportsDir string) {
 			return
 		}
 		tmpHTMLFile, _ := os.CreateTemp(tmpDir, "")
-		tmpHTMLFile.Close()
+		if err := tmpHTMLFile.Close(); err != nil {
+			logger.Warnf("Error while closing temp file %s: %s", tmpHTMLFile.Name(), err.Error())
+			return
+		}
 		tmpHTMLFilePath := tmpHTMLFile.Name()
 
 		err = os.WriteFile(tmpHTMLFilePath, htmlBytes, os.ModePerm)
@@ -323,7 +326,7 @@ var parsedTemplates *template.Template
 
 func readTemplates(themePath string) {
 	var encodeNewLine = func(s string) string {
-		return strings.Replace(s, "\n", "<br/>", -1)
+		return strings.ReplaceAll(s, "\n", "<br/>")
 	}
 	var parseMarkdown = func(args ...interface{}) string {
 		s := blackfriday.MarkdownCommon([]byte(fmt.Sprintf("%s", args...)))
@@ -331,8 +334,8 @@ func readTemplates(themePath string) {
 	}
 	var sanitizeHTML = func(s string) string {
 		var b bytes.Buffer
-		var html = bluemonday.UGCPolicy().SanitizeBytes([]byte(s))
-		b.Write(html)
+		var sanitizedHtml = bluemonday.UGCPolicy().SanitizeBytes([]byte(s))
+		b.Write(sanitizedHtml)
 		return b.String()
 	}
 	var sum = func(x ...int) int {
@@ -407,7 +410,11 @@ func GenerateReports(res *SuiteResult, reportsDir, themePath string, searchIndex
 	if err != nil {
 		return err
 	}
-	defer f.Close()
+	defer func(f *os.File) {
+		if err := f.Close(); err != nil {
+			return
+		}
+	}(f)
 	if res.BeforeSuiteHookFailure != nil {
 		execTemplate("indexPageFailure", f, res)
 	} else {
@@ -420,10 +427,7 @@ func GenerateReports(res *SuiteResult, reportsDir, themePath string, searchIndex
 		}
 		startIndex, slice := 0, runtime.NumCPU()
 		specsCount := len(res.SpecResults)
-		for {
-			if startIndex >= specsCount {
-				break
-			}
+		for startIndex < specsCount {
 			if specsCount < slice {
 				slice = specsCount
 			}
@@ -468,7 +472,7 @@ func propogateBasePath(r *spec) {
 		setHookFailureBasePath(scn.AfterScenarioHookFailure, basePath)
 		setHookFailureBasePath(scn.BeforeScenarioHookFailure, basePath)
 		for _, i := range append(append(scn.Items, scn.Contexts...), scn.Teardowns...) {
-			propogateBasepathToItem(i, basePath)
+			propagateBasepathToItem(i, basePath)
 		}
 	}
 }
@@ -479,7 +483,7 @@ func setHookFailureBasePath(f *hookFailure, basePath string) {
 	}
 }
 
-func propogateBasepathToItem(i item, basePath string) {
+func propagateBasepathToItem(i item, basePath string) {
 	var st *step
 	switch i.Kind {
 	case stepKind:
@@ -487,7 +491,7 @@ func propogateBasepathToItem(i item, basePath string) {
 	case conceptKind:
 		st = i.Concept.ConceptStep
 		for _, it := range i.Concept.Items {
-			propogateBasepathToItem(it, basePath)
+			propagateBasepathToItem(it, basePath)
 		}
 	}
 	if st != nil {
@@ -555,7 +559,11 @@ func generateIndexPages(suiteRes *SuiteResult, reportsDir string, wg *sync.WaitG
 		if err != nil {
 			logger.Fatal(err.Error())
 		}
-		defer f.Close()
+		defer func(f *os.File) {
+			if err := f.Close(); err != nil {
+				logger.Fatal(err.Error())
+			}
+		}(f)
 		wg.Add(1)
 		res := toNestedSuiteResult(d, suiteRes)
 		generateIndexPage(res, f, p, wg)
@@ -563,7 +571,11 @@ func generateIndexPages(suiteRes *SuiteResult, reportsDir string, wg *sync.WaitG
 }
 
 func generateSpecPage(suiteRes *SuiteResult, specRes *spec, wc io.WriteCloser, wg *sync.WaitGroup) {
-	defer wc.Close()
+	defer func(wc io.WriteCloser) {
+		if err := wc.Close(); err != nil {
+			logger.Warnf("Failed to close file: %s", err.Error())
+		}
+	}(wc)
 	defer wg.Done()
 	res := *suiteRes
 	if res.BasePath != "" {
@@ -586,9 +598,9 @@ func copyScreenshotFiles(reportsDir string) {
 	for _, fileName := range screenshotFiles {
 		srcfp := path.Join(src, fileName)
 		dstfp := path.Join(reportsDir, "images", fileName)
-		bytes, err := os.ReadFile(srcfp)
+		fileBytes, err := os.ReadFile(srcfp)
 		if err == nil {
-			err = os.WriteFile(dstfp, bytes, os.ModePerm)
+			err = os.WriteFile(dstfp, fileBytes, os.ModePerm)
 			if err != nil {
 				logger.Warnf("Failed to write screenshot %s", err.Error())
 			}

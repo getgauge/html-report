@@ -29,9 +29,13 @@ func (T testNameGenerator) randomName() string {
 
 func TestGetReportsDirectory(t *testing.T) {
 	userSetReportsDir := filepath.Join(os.TempDir(), randomName())
-	os.Setenv(env.GaugeReportsDirEnvName, userSetReportsDir)
+	helper.SetEnvOrFail(t, env.GaugeReportsDirEnvName, userSetReportsDir)
 	expectedReportsDir := filepath.Join(userSetReportsDir, htmlReport)
-	defer os.RemoveAll(userSetReportsDir)
+	defer func(path string) {
+		if err := os.RemoveAll(path); err != nil {
+			t.Errorf("Failed to remove directory %s: %v", path, err)
+		}
+	}(userSetReportsDir)
 
 	reportsDir := getReportsDirectory(nil)
 
@@ -45,11 +49,15 @@ func TestGetReportsDirectory(t *testing.T) {
 
 func TestGetReportsDirectoryWithOverrideFlag(t *testing.T) {
 	userSetReportsDir := filepath.Join(os.TempDir(), randomName())
-	os.Setenv(env.GaugeReportsDirEnvName, userSetReportsDir)
-	os.Setenv(env.OverwriteReportsEnvProperty, "true")
+	helper.SetEnvOrFail(t, env.GaugeReportsDirEnvName, userSetReportsDir)
+	helper.SetEnvOrFail(t, env.OverwriteReportsEnvProperty, "true")
 	nameGen := &testNameGenerator{}
 	expectedReportsDir := filepath.Join(userSetReportsDir, htmlReport, nameGen.randomName())
-	defer os.RemoveAll(userSetReportsDir)
+	defer func(path string) {
+		if err := os.RemoveAll(path); err != nil {
+			t.Errorf("Failed to remove directory %s: %v", path, err)
+		}
+	}(userSetReportsDir)
 
 	reportsDir := getReportsDirectory(nameGen)
 
@@ -66,13 +74,13 @@ func randomName() string {
 }
 
 func TestCreatingReportShouldOverwriteReportsBasedOnEnv(t *testing.T) {
-	os.Setenv(env.OverwriteReportsEnvProperty, "true")
+	helper.SetEnvOrFail(t, env.OverwriteReportsEnvProperty, "true")
 	nameGen := getNameGen()
 	if nameGen != nil {
 		t.Errorf("Expected nameGen == nil, got %s", nameGen)
 	}
 
-	os.Setenv(env.OverwriteReportsEnvProperty, "false")
+	helper.SetEnvOrFail(t, env.OverwriteReportsEnvProperty, "false")
 	nameGen = getNameGen()
 	switch nameGen.(type) {
 	case timeStampedNameGenerator:
@@ -93,8 +101,8 @@ func TestCreateReportExecutableFileShouldCreateExecFile(t *testing.T) {
 	if err != nil {
 		t.Errorf("could not create %s. %s", exPath, err.Error())
 	}
-	defer os.Remove(exPath)
-	defer os.Remove(exTarget)
+	defer helper.RemoveOrFail(t, exPath)
+	defer helper.RemoveOrFail(t, exTarget)
 
 	createReportExecutableFile(exPath, exTarget)
 
@@ -111,9 +119,9 @@ func TestCreateReportExecutableFileShouldNotCreateExecFile(t *testing.T) {
 		t.Errorf("could not create %s. %s", exPath, err.Error())
 	}
 
-	defer os.Remove(exPath)
-	defer os.Remove(exTarget)
-	defer os.Unsetenv(env.SaveExecutionResult)
+	defer helper.RemoveOrFail(t, exPath)
+	defer helper.RemoveOrFail(t, exTarget)
+	defer helper.UnsetEnvOrFail(t, env.SaveExecutionResult)
 	createReportExecutableFile(exPath, exTarget)
 	if fileExists(exTarget) {
 		t.Errorf("Expected not to create a symlink of src: %s to  dst: %s", exPath, exTarget)
