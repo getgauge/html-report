@@ -80,8 +80,7 @@ func createDistro() {
 	distroDir := filepath.Join(deploy, packageName)
 	copyPluginFiles(distroDir)
 	createZipFromUtil(deploy, packageName)
-	err := os.RemoveAll(distroDir)
-	if err != nil {
+	if err := os.RemoveAll(distroDir); err != nil {
 		panic(fmt.Sprintf("Failed to remove directory %s: %s", distroDir, err.Error()))
 	}
 }
