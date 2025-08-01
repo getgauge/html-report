@@ -9,8 +9,8 @@ require (
 	github.com/kylelemons/godebug v1.1.0
 	github.com/microcosm-cc/bluemonday v1.0.27
 	github.com/russross/blackfriday v1.6.0
-	github.com/tdewolff/minify/v2 v2.23.8
-	google.golang.org/grpc v1.73.0
+	github.com/tdewolff/minify/v2 v2.23.10
+	google.golang.org/grpc v1.74.2
 	google.golang.org/protobuf v1.36.6
 )
 
@@ -20,8 +20,8 @@ require (
 	github.com/gorilla/css v1.0.1 // indirect
 	github.com/mb0/diff v0.0.0-20131118162322-d8d9a906c24d // indirect
 	github.com/tdewolff/parse/v2 v2.8.1 // indirect
-	golang.org/x/net v0.41.0 // indirect
-	golang.org/x/sys v0.33.0 // indirect
-	golang.org/x/text v0.26.0 // indirect
+	golang.org/x/net v0.42.0 // indirect
+	golang.org/x/sys v0.34.0 // indirect
+	golang.org/x/text v0.27.0 // indirect
 	google.golang.org/genproto/googleapis/rpc v0.0.0-20250603155806-513f23925822 // indirect
 )
