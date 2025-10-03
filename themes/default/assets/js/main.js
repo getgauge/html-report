@@ -361,3 +361,38 @@ $(function() {
     dataStore = new DataStore(data)
     $.each(initializers, function(k, v) { v(); });
 });
+
+// Multiline section toggle functionality
+function initMultilineSections() {
+  const multilineHeaders = document.querySelectorAll('.multiline-header');
+  
+  multilineHeaders.forEach(header => {
+    header.addEventListener('click', function() {
+      const content = this.parentElement.querySelector('.multiline-content');
+      const icon = this.querySelector('.fa');
+      const isExpanded = content.classList.contains('expanded');
+      
+      // Toggle content
+      content.classList.toggle('expanded', !isExpanded);
+      
+      // Toggle icon between plus and minus
+      if (isExpanded) {
+        icon.classList.remove('fa-minus-square');
+        icon.classList.add('fa-plus-square');
+      } else {
+        icon.classList.remove('fa-plus-square');
+        icon.classList.add('fa-minus-square');
+      }
+    });
+  });
+}
+
+// Initialize when document is ready
+document.addEventListener('DOMContentLoaded', function() {
+  initMultilineSections();
+});
+
+// Re-initialize when spec content is loaded (Gauge uses this event)
+$(document).on('specContentLoaded', function() {
+  initMultilineSections();
+});

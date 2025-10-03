@@ -13,6 +13,7 @@ const (
 	specialStringFragmentKind
 	specialTableFragmentKind
 	tableFragmentKind
+	multilineFragmentKind
 )
 
 type fragmentKind int
