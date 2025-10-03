@@ -554,27 +554,36 @@ func toFileName(name string) string {
 }
 
 func toFragments(protoFragments []*gm.Fragment) []*fragment {
-	fragments := make([]*fragment, 0)
-	for _, f := range protoFragments {
-		switch f.GetFragmentType() {
-		case gm.Fragment_Text:
-			fragments = append(fragments, &fragment{FragmentKind: textFragmentKind, Text: f.GetText()})
-		case gm.Fragment_Parameter:
-			switch f.GetParameter().GetParameterType() {
-			case gm.Parameter_Static:
-				fragments = append(fragments, &fragment{FragmentKind: staticFragmentKind, Text: f.GetParameter().GetValue()})
-			case gm.Parameter_Dynamic:
-				fragments = append(fragments, &fragment{FragmentKind: dynamicFragmentKind, Text: f.GetParameter().GetValue()})
-			case gm.Parameter_Table:
-				fragments = append(fragments, &fragment{FragmentKind: tableFragmentKind, Table: toTable(f.GetParameter().GetTable())})
-			case gm.Parameter_Special_Table:
-				fragments = append(fragments, &fragment{FragmentKind: specialTableFragmentKind, Name: f.GetParameter().GetName(), Text: toCsv(f.GetParameter().GetTable()), FileName: toFileName(f.GetParameter().GetName())})
-			case gm.Parameter_Special_String:
-				fragments = append(fragments, &fragment{FragmentKind: specialStringFragmentKind, Name: f.GetParameter().GetName(), Text: f.GetParameter().GetValue(), FileName: toFileName(f.GetParameter().GetName())})
-			}
-		}
-	}
-	return fragments
+    fragments := make([]*fragment, 0)
+    for _, f := range protoFragments {
+        switch f.GetFragmentType() {
+        case gm.Fragment_Text:
+            fragments = append(fragments, &fragment{FragmentKind: textFragmentKind, Text: f.GetText()})
+        case gm.Fragment_Parameter:
+            param := f.GetParameter()
+            paramType := param.GetParameterType()
+            paramValue := param.GetValue()
+            
+            switch paramType {
+            case gm.Parameter_Static:
+                fragments = append(fragments, &fragment{FragmentKind: staticFragmentKind, Text: paramValue})
+            case gm.Parameter_Dynamic:
+                fragments = append(fragments, &fragment{FragmentKind: dynamicFragmentKind, Text: paramValue})
+            case gm.Parameter_Table:
+                fragments = append(fragments, &fragment{FragmentKind: tableFragmentKind, Table: toTable(param.GetTable())})
+            case gm.Parameter_Special_Table:
+                fragments = append(fragments, &fragment{FragmentKind: specialTableFragmentKind, Name: param.GetName(), Text: toCsv(param.GetTable()), FileName: toFileName(param.GetName())})
+            case gm.Parameter_Special_String:
+                // Check if this is actually a multiline string
+                if strings.Contains(paramValue, "\n") {
+                    fragments = append(fragments, &fragment{FragmentKind: multilineFragmentKind, Text: paramValue})
+                } else {
+                    fragments = append(fragments, &fragment{FragmentKind: specialStringFragmentKind, Name: param.GetName(), Text: paramValue, FileName: toFileName(param.GetName())})
+                }
+            }
+        }
+    }
+    return fragments
 }
 
 func toTable(protoTable *gm.ProtoTable) *table {

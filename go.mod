@@ -1,6 +1,6 @@
 module github.com/getgauge/html-report
 
-go 1.24
+go 1.24.5
 
 require (
 	github.com/documize/html-diff v0.0.0-20160503140253-f61c192c7796
@@ -25,3 +25,5 @@ require (
 	golang.org/x/text v0.28.0 // indirect
 	google.golang.org/genproto/googleapis/rpc v0.0.0-20250707201910-8d1bb00bc6a7 // indirect
 )
+
+replace github.com/getgauge/gauge-proto/go/gauge_messages => ../gauge-proto/go/gauge_messages

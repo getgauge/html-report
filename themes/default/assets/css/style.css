@@ -1520,3 +1520,78 @@ svg#pie-chart {
     font-style: italic;
     font-size: medium;
 }
+
+/* Multiline Section Styles */
+.multiline-section {
+  margin: 15px 0;
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+.multiline-header {
+  color: #000000;
+  padding: 8px 12px; /* Reduced padding */
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 8px; /* Reduced gap */
+  font-weight: bold;
+  transition: background 0.3s ease;
+}
+
+.multiline-header:hover {
+  background: linear-gradient(135deg, #cccccc, #cccccc);
+}
+
+.multiline-tag {
+  background: rgba(255, 255, 255, 0.2);
+  padding: 4px 8px;
+  border-radius: 4px;
+  font-size: 12px;
+  font-weight: bold;
+}
+
+.multiline-toggle {
+  font-size: 16px;
+  font-weight: bold;
+  width: 20px;
+  text-align: center;
+}
+
+.multiline-summary {
+  font-size: 14px;
+  opacity: 0.9;
+}
+
+.multiline-content {
+  background: #ffffff; 
+  padding: 0;
+  max-height: 0;
+  overflow: hidden;
+  transition: max-height 0.5s ease, padding 0.3s ease;
+  width: 100%; /* Make content full width */
+}
+
+.multiline-content.expanded {
+  max-height: 500px;
+  padding: 15px;
+}
+
+.multiline-content pre {
+  margin: 0;
+  padding: 15px;
+  background: #ffffff;
+  border: 1px solid #e0e0e0;
+  border-radius: 4px;
+  white-space: pre-wrap;
+  word-wrap: break-word;
+  font-family: 'Courier New', monospace;
+  font-size: 13px;
+  line-height: 1.4;
+  color: #333;
+}
+
+.multiline-hamburger {
+  color: #27caa9; 
+  font-size: 14px;
+}
