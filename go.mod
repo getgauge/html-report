@@ -25,5 +25,3 @@ require (
 	golang.org/x/text v0.29.0 // indirect
 	google.golang.org/genproto/googleapis/rpc v0.0.0-20250929231259-57b25ae835d4 // indirect
 )
-
-replace github.com/getgauge/gauge-proto/go/gauge_messages => ../gauge-proto/go/gauge_messages
