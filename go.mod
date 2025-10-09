@@ -5,7 +5,7 @@ go 1.24.7
 require (
 	github.com/documize/html-diff v0.0.0-20160503140253-f61c192c7796
 	github.com/getgauge/common v0.0.0-20251001154240-471505c641c5
-	github.com/getgauge/gauge-proto/go/gauge_messages v0.0.0-20251001160342-f8a6cc1f6987
+	github.com/getgauge/gauge-proto/go/gauge_messages v0.0.0-20251009113823-9780b2b3681a
 	github.com/kylelemons/godebug v1.1.0
 	github.com/microcosm-cc/bluemonday v1.0.27
 	github.com/russross/blackfriday v1.6.0
