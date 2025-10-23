@@ -378,7 +378,7 @@ func toSpec(res *gm.ProtoSpecResult, projectRoot string) *spec {
 		spec.AfterSpecHookFailures = append(spec.AfterSpecHookFailures, toHookFailure(postHookFailure, "After Spec"))
 	}
 
-	if res.GetProtoSpec().GetIsTableDriven() {
+	if res.GetProtoSpec().GetIsTableDriven() && isTableScanned {
 		computeTableDrivenStatuses(spec)
 	}
 	p, f, s := computeScenarioStatistics(spec)

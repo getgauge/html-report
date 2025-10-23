@@ -160,6 +160,23 @@ var specRes1 = &gm.ProtoSpecResult{
 	},
 }
 
+var specResWithMissingTable = &gm.ProtoSpecResult{
+	Failed:        true,
+	Skipped:       false,
+	ExecutionTime: 211316,
+	ProtoSpec: &gm.ProtoSpec{
+		SpecHeading:   "specRes1",
+		FileName:      filepath.Join(string(os.PathSeparator), "tmp", "gauge", "specs", "foobar.spec"),
+		IsTableDriven: true,
+		Items:         []*gm.ProtoItem{}, // No items!
+		PreHookFailures: []*gm.ProtoHookFailure{{
+			ErrorMessage:          "err",
+			StackTrace:            "Stacktrace",
+			FailureScreenshotFile: "Screenshot.png",
+		}},
+	},
+}
+
 var spec1 = &spec{
 	SpecHeading:   "specRes1",
 	Tags:          []string{"tag1", "tag2"},
@@ -695,6 +712,23 @@ func TestToSpecForTableDrivenSpec(t *testing.T) {
 
 	got := toSpec(datatableDrivenSpec, "/tmp/gauge/")
 
+	checkEqual(t, "", want, got)
+}
+
+func TestToSpecWithMissingTableItem(t *testing.T) {
+	want := &spec{
+		Scenarios:              make([]*scenario, 0),
+		BeforeSpecHookFailures: []*hookFailure{newHookFailure("", "Before Spec", "err", "Screenshot.png", "Stacktrace")},
+		Errors:                 make([]buildError, 0),
+		Tags:                   []string{},
+		IsTableDriven:          true,
+		SpecHeading:            "specRes1",
+		SpecFileName:           filepath.Join(string(os.PathSeparator), "tmp", "gauge", "specs", "foobar.spec"),
+		FileName:               "",
+		ExecutionStatus:        fail,
+		ExecutionTime:          211316,
+	}
+	got := toSpec(specResWithMissingTable, "")
 	checkEqual(t, "", want, got)
 }
 
