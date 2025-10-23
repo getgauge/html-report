@@ -10,6 +10,7 @@ import (
 	"path/filepath"
 	"reflect"
 	"testing"
+	"time"
 
 	gm "github.com/getgauge/gauge-proto/go/gauge_messages"
 	"github.com/kylelemons/godebug/pretty"
@@ -1549,9 +1550,23 @@ func TestMapPostHookMessagesToSuiteResult(t *testing.T) {
 	}
 }
 
-func TestMapTimestampToSuiteResult(t *testing.T) {
+func TestMapTimestampFallbackFormatToSuiteResult(t *testing.T) {
 	timestamp := "Jun 3, 2016 at 12:29pm"
 	psr := &gm.ProtoSuiteResult{Timestamp: timestamp}
+	res := ToSuiteResult("", psr)
+
+	if res.Timestamp != timestamp {
+		t.Errorf("Expected Timestamp=%s; got %s\n", timestamp, res.Timestamp)
+	}
+}
+
+func TestMapTimestampISOToSuiteResult(t *testing.T) {
+	timestamp := "Jun 3, 2016 at 12:29pm"
+	parsedTimestamp, _ := time.ParseInLocation(generatedTimeFormat, timestamp, time.Local)
+	psr := &gm.ProtoSuiteResult{
+		Timestamp:    "Jun 3, 2016 at 12:00pm",                 // old format - different value to ensure correct value used
+		TimestampISO: parsedTimestamp.Format(time.RFC3339Nano), // prefer iso field
+	}
 	res := ToSuiteResult("", psr)
 
 	if res.Timestamp != timestamp {

@@ -17,11 +17,13 @@ import (
 	"path"
 
 	gm "github.com/getgauge/gauge-proto/go/gauge_messages"
+	"github.com/getgauge/html-report/logger"
 )
 
 const (
-	execTimeFormat = "15:04:05"
-	dothtml        = ".html"
+	execTimeFormat      = "15:04:05"
+	generatedTimeFormat = "Jan 2, 2006 at 3:04pm"
+	dothtml             = ".html"
 )
 
 var screenshotFiles []string
@@ -40,7 +42,7 @@ func ToSuiteResult(pRoot string, psr *gm.ProtoSuiteResult) *SuiteResult {
 		BeforeSuiteHookFailure: toHookFailure(psr.GetPreHookFailure(), "Before Suite"),
 		AfterSuiteHookFailure:  toHookFailure(psr.GetPostHookFailure(), "After Suite"),
 		SuccessRate:            psr.GetSuccessRate(),
-		Timestamp:              psr.GetTimestamp(),
+		Timestamp:              toFormattedLocalTime(psr.GetTimestampISO(), psr.GetTimestamp()), //nolint - deprecated, but read here for backward compatibility
 		ExecutionStatus:        pass,
 		PreHookMessages:        psr.GetPreHookMessages(),
 		PostHookMessages:       psr.GetPostHookMessages(),
@@ -72,6 +74,18 @@ func ToSuiteResult(pRoot string, psr *gm.ProtoSuiteResult) *SuiteResult {
 		suiteResult.SkippedScenarioCount = suiteResult.SkippedScenarioCount + int(protoSpecRes.GetScenarioSkippedCount())
 	}
 	return &suiteResult
+}
+
+func toFormattedLocalTime(isoTimestamp string, humanReadableTimestamp string) string {
+	if isoTimestamp == "" {
+		return humanReadableTimestamp
+	}
+	parsedTime, err := time.Parse(time.RFC3339Nano, isoTimestamp)
+	if err != nil {
+		logger.Debugf("[Warning] Failed to parse timestamp %s due to %s, falling back to pre-humanized timestamp", isoTimestamp, err.Error())
+		return humanReadableTimestamp
+	}
+	return parsedTime.Local().Format(generatedTimeFormat)
 }
 
 func toNestedSuiteResult(basePath string, result *SuiteResult) *SuiteResult {
@@ -554,36 +568,36 @@ func toFileName(name string) string {
 }
 
 func toFragments(protoFragments []*gm.Fragment) []*fragment {
-    fragments := make([]*fragment, 0)
-    for _, f := range protoFragments {
-        switch f.GetFragmentType() {
-        case gm.Fragment_Text:
-            fragments = append(fragments, &fragment{FragmentKind: textFragmentKind, Text: f.GetText()})
-        case gm.Fragment_Parameter:
-            param := f.GetParameter()
-            paramType := param.GetParameterType()
-            paramValue := param.GetValue()
-            
-            switch paramType {
-            case gm.Parameter_Static:
-                fragments = append(fragments, &fragment{FragmentKind: staticFragmentKind, Text: paramValue})
-            case gm.Parameter_Dynamic:
-                fragments = append(fragments, &fragment{FragmentKind: dynamicFragmentKind, Text: paramValue})
-            case gm.Parameter_Table:
-                fragments = append(fragments, &fragment{FragmentKind: tableFragmentKind, Table: toTable(param.GetTable())})
-            case gm.Parameter_Special_Table:
-                fragments = append(fragments, &fragment{FragmentKind: specialTableFragmentKind, Name: param.GetName(), Text: toCsv(param.GetTable()), FileName: toFileName(param.GetName())})
-            case gm.Parameter_Special_String:
-                // Check if this is actually a multiline string
-                if strings.Contains(paramValue, "\n") {
-                    fragments = append(fragments, &fragment{FragmentKind: multilineFragmentKind, Text: paramValue})
-                } else {
-                    fragments = append(fragments, &fragment{FragmentKind: specialStringFragmentKind, Name: param.GetName(), Text: paramValue, FileName: toFileName(param.GetName())})
-                }
-            }
-        }
-    }
-    return fragments
+	fragments := make([]*fragment, 0)
+	for _, f := range protoFragments {
+		switch f.GetFragmentType() {
+		case gm.Fragment_Text:
+			fragments = append(fragments, &fragment{FragmentKind: textFragmentKind, Text: f.GetText()})
+		case gm.Fragment_Parameter:
+			param := f.GetParameter()
+			paramType := param.GetParameterType()
+			paramValue := param.GetValue()
+
+			switch paramType {
+			case gm.Parameter_Static:
+				fragments = append(fragments, &fragment{FragmentKind: staticFragmentKind, Text: paramValue})
+			case gm.Parameter_Dynamic:
+				fragments = append(fragments, &fragment{FragmentKind: dynamicFragmentKind, Text: paramValue})
+			case gm.Parameter_Table:
+				fragments = append(fragments, &fragment{FragmentKind: tableFragmentKind, Table: toTable(param.GetTable())})
+			case gm.Parameter_Special_Table:
+				fragments = append(fragments, &fragment{FragmentKind: specialTableFragmentKind, Name: param.GetName(), Text: toCsv(param.GetTable()), FileName: toFileName(param.GetName())})
+			case gm.Parameter_Special_String:
+				// Check if this is actually a multiline string
+				if strings.Contains(paramValue, "\n") {
+					fragments = append(fragments, &fragment{FragmentKind: multilineFragmentKind, Text: paramValue})
+				} else {
+					fragments = append(fragments, &fragment{FragmentKind: specialStringFragmentKind, Name: param.GetName(), Text: paramValue, FileName: toFileName(param.GetName())})
+				}
+			}
+		}
+	}
+	return fragments
 }
 
 func toTable(protoTable *gm.ProtoTable) *table {
