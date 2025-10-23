@@ -523,10 +523,10 @@
 {{define "Modal"}}
   <span class="modal-link">&lt;{{.Name | escapeHTML }}&gt;</span>
     <div class="modal">
-      <h2 class="modal-title">{{ .FileName }}</h2>
+      <h2 class="modal-title">{{ .FileName | escapeHTML }}</h2>
       <span class="close">&times;</span>
       <div class="modal-content">
-        <pre>{{.Text}}</pre>
+        <pre>{{ .Text | escapeHTML | encodeNewLine }}</pre>
       </div>
     </div>
 {{end}}
