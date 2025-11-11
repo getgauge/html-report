@@ -1081,7 +1081,7 @@ func TestToScenario(t *testing.T) {
 		RetriesCount:  4,
 	}
 
-	got := toScenario(scn, -1)
+	got := toScenario(scn, -1, nil)
 	if !reflect.DeepEqual(got, want) {
 		t.Errorf("want:\n%v\ngot:\n%v\n", want, got)
 	}
@@ -1109,7 +1109,7 @@ func TestToScenarioWithHookFailures(t *testing.T) {
 		TableRowIndex:             -1,
 	}
 
-	got := toScenario(scnWithHookFailure, -1)
+	got := toScenario(scnWithHookFailure, -1, nil)
 	checkEqual(t, "", want, got)
 }
 
