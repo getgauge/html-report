@@ -1,6 +1,6 @@
 module github.com/getgauge/html-report
 
-go 1.24.7
+go 1.25
 
 require (
 	github.com/documize/html-diff v0.0.0-20160503140253-f61c192c7796
