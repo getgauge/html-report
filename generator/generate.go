@@ -153,6 +153,11 @@ type scenario struct {
 	AfterScenarioHookFailure  *hookFailure `json:"AfterScenarioHookFailure"`
 	SkipErrors                []string     `json:"SkipErrors"`
 	TableRowIndex             int          `json:"TableRowIndex"`
+	ScenarioTableRowIndex     int          `json:"ScenarioTableRowIndex"`
+	IsSpecTableDriven         bool         `json:"IsSpecTableDriven"`
+	IsScenarioTableDriven     bool         `json:"IsScenarioTableDriven"`
+	ScenarioDataTable         *table       `json:"ScenarioDataTable"`
+	ScenarioTableRow          *table       `json:"ScenarioTableRow"`
 	PreHookMessages           []string     `json:"PreHookMessages"`
 	PostHookMessages          []string     `json:"PostHookMessages"`
 	PreHookScreenshotFiles    []string     `json:"PreHookScreenshotFiles"`

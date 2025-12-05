@@ -272,7 +272,35 @@ func (s bySceStatus) Swap(i, j int) {
 }
 
 func (s bySceStatus) Less(i, j int) bool {
-	return getSceState(s[i]) < getSceState(s[j])
+	// If both scenarios are scenario-table-driven with the same heading, maintain their order by row index
+	if s[i].IsScenarioTableDriven && s[j].IsScenarioTableDriven && s[i].Heading == s[j].Heading {
+		return s[i].ScenarioTableRowIndex < s[j].ScenarioTableRowIndex
+	}
+
+	stateI := s.getEffectiveState(i)
+	stateJ := s.getEffectiveState(j)
+
+	return stateI < stateJ
+}
+
+// getEffectiveState returns the worst state for a scenario, when the scenario is scenario-table-driven.
+func (s bySceStatus) getEffectiveState(index int) int {
+	scenario := s[index]
+
+	if !scenario.IsScenarioTableDriven {
+		return getSceState(scenario)
+	}
+
+	worstState := getSceState(scenario)
+	for _, otherScenario := range s {
+		if otherScenario.IsScenarioTableDriven && otherScenario.Heading == scenario.Heading {
+			state := getSceState(otherScenario)
+			if state < worstState {
+				worstState = state
+			}
+		}
+	}
+	return worstState
 }
 
 func getSceState(s *scenario) int {
@@ -366,9 +394,14 @@ func toSpec(res *gm.ProtoSpecResult, projectRoot string) *spec {
 			spec.Datatable = toTable(item.GetTable())
 			isTableScanned = true
 		case gm.ProtoItem_Scenario:
-			spec.Scenarios = append(spec.Scenarios, toScenario(item.GetScenario(), -1))
+			spec.Scenarios = append(spec.Scenarios, toScenario(item.GetScenario(), -1, nil))
 		case gm.ProtoItem_TableDrivenScenario:
-			spec.Scenarios = append(spec.Scenarios, toScenario(item.GetTableDrivenScenario().GetScenario(), int(item.GetTableDrivenScenario().GetTableRowIndex())))
+			tableDrivenScenario := item.GetTableDrivenScenario()
+			if tableDrivenScenario.GetIsScenarioTableDriven() && !tableDrivenScenario.GetIsSpecTableDriven() {
+				spec.Scenarios = append(spec.Scenarios, toScenario(tableDrivenScenario.GetScenario(), -1, tableDrivenScenario))
+			} else {
+				spec.Scenarios = append(spec.Scenarios, toScenario(tableDrivenScenario.GetScenario(), int(item.TableDrivenScenario.GetTableRowIndex()), tableDrivenScenario))
+			}
 		}
 	}
 	for _, preHookFailure := range res.GetProtoSpec().GetPreHookFailures() {
@@ -381,11 +414,12 @@ func toSpec(res *gm.ProtoSpecResult, projectRoot string) *spec {
 	if res.GetProtoSpec().GetIsTableDriven() && isTableScanned {
 		computeTableDrivenStatuses(spec)
 	}
+	computeScenarioTableStatuses(spec)
 	p, f, s := computeScenarioStatistics(spec)
 	spec.PassedScenarioCount = p
 	spec.FailedScenarioCount = f
 	spec.SkippedScenarioCount = s
-	sort.Sort(bySceStatus(spec.Scenarios))
+	sort.Stable(bySceStatus(spec.Scenarios))
 	return spec
 }
 
@@ -428,6 +462,9 @@ func hasParseErrors(errors []*gm.Error) bool {
 }
 
 func computeTableDrivenStatuses(spec *spec) {
+	if spec.Datatable == nil || len(spec.Datatable.Rows) == 0 {
+		return
+	}
 	for _, r := range spec.Datatable.Rows {
 		r.Result = skip
 	}
@@ -453,13 +490,47 @@ func SetRowFailures(failures []*hookFailure, spec *spec) {
 	}
 }
 
+func computeScenarioTableStatuses(spec *spec) {
+	// Group scenarios, key: scenario heading, value: scenarios with same table
+	scenarioTables := make(map[string][]*scenario)
+	for _, s := range spec.Scenarios {
+		if s.IsScenarioTableDriven {
+			key := s.Heading
+			scenarioTables[key] = append(scenarioTables[key], s)
+		}
+	}
+	// Update row statuses based on scenario execution results
+	for _, scenarios := range scenarioTables {
+		if len(scenarios) == 0 || scenarios[0].ScenarioDataTable == nil {
+			continue
+		}
+		table := scenarios[0].ScenarioDataTable
+		for _, s := range scenarios {
+			if s.ScenarioTableRowIndex >= 0 && s.ScenarioTableRowIndex < len(table.Rows) {
+				row := table.Rows[s.ScenarioTableRowIndex]
+				row.Result = s.ExecutionStatus
+				if s.BeforeScenarioHookFailure != nil {
+					row.Result = fail
+				}
+				if s.AfterScenarioHookFailure != nil {
+					row.Result = fail
+				}
+			}
+		}
+		// Clear table reference for all subsequent scenarios to prevent duplicate table rendering in template
+		for i := 1; i < len(scenarios); i++ {
+			scenarios[i].ScenarioDataTable = nil
+		}
+	}
+}
+
 func toScenarioSummary(s *spec) *summary {
 	var sum = summary{Failed: s.FailedScenarioCount, Passed: s.PassedScenarioCount, Skipped: s.SkippedScenarioCount}
 	sum.Total = sum.Failed + sum.Passed + sum.Skipped
 	return &sum
 }
 
-func toScenario(scn *gm.ProtoScenario, tableRowIndex int) *scenario {
+func toScenario(scn *gm.ProtoScenario, tableRowIndex int, tableDrivenScenario *gm.ProtoTableDrivenScenario) *scenario {
 	scenario := &scenario{
 		Heading:                   scn.GetScenarioHeading(),
 		ExecutionTime:             formatTime(scn.GetExecutionTime()),
@@ -474,6 +545,12 @@ func toScenario(scn *gm.ProtoScenario, tableRowIndex int) *scenario {
 		PreHookMessages:           scn.GetPreHookMessages(),
 		PostHookMessages:          scn.GetPostHookMessages(),
 		RetriesCount:              int(scn.RetriesCount),
+	}
+	if tableDrivenScenario.GetIsScenarioTableDriven() {
+		scenario.IsScenarioTableDriven = tableDrivenScenario.GetIsScenarioTableDriven()
+		scenario.ScenarioTableRowIndex = int(tableDrivenScenario.GetScenarioTableRowIndex())
+		scenario.ScenarioDataTable = toTable(tableDrivenScenario.GetScenarioDataTable())
+		scenario.ScenarioTableRow = toTable(tableDrivenScenario.GetScenarioTableRow())
 	}
 	for _, s := range scn.GetPreHookScreenshotFiles() {
 		scenario.PreHookScreenshotFiles = append(scenario.PreHookScreenshotFiles, s)

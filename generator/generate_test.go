@@ -242,6 +242,23 @@ var wSpecCommentsWithCodeBlock = `<span><pre><code>{&#34;prop&#34;:&#34;value&#3
 var wScenarioContainerStartPassDiv = `<div class="scenario-container passed">`
 var wScenarioContainerStartFailDiv = `<div class="scenario-container failed">`
 var wScenarioContainerStartSkipDiv = `<div class="scenario-container skipped">`
+var wScenarioContainerTableDrivenHiddenDiv = `<div class="scenario-container passed hidden" data-scenario-row-index='1'>`
+var wScenarioContainerTableDrivenNestedDiv = `<div class="scenario-container passed hidden" data-scenario-row-index='1' data-tablerow='0'>`
+
+var wScenarioDataTableDiv = `
+    <table class="data-table scenario-data-table" data-spec-row-index='0'>
+      <tr>
+        <th>Browser</th><th>Status</th>
+      </tr>
+      <tbody data-rowCount=2>
+        <tr class="row-selector passed selected" data-scenario-row-index='0'>
+          <td>Chrome</td><td>Pass</td>
+        </tr>
+        <tr class="row-selector failed" data-scenario-row-index='1'>
+          <td>Firefox</td><td>Fail</td>
+        </tr>
+      </tbody>
+    </table>`
 
 var wscenarioHeaderStartDiv = `<div class="scenario-head">
   <h3 class="head borderBottom">Scenario Heading</h3>
@@ -510,6 +527,13 @@ var reportGenTests = []reportGenTest{
 	{"generate passing scenario container", "scenarioContainerStartDiv", &scenario{ExecutionStatus: pass, TableRowIndex: -1}, wScenarioContainerStartPassDiv},
 	{"generate failed scenario container", "scenarioContainerStartDiv", &scenario{ExecutionStatus: fail, TableRowIndex: -1}, wScenarioContainerStartFailDiv},
 	{"generate skipped scenario container", "scenarioContainerStartDiv", &scenario{ExecutionStatus: skip, TableRowIndex: -1}, wScenarioContainerStartSkipDiv},
+	{"generate table driven scenario container", "scenarioContainerStartDiv", &scenario{ExecutionStatus: pass, IsScenarioTableDriven: true, ScenarioTableRowIndex: 1, TableRowIndex: -1}, wScenarioContainerTableDrivenHiddenDiv},
+	{"generate nested table driven scenario container", "scenarioContainerStartDiv", &scenario{ExecutionStatus: pass, IsScenarioTableDriven: true, ScenarioTableRowIndex: 1, TableRowIndex: 0}, wScenarioContainerTableDrivenNestedDiv},
+	{"generate scenario table for table driven scenario", "scenarioTableTag", &scenario{
+		TableRowIndex:         0,
+		ScenarioDataTable:     &table{Headers: []string{"Browser", "Status"}, Rows: []*row{{Cells: []string{"Chrome", "Pass"}, Result: pass}, {Cells: []string{"Firefox", "Fail"}, Result: fail}}},
+		IsScenarioTableDriven: true,
+	}, wScenarioDataTableDiv},
 	{"generate scenario header", "scenarioHeaderStartDiv", &scenario{Heading: "Scenario Heading", ExecutionTime: "00:01:01"}, wscenarioHeaderStartDiv},
 	{"generate pass step start div", "stepStartDiv", newStep(pass), wPassStepStartDiv},
 	{"generate fail step start div", "stepStartDiv", newStep(fail), wFailStepStartDiv},
