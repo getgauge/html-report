@@ -595,7 +595,7 @@ func TestToSpecWithScenariosInOrder(t *testing.T) {
 
 	got := toSpec(specRes, "")
 	if len(got.Scenarios) != 5 {
-		t.Errorf("want:%q\ngot:%q\n", 5, len(got.Scenarios))
+		t.Errorf("want:%d\ngot:%d\n", 5, len(got.Scenarios))
 	}
 	if got.Scenarios[0].ExecutionStatus != fail {
 		t.Errorf("want:%q\ngot:%q\n", fail, got.Scenarios[0].ExecutionStatus)
