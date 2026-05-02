@@ -1,0 +1,654 @@
+/*----------------------------------------------------------------
+ *  Copyright (c) ThoughtWorks, Inc.
+ *  Licensed under the Apache License, Version 2.0
+ *  See LICENSE in the project root for license information.
+ *----------------------------------------------------------------*/
+package mdgen
+
+import (
+	"encoding/base64"
+	"fmt"
+	"os"
+	"path/filepath"
+	"sort"
+	"strings"
+	"time"
+
+	gm "github.com/getgauge/gauge-proto/go/gauge_messages"
+	"github.com/getgauge/html-report/logger"
+)
+
+const (
+	execTimeFormat      = "15:04:05"
+	generatedTimeFormat = "Jan 2, 2006 at 3:04pm"
+	dotmd               = ".md"
+)
+
+// projectRoot is set by ToSuiteResult. Many helpers below close over it via
+// the package global rather than receiving it as a parameter — kept this way
+// to mirror the original generator package and avoid touching every call site
+// during the port. PR3 will revisit.
+var projectRoot string
+
+// screenshotFiles accumulates every screenshot path discovered while walking
+// the proto tree, so the generator step can copy them into the report dir.
+// Mutated from goroutines in the original code; the race is pre-existing and
+// addressed in a later PR (see PLAN.md §5).
+var screenshotFiles []string
+
+// ToSuiteResult converts a ProtoSuiteResult to the internal SuiteResult.
+func ToSuiteResult(pRoot string, psr *gm.ProtoSuiteResult) *SuiteResult {
+	projectRoot = pRoot
+	suiteResult := SuiteResult{
+		ProjectName:            psr.GetProjectName(),
+		Environment:            psr.GetEnvironment(),
+		Tags:                   psr.GetTags(),
+		ExecutionTime:          psr.GetExecutionTime(),
+		PassedSpecsCount:       len(psr.GetSpecResults()) - int(psr.GetSpecsFailedCount()) - int(psr.GetSpecsSkippedCount()),
+		FailedSpecsCount:       int(psr.GetSpecsFailedCount()),
+		SkippedSpecsCount:      int(psr.GetSpecsSkippedCount()),
+		BeforeSuiteHookFailure: toHookFailure(psr.GetPreHookFailure(), "Before Suite"),
+		AfterSuiteHookFailure:  toHookFailure(psr.GetPostHookFailure(), "After Suite"),
+		SuccessRate:            psr.GetSuccessRate(),
+		Timestamp:              toFormattedLocalTime(psr.GetTimestampISO(), psr.GetTimestamp()), //nolint - deprecated, but read here for backward compatibility
+		ExecutionStatus:        pass,
+		PreHookMessages:        psr.GetPreHookMessages(),
+		PostHookMessages:       psr.GetPostHookMessages(),
+	}
+	for _, s := range psr.GetPreHookScreenshotFiles() {
+		suiteResult.PreHookScreenshotFiles = append(suiteResult.PreHookScreenshotFiles, s)
+		screenshotFiles = append(screenshotFiles, s)
+	}
+	for _, s := range psr.GetPostHookScreenshotFiles() {
+		suiteResult.PostHookScreenshotFiles = append(suiteResult.PostHookScreenshotFiles, s)
+		screenshotFiles = append(screenshotFiles, s)
+	}
+	//nolint - deprecated, but read here for backward compatibility
+	for _, s := range psr.GetPreHookScreenshots() {
+		suiteResult.PreHookScreenshots = append(suiteResult.PreHookScreenshots, base64.StdEncoding.EncodeToString(s))
+	}
+	//nolint - deprecated, but read here for backward compatibility
+	for _, s := range psr.GetPostHookScreenshots() {
+		suiteResult.PostHookScreenshots = append(suiteResult.PostHookScreenshots, base64.StdEncoding.EncodeToString(s))
+	}
+	if psr.GetFailed() {
+		suiteResult.ExecutionStatus = fail
+	}
+	suiteResult.SpecResults = make([]*spec, 0)
+	for _, protoSpecRes := range psr.GetSpecResults() {
+		suiteResult.SpecResults = append(suiteResult.SpecResults, toSpec(protoSpecRes, projectRoot))
+		suiteResult.PassedScenarioCount = suiteResult.PassedScenarioCount + int(protoSpecRes.GetScenarioCount()-protoSpecRes.GetScenarioFailedCount()-protoSpecRes.GetScenarioSkippedCount())
+		suiteResult.FailedScenarioCount = suiteResult.FailedScenarioCount + int(protoSpecRes.GetScenarioFailedCount())
+		suiteResult.SkippedScenarioCount = suiteResult.SkippedScenarioCount + int(protoSpecRes.GetScenarioSkippedCount())
+	}
+	return &suiteResult
+}
+
+func toFormattedLocalTime(isoTimestamp string, humanReadableTimestamp string) string {
+	if isoTimestamp == "" {
+		return humanReadableTimestamp
+	}
+	parsedTime, err := time.Parse(time.RFC3339Nano, isoTimestamp)
+	if err != nil {
+		logger.Debugf("[Warning] Failed to parse timestamp %s due to %s, falling back to pre-humanized timestamp", isoTimestamp, err.Error())
+		return humanReadableTimestamp
+	}
+	return parsedTime.Local().Format(generatedTimeFormat)
+}
+
+func toNestedSuiteResult(basePath string, result *SuiteResult) *SuiteResult {
+	sr := &SuiteResult{
+		ProjectName:            result.ProjectName,
+		Timestamp:              result.Timestamp,
+		Environment:            result.Environment,
+		Tags:                   result.Tags,
+		BeforeSuiteHookFailure: result.BeforeSuiteHookFailure,
+		AfterSuiteHookFailure:  result.AfterSuiteHookFailure,
+		ExecutionStatus:        pass,
+		SpecResults:            getNestedSpecResults(result.SpecResults, basePath),
+		BasePath:               filepath.Clean(basePath),
+	}
+
+	for _, spec := range sr.SpecResults {
+		if spec.ExecutionStatus == fail {
+			sr.ExecutionStatus = fail
+			sr.FailedSpecsCount++
+		}
+		if spec.ExecutionStatus == skip {
+			sr.SkippedSpecsCount++
+		}
+		if spec.ExecutionStatus == pass {
+			sr.PassedSpecsCount++
+		}
+		sr.ExecutionTime += spec.ExecutionTime
+		sr.PassedScenarioCount += spec.PassedScenarioCount
+		sr.FailedScenarioCount += spec.FailedScenarioCount
+		sr.SkippedScenarioCount += spec.SkippedScenarioCount
+	}
+	sr.SuccessRate = getSuccessRate(len(sr.SpecResults), sr.FailedSpecsCount+sr.SkippedSpecsCount)
+	return sr
+}
+
+func getSuccessRate(totalSpecs int, failedSpecs int) float32 {
+	if totalSpecs == 0 {
+		return 0
+	}
+	return (float32)(100.0 * (totalSpecs - failedSpecs) / totalSpecs)
+}
+
+func getNestedSpecResults(specResults []*spec, basePath string) []*spec {
+	nestedSpecResults := make([]*spec, 0)
+	for _, specResult := range specResults {
+		rel, _ := filepath.Rel(projectRoot, specResult.FileName)
+		if strings.HasPrefix(rel, basePath) {
+			nestedSpecResults = append(nestedSpecResults, specResult)
+		}
+	}
+	return nestedSpecResults
+}
+
+func toHookFailure(failure *gm.ProtoHookFailure, hookName string) *hookFailure {
+	if failure == nil {
+		return nil
+	}
+	failureScreenshotFile := failure.GetFailureScreenshotFile()
+	result := &hookFailure{
+		ErrMsg:                failure.GetErrorMessage(),
+		HookName:              hookName,
+		StackTrace:            failure.GetStackTrace(),
+		TableRowIndex:         failure.TableRowIndex,
+		FailureScreenshotFile: failureScreenshotFile,
+		FailureScreenshot:     base64.StdEncoding.EncodeToString(failure.GetFailureScreenshot()), //nolint - deprecated, but read here for backward compatibility
+	}
+	if failureScreenshotFile != "" {
+		screenshotFiles = append(screenshotFiles, failureScreenshotFile)
+	}
+	return result
+}
+
+// toMDFileName replaces the original toHTMLFileName: it computes the report
+// path for a spec relative to the project root and swaps the .spec extension
+// for .md.
+func toMDFileName(specName, basePath string) string {
+	specPath, err := filepath.Rel(basePath, specName)
+	if err != nil {
+		specPath = filepath.Join(basePath, filepath.Base(specName))
+	}
+	ext := filepath.Ext(specPath)
+	return filepath.ToSlash(filepath.Clean(strings.TrimSuffix(specPath, ext) + dotmd))
+}
+
+type bySceStatus []*scenario
+
+func (s bySceStatus) Len() int {
+	return len(s)
+}
+func (s bySceStatus) Swap(i, j int) {
+	s[i], s[j] = s[j], s[i]
+}
+
+func (s bySceStatus) Less(i, j int) bool {
+	// Scenario-table-driven scenarios with the same heading keep their row order.
+	if s[i].IsScenarioTableDriven && s[j].IsScenarioTableDriven && s[i].Heading == s[j].Heading {
+		return s[i].ScenarioTableRowIndex < s[j].ScenarioTableRowIndex
+	}
+
+	stateI := s.getEffectiveState(i)
+	stateJ := s.getEffectiveState(j)
+
+	return stateI < stateJ
+}
+
+// getEffectiveState returns the worst state for a scenario, when the scenario is scenario-table-driven.
+func (s bySceStatus) getEffectiveState(index int) int {
+	scenario := s[index]
+
+	if !scenario.IsScenarioTableDriven {
+		return getSceState(scenario)
+	}
+
+	worstState := getSceState(scenario)
+	for _, otherScenario := range s {
+		if otherScenario.IsScenarioTableDriven && otherScenario.Heading == scenario.Heading {
+			state := getSceState(otherScenario)
+			if state < worstState {
+				worstState = state
+			}
+		}
+	}
+	return worstState
+}
+
+func getSceState(s *scenario) int {
+	if s.ExecutionStatus == fail {
+		return -1
+	}
+	if s.ExecutionStatus == skip {
+		return 0
+	}
+	return 1
+}
+
+func getSpecName(s *gm.ProtoSpec) string {
+	specName := s.GetSpecHeading()
+	if strings.TrimSpace(specName) == "" {
+		specName = filepath.Base(s.GetFileName())
+	}
+	return specName
+}
+
+func toSpec(res *gm.ProtoSpecResult, projectRoot string) *spec {
+	relSpecPath, _ := filepath.Rel(projectRoot, res.ProtoSpec.FileName)
+	normalizedSpecPath := strings.ReplaceAll(relSpecPath, fmt.Sprintf("..%c", os.PathSeparator), "")
+	spec := &spec{
+		Scenarios:              make([]*scenario, 0),
+		BeforeSpecHookFailures: make([]*hookFailure, 0),
+		AfterSpecHookFailures:  make([]*hookFailure, 0),
+		Errors:                 make([]buildError, 0),
+		FileName:               filepath.Join(projectRoot, normalizedSpecPath),
+		SpecFileName:           res.GetProtoSpec().GetFileName(),
+		SpecHeading:            res.GetProtoSpec().GetSpecHeading(),
+		IsTableDriven:          res.GetProtoSpec().GetIsTableDriven(),
+		ExecutionTime:          res.GetExecutionTime(),
+		ExecutionStatus:        pass,
+		PreHookMessages:        res.GetProtoSpec().GetPreHookMessages(),
+		PostHookMessages:       res.GetProtoSpec().GetPostHookMessages(),
+	}
+	for _, s := range res.GetProtoSpec().GetPreHookScreenshotFiles() {
+		spec.PreHookScreenshotFiles = append(spec.PreHookScreenshotFiles, s)
+		screenshotFiles = append(screenshotFiles, s)
+	}
+	for _, s := range res.GetProtoSpec().GetPostHookScreenshotFiles() {
+		spec.PostHookScreenshotFiles = append(spec.PostHookScreenshotFiles, s)
+		screenshotFiles = append(screenshotFiles, s)
+	}
+
+	//nolint - deprecated, but read here for backward compatibility
+	for _, s := range res.GetProtoSpec().GetPreHookScreenshots() {
+		spec.PreHookScreenshots = append(spec.PreHookScreenshots, base64.StdEncoding.EncodeToString(s))
+	}
+
+	//nolint - deprecated, but read here for backward compatibility
+	for _, s := range res.GetProtoSpec().GetPostHookScreenshots() {
+		spec.PostHookScreenshots = append(spec.PostHookScreenshots, base64.StdEncoding.EncodeToString(s))
+	}
+	if res.GetFailed() {
+		spec.ExecutionStatus = fail
+	}
+	if res.GetSkipped() {
+		spec.ExecutionStatus = skip
+	}
+	sourceTags := res.GetProtoSpec().GetTags()
+	if sourceTags != nil {
+		spec.Tags = make([]string, 0)
+		spec.Tags = append(spec.Tags, sourceTags...)
+	}
+	if hasParseErrors(res.Errors) {
+		spec.Errors = toErrors(res.Errors)
+		return spec
+	}
+	isTableScanned := false
+	for _, item := range res.GetProtoSpec().GetItems() {
+		switch item.GetItemType() {
+		case gm.ProtoItem_Comment:
+			if isTableScanned {
+				spec.CommentsAfterDatatable = fmt.Sprintf("%s\n%s", spec.CommentsAfterDatatable, item.GetComment().GetText())
+			} else {
+				spec.CommentsBeforeDatatable = fmt.Sprintf("%s\n%s", spec.CommentsBeforeDatatable, item.GetComment().GetText())
+			}
+		case gm.ProtoItem_Table:
+			spec.Datatable = toTable(item.GetTable())
+			isTableScanned = true
+		case gm.ProtoItem_Scenario:
+			spec.Scenarios = append(spec.Scenarios, toScenario(item.GetScenario(), -1, nil))
+		case gm.ProtoItem_TableDrivenScenario:
+			tableDrivenScenario := item.GetTableDrivenScenario()
+			if tableDrivenScenario.GetIsScenarioTableDriven() && !tableDrivenScenario.GetIsSpecTableDriven() {
+				spec.Scenarios = append(spec.Scenarios, toScenario(tableDrivenScenario.GetScenario(), -1, tableDrivenScenario))
+			} else {
+				spec.Scenarios = append(spec.Scenarios, toScenario(tableDrivenScenario.GetScenario(), int(item.TableDrivenScenario.GetTableRowIndex()), tableDrivenScenario))
+			}
+		}
+	}
+	for _, preHookFailure := range res.GetProtoSpec().GetPreHookFailures() {
+		spec.BeforeSpecHookFailures = append(spec.BeforeSpecHookFailures, toHookFailure(preHookFailure, "Before Spec"))
+	}
+	for _, postHookFailure := range res.GetProtoSpec().GetPostHookFailures() {
+		spec.AfterSpecHookFailures = append(spec.AfterSpecHookFailures, toHookFailure(postHookFailure, "After Spec"))
+	}
+
+	if res.GetProtoSpec().GetIsTableDriven() && isTableScanned {
+		computeTableDrivenStatuses(spec)
+	}
+	computeScenarioTableStatuses(spec)
+	p, f, s := computeScenarioStatistics(spec)
+	spec.PassedScenarioCount = p
+	spec.FailedScenarioCount = f
+	spec.SkippedScenarioCount = s
+	sort.Stable(bySceStatus(spec.Scenarios))
+	return spec
+}
+
+func computeScenarioStatistics(s *spec) (passed, failed, skipped int) {
+	for _, scn := range s.Scenarios {
+		switch scn.ExecutionStatus {
+		case pass:
+			passed++
+		case fail:
+			failed++
+		case skip:
+			skipped++
+		}
+	}
+	return passed, failed, skipped
+}
+
+func toErrors(errors []*gm.Error) []buildError {
+	var buildErrors []buildError
+	for _, e := range errors {
+		err := buildError{FileName: e.Filename, LineNumber: int(e.LineNumber), Message: e.Message}
+		switch e.Type {
+		case gm.Error_PARSE_ERROR:
+			err.ErrorType = parseErrorType
+		case gm.Error_VALIDATION_ERROR:
+			err.ErrorType = validationErrorType
+		}
+		buildErrors = append(buildErrors, err)
+	}
+	return buildErrors
+}
+
+func hasParseErrors(errors []*gm.Error) bool {
+	for _, e := range errors {
+		if e.Type == gm.Error_PARSE_ERROR {
+			return true
+		}
+	}
+	return false
+}
+
+func computeTableDrivenStatuses(spec *spec) {
+	if spec.Datatable == nil || len(spec.Datatable.Rows) == 0 {
+		return
+	}
+	for _, r := range spec.Datatable.Rows {
+		r.Result = skip
+	}
+	for _, s := range spec.Scenarios {
+		if s.TableRowIndex >= 0 {
+			var row = spec.Datatable.Rows[s.TableRowIndex]
+			if s.ExecutionStatus == fail {
+				row.Result = fail
+			} else if row.Result != fail && s.ExecutionStatus == pass {
+				row.Result = pass
+			}
+		}
+	}
+	SetRowFailures(spec.BeforeSpecHookFailures, spec)
+	SetRowFailures(spec.AfterSpecHookFailures, spec)
+}
+
+func SetRowFailures(failures []*hookFailure, spec *spec) {
+	for _, f := range failures {
+		if f.TableRowIndex >= 0 {
+			spec.Datatable.Rows[f.TableRowIndex].Result = fail
+		}
+	}
+}
+
+func computeScenarioTableStatuses(spec *spec) {
+	// Group scenarios, key: scenario heading, value: scenarios with same table
+	scenarioTables := make(map[string][]*scenario)
+	for _, s := range spec.Scenarios {
+		if s.IsScenarioTableDriven {
+			key := s.Heading
+			scenarioTables[key] = append(scenarioTables[key], s)
+		}
+	}
+	// Update row statuses based on scenario execution results
+	for _, scenarios := range scenarioTables {
+		if len(scenarios) == 0 || scenarios[0].ScenarioDataTable == nil {
+			continue
+		}
+		table := scenarios[0].ScenarioDataTable
+		for _, s := range scenarios {
+			if s.ScenarioTableRowIndex >= 0 && s.ScenarioTableRowIndex < len(table.Rows) {
+				row := table.Rows[s.ScenarioTableRowIndex]
+				row.Result = s.ExecutionStatus
+				if s.BeforeScenarioHookFailure != nil {
+					row.Result = fail
+				}
+				if s.AfterScenarioHookFailure != nil {
+					row.Result = fail
+				}
+			}
+		}
+		// Clear table reference for all subsequent scenarios so the renderer
+		// doesn't emit the same table once per row.
+		for i := 1; i < len(scenarios); i++ {
+			scenarios[i].ScenarioDataTable = nil
+		}
+	}
+}
+
+func toScenarioSummary(s *spec) *summary {
+	var sum = summary{Failed: s.FailedScenarioCount, Passed: s.PassedScenarioCount, Skipped: s.SkippedScenarioCount}
+	sum.Total = sum.Failed + sum.Passed + sum.Skipped
+	return &sum
+}
+
+func toScenario(scn *gm.ProtoScenario, tableRowIndex int, tableDrivenScenario *gm.ProtoTableDrivenScenario) *scenario {
+	scenario := &scenario{
+		Heading:                   scn.GetScenarioHeading(),
+		ExecutionTime:             formatTime(scn.GetExecutionTime()),
+		Tags:                      scn.GetTags(),
+		ExecutionStatus:           getScenarioStatus(scn),
+		Contexts:                  getItems(scn.GetContexts()),
+		Items:                     getItems(scn.GetScenarioItems()),
+		Teardowns:                 getItems(scn.GetTearDownSteps()),
+		BeforeScenarioHookFailure: toHookFailure(scn.GetPreHookFailure(), "Before Scenario"),
+		AfterScenarioHookFailure:  toHookFailure(scn.GetPostHookFailure(), "After Scenario"),
+		TableRowIndex:             tableRowIndex,
+		PreHookMessages:           scn.GetPreHookMessages(),
+		PostHookMessages:          scn.GetPostHookMessages(),
+		RetriesCount:              int(scn.RetriesCount),
+	}
+	if tableDrivenScenario.GetIsScenarioTableDriven() {
+		scenario.IsScenarioTableDriven = tableDrivenScenario.GetIsScenarioTableDriven()
+		scenario.ScenarioTableRowIndex = int(tableDrivenScenario.GetScenarioTableRowIndex())
+		scenario.ScenarioDataTable = toTable(tableDrivenScenario.GetScenarioDataTable())
+		scenario.ScenarioTableRow = toTable(tableDrivenScenario.GetScenarioTableRow())
+	}
+	for _, s := range scn.GetPreHookScreenshotFiles() {
+		scenario.PreHookScreenshotFiles = append(scenario.PreHookScreenshotFiles, s)
+		screenshotFiles = append(screenshotFiles, s)
+	}
+	for _, s := range scn.GetPostHookScreenshotFiles() {
+		scenario.PostHookScreenshotFiles = append(scenario.PostHookScreenshotFiles, s)
+		screenshotFiles = append(screenshotFiles, s)
+	}
+	//nolint - deprecated, but read here for backward compatibility
+	for _, s := range scn.GetPreHookScreenshots() {
+		scenario.PreHookScreenshots = append(scenario.PreHookScreenshots, base64.StdEncoding.EncodeToString(s))
+	}
+	//nolint - deprecated, but read here for backward compatibility
+	for _, s := range scn.GetPostHookScreenshots() {
+		scenario.PostHookScreenshots = append(scenario.PostHookScreenshots, base64.StdEncoding.EncodeToString(s))
+	}
+	return scenario
+}
+
+func toComment(protoComment *gm.ProtoComment) *comment {
+	return &comment{Text: protoComment.GetText()}
+}
+
+func toStep(protoStep *gm.ProtoStep) *step {
+	res := protoStep.GetStepExecutionResult().GetExecutionResult()
+	failureScreenshotFile := res.GetFailureScreenshotFile()
+	result := &result{
+		Status:                getStepStatus(protoStep.GetStepExecutionResult()),
+		StackTrace:            res.GetStackTrace(),
+		ErrorMessage:          res.GetErrorMessage(),
+		ExecutionTime:         formatTime(res.GetExecutionTime()),
+		Messages:              res.GetMessage(),
+		FailureScreenshotFile: failureScreenshotFile,
+		FailureScreenshot:     base64.StdEncoding.EncodeToString(res.GetFailureScreenshot()), //nolint - deprecated, but read here for backward compatibility
+	}
+	if failureScreenshotFile != "" {
+		screenshotFiles = append(screenshotFiles, failureScreenshotFile)
+	}
+	for _, s := range res.GetScreenshotFiles() {
+		result.ScreenshotFiles = append(result.ScreenshotFiles, s)
+		screenshotFiles = append(screenshotFiles, s)
+	}
+
+	//nolint - deprecated, but read here for backward compatibility
+	for _, s := range res.GetScreenshots() {
+		result.Screenshots = append(result.Screenshots, base64.StdEncoding.EncodeToString(s))
+	}
+	if protoStep.GetStepExecutionResult().GetSkipped() {
+		result.SkippedReason = protoStep.GetStepExecutionResult().GetSkippedReason()
+	}
+	step := &step{
+		Fragments:             toFragments(protoStep.GetFragments()),
+		Result:                result,
+		BeforeStepHookFailure: toHookFailure(protoStep.GetStepExecutionResult().GetPreHookFailure(), "Before Step"),
+		AfterStepHookFailure:  toHookFailure(protoStep.GetStepExecutionResult().GetPostHookFailure(), "After Step"),
+		PreHookMessages:       protoStep.GetPreHookMessages(),
+		PostHookMessages:      protoStep.GetPostHookMessages(),
+	}
+	for _, s := range protoStep.GetPreHookScreenshotFiles() {
+		step.PreHookScreenshotFiles = append(step.PreHookScreenshotFiles, s)
+		screenshotFiles = append(screenshotFiles, s)
+	}
+	for _, s := range protoStep.GetPostHookScreenshotFiles() {
+		step.PostHookScreenshotFiles = append(step.PostHookScreenshotFiles, s)
+		screenshotFiles = append(screenshotFiles, s)
+	}
+	//nolint - deprecated, but read here for backward compatibility
+	for _, s := range protoStep.GetPreHookScreenshots() {
+		step.PreHookScreenshots = append(step.PreHookScreenshots, base64.StdEncoding.EncodeToString(s))
+	}
+	//nolint - deprecated, but read here for backward compatibility
+	for _, s := range protoStep.GetPostHookScreenshots() {
+		step.PostHookScreenshots = append(step.PostHookScreenshots, base64.StdEncoding.EncodeToString(s))
+	}
+	return step
+}
+
+func toConcept(protoConcept *gm.ProtoConcept) *concept {
+	protoConcept.ConceptStep.StepExecutionResult = protoConcept.GetConceptExecutionResult()
+	return &concept{
+		ConceptStep: toStep(protoConcept.GetConceptStep()),
+		Items:       getItems(protoConcept.GetSteps()),
+	}
+}
+
+func toFileName(name string) string {
+	if strings.Contains(name, ":") {
+		return strings.Split(name, ":")[1]
+	}
+	return name
+}
+
+func toFragments(protoFragments []*gm.Fragment) []*fragment {
+	fragments := make([]*fragment, 0)
+	for _, f := range protoFragments {
+		switch f.GetFragmentType() {
+		case gm.Fragment_Text:
+			fragments = append(fragments, &fragment{FragmentKind: textFragmentKind, Text: f.GetText()})
+		case gm.Fragment_Parameter:
+			param := f.GetParameter()
+			paramType := param.GetParameterType()
+			paramValue := param.GetValue()
+
+			switch paramType {
+			case gm.Parameter_Static:
+				fragments = append(fragments, &fragment{FragmentKind: staticFragmentKind, Text: paramValue})
+			case gm.Parameter_Dynamic:
+				fragments = append(fragments, &fragment{FragmentKind: dynamicFragmentKind, Text: paramValue})
+			case gm.Parameter_Table:
+				fragments = append(fragments, &fragment{FragmentKind: tableFragmentKind, Table: toTable(param.GetTable())})
+			case gm.Parameter_Special_Table:
+				fragments = append(fragments, &fragment{FragmentKind: specialTableFragmentKind, Name: param.GetName(), Text: toCsv(param.GetTable()), FileName: toFileName(param.GetName())})
+			case gm.Parameter_Special_String:
+				if strings.Contains(paramValue, "\n") {
+					fragments = append(fragments, &fragment{FragmentKind: multilineFragmentKind, Text: paramValue})
+				} else {
+					fragments = append(fragments, &fragment{FragmentKind: specialStringFragmentKind, Name: param.GetName(), Text: paramValue, FileName: toFileName(param.GetName())})
+				}
+			}
+		}
+	}
+	return fragments
+}
+
+func toTable(protoTable *gm.ProtoTable) *table {
+	rows := make([]*row, len(protoTable.GetRows()))
+	for i, r := range protoTable.GetRows() {
+		rows[i] = &row{
+			Cells:  r.GetCells(),
+			Result: pass,
+		}
+	}
+	return &table{Headers: protoTable.GetHeaders().GetCells(), Rows: rows}
+}
+
+func toCsv(protoTable *gm.ProtoTable) string {
+	csv := []string{strings.Join(protoTable.GetHeaders().GetCells(), ",")}
+	for _, row := range protoTable.GetRows() {
+		csv = append(csv, strings.Join(row.GetCells(), ","))
+	}
+	return strings.Join(csv, "\n")
+}
+
+func getItems(protoItems []*gm.ProtoItem) []item {
+	items := make([]item, 0)
+	var previousItem gm.ProtoItem_ItemType
+	for _, i := range protoItems {
+		switch i.GetItemType() {
+		case gm.ProtoItem_Step:
+			items = append(items, item{Kind: stepKind, Step: toStep(i.GetStep())})
+		case gm.ProtoItem_Comment:
+			if previousItem == gm.ProtoItem_Comment {
+				items[len(items)-1].Comment.Text += "\n\n" + i.GetComment().Text
+			} else {
+				items = append(items, item{Kind: commentKind, Comment: toComment(i.GetComment())})
+			}
+		case gm.ProtoItem_Concept:
+			items = append(items, item{Kind: conceptKind, Concept: toConcept(i.GetConcept())})
+		}
+		previousItem = i.GetItemType()
+	}
+	return items
+}
+
+func getStepStatus(res *gm.ProtoStepExecutionResult) status {
+	if res.GetSkipped() {
+		return skip
+	}
+	if res.GetExecutionResult() == nil {
+		return notExecuted
+	}
+	if res.GetExecutionResult().GetFailed() {
+		return fail
+	}
+	return pass
+}
+
+func getScenarioStatus(scn *gm.ProtoScenario) status {
+	switch scn.GetExecutionStatus() {
+	case gm.ExecutionStatus_FAILED:
+		return fail
+	case gm.ExecutionStatus_PASSED:
+		return pass
+	case gm.ExecutionStatus_SKIPPED:
+		return skip
+	default:
+		return notExecuted
+	}
+}
+
+func formatTime(ms int64) string {
+	return time.Unix(0, ms*int64(time.Millisecond)).UTC().Format(execTimeFormat)
+}

@@ -5,3 +5,4 @@ bin
 *.iml
 .DS_Store
 generator/_testdata/benchmark/*.html
+settings.local.json
