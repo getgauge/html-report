@@ -20,6 +20,7 @@ require (
 	github.com/gorilla/css v1.0.1 // indirect
 	github.com/mb0/diff v0.0.0-20131118162322-d8d9a906c24d // indirect
 	github.com/tdewolff/parse/v2 v2.8.12 // indirect
+	github.com/yuin/goldmark v1.8.2 // indirect
 	golang.org/x/net v0.53.0 // indirect
 	golang.org/x/sys v0.43.0 // indirect
 	golang.org/x/text v0.36.0 // indirect
