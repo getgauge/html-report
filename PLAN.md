@@ -4,21 +4,20 @@
 
 > **Update this section before and after every commit.** It is the single durable record of where this multi-PR effort stands; a fresh session should be able to read it and resume work without re-deriving context.
 
-**Status as of 2026-05-02:** PR 1 work complete in working tree, about to be committed.
+**Status as of 2026-05-02:** PR 1 committed locally on `master` (not yet pushed). Ready to start PR 2.
 
 | PR | Scope | Status | Commit |
 | --- | --- | --- | --- |
-| 1 | `mdgen/` package: types, transform, fragments, format helpers, tests for transform + format | 🟡 Ready to commit | _pending_ |
+| 1 | `mdgen/` package: types, transform, fragments, format helpers, tests for transform + format | 🟢 Done (local) | `d557725` |
 | 2 | Renderers + golden + integration + parse tests (steps 3, 4.2–4.5) | ⏳ Not started | — |
 | 3 | Switch entry point, delete HTML pipeline, rename plugin, update build + `deploy.yml` (step 5) | ⏳ Not started | — |
 | 4 | README, schema, examples, migration note | ⏳ Not started | — |
 
-**Uncommitted in working tree right now:**
-- `mdgen/` (new package, 6 files) — PR 1 source
-- `PLAN.md` (this file) — recreated after disappearing between sessions
-- `.gitignore` (modified, pre-existing in working tree before PR 1) — adds `settings.local.json`; per the user's instruction, ride this along in PR 1's commit
+**Uncommitted in working tree right now:** none (this PLAN.md edit will become a small follow-up commit, or fold into the first PR 2 commit).
 
-**Next concrete action after the PR 1 commit lands:** start PR 2 step 4.2 — write `mdgen/render_test.go` with one test per render function, using `bytes.Buffer` and substring assertions. Renderer functions don't exist yet; write tests against the planned API in §3 of this plan, then implement the renderers to satisfy them (TDD).
+**Next concrete action:** start PR 2 step 4.2 — write `mdgen/render_test.go` with one test per planned render function, using `bytes.Buffer` and substring assertions. The render functions don't exist yet; write tests against the API sketched in §3 of this plan, then implement the renderers to satisfy them (TDD). When the test file is in place but renderers are stubs, expect failing tests — that's the checkpoint to commit "tests in, renderers stubbed" before implementing.
+
+**Push status:** `master` is 1 commit ahead of `origin/master`. User has not asked for a push yet — do not push without explicit confirmation, especially given this is a feature scaffold rather than a complete change.
 
 **Status legend:** 🟢 Done · 🟡 In progress / ready to commit · ⏳ Not started · 🔴 Blocked
 
