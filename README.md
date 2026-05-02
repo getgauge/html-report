@@ -1,155 +1,191 @@
-html-report
-==========
+markdown-report
+===============
 
 [![Actions Status](https://github.com/getgauge/html-report/workflows/test/badge.svg)](https://github.com/getgauge/html-report/actions)
 [![Contributor Covenant](https://img.shields.io/badge/Contributor%20Covenant-v1.4%20adopted-ff69b4.svg)](CODE_OF_CONDUCT.md)
 
+A [Gauge](https://gauge.org) execution-reporting plugin that emits
+GitHub-Flavored Markdown. Runs as a drop-in replacement for the old
+`html-report` plugin, but the output is plain `.md` so reports render in
+GitHub, GitLab, IDE previewers, `glow`, and any other Markdown viewer.
+
+> **v5.0 is a breaking change.** The plugin id, env-var prefix, output
+> format, and version line all changed. See [Migrating from html-report
+> v4](#migrating-from-html-report-v4) below.
+
 Features
--------
+--------
 
--  A comprehensive test results report template prepared in a html
-   format providing the overall summary with drill down of the test
-   cases executed and effort spent during the testing for each stage and feature.
--  It provides the details for the defects found during the run.
--  It indicates the tests by color code - failed(red), passed(green) and
-   skipped(grey).
--  The failure can be analyzed with the stacktrace and
-   screenshot(captures unless overwritten not to).
--  The skipped tests can be analyzed with the given reason.
--  [Custom Messages](https://docs.gauge.org/writing-specifications.html#custom-messages-in-reports) allows users to add messages at runtime.
+- One `index.md` summary at the report root, one `.md` per spec under
+  `specs/`, screenshots copied into `images/`.
+- Status glyphs (✅ / ❌ / ⏭️) plus text status words for accessible
+  rendering across viewers.
+- Stack traces and large error blocks wrapped in collapsible
+  `<details>` sections — keeps files scannable while preserving the
+  full diagnostic context.
+- Table-driven specs and scenario-table-driven scenarios render as
+  GFM tables with per-row pass/fail status.
+- Honors `use_nested_specs` to emit a per-directory `index.md`.
 
+What was removed in v5
+----------------------
 
-**Sample HTML Report documemt**
+- The HTML template stack (`generator/`, `theme/`, `themes/`).
+- The full-text search sidebar / `js/search_index.js`.
+- Theme support (`GAUGE_HTML_REPORT_THEME_PATH`).
+- The HTML minifier and the `gauge_minify_reports` env var.
 
-<img src="https://github.com/getgauge/html-report/raw/master/images/sample.png" alt="Create New Project preview" style="width: 600px;"/>
+If your CI scrapes `index.html` or hands the report to a human via a
+themed lightbox, you should stay on `html-report` v4 until those
+consumers are migrated.
 
 Installation
 ------------
 
 ```
-gauge install html-report
+gauge install markdown-report
 ```
 
-* Installing specific version
+Specific version:
+
 ```
-gauge install html-report --version 4.3.3
+gauge install markdown-report --version 5.0.0
 ```
 
 #### Offline installation
-* Download the plugin from [Releases](https://github.com/getgauge/html-report/releases)
-```
-gauge install html-report --file html-report-4.3.3-linux.x86_64.zip
-```
 
-#### Build from Source
-
-##### Requirements
-* [Golang](http://golang.org/)
-
-##### Compiling
-Download dependencies
-```
-go get -t ./...
-```
-
-Compilation
-```
-
-go run build/make.go
-```
-
-For cross-platform compilation
+Download the plugin from [Releases](https://github.com/getgauge/html-report/releases):
 
 ```
-go run build/make.go --all-platforms
+gauge install markdown-report --file markdown-report-5.0.0-linux.x86_64.zip
 ```
 
-##### Installing
-After compilation
+#### Build from source
+
+Requirements:
+- [Go](https://golang.org/) (matching `go.mod`)
 
 ```
-go run build/make.go --install
+go run build/make.go                 # compile for current host
+go run build/make.go --all-platforms # cross-compile
+go run build/make.go --install       # install locally
+go run build/make.go --distro        # build distributable
 ```
 
-Installing to a CUSTOM_LOCATION
-
-```
-go run build/make.go --install --plugin-prefix CUSTOM_LOCATION
-```
-
-#### Creating distributable
-
-Note: Run after compiling
-
-```
-go run build/make.go --distro
-```
-
-For distributable across platforms: Windows and Linux for both x86 and x86_64
-
-```
-go run build/make.go --distro --all-platforms
-```
-
-New distribution details need to be updated in the `html-report-install.json` file in the [gauge plugin repository](https://github.com/getgauge/gauge-repository) for a new version update.
+`go run build/make.go --install --plugin-prefix CUSTOM_LOCATION` installs into a custom prefix.
 
 Configuration
 -------------
 
-The HTML report plugin can be configured by the properties set in the
-`env/default.properties` file in the project.
+The plugin reads its configuration from `env/default/default.properties`
+in the project, which Gauge surfaces as environment variables. The
+configurable properties are:
 
-The configurable properties are:
+| Property                  | Type    | Default     | Purpose |
+| ------------------------- | ------- | ----------- | ------- |
+| `gauge_reports_dir`       | path    | `reports`   | Where reports are written. Relative paths are resolved against the project root. |
+| `overwrite_reports`       | boolean | `true`      | If `false`, every run lands in a new timestamped directory. |
+| `use_nested_specs`        | boolean | `false`     | When `true`, emits an `index.md` for every spec subdirectory in addition to the suite-level one. |
+| `save_execution_result`   | boolean | `true`      | If `true`, the plugin places a symlink (or `.bat` on Windows) to its executable inside the report directory so the report can be regenerated offline. |
+| `gauge_screenshots_dir`   | path    | unset       | Where Gauge stages step / hook screenshots. Set by Gauge; the plugin reads the variable. |
 
-**gauge_reports_dir**
+The `GAUGE_HTML_REPORT_THEME_PATH` and `gauge_minify_reports` variables
+from v4 are no longer consulted.
 
--  Specifies the path to the directory where the execution reports will
-   be generated.
-
--  Should be either relative to the project directory or an absolute
-   path. By default it is set to `reports` directory in the project
-
-**overwrite_reports**
-
--  Set to ``true`` if the reports **must be overwritten** on each
-   execution maintaining only the latest execution report.
-
--  If set to `false` then a _**new report**_ will be generated on each execution in the reports directory in a nested time-stamped directory. By default it is set to `true`.
-
-
-**GAUGE_HTML_REPORT_THEME_PATH**
-
--  Specifies the path to the custom theme directory.
-
--  Should be either relative to the project directory or an absolute
-   path. By default, `default` theme shipped with gauge is used.
-
-**gauge_minify_reports**
-
--  Set to ``true`` if the generated HTML files needs to be minified. This helps avoid creating huge reports if the project suite is huge.
-
-Report re-generation
+Report regeneration
 -------------------
 
-If report generation fails due to some reason, we don't have to re-run the tests again.
+The plugin saves the raw `last_run_result` proto under `.gauge/`
+during normal runs. To regenerate a report from it:
 
-Gauge now generates a last_run_result file in the `.gauge` folder under the Project Root. There is also a symlink to the html-report executable available in <gauge_reports_dir>/html-report.
+1. Navigate to the report directory.
+2. Move the `markdown-report` symlink to the `.gauge/` directory.
+3. Navigate to `.gauge/`.
+4. Run:
+   ```
+   ./markdown-report --input=last_run_result --output=/some/path
+   ```
 
-**To regenerate the report**
+The output directory is created if it doesn't exist; do not point this
+at a directory you don't want overwritten. Regeneration only works if
+`save_execution_result` was `true` when the original run captured the
+result.
 
-- Navigate to the reports directory
-- move the `html-report` file to `.gauge` directory
-- Navigate to the `.gauge` directory
-- run `./html-report --input=last_run_result --output="/some/path"`
+Migrating from html-report v4
+-----------------------------
 
-**Note:** The output directory is created. Take care not to overwrite an existing directory. The `html-report` executable and `last_run_result` will be generated only if the property `save_execution_result` is set to `true`.
-While regenerating a report, the default theme is used. A custom can be used if ``--theme`` flag is specified with the path to the custom theme.
+1. **Install the new plugin.** `gauge install markdown-report` —
+   `html-report` is no longer maintained for new releases. Both
+   plugins can coexist temporarily while you cut over.
+2. **Update env files.** Remove `gauge_minify_reports` and
+   `GAUGE_HTML_REPORT_THEME_PATH` from `env/default/default.properties`.
+   The remaining variables (`gauge_reports_dir`, `overwrite_reports`,
+   `use_nested_specs`, `save_execution_result`) carry over unchanged.
+3. **Adjust report consumers.** If you have CI that publishes
+   `index.html` or scrapes `js/search_index.js`, repoint to `index.md`
+   and the `specs/<name>.md` tree. GitHub renders the report directly
+   when committed.
+4. **Update the plugin id wherever it's referenced.** In CI logs,
+   gauge-repository registrations, or any tooling that filters by
+   plugin id, change `html-report` to `markdown-report`.
+5. **Custom themes are gone.** v5 uses the Markdown engine of the
+   target viewer (GitHub, glow, IDE preview) for styling. If you
+   shipped a custom theme, that effort moves to viewer choice.
+6. **Search / sidebar UI is gone.** Use your editor's file finder or
+   `grep` against the `.md` tree.
 
+Sample output
+-------------
+
+`index.md` (excerpt):
+
+```markdown
+# Gauge Report — demo
+
+_Generated Jan 2, 2026 at 3:04pm · Environment: default · Tags: regression_
+
+## Summary
+
+| Scope     | Total | ✅ Passed | ❌ Failed | ⏭️ Skipped | Success rate |
+| ---       | ---   | ---       | ---       | ---         | ---          |
+| Specs     | 1     | 0         | 1         | 0           | 0%           |
+| Scenarios | 2     | 1         | 1         | 0           | 50%          |
+
+**Total time:** 6.00s
+
+## Specs
+
+| Status | Spec                            | Time  | Tags       |
+| ---    | ---                             | ---   | ---        |
+| ❌     | [Checkout](specs/checkout.md)   | 6.00s | regression |
+```
+
+A failing-step block in a per-spec page:
+
+```markdown
+- ❌ checkout breaks _(00:00:00)_
+
+  **Error:** `expected 200 got 500`
+
+  <details><summary>Stack trace</summary>
+
+  ```
+  at handler.go:42
+  at router.go:11
+  ```
+
+  </details>
+
+  ![Failure screenshot](../images/scn-fail.png)
+```
+
+The full set of representative shapes (mixed pass/fail, all-skipped,
+before-suite-hook-failure, data-table-driven, with-screenshots) is
+checked in under [`mdgen/_testdata/`](mdgen/_testdata/) — those files
+are the format reference.
 
 License
 -------
-
-This program is licensed under:
 
 [Apache License, Version 2.0](https://www.apache.org/licenses/LICENSE-2.0.txt)
 
