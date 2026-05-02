@@ -32,14 +32,13 @@ const (
 	bin               = "bin"
 	newDirPermissions = 0755
 	gauge             = "gauge"
-	htmlReport        = "html-report"
+	markdownReport    = "markdown-report"
 	deploy            = "deploy"
 	pluginJSONFile    = "plugin.json"
-	themesDir         = "themes"
 	CgoEnabled        = "CGO_ENABLED"
 )
 
-var deployDir = filepath.Join(deploy, htmlReport)
+var deployDir = filepath.Join(deploy, markdownReport)
 
 func main() {
 	flag.Parse()
@@ -57,7 +56,7 @@ func compile() {
 	if *allPlatforms {
 		compileAcrossPlatforms()
 	} else {
-		compileGoPackage(htmlReport)
+		compileGoPackage(markdownReport)
 	}
 }
 
@@ -76,7 +75,7 @@ func createPluginDistro(forAllPlatforms bool) {
 }
 
 func createDistro() {
-	packageName := fmt.Sprintf("%s-%s-%s.%s", htmlReport, getPluginVersion(), getGOOS(), getArch())
+	packageName := fmt.Sprintf("%s-%s-%s.%s", markdownReport, getPluginVersion(), getGOOS(), getArch())
 	distroDir := filepath.Join(deploy, packageName)
 	copyPluginFiles(distroDir)
 	createZipFromUtil(deploy, packageName)
@@ -198,7 +197,7 @@ func executeCommand(command string, arg ...string) (string, error) {
 }
 
 func compileGoPackage(packageName string) {
-	runProcess("go", "build", "-o", getGaugeExecutablePath(htmlReport))
+	runProcess("go", "build", "-o", getGaugeExecutablePath(markdownReport))
 }
 
 func getGaugeExecutablePath(file string) string {
@@ -243,12 +242,11 @@ func copyFiles(files map[string]string, installDir string) {
 func copyPluginFiles(destDir string) {
 	files := make(map[string]string)
 	if getGOOS() == "windows" {
-		files[filepath.Join(getBinDir(), htmlReport+".exe")] = bin
+		files[filepath.Join(getBinDir(), markdownReport+".exe")] = bin
 	} else {
-		files[filepath.Join(getBinDir(), htmlReport)] = bin
+		files[filepath.Join(getBinDir(), markdownReport)] = bin
 	}
 	files[pluginJSONFile] = ""
-	files[themesDir] = themesDir
 	copyFiles(files, destDir)
 }
 
@@ -303,13 +301,13 @@ func compileAcrossPlatforms() {
 	for _, platformEnv := range platformEnvs {
 		setEnv(platformEnv)
 		fmt.Printf("Compiling for platform => OS:%s ARCH:%s \n", platformEnv[goOS], platformEnv[goARCH])
-		compileGoPackage(htmlReport)
+		compileGoPackage(markdownReport)
 	}
 }
 
 func installPlugin(installPrefix string) {
 	copyPluginFiles(deployDir)
-	pluginInstallPath := filepath.Join(installPrefix, htmlReport, getPluginVersion())
+	pluginInstallPath := filepath.Join(installPrefix, markdownReport, getPluginVersion())
 	err := mirrorDir(deployDir, pluginInstallPath)
 	if err != nil {
 		panic(fmt.Sprintf("Failed to mirror directory  '%s' to '%s': %s", deployDir, pluginInstallPath, err.Error()))

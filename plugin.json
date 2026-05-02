@@ -4,29 +4,29 @@
     ],
     "command": {
         "darwin": [
-            "bin/html-report"
+            "bin/markdown-report"
         ],
         "linux": [
-            "bin/html-report"
+            "bin/markdown-report"
         ],
         "windows": [
-            "bin/html-report"
+            "bin/markdown-report"
         ]
     },
-    "description": "Html reporting plugin",
+    "description": "Markdown reporting plugin",
     "gaugeVersionSupport": {
         "maximum": "",
         "minimum": "1.0.7"
     },
-    "id": "html-report",
+    "id": "markdown-report",
     "install": {
         "darwin": [],
         "linux": [],
         "windows": []
     },
-    "name": "Html Report",
+    "name": "Markdown Report",
     "scope": [
         "Execution"
     ],
-    "version": "4.4.3"
+    "version": "5.0.0"
 }

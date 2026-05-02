@@ -25,7 +25,6 @@ const (
 	UseNestedSpecs              = "use_nested_specs"
 	SaveExecutionResult         = "save_execution_result"
 	pluginKillTimeout           = "plugin_kill_timeout"
-	gaugeMinifyReports          = "gauge_minify_reports"
 	gaugeMaxMessageSize         = "gauge_max_message_size"
 )
 
@@ -77,7 +76,7 @@ func AddDefaultPropertiesToProject() {
 		logger.Debugf("Failed to setup html report plugin in project: %s \n", err)
 		return
 	}
-	logger.Debug("Succesfully added configurations for html-report to env/default/default.properties")
+	logger.Debug("Succesfully added configurations for markdown-report to env/default/default.properties")
 }
 
 func getDefaultPropertiesFile() string {
@@ -90,10 +89,6 @@ func ShouldOverwriteReports() bool {
 
 func ShouldUseNestedSpecs() bool {
 	return isEnvSet(UseNestedSpecs)
-}
-
-func ShouldMinifyReports() bool {
-	return isEnvSet(gaugeMinifyReports)
 }
 
 func isEnvSet(envName string) bool {

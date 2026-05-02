@@ -55,7 +55,7 @@ func (h *handler) NotifyExecutionEnding(c context.Context, m *gauge_messages.Exe
 }
 
 func (h *handler) NotifySuiteResult(c context.Context, m *gauge_messages.SuiteExecutionResult) (*gauge_messages.Empty, error) {
-	createReport(m, true)
+	createReport(m)
 	return &gauge_messages.Empty{}, nil
 }
 

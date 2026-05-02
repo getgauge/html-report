@@ -7,34 +7,28 @@ package regenerate
 
 import (
 	"os"
-	"path/filepath"
-
-	"github.com/getgauge/html-report/logger"
 
 	"github.com/getgauge/gauge-proto/go/gauge_messages"
 	"github.com/getgauge/html-report/env"
-	"github.com/getgauge/html-report/generator"
-	"github.com/getgauge/html-report/theme"
+	"github.com/getgauge/html-report/logger"
+	"github.com/getgauge/html-report/mdgen"
 	"google.golang.org/protobuf/proto"
 )
 
-// Report generates html report from saved result.
-func Report(inputFile, reportsDir, themePath, pRoot string) {
+// Report regenerates a Markdown report from a previously persisted
+// last_run_result.bin (proto-serialized SuiteResult).
+func Report(inputFile, reportsDir, pRoot string) {
 	b, err := os.ReadFile(inputFile)
 	if err != nil {
 		logger.Fatal(err.Error())
 	}
 	psr := &gauge_messages.ProtoSuiteResult{}
-	err = proto.Unmarshal(b, psr)
-	if err != nil {
+	if err := proto.Unmarshal(b, psr); err != nil {
 		logger.Fatalf("Unable to read last run data from %s. Error: %s", inputFile, err.Error())
 	}
-	res := generator.ToSuiteResult(pRoot, psr)
-
+	res := mdgen.ToSuiteResult(pRoot, psr)
 	env.CreateDirectory(reportsDir)
-	if themePath == "" {
-		workingDir, _ := env.GetCurrentExecutableDir()
-		themePath = theme.GetDefaultThemePath(filepath.Dir(workingDir))
+	if err := mdgen.GenerateReports(res, reportsDir); err != nil {
+		logger.Fatalf("Failed to regenerate report: %s", err.Error())
 	}
-	generator.GenerateReport(res, reportsDir, themePath, true)
 }

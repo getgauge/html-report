@@ -20,8 +20,7 @@ import (
 
 var now = time.Now()
 
-type testNameGenerator struct {
-}
+type testNameGenerator struct{}
 
 func (T testNameGenerator) randomName() string {
 	return now.Format(timeFormat)
@@ -30,7 +29,7 @@ func (T testNameGenerator) randomName() string {
 func TestGetReportsDirectory(t *testing.T) {
 	userSetReportsDir := filepath.Join(os.TempDir(), randomName())
 	helper.SetEnvOrFail(t, env.GaugeReportsDirEnvName, userSetReportsDir)
-	expectedReportsDir := filepath.Join(userSetReportsDir, htmlReport)
+	expectedReportsDir := filepath.Join(userSetReportsDir, markdownReport)
 	defer func(path string) {
 		if err := os.RemoveAll(path); err != nil {
 			t.Errorf("Failed to remove directory %s: %v", path, err)
@@ -52,7 +51,7 @@ func TestGetReportsDirectoryWithOverrideFlag(t *testing.T) {
 	helper.SetEnvOrFail(t, env.GaugeReportsDirEnvName, userSetReportsDir)
 	helper.SetEnvOrFail(t, env.OverwriteReportsEnvProperty, "true")
 	nameGen := &testNameGenerator{}
-	expectedReportsDir := filepath.Join(userSetReportsDir, htmlReport, nameGen.randomName())
+	expectedReportsDir := filepath.Join(userSetReportsDir, markdownReport, nameGen.randomName())
 	defer func(path string) {
 		if err := os.RemoveAll(path); err != nil {
 			t.Errorf("Failed to remove directory %s: %v", path, err)
@@ -91,10 +90,10 @@ func TestCreatingReportShouldOverwriteReportsBasedOnEnv(t *testing.T) {
 
 func TestCreateReportExecutableFileShouldCreateExecFile(t *testing.T) {
 	isSaveExecutionResultDisabled = func() bool { return false }
-	exPath := filepath.Join(os.TempDir(), "html-report")
-	exTargetFileName := "html-report-target"
+	exPath := filepath.Join(os.TempDir(), markdownReport)
+	exTargetFileName := markdownReport + "-target"
 	if runtime.GOOS == "windows" {
-		exTargetFileName = "html-report-target.bat"
+		exTargetFileName = markdownReport + "-target.bat"
 	}
 	exTarget := filepath.Join(os.TempDir(), exTargetFileName)
 	_, err := os.Create(exPath)
@@ -110,10 +109,11 @@ func TestCreateReportExecutableFileShouldCreateExecFile(t *testing.T) {
 		t.Errorf("Could not create a symlink of src: %s to  dst: %s", exPath, exTarget)
 	}
 }
+
 func TestCreateReportExecutableFileShouldNotCreateExecFile(t *testing.T) {
 	isSaveExecutionResultDisabled = func() bool { return true }
-	exPath := filepath.Join(os.TempDir(), "html-report")
-	exTarget := filepath.Join(os.TempDir(), "html-report-target")
+	exPath := filepath.Join(os.TempDir(), markdownReport)
+	exTarget := filepath.Join(os.TempDir(), markdownReport+"-target")
 	_, err := os.Create(exPath)
 	if err != nil {
 		t.Errorf("could not create %s. %s", exPath, err.Error())

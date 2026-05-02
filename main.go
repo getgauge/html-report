@@ -20,10 +20,9 @@ import (
 )
 
 const usage = `Usage of using_flag:
-  -i, --input Source file to generate report from. This should be generated in <PROJECTROOT>/.gauge folder.
+  -i, --input  Source file to generate report from. This should be generated in <PROJECTROOT>/.gauge folder.
   -o, --output Output location for generating report. Will create directory if it doesn't exist.
-  -t, --theme Theme to use for generating html report. 'default' theme will be used if not specified.
-  -h, --help prints help information 
+  -h, --help   prints help information
 `
 
 func main() {
@@ -33,9 +32,6 @@ func main() {
 	var outDir string
 	flag.StringVar(&outDir, "output", "", "Output location for generating report. Will create directory if it doesn't exist.")
 	flag.StringVar(&outDir, "o", "", "Output location for generating report. Will create directory if it doesn't exist.")
-	var themePath string
-	flag.StringVar(&themePath, "theme", "", "Theme to use for generating html report. 'default' theme will be used if not specified.")
-	flag.StringVar(&themePath, "t", "", "Theme to use for generating html report. 'default' theme will be used if not specified.")
 
 	flag.Usage = func() { fmt.Print(usage) }
 	flag.Parse()
@@ -51,7 +47,7 @@ func main() {
 		if !common.FileExists(inputFile) {
 			logger.Fatalf("Input file does not exist: %s", inputFile)
 		}
-		regenerate.Report(inputFile, outDir, themePath, projectRoot)
+		regenerate.Report(inputFile, outDir, projectRoot)
 		return
 	}
 

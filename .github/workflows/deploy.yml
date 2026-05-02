@@ -30,23 +30,23 @@ jobs:
       - name: Deploy
         run: |
           if [ -z "$version" ]; then
-            version=$(cd deploy && ls html-report* | head -1 | sed "s/\.[^\.]*$//" | sed "s/html-report-//" | sed "s/-[a-z]*\.[a-z0-9_]*$//");
+            version=$(cd deploy && ls markdown-report* | head -1 | sed "s/\.[^\.]*$//" | sed "s/markdown-report-//" | sed "s/-[a-z]*\.[a-z0-9_]*$//");
           fi
           echo "VERSION=$version" >> $GITHUB_ENV
 
           echo "---------------------------"
           echo "Updating release v$version"
           echo "---------------------------"
-          echo -e "Gauge HTML Report v$version\n\n" > desc.txt
-          release_description=$(ruby -e "$(curl -sSfL https://github.com/getgauge/gauge/raw/master/build/create_release_text.rb)" getgauge html-report)
+          echo -e "Gauge Markdown Report v$version\n\n" > desc.txt
+          release_description=$(ruby -e "$(curl -sSfL https://github.com/getgauge/gauge/raw/master/build/create_release_text.rb)" getgauge markdown-report)
           echo "$release_description" >> desc.txt
-          gh release create --title "Gauge Html Report v${version}" --notes-file ./desc.txt "v${version}" deploy/*
+          gh release create --title "Gauge Markdown Report v${version}" --notes-file ./desc.txt "v${version}" deploy/*
 
       - name: Update metadata in gauge-repository
         run: |
           git clone https://github.com/getgauge/gauge-repository.git
           cd gauge-repository
-          python update_metadata.py html-report $VERSION
-          commit_message=$(echo -e "Update html-report to v$VERSION")
+          python update_metadata.py markdown-report $VERSION
+          commit_message=$(echo -e "Update markdown-report to v$VERSION")
           git commit -am "$commit_message"
           git push "https://$GITHUB_ACTOR:$GITHUB_TOKEN@github.com/getgauge/gauge-repository.git" master

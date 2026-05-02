@@ -8,25 +8,22 @@ package main
 import (
 	"os"
 	"path/filepath"
-	"time"
-
-	"strings"
-
 	"runtime"
+	"strings"
+	"time"
 
 	"github.com/getgauge/common"
 	"github.com/getgauge/gauge-proto/go/gauge_messages"
 	"github.com/getgauge/html-report/env"
-	"github.com/getgauge/html-report/generator"
 	"github.com/getgauge/html-report/logger"
-	"github.com/getgauge/html-report/theme"
+	"github.com/getgauge/html-report/mdgen"
 )
 
 const (
-	htmlReport      = "html-report"
+	markdownReport  = "markdown-report"
 	setupAction     = "setup"
 	executionAction = "execution"
-	pluginActionEnv = "html-report_action"
+	pluginActionEnv = "markdown-report_action"
 	timeFormat      = "2006-01-02_15.04.05"
 )
 
@@ -34,8 +31,7 @@ type nameGenerator interface {
 	randomName() string
 }
 
-type timeStampedNameGenerator struct {
-}
+type timeStampedNameGenerator struct{}
 
 func (T timeStampedNameGenerator) randomName() string {
 	return time.Now().Format(timeFormat)
@@ -43,29 +39,29 @@ func (T timeStampedNameGenerator) randomName() string {
 
 var pluginsDir string
 
-func createReport(suiteResult *gauge_messages.SuiteExecutionResult, searchIndex bool) {
+// createReport is invoked by the gRPC handler when a suite finishes. It
+// transforms the proto result and writes a Markdown report tree.
+func createReport(suiteResult *gauge_messages.SuiteExecutionResult) {
 	projectRoot, err := common.GetProjectRoot()
 	if err != nil {
 		logger.Debugf("Failed to generate report. %s", err.Error())
 		return
 	}
 	reportsDir := getReportsDirectory(getNameGen())
-	res := generator.ToSuiteResult(projectRoot, suiteResult.GetSuiteResult())
+	res := mdgen.ToSuiteResult(projectRoot, suiteResult.GetSuiteResult())
 	logger.Debug("Transformed SuiteResult to report structure")
 	go createReportExecutableFile(getExecutableAndTargetPath(reportsDir, pluginsDir))
-	t := theme.GetThemePath(pluginsDir)
-	generator.GenerateReport(res, reportsDir, t, searchIndex)
-	logger.Debugf("Done generating HTML report using theme from %s", t)
+	if err := mdgen.GenerateReports(res, reportsDir); err != nil {
+		logger.Fatalf("Failed to generate reports: %s\n", err.Error())
+	}
+	logger.Debugf("Done generating Markdown report at %s", reportsDir)
 }
 
 func getNameGen() nameGenerator {
-	var nameGen nameGenerator
 	if env.ShouldOverwriteReports() {
-		nameGen = nil
-	} else {
-		nameGen = timeStampedNameGenerator{}
+		return nil
 	}
-	return nameGen
+	return timeStampedNameGenerator{}
 }
 
 func getReportsDirectory(nameGen nameGenerator) string {
@@ -76,9 +72,9 @@ func getReportsDirectory(nameGen nameGenerator) string {
 	env.CreateDirectory(reportsDir)
 	var currentReportDir string
 	if nameGen != nil {
-		currentReportDir = filepath.Join(reportsDir, htmlReport, nameGen.randomName())
+		currentReportDir = filepath.Join(reportsDir, markdownReport, nameGen.randomName())
 	} else {
-		currentReportDir = filepath.Join(reportsDir, htmlReport)
+		currentReportDir = filepath.Join(reportsDir, markdownReport)
 	}
 	env.CreateDirectory(currentReportDir)
 	return currentReportDir
@@ -102,13 +98,13 @@ func createReportExecutableFile(exPath, exTarget string) {
 		}
 	}
 	if runtime.GOOS == "windows" {
-		createBatFileToExecuteHTMLReport(exPath, exTarget)
+		createBatFileToExecuteReport(exPath, exTarget)
 	} else {
-		createSymlinkToHTMLReport(exPath, exTarget)
+		createSymlinkToReport(exPath, exTarget)
 	}
 }
 
-func createBatFileToExecuteHTMLReport(exPath, exTarget string) {
+func createBatFileToExecuteReport(exPath, exTarget string) {
 	content := "@echo off \n" + exPath + " %*"
 	o := []byte(content)
 	exTarget = strings.TrimSuffix(exTarget, filepath.Ext(exTarget))
@@ -121,7 +117,7 @@ func createBatFileToExecuteHTMLReport(exPath, exTarget string) {
 	logger.Debugf("Generated %s", outF)
 }
 
-func createSymlinkToHTMLReport(exPath, exTarget string) {
+func createSymlinkToReport(exPath, exTarget string) {
 	if _, err := os.Lstat(exTarget); err == nil {
 		if err := os.Remove(exTarget); err != nil {
 			logger.Debugf("[Warning] Unable to remove existing symlink %s\n", exTarget)
