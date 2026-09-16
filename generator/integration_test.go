@@ -808,7 +808,7 @@ func newProtoSuiteRes(failed bool, failCount, skipCount int32, succRate float32,
 		Environment:       "default",
 		Tags:              "",
 		ProjectName:       "Gauge Project",
-		TimestampISO:      "2016-07-13T11:49:00Z",
+		Timestamp:         "Jul 13, 2016 at 11:49am", //nolint - deprecated, keep this pattern to avoid timezone issues in tests
 		SpecsSkippedCount: skipCount,
 		PostHookFailure:   postHook,
 		PreHookFailure:    preHook,
