@@ -1604,7 +1604,7 @@ func TestMapPostHookMessagesToSuiteResult(t *testing.T) {
 
 func TestMapTimestampFallbackFormatToSuiteResult(t *testing.T) {
 	timestamp := "Jun 3, 2016 at 12:29pm"
-	psr := &gm.ProtoSuiteResult{Timestamp: timestamp}
+	psr := &gm.ProtoSuiteResult{Timestamp: timestamp} //nolint - deprecated, but set here to exercise the pre-TimestampISO fallback path
 	res := ToSuiteResult("", psr)
 
 	if res.Timestamp != timestamp {
@@ -1616,7 +1616,7 @@ func TestMapTimestampISOToSuiteResult(t *testing.T) {
 	timestamp := "Jun 3, 2016 at 12:29pm"
 	parsedTimestamp, _ := time.ParseInLocation(generatedTimeFormat, timestamp, time.Local)
 	psr := &gm.ProtoSuiteResult{
-		Timestamp:    "Jun 3, 2016 at 12:00pm",                 // old format - different value to ensure correct value used
+		Timestamp:    "Jun 3, 2016 at 12:00pm",                 //nolint - deprecated, old format - different value to ensure correct value used
 		TimestampISO: parsedTimestamp.Format(time.RFC3339Nano), // prefer iso field
 	}
 	res := ToSuiteResult("", psr)
