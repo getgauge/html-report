@@ -60,6 +60,7 @@ type specsMeta struct {
 	Skipped       bool
 	Tags          []string
 	ReportFile    string
+	Selected      bool
 }
 
 type sidebar struct {

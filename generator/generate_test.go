@@ -144,6 +144,44 @@ var wSidebarAside = `<aside class="sidebar">
   </div>
 </aside>`
 
+var wSidebarAsideWithSelectedSpec = `<aside class="sidebar">
+	<h3 class="title">Specifications</h3>
+	<div class="searchbar">
+		<input id="searchSpecifications" placeholder="Type specification or tag name" type="text" />
+		<i class="fa fa-search"></i>
+	</div>
+	<div class="specs-sorting">
+		<div class="sort sort-specs-name" data-sort-by="specs-name">
+			<span class="sort-icons"><i class="fa fa-caret-up"></i><i class="fa fa-caret-down"></i></span><span>Name</span>
+		</div>
+		<div class="sort sort-execution-time" data-sort-by="execution-time">
+			<span class="sort-icons"><i class="fa fa-caret-up"></i><i class="fa fa-caret-down"></i></span><span>Execution time</span>
+		</div>
+	</div>
+	<div id="listOfSpecifications">
+		<ul id="scenarios" class="spec-list">
+			<a href="passing_spec.html">
+				<li class="passed spec-name">
+					<span id="scenarioName" class="scenarioname">Passing Spec</span>
+					<span id="time" class="time">00:01:04</span>
+				</li>
+			</a>
+			<a href="failing_spec.html" aria-current="page">
+				<li class="failed spec-name selected">
+					<span id="scenarioName" class="scenarioname">Failing Spec</span>
+					<span id="time" class="time">00:00:30</span>
+				</li>
+			</a>
+			<a href="skipped_spec.html">
+				<li class="skipped spec-name">
+					<span id="scenarioName" class="scenarioname">Skipped Spec</span>
+					<span id="time" class="time">00:00:00</span>
+				</li>
+			</a>
+		</ul>
+	</div>
+</aside>`
+
 var wHookFailureWithScreenhotDiv = `<div class="error-container failed" data-tablerow='0'>
 <div class="error-heading">BeforeSuite Failed:<span class="error-message"> SomeError</span></div>
   <div class="toggle-show">
@@ -334,7 +372,7 @@ var wStepFailDiv = `<div class="error-container failed">
 		 <p class="custom-message">To view a screenshot of this failed step, Please set up a <a href="https://docs.gauge.org/writing-specifications/#taking-custom-screenshots">custom screenshot handler.</a>
 		 </p>
 		</div>
-	  </div>		
+	  </div>
   </div>
 </div>`
 
@@ -509,10 +547,17 @@ var reportGenTests = []reportGenTest{
 	{"generate sidebar with appropriate pass/fail/skip class", "sidebarDiv", &sidebar{
 		IsBeforeHookFailure: false,
 		Specs: []*specsMeta{
-			newSpecsMeta("Passing Spec", "00:01:04", false, false, nil, "passing_spec.html"),
-			newSpecsMeta("Failing Spec", "00:00:30", true, false, nil, "failing_spec.html"),
-			newSpecsMeta("Skipped Spec", "00:00:00", false, true, nil, "skipped_spec.html"),
+			newSpecsMeta("Passing Spec", "00:01:04", false, false, nil, "passing_spec.html", false),
+			newSpecsMeta("Failing Spec", "00:00:30", true, false, nil, "failing_spec.html", false),
+			newSpecsMeta("Skipped Spec", "00:00:00", false, true, nil, "skipped_spec.html", false),
 		}}, wSidebarAside},
+	{"generate sidebar highlighting the currently viewed spec", "sidebarDiv", &sidebar{
+		IsBeforeHookFailure: false,
+		Specs: []*specsMeta{
+			newSpecsMeta("Passing Spec", "00:01:04", false, false, nil, "passing_spec.html", false),
+			newSpecsMeta("Failing Spec", "00:00:30", true, false, nil, "failing_spec.html", true),
+			newSpecsMeta("Skipped Spec", "00:00:00", false, true, nil, "skipped_spec.html", false),
+		}}, wSidebarAsideWithSelectedSpec},
 	{"do not generate sidebar if presuitehook failure", "sidebarDiv", &sidebar{
 		IsBeforeHookFailure: true,
 		Specs:               []*specsMeta{},
@@ -576,7 +621,7 @@ func newHookFailure(basePath, name, errMsg, screenshot, stacktrace string) *hook
 	}
 }
 
-func newSpecsMeta(name, execTime string, failed, skipped bool, tags []string, fileName string) *specsMeta {
+func newSpecsMeta(name, execTime string, failed, skipped bool, tags []string, fileName string, selected bool) *specsMeta {
 	return &specsMeta{
 		SpecName:      name,
 		ExecutionTime: execTime,
@@ -584,6 +629,7 @@ func newSpecsMeta(name, execTime string, failed, skipped bool, tags []string, fi
 		Skipped:       skipped,
 		Tags:          tags,
 		ReportFile:    fileName,
+		Selected:      selected,
 	}
 }
 

@@ -228,6 +228,7 @@ func toSidebar(res *SuiteResult, specFilePath string) *sidebar {
 			Skipped:       specRes.ExecutionStatus == skip,
 			Tags:          specRes.Tags,
 			ReportFile:    toHTMLFileName(specRes.FileName, basePath),
+			Selected:      specFilePath != "" && specRes.FileName == specFilePath,
 		}
 		specsMetaList = append(specsMetaList, sm)
 	}
