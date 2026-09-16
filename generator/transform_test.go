@@ -1247,6 +1247,81 @@ func TestToStepCollectsScreenshot(t *testing.T) {
 	}
 }
 
+// A step that raises SkipScenarioException (or the language runner's equivalent)
+var protoStepWithSkipScenario = &gm.ProtoStep{
+	Fragments: []*gm.Fragment{
+		newTextFragment("Skip this test case"),
+	},
+	StepExecutionResult: &gm.ProtoStepExecutionResult{
+		ExecutionResult: &gm.ProtoExecutionResult{
+			ExecutionTime: 0,
+			SkipScenario:  true,
+			Message:       []string{"This scenario is skipped."},
+		},
+	},
+}
+
+func TestToStepWhenStepRaisesSkipScenarioException(t *testing.T) {
+	want := &step{
+		Fragments: []*fragment{
+			{FragmentKind: textFragmentKind, Text: "Skip this test case"},
+		},
+		Result: &result{
+			Status:        skip,
+			ExecutionTime: "00:00:00",
+			Messages:      []string{"This scenario is skipped."},
+		},
+	}
+
+	got := toStep(protoStepWithSkipScenario)
+	if !reflect.DeepEqual(got, want) {
+		t.Errorf("want:\n%v\ngot:\n%v\n", want, got)
+	}
+}
+
+func TestGetStepStatus(t *testing.T) {
+	tests := []struct {
+		name string
+		res  *gm.ProtoStepExecutionResult
+		want status
+	}{
+		{
+			name: "step skipped outright (e.g. after a prior failure) is skip",
+			res:  &gm.ProtoStepExecutionResult{Skipped: true},
+			want: skip,
+		},
+		{
+			name: "no execution result at all is not executed",
+			res:  &gm.ProtoStepExecutionResult{},
+			want: notExecuted,
+		},
+		{
+			name: "failed execution result is fail",
+			res:  &gm.ProtoStepExecutionResult{ExecutionResult: &gm.ProtoExecutionResult{Failed: true}},
+			want: fail,
+		},
+		{
+			name: "step that ran and raised SkipScenarioException is skip, not pass",
+			res:  &gm.ProtoStepExecutionResult{ExecutionResult: &gm.ProtoExecutionResult{SkipScenario: true}},
+			want: skip,
+		},
+		{
+			name: "an ordinary successful step is pass",
+			res:  &gm.ProtoStepExecutionResult{ExecutionResult: &gm.ProtoExecutionResult{}},
+			want: pass,
+		},
+	}
+
+	for _, test := range tests {
+		t.Run(test.name, func(t *testing.T) {
+			got := getStepStatus(test.res)
+			if got != test.want {
+				t.Errorf("%s: want %s, got %s", test.name, test.want, got)
+			}
+		})
+	}
+}
+
 func TestToCSV(t *testing.T) {
 	table := newTableItem([]string{"Word", "Count"}, [][]string{
 		{"Gauge", "3"},
