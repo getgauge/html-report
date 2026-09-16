@@ -525,13 +525,31 @@ func TestToSidebar(t *testing.T) {
 	want := &sidebar{
 		IsBeforeHookFailure: false,
 		Specs: []*specsMeta{
-			newSpecsMeta("specRes2", "00:03:31", true, false, []string{"tag1", "tag2", "tag3"}, "specRes2.html"),
-			newSpecsMeta("specRes3", "00:03:31", false, true, []string{"tag1"}, "specRes3.html"),
-			newSpecsMeta("specRes1", "00:03:31", false, false, []string{"tag1", "tag2"}, "foobar.html"),
+			newSpecsMeta("specRes2", "00:03:31", true, false, []string{"tag1", "tag2", "tag3"}, "specRes2.html", false),
+			newSpecsMeta("specRes3", "00:03:31", false, true, []string{"tag1"}, "specRes3.html", false),
+			newSpecsMeta("specRes1", "00:03:31", false, false, []string{"tag1", "tag2"}, "foobar.html", false),
 		},
 	}
 
 	got := toSidebar(suiteRes2, "")
+	if !reflect.DeepEqual(got, want) {
+		t.Errorf("want:\n%v\ngot:\n%v\n", want, got)
+	}
+}
+
+func TestToSidebarMarksTheCurrentlyViewedSpecAsSelected(t *testing.T) {
+	want := &sidebar{
+		IsBeforeHookFailure: false,
+		Specs: []*specsMeta{
+			newSpecsMeta("specRes2", "00:03:31", true, false, []string{"tag1", "tag2", "tag3"}, "specRes2.html", true),
+			newSpecsMeta("specRes3", "00:03:31", false, true, []string{"tag1"}, "specRes3.html", false),
+			newSpecsMeta("specRes1", "00:03:31", false, false, []string{"tag1", "tag2"}, "foobar.html", false),
+		},
+	}
+
+	// specRes2's FileName is "specRes2.spec" -- this mirrors how a spec page is
+	// rendered: {{template "sidebarDiv" (toSidebar .SuiteRes .SpecRes.FileName)}}
+	got := toSidebar(suiteRes2, "specRes2.spec")
 	if !reflect.DeepEqual(got, want) {
 		t.Errorf("want:\n%v\ngot:\n%v\n", want, got)
 	}
