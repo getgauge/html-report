@@ -728,6 +728,10 @@ func getStepStatus(res *gm.ProtoStepExecutionResult) status {
 	if res.GetExecutionResult().GetFailed() {
 		return fail
 	}
+	if res.GetExecutionResult().GetSkipScenario() {
+		// Catch programatically skipped scenarios correctly
+		return skip
+	}
 	return pass
 }
 
